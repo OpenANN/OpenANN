@@ -1,0 +1,21 @@
+#ifndef OPENANN_INCLUDED
+#define OPENANN_INCLUDED
+
+namespace OpenANN
+{
+
+class OpenANNLibraryInfo
+{
+public:
+  static const char* VERSION;
+  static const char* URL;
+  static const char* DESCRIPTION;
+  static const char* COMPILATION_TIME;
+  static const char* COMPILER_FLAGS;
+
+  static void print();
+};
+
+}
+
+#endif // OPENANN_INCLUDED

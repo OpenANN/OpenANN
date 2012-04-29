@@ -1,0 +1,22 @@
+#include <OpenANN>
+#include <iostream>
+
+namespace OpenANN
+{
+
+const char* OpenANNLibraryInfo::VERSION = "${OPENANN_VERSION_NUMBER}";
+const char* OpenANNLibraryInfo::URL = "${OPENANN_URL}";
+const char* OpenANNLibraryInfo::DESCRIPTION = "${OPENANN_BRIEF_DESCRIPTION}";
+const char* OpenANNLibraryInfo::COMPILATION_TIME = "${OPENANN_TIME}";
+const char* OpenANNLibraryInfo::COMPILER_FLAGS = "${OPENANN_COMPILER_FLAGS}";
+
+void OpenANNLibraryInfo::print()
+{
+  std::cout << "OpenANN v" << VERSION << std::endl
+      << DESCRIPTION << std::endl
+      << "Homepage: " << URL << std::endl
+      << "Compilation time: " << COMPILATION_TIME << std::endl
+      << "Compiled with flags: " << COMPILER_FLAGS << std::endl;
+}
+
+}
