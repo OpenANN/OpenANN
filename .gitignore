@@ -1,3 +1,4 @@
 build
 *~
 src/OpenANN.cpp
+doxygen.cfg

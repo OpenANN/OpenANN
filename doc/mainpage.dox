@@ -1,0 +1,135 @@
+namespace OpenANN
+{
+
+/**
+
+\mainpage
+
+\b Table \b of \b contents
+  - \ref License
+  - \ref Requirements
+  - \ref Features
+  - \ref SimpleExample
+  - \ref MoreExamples
+  - \ref TodoList
+
+\section License
+
+The license is LGPL 3. You can find the license text in the files COPYING and COPYING.LESSER.
+
+\section Requirements
+
+Supported operating systems and compilers
+  - Linux
+  - GCC
+
+Compilation
+  - <a href="http://www.cmake.org" target=_blank>CMake</a>
+  - pkg-config
+  - <a href="http://eigen.tuxfamily.org" target=_blank>Eigen</a>
+  - <a href="http://www.alglib.net" target=_blank>ALGLIB</a>
+
+\code
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE:String=Release ..
+sudo make install
+sudo ldconfig
+\endcode
+
+Documentation
+  - <a href="http://www.stack.nl/~dimitri/doxygen/" target=_blank>doxygen</a>
+  - <a href="http://www.graphviz.org" target=_blank>Graphviz</a>
+
+Examples
+  - OpenGL
+  - GLUT
+  - libxmu
+  - Qt4
+
+Ruby bindings
+  - <a href="http://www.ruby-lang.org" target=_blank>Ruby</a>
+  - <a href="http://rubygems.org" target=_blank>RubyGems</a>
+  - <a href="http://rice.rubyforge.org" target=_blank>Rice</a>
+
+\code
+sudo apt-get install ruby rubygems
+sudo gem install rice
+\endcode
+
+\section Features List of Features
+
+  - artificial neural networks
+    - multilayer perceptron (MLP)
+    - MLP with compressed weights
+    - convolutional neural network (CNN)
+  - optimization algorithms
+    - stochastic gradient descent (SGD)
+    - conjugate gradient (CG)
+    - Levenberg-Marquardt algorithm (LMA)
+    - sequential quadratic programming (SQP)
+    - (increasing population size) covariance matrix adaption evolution strategies (IPOPCMAES)
+  - supported languages
+    - C++
+    - Ruby bindings
+
+\section SimpleExample A Simple Example
+
+\code
+#include <OpenANN>
+#include <Eigen/Dense>
+
+using namespace OpenANN;
+
+int main()
+{
+  Eigen::MatrixXf x(1, 1);
+  x.fill(2.0f);
+  Eigen::MatrixXf t(1, 1);
+  t.fill(5.0f);
+
+  MLP mlp;
+  mlp.input(1)
+     .fullyConnectedHiddenLayer(3, MLP::TANH)
+     .fullyConnectedHiddenLayer(3, MLP::TANH)
+     .output(1, MLP::MSE, MLP::ID)
+     .trainingSet(x, t)
+     .training(MLP::BATCH_LMA);
+
+  mlp.fit();
+  Eigen::VectorXf y = mlp(x);
+
+  return 0;
+}
+\endcode
+
+Compile it with pkg-config and g++:
+
+\code
+g++ main.cpp `pkg-config --cflags --libs openann`
+\endcode
+
+\section MoreExamples More Examples
+
+Classification
+
+Reinforcement Learning
+
+\section TodoList Todo List
+
+  @todo Classes for layer types
+  @todo layer: Subsampling layer (CNN)
+  @todo layer: Maxpooling layer (CNN)
+  @todo layer: Ordinary convolutional layer (CNN)
+  @todo layer: Radial basis functions layer (RBF)
+  @todo layer: Support vector machines (SVM, maybe include libsvm?)
+  @todo Unsupervised methods (RBM, DBN, SOM, ...)
+  @todo example: NORB data set
+  @todo example: Caltech-101/256 data set
+  @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
+  @todo port: Mac and Windows
+  @todo port: test other compilers
+
+*/
+
+}
