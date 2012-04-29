@@ -5,7 +5,7 @@
 #
 #
 #
-# The following macro is defined:
+# The following macros are defined:
 #
 # add_documentation(target <configuration file>)
 #     Adds targets that generate the documentation.
