@@ -11,3 +11,5 @@ set(OPENANN_COMPILER_FLAGS) # TODO determine optimization flags, warning flags e
 include_directories(OpenANN)
 
 add_subdirectory(src)
+
+install(DIRECTORY OpenANN DESTINATION include)
