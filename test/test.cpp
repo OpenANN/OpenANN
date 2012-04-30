@@ -6,10 +6,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <io/Logger.h>
+#include <OpenANN>
 #include "RandomTestCase.h"
 
 int main(int argc, char** argv)
 {
+  OpenANN::OpenANNLibraryInfo::print();
+
   bool verbose = false;
   bool qt = false;
   for(int i = 1; i < argc; i++)
