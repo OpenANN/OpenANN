@@ -47,11 +47,10 @@ if(DOXYGEN_FOUND AND BUILD_DOCUMENTATION)
   install_documentation(${PROJECT_BINARY_DIR}/html openann)
 endif()
 
-if(OPENMP_FOUND AND (LINUX_FOUND OR FREEBSD_FOUND))
+if(OPENMP_FOUND AND UNIX)
   set(OPENANN_LINK_LIBS "-lgomp")
 endif()
 configure_file(openann.pc.in openann.pc @ONLY)
-
 string(REPLACE ":" ";" pkg_target_search "$ENV{PKG_CONFIG_LIBDIR}")
 find_path(pkg_target_dir "pkgconfig" ${pkg_target_search} "${CMAKE_INSTALL_PREFIX}/share" ${pkg_target_search})
 if(NOT pkg_target_dir)

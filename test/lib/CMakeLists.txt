@@ -1,4 +1,4 @@
-if(NOT (EXISTS "CPP-Test")) # TODO this check does not work
+if(NOT (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/CPP-Test/"))
   if(UNIX)
     exec_program("sh" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "setup.sh" "CPP-Test" RETURN_VALUE result)
     if(result GREATER 0)
