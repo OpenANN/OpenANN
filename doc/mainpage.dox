@@ -52,10 +52,7 @@ Ruby bindings
   - <a href="http://rubygems.org" target=_blank>RubyGems</a>
   - <a href="http://rice.rubyforge.org" target=_blank>Rice</a>
 
-\code
-sudo apt-get install ruby rubygems
-sudo gem install rice
-\endcode
+sudo apt-get install ruby rubygems; sudo gem install rice
 
 \section Features List of Features
 

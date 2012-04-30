@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+includedir=${prefix}/include/OpenANN
+libdir=${exec_prefix}/lib
+
+Name: openann
+Description: @OPENANN_BRIEF_DESCRIPTION@
+URL: @OPENANN_URL@
+Version: @OPENANN_VERSION_NUMBER@
+Requires: eigen3
+Conflicts:
+Cflags: -I\${includedir} @OPENANN_CUDA_FLAGS@
+Libs: -L\${libdir} @OPENANN_LINK_LIBS@

@@ -1,4 +1,6 @@
 build
+.kdev4
 *~
+*.backup
 src/OpenANN.cpp
 doxygen.cfg

@@ -4,12 +4,18 @@ project(OpenANN)
 
 find_package(Doxygen)
 include(cmake/UseDoxygen.cmake)
+find_package(OpenMP)
 
 set(OPENANN_VERSION_NUMBER "1.0.0")
 set(OPENANN_URL "https://github.com/AlexanderFabisch/OpenANN")
 set(OPENANN_BRIEF_DESCRIPTION "An open source library for artificial neural networks.")
 set(OPENANN_TIME) # TODO write macro that determines the current time
+set(OPENANN_CUDA_FLAGS) # TODO CUDA optimization flags
 set(OPENANN_COMPILER_FLAGS) # TODO determine optimization flags, warning flags etc.
+set(OPENANN_LINK_LIBS "-lopenann") # TODO libraries to link for external executables
+if(OPENMP_FOUND AND CMAKE_COMPILER_IS_GNUCXX)
+  set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lgomp")
+endif()
 
 include_directories(OpenANN)
 
@@ -28,3 +34,15 @@ if(DOXYGEN_FOUND AND BUILD_DOCUMENTATION)
   add_documentation(openann_doc doxygen.cfg)
   install_documentation(${PROJECT_BINARY_DIR}/html openann)
 endif()
+
+if(OPENMP_FOUND AND (LINUX_FOUND OR FREEBSD_FOUND))
+  set(OPENANN_LINK_LIBS "-lgomp")
+endif()
+configure_file(openann.pc.in openann.pc @ONLY)
+
+string(REPLACE ":" ";" pkg_target_search "$ENV{PKG_CONFIG_LIBDIR}")
+find_path(pkg_target_dir "pkgconfig" ${pkg_target_search} "${CMAKE_INSTALL_PREFIX}/share" ${pkg_target_search})
+if(NOT pkg_target_dir)
+  set(pkg_target_dir "${CMAKE_INSTALL_PREFIX}/share")
+endif()
+install(FILES "${PROJECT_BINARY_DIR}/openann.pc" DESTINATION "${pkg_target_dir}/pkgconfig")
