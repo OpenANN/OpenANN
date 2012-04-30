@@ -5,8 +5,8 @@
 #endif
 #include <iostream>
 #include <cstdlib>
-
 #include <io/Logger.h>
+#include "RandomTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
   OpenANN::Logger::deactivate = true;
 
   TestSuite ts("OpenANN");
-  //ts.addTestCase(new ...TestCase); // TODO add test cases
+  ts.addTestCase(new RandomTestCase);
 
   if(qt)
   {
