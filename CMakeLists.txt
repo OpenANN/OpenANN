@@ -3,15 +3,20 @@ cmake_minimum_required(VERSION 2.8)
 project(OpenANN)
 
 find_package(Doxygen)
-include(cmake/UseDoxygen.cmake)
 find_package(OpenMP)
+include(cmake/UseDoxygen.cmake)
+include(cmake/Utilities.cmake)
 
 set(OPENANN_VERSION_NUMBER "1.0.0")
 set(OPENANN_URL "https://github.com/AlexanderFabisch/OpenANN")
 set(OPENANN_BRIEF_DESCRIPTION "An open source library for artificial neural networks.")
-set(OPENANN_TIME) # TODO write macro that determines the current time
+current_time(OPENANN_TIME) # cmake execution time
 set(OPENANN_CUDA_FLAGS) # TODO CUDA optimization flags
+set(OPENANN_OPTIMIZATION_FLAGS) # TODO optimization flags
 set(OPENANN_COMPILER_FLAGS) # TODO determine optimization flags, warning flags etc.
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(COMPILER_WARNING_FLAGS "-Wall -Wextra -pedantic -Wno-long-long")
+endif()
 set(OPENANN_LINK_LIBS "-lopenann") # TODO libraries to link for external executables
 if(OPENMP_FOUND AND CMAKE_COMPILER_IS_GNUCXX)
   set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lgomp")
