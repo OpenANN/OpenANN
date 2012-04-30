@@ -26,6 +26,8 @@ include_directories(OpenANN)
 
 add_subdirectory(src)
 
+add_subdirectory(test)
+
 install(DIRECTORY OpenANN DESTINATION include)
 
 option(BUILD_DOCUMENTATION "Build OpenANN documentation using doxygen" ON)

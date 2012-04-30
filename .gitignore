@@ -3,4 +3,5 @@ build
 *~
 *.backup
 src/OpenANN.cpp
+test/lib/CPP-Test
 doxygen.cfg
