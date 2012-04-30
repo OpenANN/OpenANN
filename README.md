@@ -43,6 +43,7 @@ Directory Structure
 * benchmarks - Standard ANN benchmarks
 * cmake - CMake macros
 * doc - Additional doxygen documentation files
+* examples - OpenANN showcase
 * ruby - Ruby language bindings
 * src - Implementation files for libopenann
 * test - Contains the OpenANN test suite
