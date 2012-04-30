@@ -6,6 +6,11 @@ find_package(Doxygen)
 find_package(OpenMP)
 include(cmake/UseDoxygen.cmake)
 include(cmake/Utilities.cmake)
+include(cmake/FindEigen3.cmake)
+
+if(NOT EIGEN3_FOUND)
+  message(FATAL_ERROR "Could not find Eigen 3 library. Download it from http://eigen.tuxfamily.org/ and install it with CMake.")
+endif()
 
 set(OPENANN_VERSION_NUMBER "1.0.0")
 set(OPENANN_URL "https://github.com/AlexanderFabisch/OpenANN")
@@ -22,7 +27,7 @@ if(OPENMP_FOUND AND CMAKE_COMPILER_IS_GNUCXX)
   set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lgomp")
 endif()
 
-include_directories(OpenANN)
+include_directories(OpenANN ${EIGEN3_INCLUDE_DIRS})
 
 add_subdirectory(src)
 
