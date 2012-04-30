@@ -5,6 +5,8 @@
 #include <numeric>
 #include <vector>
 
+using namespace OpenANN;
+
 void RandomTestCase::run()
 {
   RUN(RandomTestCase, generateInt);

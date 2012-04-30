@@ -1,45 +1,28 @@
-#pragma once
+#ifndef OPENANN_RANDOM_H
+#define OPENANN_RANDOM_H
 
 #include <AssertionMacros.h>
 #include <cmath>
-#include <ctime>
 #include <cstdlib>
+
+namespace OpenANN
+{
 
 class RandomNumberGenerator
 {
 public:
-  RandomNumberGenerator()
-  {
-    static bool seedInitialized = false;
-    if(!seedInitialized)
-    {
-      srand(time(0));
-      seedInitialized = true;
-    }
-  }
-
-  int generateInt(int min, int range) const
-  {
-    OPENANN_CHECK(range >= 0);
-    if(range == 0)
-      return min;
-    else
-      return rand() % range + min;
-  }
-
-  size_t generateIndex(size_t size) const
-  {
-    return size_t(generateInt(0, size));
-  }
+  RandomNumberGenerator();
+  int generateInt(int min, int range) const;
+  size_t generateIndex(size_t size) const;
 
   template<class T>
   T generate(T min, T range) const
   {
     OPENANN_CHECK(range >= T());
-    if(range == T(0))
+    if(range == T())
       return min;
     else
-      return (T(rand()) / T(RAND_MAX)) * range + min;
+      return (T) rand() / (T) RAND_MAX * range + min;
   }
 
   /**
@@ -53,3 +36,7 @@ public:
     return sqrt(T(-2) * log(generate(T(), T(1)))) * cos(T(2) * T(M_PI) * generate(T(), T(1)));
   }
 };
+
+}
+
+#endif // OPENANN_RANDOM_H
