@@ -35,3 +35,14 @@ Guidelines for Developers
 * TODO link to todo list
 * TODO link to coding style
 * Use the namespace OpenANN.
+
+Directory Structure
+-------------------
+
+* OpenANN - Header files that are exposed to the user
+* benchmarks - Standard ANN benchmarks
+* cmake - CMake macros
+* doc - Additional doxygen documentation files
+* ruby - Ruby language bindings
+* src - Implementation files for libopenann
+* test - Contains the OpenANN test suite
