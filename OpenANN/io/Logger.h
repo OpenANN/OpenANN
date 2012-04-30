@@ -16,6 +16,9 @@
 
 #endif // NDEBUG
 
+namespace OpenANN
+{
+
 class Logger
 {
 public:
@@ -50,3 +53,4 @@ Logger& operator<<(Logger& logger, const T& t)
   return logger;
 }
 
+}

@@ -2,6 +2,9 @@
 #include <AssertionMacros.h>
 #include <ctime>
 
+namespace OpenANN
+{
+
 bool Logger::deactivate = false;
 
 Logger::Logger(Target target, std::string name)
@@ -36,4 +39,6 @@ Logger::~Logger()
 bool Logger::isActive()
 {
   return target != NONE;
+}
+
 }
