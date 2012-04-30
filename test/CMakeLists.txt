@@ -8,7 +8,6 @@ file(GLOB test_src "*.cpp")
 
 if(QT_FOUND)
   set(QT_USE_QTMAIN TRUE)
-  set(QT_USE_QTOPENGL TRUE)
   include(${QT_USE_FILE})
   add_definitions("${QT_DEFINITIONS} -DUSE_QT")
   add_executable(TestSuite ${test_src})
