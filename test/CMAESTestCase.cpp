@@ -20,12 +20,12 @@ void CMAESTestCase::rosenbrock()
   s.maximalFunctionEvaluations = 100000;
   s.maximalIterations = 10000;
   s.minimalValue = 0.001;
-  s.maximalRestarts = 5;
+  s.maximalRestarts = 10;
   cmaes.setOptimizable(r);
   cmaes.setStopCriteria(s);
   cmaes.optimize();
   Vt optimum = cmaes.result();
-  ASSERT(r.error() < 0.001);
+  ASSERT(r.error() < 0.01);
 }
 
 void CMAESTestCase::himmelblau()

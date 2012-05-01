@@ -7,8 +7,9 @@
 #include <cstdlib>
 #include <io/Logger.h>
 #include <OpenANN>
-#include "RandomTestCase.h"
+#include "ActivationFunctionsTestCase.h"
 #include "CMAESTestCase.h"
+#include "RandomTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -28,8 +29,9 @@ int main(int argc, char** argv)
   OpenANN::Logger::deactivate = true;
 
   TestSuite ts("OpenANN");
-  ts.addTestCase(new RandomTestCase);
+  ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CMAESTestCase);
+  ts.addTestCase(new RandomTestCase);
 
   if(qt)
   {
