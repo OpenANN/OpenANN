@@ -41,9 +41,9 @@ public:
   virtual int values() { return examples(); }
   virtual void VJ(Vt& values, Mt& jacobian);
   virtual void finishedIteration() {}
-  virtual Vt singleGradientFD(int n, const fpt eps = 1e-10);
-  virtual Vt gradientFD(const fpt eps = 1e-10);
-  virtual Mt hessianFD(const fpt eps = 1e-5);
+  virtual Vt singleGradientFD(int n, const fpt eps = (fpt) 1e-2);
+  virtual Vt gradientFD(const fpt eps = (fpt) 1e-2);
+  virtual Mt hessianFD(const fpt eps = (fpt) 1e-2);
 };
 
 }

@@ -11,6 +11,7 @@
 #include "CMAESTestCase.h"
 #include "CompressionMatrixFactoryTestCase.h"
 #include "MLPImplementationTestCase.h"
+#include "MLPTestCase.h"
 #include "RandomTestCase.h"
 
 int main(int argc, char** argv)
@@ -35,6 +36,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
   ts.addTestCase(new MLPImplementationTestCase);
+  ts.addTestCase(new MLPTestCase);
   ts.addTestCase(new RandomTestCase);
 
   if(qt)
