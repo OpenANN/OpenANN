@@ -9,6 +9,8 @@
 #include <OpenANN>
 #include "ActivationFunctionsTestCase.h"
 #include "CMAESTestCase.h"
+#include "CompressionMatrixFactoryTestCase.h"
+#include "MLPImplementationTestCase.h"
 #include "RandomTestCase.h"
 
 int main(int argc, char** argv)
@@ -31,6 +33,8 @@ int main(int argc, char** argv)
   TestSuite ts("OpenANN");
   ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CMAESTestCase);
+  ts.addTestCase(new CompressionMatrixFactoryTestCase);
+  ts.addTestCase(new MLPImplementationTestCase);
   ts.addTestCase(new RandomTestCase);
 
   if(qt)
