@@ -74,5 +74,5 @@ void RandomTestCase::sampleNormalDistribution()
   for(int i = 0; i < N; i++)
     variance += std::pow(random[i] - mean, 2.0);
   variance /= (double) N;
-  ASSERT_WITHIN(variance, 0.9, 1.1);
+  ASSERT_WITHIN(variance, 0.8, 1.2);
 }

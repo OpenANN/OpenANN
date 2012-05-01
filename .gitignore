@@ -2,6 +2,8 @@ build
 .kdev4
 *~
 *.backup
+lib/ALGLIB
+lib/CMA-ES*
 src/OpenANN.cpp
 test/lib/CPP-Test
 doxygen.cfg
