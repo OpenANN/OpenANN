@@ -1,0 +1,37 @@
+if [ $# -ne 2 ]; then
+  echo "usage: setup.sh TARGET_CMAES TARGET_ALGLIB" 1>&2
+  exit 1
+fi
+
+TARGET_CMAES=$1
+TARGET_ALGLIB=$2
+
+echo "Starting setup script for external libraries."
+if [ -d "${TARGET_CMAES}" ]; then
+  echo "Removing current CMA-ESpp library."
+  rm -r ${TARGET_CMAES}
+fi
+echo "Downloading CMA-ESpp."
+wget https://github.com/AlexanderFabisch/CMA-ESpp/zipball/master
+echo "Unzipping CMA-ESpp."
+unzip master > /dev/null
+rm master
+mv *-CMA-ESpp-* ${TARGET_CMAES}
+echo "Successfully installed CMA-ESpp."
+if [ -d "${TARGET_ALGLIB}" ]; then
+  echo "Removing current ALGLIB library."
+  rm -r ${TARGET_ALGLIB}
+fi
+echo "This setup script will download ALGLIB for you. Note that ALGLIB is"
+echo "licensed under GPL license and thus we cannot directly include it to"
+echo "OpenANN."
+echo "Downloading ALGLIB."
+wget http://www.alglib.net/translator/re/alglib-3.5.0.cpp.zip
+echo "Unzipping ALGLIB."
+unzip alglib-3.5.0.cpp.zip > /dev/null
+rm alglib-3.5.0.cpp.zip
+mv cpp/src ${TARGET_ALGLIB}
+mv cpp/gpl* ${TARGET_ALGLIB}
+rm -r cpp
+echo "Successfully installed ALGLIB."
+exit 0

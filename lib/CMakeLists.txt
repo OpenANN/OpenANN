@@ -1,0 +1,18 @@
+if(NOT (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/CMA-ESpp/"))
+  if(UNIX)
+    exec_program("sh" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "setup.sh" "CMA-ESpp" "ALGLIB" RETURN_VALUE result)
+    if(result GREATER 0)
+      message(FATAL_ERROR "I could not install CMA-ESpp and ALGLIB.")
+    endif()
+  else()
+    message(FATAL_ERROR "I do not know how to install CMA-ESpp and ALGLIB.")
+  endif()
+endif()
+
+if(USE_GPL_LICENSE)
+  include_directories(ALGLIB)
+  file(GLOB alglib_src "ALGLIB/*.cpp")
+  add_library(alglib ${alglib_src})
+endif()
+
+add_subdirectory(CMA-ESpp)

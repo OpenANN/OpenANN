@@ -27,8 +27,13 @@ if(OPENMP_FOUND AND CMAKE_COMPILER_IS_GNUCXX)
   set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lgomp")
 endif()
 
-include_directories(OpenANN ${EIGEN3_INCLUDE_DIRS})
+option(USE_GPL_LICENSE "Enable use of libraries that are under GPL license" OFF)
+if(USE_GPL_LICENSE)
+  set(OPENANN_COMPILER_FLAGS "${OPENANN_COMPILER_FLAGS} -DUSE_GPL_LICENSE")
+endif()
+add_subdirectory(lib)
 
+include_directories(OpenANN ${EIGEN3_INCLUDE_DIRS})
 add_subdirectory(src)
 
 add_subdirectory(test)

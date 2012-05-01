@@ -7,7 +7,10 @@ License
 -------
 
 The license is LGPL 3. You can find the license text in the files `COPYING` and
-`COPYING.LESSER`.
+`COPYING.LESSER`. Note that you can activate the CMake option
+`USE_GPL_LIBRARIES` in order to use the library ALGLIB which is necessary to use
+the optimization algorithms conjugate gradient and Levenberg-Marquardt. In this
+case the compiled shared library libopenann is under GPL license.
 
 Requirements
 ------------
@@ -44,6 +47,7 @@ Directory Structure
 * cmake - CMake macros
 * doc - Additional doxygen documentation files
 * examples - OpenANN showcase
+* lib - External libraries
 * ruby - Ruby language bindings
 * src - Implementation files for libopenann
 * test - Contains the OpenANN test suite
