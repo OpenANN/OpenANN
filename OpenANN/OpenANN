@@ -18,4 +18,6 @@ public:
 
 }
 
+#include <MLP.h>
+
 #endif // OPENANN_INCLUDED

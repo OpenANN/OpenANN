@@ -73,7 +73,7 @@ add_subdirectory(lib)
 include_directories(OpenANN ${EIGEN3_INCLUDE_DIRS} lib/CMA-ESpp)
 add_definitions(${OPENANN_CUDA_FLAGS})
 add_subdirectory(src)
-
+add_subdirectory(examples)
 add_subdirectory(test)
 
 install(DIRECTORY OpenANN DESTINATION include)

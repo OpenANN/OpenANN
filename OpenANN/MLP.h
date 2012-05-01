@@ -34,6 +34,7 @@ public:
   {
     NOT_INITIALIZED,
     CMAES,          //!< Covariance Matrix Adaption Evolution Strategies
+    LMA             //!< Levenberg-Marquardt Algorithm
   };
 
   /** Layer initialization state. */
