@@ -5,8 +5,6 @@
 #include <numeric>
 #include <vector>
 
-using namespace OpenANN;
-
 void RandomTestCase::run()
 {
   RUN(RandomTestCase, generateInt);
@@ -19,7 +17,7 @@ void RandomTestCase::generateInt()
 {
   const int N = 1000;
   std::vector<int> random(N);
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   for(int i = 0; i < N; i++)
     random[i] = rng.generateInt(-10, 21);
   int sum = std::accumulate(random.begin(), random.end(), 0);
@@ -34,7 +32,7 @@ void RandomTestCase::generateIndex()
 {
   const int N = 1000;
   std::vector<size_t> random(N);
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   for(int i = 0; i < N; i++)
     random[i] = rng.generateIndex(10);
   size_t sum = std::accumulate(random.begin(), random.end(), 0);
@@ -49,7 +47,7 @@ void RandomTestCase::generate()
 {
   const int N = 1000;
   std::vector<double> random(N);
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   for(int i = 0; i < N; i++)
     random[i] = rng.generate(-10.0, 20.0);
   double sum = std::accumulate(random.begin(), random.end(), 0);
@@ -64,7 +62,7 @@ void RandomTestCase::sampleNormalDistribution()
 {
   const int N = 1000;
   std::vector<double> random(N);
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   for(int i = 0; i < N; i++)
     random[i] = rng.sampleNormalDistribution<double>();
   double sum = std::accumulate(random.begin(), random.end(), 0);

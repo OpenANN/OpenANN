@@ -1,7 +1,7 @@
 #include <Optimizable.h>
 #include <AssertionMacros.h>
 
-class Himmelblau : public Optimizable
+class Himmelblau : public OpenANN::Optimizable
 {
   Vt x;
 public:

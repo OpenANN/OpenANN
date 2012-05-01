@@ -3,7 +3,7 @@
 #include <cmath>
 
 template<int N>
-class Ellinum : public Optimizable
+class Ellinum : public OpenANN::Optimizable
 {
   Vt x;
 public:

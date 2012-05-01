@@ -216,39 +216,17 @@ void MLPImplementation::initializeParameterPointersLayer(int& p, int l)
 void MLPImplementation::initializeOrthogonalFunctions(int l)
 {
   CompressionMatrixFactory compressionMatrixFactory;
-  if(layerInfos[l+1].compressed && l == 0 && layerInfos[0].dimension == 3)
-  {
-    compressionMatrixFactory.dimension = CompressionMatrixFactory::THREE;
-    compressionMatrixFactory.firstInputDim = layerInfos[l].nodesPerDimension[0];
-    compressionMatrixFactory.secondInputDim = layerInfos[l].nodesPerDimension[1];
-    compressionMatrixFactory.firstParamDim = parametersX;
-    compressionMatrixFactory.secondParamDim = parametersY;
-    compressionMatrixFactory.thirdParamDim = parametersZ;
-    compressionMatrixFactory.t = &firstLayer3Dt;
-  }
-  else if(layerInfos[l+1].compressed && l == 0 && layerInfos[0].dimension == 2)
-  {
-    compressionMatrixFactory.dimension = CompressionMatrixFactory::TWO;
-    compressionMatrixFactory.firstInputDim = layerInfos[l].nodesPerDimension[0];
-    compressionMatrixFactory.secondInputDim = layerInfos[l].nodesPerDimension[1];
-    compressionMatrixFactory.firstParamDim = parametersX;
-    compressionMatrixFactory.secondParamDim = parametersY;
-  }
+  compressionMatrixFactory.inputDim = layerInfos[l].nodes+1;
+  if(layerInfos[l+1].compression == "random")
+    compressionMatrixFactory.transformation = CompressionMatrixFactory::GAUSSIAN;
+  else
+    compressionMatrixFactory.transformation = CompressionMatrixFactory::DCT;
+  if(layerInfos[l+1].compressed)
+    compressionMatrixFactory.paramDim = layerInfos[l+1].parameters;
   else
   {
-    compressionMatrixFactory.dimension = CompressionMatrixFactory::ONE;
-    compressionMatrixFactory.firstInputDim = layerInfos[l].nodes+1;
-    if(layerInfos[l+1].compression == "random")
-      compressionMatrixFactory.transformation = CompressionMatrixFactory::GAUSSIAN;
-    else
-      compressionMatrixFactory.transformation = CompressionMatrixFactory::DCT;
-    if(layerInfos[l+1].compressed)
-      compressionMatrixFactory.firstParamDim = layerInfos[l+1].parameters;
-    else
-    {
-      compressionMatrixFactory.compress = false;
-      compressionMatrixFactory.firstParamDim = layerInfos[l].nodes + biased;
-    }
+    compressionMatrixFactory.compress = false;
+    compressionMatrixFactory.paramDim = layerInfos[l].nodes + biased;
   }
   compressionMatrixFactory.createCompressionMatrix(orthogonalFunctions[l]);
 }

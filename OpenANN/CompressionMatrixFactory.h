@@ -10,34 +10,19 @@ class CompressionMatrixFactory
 {
 public:
   bool compress;
-  enum Dimension {
-    ONE, TWO, THREE
-  } dimension;
   enum Transformation {
     DCT, GAUSSIAN, AVERAGE, EDGE
   } transformation;
-  int firstInputDim;
-  int secondInputDim;
-  int firstParamDim;
-  int secondParamDim;
-  int thirdParamDim;
-  std::vector<std::vector<fpt> >* t;
+  int inputDim;
+  int paramDim;
 
   CompressionMatrixFactory();
-  CompressionMatrixFactory(int firstInputDim, int firstParamDim,
-                           Transformation transformation = DCT);
-  CompressionMatrixFactory(int firstInputDim, int secondInputDim,
-                           int firstParamDim, int secondParamDim,
-                           Transformation transformation = DCT);
-  CompressionMatrixFactory(int firstInputDim, int secondInputDim, std::vector<std::vector<fpt> >* t,
-                           int firstParamDim, int secondParamDim, int thirdParamDim,
-                           Transformation transformation = DCT);
-  void createCompressionMatrix(Mt& orthogonalFunctionsMatrix);
+  CompressionMatrixFactory(int inputDim, int paramDim,
+      Transformation transformation = DCT);
+  void createCompressionMatrix(Mt& cm);
 
 private:
-  void create1DCompressionMatrix(Mt& orthogonalFunctionsMatrix);
-  void create2DCompressionMatrix(Mt& orthogonalFunctionsMatrix);
-  void create3DCompressionMatrix(Mt& orthogonalFunctionsMatrix);
+  void fillCompressionMatrix(Mt& cm);
 };
 
 }

@@ -1,10 +1,8 @@
 #include <Optimizable.h>
 #include <AssertionMacros.h>
 
-using namespace OpenANN;
-
 template<int N>
-class Rosenbrock : public Optimizable
+class Rosenbrock : public OpenANN::Optimizable
 {
   Vt x;
 public:

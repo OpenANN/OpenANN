@@ -1,5 +1,4 @@
 #include "CMAESTestCase.h"
-
 #include <optimization/IPOPCMAES.h>
 #include "optimization/Rosenbrock.h"
 #include "optimization/Himmelblau.h"
@@ -14,9 +13,9 @@ void CMAESTestCase::run()
 
 void CMAESTestCase::rosenbrock()
 {
-  IPOPCMAES cmaes;
+  OpenANN::IPOPCMAES cmaes;
   Rosenbrock<10> r;
-  StopCriteria s;
+  OpenANN::StopCriteria s;
   s.maximalFunctionEvaluations = 100000;
   s.maximalIterations = 10000;
   s.minimalValue = 0.001;
@@ -30,9 +29,9 @@ void CMAESTestCase::rosenbrock()
 
 void CMAESTestCase::himmelblau()
 {
-  IPOPCMAES cmaes;
+  OpenANN::IPOPCMAES cmaes;
   Himmelblau r;
-  StopCriteria s;
+  OpenANN::StopCriteria s;
   s.maximalFunctionEvaluations = 10000;
   s.maximalIterations = 10000;
   s.minimalValue = 0.001;
@@ -45,9 +44,9 @@ void CMAESTestCase::himmelblau()
 
 void CMAESTestCase::ellinum()
 {
-  IPOPCMAES cmaes;
+  OpenANN::IPOPCMAES cmaes;
   Ellinum<3> r;
-  StopCriteria s;
+  OpenANN::StopCriteria s;
   s.maximalIterations = 10000;
   s.minimalValue = 0.01;
   cmaes.setOptimizable(r);
