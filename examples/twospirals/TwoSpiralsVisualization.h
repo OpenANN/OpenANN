@@ -215,14 +215,14 @@ protected:
         break;
       case Qt::Key_A:
         eventLogger << "Training with restart (" << mlp->dimension() << " parameters)...";
-        mlp->training(MLP::LMA);
+        mlp->training(MLP::BATCH_LMA);
         trainingSet.setVisualization(this);
         mlp->fit(stop);
         eventLogger << " finished.\n";
         break;
       case Qt::Key_S:
         eventLogger << "Training without restart (" << mlp->dimension() << " parameters)...";
-        mlp->training(MLP::LMA, false);
+        mlp->training(MLP::BATCH_LMA, false);
         trainingSet.setVisualization(this);
         mlp->fit(stop);
         eventLogger << " finished.\n";
@@ -267,7 +267,7 @@ protected:
               m.output(trainingSet.outputs(), MLP::SSE);
             m.trainingSet(trainingSet)
              .testSet(testSet);
-            m.training(MLP::LMA, false);
+            m.training(MLP::BATCH_LMA, false);
             m.fit(stop);
           }
         }

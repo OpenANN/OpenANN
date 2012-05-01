@@ -1,5 +1,6 @@
 #include <MLP.h>
 #include <optimization/IPOPCMAES.h>
+#include <optimization/LMA.h>
 #include <io/DirectStorageDataSet.h>
 #include <AssertionMacros.h>
 #include <ActivationFunctions.h>
@@ -262,9 +263,14 @@ MLP& MLP::training(Training training, bool reinit)
   {
     case NOT_INITIALIZED:
       break;
-    case CMAES:
+    case BATCH_CMAES:
       optimizer = new IPOPCMAES;
       break;
+#ifdef USE_GPL_LICENSE
+    case BATCH_LMA:
+      optimizer = new LMA(true);
+      break;
+#endif
     default:
       OPENANN_CHECK(false && "unknown optimizer");
       break;

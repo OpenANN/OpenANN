@@ -33,8 +33,8 @@ public:
   enum Training
   {
     NOT_INITIALIZED,
-    CMAES,          //!< Covariance Matrix Adaption Evolution Strategies
-    LMA             //!< Levenberg-Marquardt Algorithm
+    BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies
+    BATCH_LMA     //!< Levenberg-Marquardt Algorithm
   };
 
   /** Layer initialization state. */
