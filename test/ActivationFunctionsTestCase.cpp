@@ -6,6 +6,7 @@ void ActivationFunctionsTestCase::run()
   RUN(ActivationFunctionsTestCase, softmax);
   RUN(ActivationFunctionsTestCase, logistic);
   RUN(ActivationFunctionsTestCase, normaltanh);
+  RUN(ActivationFunctionsTestCase, linear);
 }
 
 void ActivationFunctionsTestCase::softmax()
