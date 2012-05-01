@@ -25,9 +25,7 @@ macro(add_documentation target configuration)
 
   add_custom_command(
     OUTPUT ${COMMAND_NAME}
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Building documentation..."
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null
-    COMMAND ${CMAKE_COMMAND} -E echo "Done."
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${DOXYGEN_INPUT}
   )
