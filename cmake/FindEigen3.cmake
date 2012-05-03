@@ -1,4 +1,4 @@
-find_path(EIGEN3_INCLUDE_DIRS Eigen/Dense ${CMAKE_INSTALL_PREFIX}/include/eigen3)
+find_path(EIGEN3_INCLUDE_DIRS Eigen/Dense ${CMAKE_INSTALL_PREFIX}/include/eigen3 /usr/include/eigen3)
 
 message(STATUS ${EIGEN3_INCLUDE_DIRS})
 

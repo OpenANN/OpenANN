@@ -14,6 +14,15 @@ if(NOT EIGEN3_FOUND)
   message(FATAL_ERROR "Could not find Eigen 3 library. Download it from http://eigen.tuxfamily.org/ and install it with CMake.")
 endif()
 
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(FATAL_ERROR "Usage: mkdir build; cmake .. ")
+endif()
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+  message(STATUS "Default build type.")
+endif()
+
 set(OPENANN_VERSION_NUMBER "1.0.0")
 set(OPENANN_URL "https://github.com/AlexanderFabisch/OpenANN")
 set(OPENANN_BRIEF_DESCRIPTION "An open source library for artificial neural networks.")
