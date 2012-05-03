@@ -5,6 +5,7 @@
 #include <io/Logger.h>
 #include <io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
+#include <GL/glu.h>
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QMutex>
