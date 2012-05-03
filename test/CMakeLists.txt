@@ -3,7 +3,7 @@ add_subdirectory(lib)
 find_package(Qt4)
 
 include_directories(lib/CPP-Test)
-
+add_definitions(${OPENANN_COMPILER_FLAGS})
 file(GLOB test_src "*.cpp")
 
 if(QT_FOUND)
