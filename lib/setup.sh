@@ -11,13 +11,24 @@ if [ -d "${TARGET_CMAES}" ]; then
   echo "Removing current CMA-ESpp library."
   rm -r ${TARGET_CMAES}
 fi
-echo "Downloading CMA-ESpp."
-wget https://github.com/AlexanderFabisch/CMA-ESpp/zipball/master
+echo "Downloading CMA-ESpp..."
+if wget --no-check-certificate https://github.com/AlexanderFabisch/CMA-ESpp/zipball/master; then
+  echo "Success."
+else
+  echo "Failed."
+  exit 1
+fi
 echo "Unzipping CMA-ESpp."
-unzip master > /dev/null
+if unzip master > /dev/null; then
+  echo "Success."
+else
+  echo "Failed."
+  exit 1
+fi
 rm master
 mv *-CMA-ESpp-* ${TARGET_CMAES}
 echo "Successfully installed CMA-ESpp."
+
 if [ -d "${TARGET_ALGLIB}" ]; then
   echo "Removing current ALGLIB library."
   rm -r ${TARGET_ALGLIB}
@@ -26,7 +37,12 @@ echo "This setup script will download ALGLIB for you. Note that ALGLIB is"
 echo "licensed under GPL license and thus we cannot directly include it to"
 echo "OpenANN."
 echo "Downloading ALGLIB."
-wget http://www.alglib.net/translator/re/alglib-3.5.0.cpp.zip
+if wget http://www.alglib.net/translator/re/alglib-3.5.0.cpp.zip; then
+  echo "Success."
+else
+  echo "Failed."
+  exit 2
+fi
 echo "Unzipping ALGLIB."
 unzip alglib-3.5.0.cpp.zip > /dev/null
 rm alglib-3.5.0.cpp.zip

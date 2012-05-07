@@ -11,7 +11,12 @@ if [ -d "${TARGET_DIR}" ]; then
   rm -r ${TARGET_DIR}
 fi
 echo "Downloading CPP-Test."
-wget https://github.com/AlexanderFabisch/CPP-Test/zipball/master
+if wget --no-check-certificate https://github.com/AlexanderFabisch/CPP-Test/zipball/master; then
+  echo "Success."
+else
+  echo "Failed."
+  exit 1
+fi
 echo "Unzipping library."
 unzip master > /dev/null
 rm master

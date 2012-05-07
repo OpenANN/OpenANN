@@ -19,6 +19,7 @@ Requirements
 * C++ compiler, e. g. g++
 * build management tool that is supported by CMake, e. g. make
 * Eigen 3 library
+* shell, wget, unzip
 
 Installation
 ------------
