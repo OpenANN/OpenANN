@@ -1,1 +1,2 @@
+add_subdirectory(polebalancing)
 add_subdirectory(twospirals)
