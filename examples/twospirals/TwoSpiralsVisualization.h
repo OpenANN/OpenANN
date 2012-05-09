@@ -52,6 +52,8 @@ protected:
   virtual void initializeGL();
   virtual void resizeGL(int width, int height);
   virtual void paintGL();
+  void paintPrediction();
+  void paintDataSet(bool training);
   virtual void keyPressEvent(QKeyEvent* keyEvent);
 
 signals:

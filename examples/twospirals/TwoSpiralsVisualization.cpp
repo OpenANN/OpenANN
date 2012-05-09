@@ -13,22 +13,21 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
       showTraining(true), showTest(true), showPrediction(true), showSmooth(true),
       mlp(new MLP), eventLogger(Logger::CONSOLE)
 {
-  for(int x = 0; x < 100; x++)
-  {
-    for(int y = 0; y < 100; y++)
-    {
-      classes[x][y] = 0;
-    }
-  }
+  std::memset(classes, 0, sizeof(fpt)*100*100);
+  trainingSet.setVisualization(this);
+  QObject::connect(this, SIGNAL(updatedData()), this, SLOT(repaint()));
+
+  // initialize MLP
   mlp->input(trainingInput.rows())
     .fullyConnectedHiddenLayer(20, MLP::TANH, 3)
     .fullyConnectedHiddenLayer(20, MLP::TANH, 6)
     .output(trainingOutput.rows(), MLP::SSE, MLP::TANH, 1)
     .trainingSet(trainingSet)
     .testSet(testSet);
+
+  // set stop criteria
   stop.maximalIterations = 10000;
-  stop.minimalSearchSpaceStep = 1e-18;
-  QObject::connect(this, SIGNAL(updatedData()), this, SLOT(repaint()));
+  stop.minimalSearchSpaceStep = 1e-8;
 }
 
 TwoSpiralsVisualization::~TwoSpiralsVisualization()
@@ -67,9 +66,7 @@ void TwoSpiralsVisualization::resizeGL(int width, int height)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(45.0f, (float) width / (float) height, 1.0f, 100.0f);
-
   glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClearDepth(1.0f);
 }
@@ -78,67 +75,61 @@ void TwoSpiralsVisualization::paintGL()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-
   glTranslatef(-0.5f,-0.5f,-1.25f);
-  glColor3f(0.0f,0.0f,0.0f);
 
   if(showPrediction)
-  {
-    for(int x = 0; x < 100; x++)
-    {
-      for(int y = 0; y < 100; y++)
-      {
-        classesMutex.lock();
-        float c;
-        if(showSmooth)
-          c = classes[x][y]/2.0f + 0.5f;
-        else
-          c = classes[x][y] < 0.0 ? 0.0f : 1.0f;
-        classesMutex.unlock();
-        glColor3f(c, c, c);
-        float minX = (float) x / 100.0f - 0.005;
-        float maxX = minX + 0.01;
-        float minY = (float) y / 100.0f - 0.005;
-        float maxY = minY + 0.01;
-        glBegin(GL_QUADS);
-          glVertex2f(minX, maxY);
-          glVertex2f(maxX, maxY);
-          glVertex2f(maxX, minY);
-          glVertex2f(minX, minY);
-        glEnd();
-      }
-    }
-  }
+    paintPrediction();
 
   if(showTraining)
-  {
-    glBegin(GL_POINTS);
-      for(int n = 0; n < trainingSet.samples(); n++)
-      {
-        if(trainingSet.getTarget(n)(0) > 0.0)
-          glColor3f(1.0f, 0.0f, 0.0f);
-        else
-          glColor3f(1.0f, 1.0f, 0.0f);
-        glVertex2d(trainingSet.getInstance(n)(0), trainingSet.getInstance(n)(1));
-      }
-    glEnd();
-  }
+    paintDataSet(true);
 
   if(showTest)
-  {
-    glBegin(GL_POINTS);
-      for(int n = 0; n < testSet.samples(); n++)
-      {
-        if(testSet.getTarget(n)(0) > 0.0)
-          glColor3f(1.0f, 0.0f, 0.0f);
-        else
-          glColor3f(1.0f, 1.0f, 0.0f);
-        glVertex2d(testSet.getInstance(n)(0), testSet.getInstance(n)(1));
-      }
-    glEnd();
-  }
+    paintDataSet(false);
 
   glFlush();
+}
+
+void TwoSpiralsVisualization::paintPrediction()
+{
+  for(int x = 0; x < 100; x++)
+  {
+    for(int y = 0; y < 100; y++)
+    {
+      classesMutex.lock();
+      float c;
+      if(showSmooth)
+        c = classes[x][y]/2.0f + 0.5f;
+      else
+        c = classes[x][y] < 0.0 ? 0.0f : 1.0f;
+      classesMutex.unlock();
+      glColor3f(c, c, c);
+      float minX = (float) x / 100.0f - 0.005;
+      float maxX = minX + 0.01;
+      float minY = (float) y / 100.0f - 0.005;
+      float maxY = minY + 0.01;
+      glBegin(GL_QUADS);
+        glVertex2f(minX, maxY);
+        glVertex2f(maxX, maxY);
+        glVertex2f(maxX, minY);
+        glVertex2f(minX, minY);
+      glEnd();
+    }
+  }
+}
+
+void TwoSpiralsVisualization::paintDataSet(bool training)
+{
+  TwoSpiralsDataSet& dataSet = training ? trainingSet : testSet;
+  glBegin(GL_POINTS);
+    for(int n = 0; n < dataSet.samples(); n++)
+    {
+      if(dataSet.getTarget(n)(0) > 0.0)
+        glColor3f(1.0f, 0.0f, 0.0f);
+      else
+        glColor3f(1.0f, 1.0f, 0.0f);
+      glVertex2d(dataSet.getInstance(n)(0), dataSet.getInstance(n)(1));
+    }
+  glEnd();
 }
 
 void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
@@ -168,7 +159,6 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
     case Qt::Key_A:
       eventLogger << "Training with restart (" << mlp->dimension() << " parameters)...";
       mlp->training(MLP::BATCH_LMA);
-      trainingSet.setVisualization(this);
       mlp->fit(stop);
       eventLogger << " finished.\n";
       break;

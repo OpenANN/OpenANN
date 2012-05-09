@@ -75,7 +75,9 @@ int main(int argc, char** argv)
   std::string directory = ".";
   if(argc > 1)
     directory = std::string(argv[1]);
+
   FANNFormatLoader loader(directory + "/two-spiral");
+  // scale the output to [-1, 1]
   for(int n = 0; n < loader.testN; n++)
   {
     loader.testOutput(0, n) -= 0.5;
