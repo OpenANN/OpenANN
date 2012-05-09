@@ -23,7 +23,8 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     .fullyConnectedHiddenLayer(20, MLP::TANH, 6)
     .output(trainingOutput.rows(), MLP::SSE, MLP::TANH, 1)
     .trainingSet(trainingSet)
-    .testSet(testSet);
+    .testSet(testSet)
+    .training(MLP::BATCH_LMA);
 
   // set stop criteria
   stop.maximalIterations = 10000;
@@ -158,7 +159,6 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
       break;
     case Qt::Key_A:
       eventLogger << "Training with restart (" << mlp->dimension() << " parameters)...";
-      mlp->training(MLP::BATCH_LMA);
       mlp->fit(stop);
       eventLogger << " finished.\n";
       break;
