@@ -110,6 +110,8 @@ g++ main.cpp `pkg-config --cflags --libs openann`
 
 Classification
 
+  - \ref TwoSpirals
+
 Reinforcement Learning
 
 \section TodoList Todo List

@@ -14,13 +14,18 @@
  * This is a classification benchmark which is particularly difficult for
  * gradient descent optimization.
  *
- * The two spirals data set was developed by Lang and Witbrock [1]. The data set
- * we use here is taken from the
+ * The two spirals data set was developed by Lang and Witbrock [1]. The data
+ * set we use here is taken from the
  * <a href="http://leenissen.dk/fann/wp/" target=_blank>FANN</a> library. It
  * consists of 193 training instances and 193 test instances located on a 2D
  * surface. They belong to one of two spirals:
  *
  * \image html TwoSpirals-DataSet.png
+ *
+ * In order to use this example you have to download the FANN library which
+ * includes the data set. The files are located in
+ * "path/to/fann/lib/sources/datasets". The required files are
+ * "two-spiral.train" and "two-spiral.test".
  *
  * \section Architecture Network Architecture
  *
@@ -34,17 +39,17 @@
  *
  * \section UI User Interface
  *
- * There are no arguments you can pass to the program. Compile and start with
+ * You can pass the directory where the data set is located as an argument to
+ * the program. The default is '.'. Compile and start with
  * \code
-./TwoSpirals
+./TwoSpirals [directory]
 \endcode
  * You can use the following keys to control the program:
  *  - Q: Toggle display of training set
  *  - W: Toggle display of test set
  *  - E: Toggle display of predicted classes for the whole surface
  *  - R: Toggle display of smooth prediction transitions (black+white or grey)
- *  - A: Start visible training (with parameters reset)
- *  - S: Start visible training (without parameters reset)
+ *  - A: Start visible training
  *  - P: Print current MLP parameters
  *  - Escape: Quit application.
  *

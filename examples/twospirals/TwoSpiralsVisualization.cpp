@@ -172,13 +172,6 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
       mlp->fit(stop);
       eventLogger << " finished.\n";
       break;
-    case Qt::Key_S:
-      eventLogger << "Training without restart (" << mlp->dimension() << " parameters)...";
-      mlp->training(MLP::BATCH_LMA, false);
-      trainingSet.setVisualization(this);
-      mlp->fit(stop);
-      eventLogger << " finished.\n";
-      break;
     case Qt::Key_P:
       eventLogger << "Parameters:\n" << mlp->currentParameters().transpose() << "\n";
       break;
