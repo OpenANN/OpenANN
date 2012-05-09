@@ -46,7 +46,7 @@
  *  - A: Start visible training (with parameters reset)
  *  - S: Start visible training (without parameters reset)
  *  - P: Print current MLP parameters
- *  - B: Start (invisible) benchmark with different compression configurations
+ *  - Escape: Quit application.
  *
  * A trained model could make these predictions:
  *

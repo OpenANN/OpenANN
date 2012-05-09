@@ -1,4 +1,7 @@
 #include "TwoSpiralsVisualization.h"
+#include <AssertionMacros.h>
+#include <GL/glu.h>
+#include <QApplication>
 
 TwoSpiralsVisualization::TwoSpiralsVisualization(
     const Mt& trainingInput,
@@ -176,55 +179,12 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
       mlp->fit(stop);
       eventLogger << " finished.\n";
       break;
-    case Qt::Key_B:
-    {
-      eventLogger << "Starting Benchmark.\n";
-      int runs = 100;
-      std::vector<std::vector<int> > compressions;
-      std::vector<int> none;
-      std::vector<int> no_compression(3);
-      no_compression[0] = 3; no_compression[1] = 21; no_compression[2] = 21;
-      std::vector<int> mid_compression(3);
-      mid_compression[0] = 3; mid_compression[1] = 12; mid_compression[2] = 12;
-      std::vector<int> high_compression(3);
-      high_compression[0] = 3; high_compression[1] = 6; high_compression[2] = 6;
-      std::vector<int> very_high_compression(3);
-      very_high_compression[0] = 3; very_high_compression[1] = 6; very_high_compression[2] = 1;
-
-      compressions.push_back(none);
-      compressions.push_back(no_compression);
-      compressions.push_back(mid_compression);
-      compressions.push_back(high_compression);
-      compressions.push_back(very_high_compression);
-      for(size_t c = 0; c < compressions.size(); c++)
-      {
-        for(int run = 0; run < runs; run++)
-        {
-          MLP m;
-          m.input(trainingSet.inputs());
-          if(compressions[c].size() == 3)
-            m.fullyConnectedHiddenLayer(20, MLP::TANH, compressions[c][0]);
-          else
-            m.fullyConnectedHiddenLayer(20);
-          if(compressions[c].size() == 3)
-            m.fullyConnectedHiddenLayer(20, MLP::TANH, compressions[c][1]);
-          else
-            m.fullyConnectedHiddenLayer(20);
-          if(compressions[c].size() == 3)
-            m.output(trainingSet.outputs(), MLP::SSE, MLP::TANH, compressions[c][2]);
-          else
-            m.output(trainingSet.outputs(), MLP::SSE);
-          m.trainingSet(trainingSet)
-            .testSet(testSet);
-          m.training(MLP::BATCH_LMA, false);
-          m.fit(stop);
-        }
-      }
-      eventLogger << "Finished Benchmark.\n";
-      break;
-    }
     case Qt::Key_P:
       eventLogger << "Parameters:\n" << mlp->currentParameters().transpose() << "\n";
+      break;
+    case Qt::Key_Escape:
+      eventLogger << "Quitting application.\n";
+      QApplication::quit();
       break;
     default:
       QGLWidget::keyPressEvent(keyEvent);

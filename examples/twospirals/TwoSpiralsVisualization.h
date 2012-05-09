@@ -1,11 +1,9 @@
 #pragma once
 
 #include <OpenANN>
-#include <AssertionMacros.h>
 #include <io/Logger.h>
 #include <io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
-#include <GL/glu.h>
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QMutex>
