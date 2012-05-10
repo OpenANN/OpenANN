@@ -81,8 +81,8 @@ private: // temporary objects, avoiding memory allocations
 
 public:
   /**
-   * It is not sufficient to call this constructor. You have to specify at least
-   * an output layer.
+   * It is not sufficient to call this constructor. You have to specify at
+   * least an output layer.
    * @param errorTarget target for error logger (after each iteration)
    * @param parameterTarget target for parameter logger (after each iteration)
    */
@@ -104,11 +104,18 @@ public:
    */
   MLP& input(int rows, int cols);
   /**
-   * @todo documentation
+   * Defines the dimensions of a three-dimensional input.
+   * @param arrays two-dimensional input arrays, e. g. color channels
+   * @param rows input rows
+   * @param cols input columns
    */
   MLP& input(int arrays, int rows, int cols);
   /**
-   * @todo documentation
+   * Add a convolutional layer.
+   * @param featureMaps number of feature maps
+   * @param kernelRows filter kernel rows
+   * @param kernelCols filter kernel columns
+   * @param a activation function
    */
   MLP& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
       ActivationFunction a = NO_ACT_FUN);
@@ -192,6 +199,10 @@ public:
    *                       column
    */
   MLP& trainingSet(Mt& trainingInput, Mt& trainingOutput);
+  /**
+   * Set the current training set.
+   * @param trainingSet custom training set
+   */
   MLP& trainingSet(DataSet& trainingSet);
   /**
    * Set the current test set.
@@ -199,6 +210,10 @@ public:
    * @param testOutput output vectors, each instance should be in a new column
    */
   MLP& testSet(Mt& testInput, Mt& testOutput);
+  /**
+   * Set the current test set.
+   * @param testSet custom test set
+   */
   MLP& testSet(DataSet& testSet);
   /**
    * Set the optimization algorithm.
@@ -211,7 +226,13 @@ public:
    * @param stop stopping criteria for batch training
    */
   Vt fit(StopCriteria stop = StopCriteria::defaultValue);
+  /**
+   * @return dimension of the parameter vector
+   */
   virtual unsigned int dimension();
+  /**
+   * @return error on the training set
+   */
   virtual fpt error();
   virtual bool providesGradient();
   virtual Vt gradient();
