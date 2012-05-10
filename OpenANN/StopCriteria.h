@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STOPCRITERIA_H
+#define STOPCRITERIA_H
 
 namespace OpenANN {
 
@@ -44,3 +45,5 @@ public:
 };
 
 }
+
+#endif // STOPCRITERIA_H
