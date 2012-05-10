@@ -3,8 +3,8 @@
 namespace OpenANN {
 
 /**
- * The stop criteria for optimization algorithms. Note that not every algorithm
- * might check all criteria.
+ * The stop criteria for optimization algorithms. Note that not every
+ * algorithm might check all criteria.
  */
 class StopCriteria
 {
