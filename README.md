@@ -36,7 +36,7 @@ Linux
 Guidelines for Developers
 -------------------------
 
-* TODO link to todo list
+* Here is a todo list: https://github.com/AlexanderFabisch/OpenANN/wiki/Todo
 * TODO link to coding style
 * Use the namespace OpenANN.
 
