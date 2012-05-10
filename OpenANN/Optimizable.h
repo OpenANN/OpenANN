@@ -73,10 +73,6 @@ public:
    * @return hessian of the i-th training example
    */
   virtual Vt hessian(unsigned i) { return hessian(); }
-  virtual int operator()(const Vt& x, Vt& fvec);
-  virtual int df(const Vt& x, Mt& fjac);
-  virtual int inputs() { return dimension(); }
-  virtual int values() { return examples(); }
   virtual void VJ(Vt& values, Mt& jacobian);
   virtual void finishedIteration() {}
   virtual Vt singleGradientFD(int n, const fpt eps = (fpt) 1e-2);

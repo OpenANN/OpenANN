@@ -448,7 +448,7 @@ int MLP::operator()(const Vt& x, Vt& fvec)
 int MLP::df(const Vt& x, Vt& fjac)
 {
   setParameters(x);
-  for(int n = 0; n < values(); n++)
+  for(int n = 0; n < examples(); n++)
     fjac.row(n) = gradient(n);
   return 0;
 }

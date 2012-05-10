@@ -3,21 +3,6 @@
 
 namespace OpenANN {
 
-int Optimizable::operator()(const Vt& x, Vt& fvec)
-{
-  setParameters(x);
-  for(int n = 0; n < values(); n++)
-    fvec(n) = error(n);
-  return 0;
-}
-int Optimizable::df(const Vt& x, Mt& fjac)
-{
-  setParameters(x);
-  for(int n = 0; n < values(); n++)
-    fjac.row(n) = gradient(n);
-  return 0;
-}
-
 void Optimizable::VJ(Vt& values, Mt& jacobian)
 {
   OPENANN_CHECK_EQUALS(values.rows(), (int) examples());
