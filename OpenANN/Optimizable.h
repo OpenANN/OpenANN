@@ -73,10 +73,30 @@ public:
    * @return hessian of the i-th training example
    */
   virtual Vt hessian(unsigned i) { return hessian(); }
+  /**
+   * Calculates the function values and gradients of all training examples.
+   * @param values function values
+   * @param jacobian contains one gradient per row
+   */
   virtual void VJ(Vt& values, Mt& jacobian);
+  /**
+   * This callback is called after each optimization algorithm iteration.
+   */
   virtual void finishedIteration() {}
+  /**
+   * Use finite differences to approximate the gradient.
+   * @return approximated gradient of the n-th training example
+   */
   virtual Vt singleGradientFD(int n, const fpt eps = (fpt) 1e-2);
+  /**
+   * Use finite differences to approximate the gradient.
+   * @return approximated gradient of the training set
+   */
   virtual Vt gradientFD(const fpt eps = (fpt) 1e-2);
+  /**
+   * Use finite differences to approximate the hessian.
+   * @return approximated hessian of the training set
+   */
   virtual Mt hessianFD(const fpt eps = (fpt) 1e-2);
 };
 
