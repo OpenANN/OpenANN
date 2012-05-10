@@ -123,7 +123,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
     }
     case 7:
     {
-      setupLogger << "2-20-20-1 (bias), Compression: 3-6-3\n";
+      setupLogger << "2-20-20-1 (bias), Compression: 3-6-1\n";
       mlp.input(2)
         .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 3)
         .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 6)
@@ -193,7 +193,7 @@ void logResults(std::vector<Result>& results, unsigned long time)
       << (fpt)time/(fpt)results.size() << "\n";
   resultLogger << "[min,max]\t";
   resultLogger << "[" << correctMin << "," << correctMax << "]\t"
-      << "[" << accuracyMin << "," << accuracyMax << "]\n";
+      << "[" << accuracyMin << "," << accuracyMax << "]\n\n";
 }
 
 int main(int argc, char** argv)
