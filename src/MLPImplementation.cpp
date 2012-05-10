@@ -256,7 +256,7 @@ void MLPImplementation::initializeLayer(int l)
       {
         for(int m = 0; m < parameters[previousLayer].cols(); m++)
         {
-          fpt sigma = 0.333*pow((fpt) m / (fpt) parameters[previousLayer].cols() + 0.333, 1.05);
+          fpt sigma = rng.sampleNormalDistribution<fpt>() * 0.05;
           parameters[previousLayer](j, m) = rng.sampleNormalDistribution<fpt>() * sigma;
         }
       }

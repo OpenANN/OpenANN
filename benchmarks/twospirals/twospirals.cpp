@@ -60,33 +60,6 @@ void setup(OpenANN::MLP& mlp, int architecture)
   {
     case 0:
     {
-      setupLogger << "2-10-5-1 (bias)\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(10, OpenANN::MLP::TANH)
-        .fullyConnectedHiddenLayer(5, OpenANN::MLP::TANH)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
-      break;
-    }
-    case 1:
-    {
-      setupLogger << "2-10-10-1 (bias)\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(10, OpenANN::MLP::TANH)
-        .fullyConnectedHiddenLayer(10, OpenANN::MLP::TANH)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
-      break;
-    }
-    case 2:
-    {
-      setupLogger << "2-20-10-1 (bias)\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
-        .fullyConnectedHiddenLayer(10, OpenANN::MLP::TANH)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
-      break;
-    }
-    case 3:
-    {
       setupLogger << "2-20-20-1 (bias)\n";
       mlp.input(2)
         .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
@@ -94,7 +67,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
       break;
     }
-    case 4:
+    case 1:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-21-21\n";
       mlp.input(2)
@@ -103,7 +76,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 21);
       break;
     }
-    case 5:
+    case 2:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-12-12\n";
       mlp.input(2)
@@ -112,7 +85,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 12);
       break;
     }
-    case 6:
+    case 3:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-6-6\n";
       mlp.input(2)
@@ -121,7 +94,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 6);
       break;
     }
-    case 7:
+    case 4:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-6-1\n";
       mlp.input(2)
@@ -203,11 +176,11 @@ int main(int argc, char** argv)
 #endif
 
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
-  const int architectures = 8;
+  const int architectures = 5;
   const int runs = 100;
   OpenANN::StopCriteria stop;
-  stop.minimalSearchSpaceStep = 1e-10;
-  stop.minimalValueDifferences = 1e-10;
+  stop.minimalSearchSpaceStep = 1e-6;
+  stop.minimalValueDifferences = 1e-6;
   stop.maximalIterations = 10000;
   Stopwatch sw;
 
