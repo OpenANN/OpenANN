@@ -11,7 +11,7 @@
 namespace OpenANN {
 
 LMA::LMA(bool approximateHessian)
-    : debugLogger(Logger::CONSOLE), opt(0),
+    : debugLogger(Logger::NONE), opt(0),
       approximateHessian(approximateHessian)
 {
 }

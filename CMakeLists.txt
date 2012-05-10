@@ -83,6 +83,7 @@ add_subdirectory(lib)
 include_directories(OpenANN ${EIGEN3_INCLUDE_DIRS} lib/CMA-ESpp lib/ALGLIB test/lib/CPP-Test)
 add_subdirectory(src)
 add_subdirectory(examples)
+add_subdirectory(benchmarks)
 add_subdirectory(test)
 
 install(DIRECTORY OpenANN DESTINATION include)
