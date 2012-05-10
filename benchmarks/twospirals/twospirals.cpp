@@ -2,6 +2,7 @@
 #include <OpenANN>
 #include <Test/Stopwatch.h>
 #include <cstdlib>
+#include <vector>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -160,6 +161,41 @@ Result evaluate(OpenANN::MLP& mlp, OpenANN::FANNFormatLoader& loader)
   return result;
 }
 
+void logResults(std::vector<Result>& results, unsigned long time)
+{
+  OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
+  resultLogger << "\t\tCorrect\t\tAccuracy\t\tTime/ms\n";
+  Vt correct(results.size());
+  Vt accuracy(results.size());
+  for(unsigned i = 0; i < results.size(); i++)
+  {
+    correct(i) = (fpt) results[i].correct;
+    accuracy(i) = results[i].accuracy;
+  }
+  fpt correctMean = correct.mean();
+  fpt accuracyMean = accuracy.mean();
+  fpt correctMin = correct.minCoeff();
+  fpt accuracyMin = accuracy.minCoeff();
+  fpt correctMax = correct.maxCoeff();
+  fpt accuracyMax = accuracy.maxCoeff();
+  for(unsigned i = 0; i < results.size(); i++)
+  {
+    correct(i) -= correctMean;
+    accuracy(i) -= accuracyMean;
+  }
+  correct = correct.cwiseAbs();
+  accuracy = accuracy.cwiseAbs();
+  fpt correctStdDev = std::sqrt(correct.mean());
+  fpt accuracyStdDev = std::sqrt(accuracy.mean());
+  resultLogger << "Mean+-StdDev\t";
+  resultLogger << correctMean << "+-" << correctStdDev << "\t"
+      << accuracyMean << "+-" << correctStdDev << "\t"
+      << (fpt)time/(fpt)results.size() << "\n";
+  resultLogger << "[min,max]\t";
+  resultLogger << "[" << correctMin << "," << correctMax << "]\t"
+      << "[" << accuracyMin << "," << accuracyMax << "]\n";
+}
+
 int main(int argc, char** argv)
 {
 #ifdef PARALLEL_CORES
@@ -170,7 +206,8 @@ int main(int argc, char** argv)
   const int architectures = 8;
   const int runs = 100;
   OpenANN::StopCriteria stop;
-  stop.minimalSearchSpaceStep = 1e-5;
+  stop.minimalSearchSpaceStep = 1e-10;
+  stop.minimalValueDifferences = 1e-10;
   stop.maximalIterations = 10000;
   Stopwatch sw;
 
@@ -183,7 +220,7 @@ int main(int argc, char** argv)
   for(int architecture = 0; architecture < architectures; architecture++)
   {
     long unsigned time = 0;
-    Result architectureResult;
+    std::vector<Result> results;
     OpenANN::MLP mlp(OpenANN::Logger::NONE, OpenANN::Logger::NONE);
     setup(mlp, architecture);
     mlp.trainingSet(loader.trainingInput, loader.trainingOutput);
@@ -194,19 +231,11 @@ int main(int argc, char** argv)
       mlp.fit(stop);
       time += sw.stop(Stopwatch::MILLISECOND);
       Result result = evaluate(mlp, loader);
-      architectureResult += result;
+      results.push_back(result);
       resultLogger << ".";
     }
     resultLogger << "\nFinished " << runs << " runs.\n";
-    resultLogger << "FP\tTP\tFN\tTN\tCorrect\tWrong\tAccuracy\tTime/ms\n";
-    resultLogger << (fpt)architectureResult.fp/(fpt)runs << "\t"
-        << (fpt)architectureResult.tp/(fpt)runs << "\t"
-        << (fpt)architectureResult.fn/(fpt)runs << "\t"
-        << (fpt)architectureResult.tn/(fpt)runs << "\t"
-        << (fpt)architectureResult.correct/(fpt)runs << "\t"
-        << (fpt)architectureResult.wrong/(fpt)runs << "\t"
-        << (fpt)architectureResult.accuracy/(fpt)runs << "\t"
-        << (fpt)time/(fpt)runs << "\n\n";
+    logResults(results, time);
   }
   return EXIT_SUCCESS;
 }
