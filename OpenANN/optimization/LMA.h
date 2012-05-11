@@ -12,6 +12,14 @@ namespace OpenANN {
 
 /**
  * Levenberg-Marquardt Algorithm.
+ *
+ * This algorithm works especially well for least squares optimization. The
+ * optimization will stop if one of the following stopping criteria is
+ * satisfied:
+ *  - \f$ |g| < \f$ stop.minimalSearchSpaceStep
+ *  - \f$ |E^{t+1}-E^{t}| \leq \f$ stop.minimalValueDifferences
+ *    \f$ \cdot max\{|E^{t+1}|,|E^{t}|,1\} \f$
+ *  - \f$ t > \f$ stop.maximalIterations
  */
 class LMA : public Optimizer
 {

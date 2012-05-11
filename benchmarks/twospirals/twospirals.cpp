@@ -142,6 +142,9 @@ Result evaluate(OpenANN::MLP& mlp, OpenANN::FANNFormatLoader& loader, Evaluatabl
   return result;
 }
 
+/**
+ * Print benchmark results.
+ */
 void logResults(std::vector<Result>& results, unsigned long time)
 {
   typedef OpenANN::FloatingPointFormatter fmt;
