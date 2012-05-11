@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 #ifndef NDEBUG
 
@@ -34,6 +35,16 @@ public:
   ~Logger();
   bool isActive();
 };
+
+struct FloatingPointFormatter
+{
+  fpt value;
+  int precision;
+  std::string result;
+  FloatingPointFormatter(fpt value, int precision);
+};
+
+Logger& operator<<(Logger& logger, const FloatingPointFormatter& t);
 
 template<typename T>
 Logger& operator<<(Logger& logger, const T& t)

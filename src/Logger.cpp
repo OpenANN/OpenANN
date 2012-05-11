@@ -41,4 +41,29 @@ bool Logger::isActive()
   return target != NONE;
 }
 
+FloatingPointFormatter::FloatingPointFormatter(fpt value, int precision)
+  : value(value), precision(precision)
+{
+  char buffer[32];
+  sprintf(buffer, "%.2f", value);
+  result = std::string(buffer);
+}
+
+Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
+{
+  switch(logger.target)
+  {
+    case Logger::CONSOLE:
+      std::cout << std::setprecision(t.precision) << t.result << std::flush;
+      break;
+    case Logger::APPEND_FILE:
+    case Logger::FILE:
+      logger.file << std::setprecision(t.precision) << t.result << std::flush;
+      break;
+    default: // do not log
+      break;
+  }
+  return logger;
+}
+
 }

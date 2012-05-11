@@ -1,4 +1,5 @@
 #include <io/FANNFormatLoader.h>
+#include <io/DirectStorageDataSet.h>
 #include <OpenANN>
 #include <Test/Stopwatch.h>
 #include <cstdlib>
@@ -7,29 +8,25 @@
 #include <omp.h>
 #endif
 
+class EvaluatableDataset : public OpenANN::DirectStorageDataSet
+{
+public:
+  int iterations;
+  EvaluatableDataset(Mt& in, Mt& out)
+    : DirectStorageDataSet(in, out), iterations(0)
+  {}
+  virtual void finishIteration(OpenANN::MLP& mlp) { iterations++; }
+};
+
 struct Result
 {
-  int fp, tp, fn, tn, correct, wrong;
+  int fp, tp, fn, tn, correct, wrong, iterations;
   fpt accuracy;
-  int accumulated;
 
   Result()
-    : fp(0), tp(0), fn(0), tn(0), correct(0), wrong(0), accuracy(0.0),
-      accumulated(1)
-  {
-  }
-
-  void operator+=(Result& other)
-  {
-    fp += other.fp;
-    tp += other.tp;
-    fn += other.fn;
-    tn += other.tn;
-    correct += other.correct;
-    wrong += other.wrong;
-    accuracy += other.accuracy;
-    accumulated += other.accumulated;
-  }
+    : fp(0), tp(0), fn(0), tn(0), correct(0), wrong(0), iterations(0),
+      accuracy(0.0)
+  {}
 };
 
 /**
@@ -112,7 +109,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
 /**
  * Evaluate the learned model.
  */
-Result evaluate(OpenANN::MLP& mlp, OpenANN::FANNFormatLoader& loader)
+Result evaluate(OpenANN::MLP& mlp, OpenANN::FANNFormatLoader& loader, EvaluatableDataset& ds)
 {
   Result result;
   for(int n = 0; n < loader.testN; n++)
@@ -131,42 +128,54 @@ Result evaluate(OpenANN::MLP& mlp, OpenANN::FANNFormatLoader& loader)
   result.correct = result.tn + result.tp;
   result.wrong = result.fn + result.fp;
   result.accuracy = (fpt) result.correct / (fpt) loader.testN;
+  result.iterations = ds.iterations;
   return result;
 }
 
 void logResults(std::vector<Result>& results, unsigned long time)
 {
+  typedef OpenANN::FloatingPointFormatter fmt;
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
-  resultLogger << "\t\tCorrect\t\tAccuracy\t\tTime/ms\n";
+  resultLogger << "\t\tCorrect\t\tAccuracy\tTime/ms\t\tIterations\n";
   Vt correct(results.size());
   Vt accuracy(results.size());
+  Vt iterations(results.size());
   for(unsigned i = 0; i < results.size(); i++)
   {
     correct(i) = (fpt) results[i].correct;
     accuracy(i) = results[i].accuracy;
+    iterations(i) = results[i].iterations;
   }
   fpt correctMean = correct.mean();
   fpt accuracyMean = accuracy.mean();
+  fpt iterationsMean = iterations.mean();
   fpt correctMin = correct.minCoeff();
   fpt accuracyMin = accuracy.minCoeff();
+  fpt iterationsMin = iterations.minCoeff();
   fpt correctMax = correct.maxCoeff();
   fpt accuracyMax = accuracy.maxCoeff();
+  fpt iterationsMax = iterations.maxCoeff();
   for(unsigned i = 0; i < results.size(); i++)
   {
     correct(i) -= correctMean;
     accuracy(i) -= accuracyMean;
+    iterations(i) -= iterationsMean;
   }
   correct = correct.cwiseAbs();
   accuracy = accuracy.cwiseAbs();
+  iterations = iterations.cwiseAbs();
   fpt correctStdDev = std::sqrt(correct.mean());
   fpt accuracyStdDev = std::sqrt(accuracy.mean());
+  fpt iterationsStdDev = std::sqrt(iterations.mean());
   resultLogger << "Mean+-StdDev\t";
   resultLogger << correctMean << "+-" << correctStdDev << "\t"
-      << accuracyMean << "+-" << correctStdDev << "\t"
-      << (fpt)time/(fpt)results.size() << "\n";
+      << accuracyMean << "+-" << fmt(correctStdDev, 3) << "\t"
+      << fmt((fpt)time/(fpt)results.size(), 5) << "\t\t"
+      << iterationsMean << "+-" << fmt(iterationsStdDev, 3) << "\n";
   resultLogger << "[min,max]\t";
   resultLogger << "[" << correctMin << "," << correctMax << "]\t"
-      << "[" << accuracyMin << "," << accuracyMax << "]\n\n";
+      << "[" << fmt(accuracyMin, 3) << "," << fmt(accuracyMax, 3) << "]\t\t\t"
+      << "[" << (int) iterationsMin << "," << (int) iterationsMax << "]\n\n";
 }
 
 int main(int argc, char** argv)
@@ -179,9 +188,9 @@ int main(int argc, char** argv)
   const int architectures = 5;
   const int runs = 100;
   OpenANN::StopCriteria stop;
-  stop.minimalSearchSpaceStep = 1e-6;
-  stop.minimalValueDifferences = 1e-6;
-  stop.maximalIterations = 10000;
+  stop.minimalSearchSpaceStep = 1e-8;
+  stop.minimalValueDifferences = 1e-8;
+  stop.maximalIterations = 1000;
   Stopwatch sw;
 
   std::string directory = ".";
@@ -196,14 +205,15 @@ int main(int argc, char** argv)
     std::vector<Result> results;
     OpenANN::MLP mlp(OpenANN::Logger::NONE, OpenANN::Logger::NONE);
     setup(mlp, architecture);
-    mlp.trainingSet(loader.trainingInput, loader.trainingOutput);
-    mlp.training(OpenANN::MLP::BATCH_LMA);
     for(int run = 0; run < runs; run++)
     {
+      EvaluatableDataset ds(loader.trainingInput, loader.trainingOutput);
+      mlp.trainingSet(ds);
+      mlp.training(OpenANN::MLP::BATCH_LMA);
       sw.start();
       mlp.fit(stop);
       time += sw.stop(Stopwatch::MILLISECOND);
-      Result result = evaluate(mlp, loader);
+      Result result = evaluate(mlp, loader, ds);
       results.push_back(result);
       resultLogger << ".";
     }
