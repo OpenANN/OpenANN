@@ -40,7 +40,6 @@ struct FloatingPointFormatter
 {
   fpt value;
   int precision;
-  std::string result;
   FloatingPointFormatter(fpt value, int precision);
 };
 

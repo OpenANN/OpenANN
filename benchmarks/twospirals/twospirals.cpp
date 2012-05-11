@@ -57,6 +57,15 @@ void setup(OpenANN::MLP& mlp, int architecture)
   {
     case 0:
     {
+      setupLogger << "2-20-10-1 (bias)\n";
+      mlp.input(2)
+        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
+        .fullyConnectedHiddenLayer(10, OpenANN::MLP::TANH)
+        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
+      break;
+    }
+    case 1:
+    {
       setupLogger << "2-20-20-1 (bias)\n";
       mlp.input(2)
         .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
@@ -64,7 +73,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
       break;
     }
-    case 1:
+    case 2:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-21-21\n";
       mlp.input(2)
@@ -73,7 +82,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 21);
       break;
     }
-    case 2:
+    case 3:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-12-12\n";
       mlp.input(2)
@@ -82,7 +91,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 12);
       break;
     }
-    case 3:
+    case 4:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-6-6\n";
       mlp.input(2)
@@ -91,19 +100,20 @@ void setup(OpenANN::MLP& mlp, int architecture)
         .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 6);
       break;
     }
-    case 4:
+    case 5:
     {
-      setupLogger << "2-20-20-1 (bias), Compression: 3-6-1\n";
+      setupLogger << "2-20-20-1 (bias), Compression: 3-6-3\n";
       mlp.input(2)
         .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 3)
         .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 6)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 1);
+        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 3);
       break;
     }
     default:
       setupLogger << "Unknown architecture, quitting.\n";
       exit(EXIT_FAILURE);
   }
+  setupLogger << mlp.dimension() << " parameters\n";
 }
 
 /**
@@ -168,9 +178,9 @@ void logResults(std::vector<Result>& results, unsigned long time)
   fpt accuracyStdDev = std::sqrt(accuracy.mean());
   fpt iterationsStdDev = std::sqrt(iterations.mean());
   resultLogger << "Mean+-StdDev\t";
-  resultLogger << correctMean << "+-" << correctStdDev << "\t"
-      << accuracyMean << "+-" << fmt(correctStdDev, 3) << "\t"
-      << fmt((fpt)time/(fpt)results.size(), 5) << "\t\t"
+  resultLogger << fmt(correctMean, 3) << "+-" << fmt(correctStdDev, 3) << "\t"
+      << fmt(accuracyMean, 3) << "+-" << fmt(accuracyStdDev, 3) << "\t"
+      << (int) ((fpt)time/(fpt)results.size()) << "\t\t"
       << iterationsMean << "+-" << fmt(iterationsStdDev, 3) << "\n";
   resultLogger << "[min,max]\t";
   resultLogger << "[" << correctMin << "," << correctMax << "]\t"
@@ -185,7 +195,7 @@ int main(int argc, char** argv)
 #endif
 
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
-  const int architectures = 5;
+  const int architectures = 6;
   const int runs = 100;
   OpenANN::StopCriteria stop;
   stop.minimalSearchSpaceStep = 1e-8;
