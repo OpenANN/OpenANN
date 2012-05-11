@@ -23,7 +23,7 @@ void printUsage()
 
 int main(int argc, char** argv)
 {
-  OpenANNLibraryInfo::print();
+  OpenANN::OpenANNLibraryInfo::print();
 
   bool singlePoleBalancing = false;
   bool partiallyObservable = false;
