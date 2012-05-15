@@ -11,6 +11,7 @@ class ActionSpace
 public:
   typedef Vt Action;
   typedef std::vector<Action> A;
+  virtual ~ActionSpace() {}
   virtual int actionSpaceDimension() const = 0;
   virtual bool actionSpaceContinuous() const = 0;
   virtual int actionSpaceElements() const = 0;

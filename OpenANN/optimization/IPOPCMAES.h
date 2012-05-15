@@ -36,6 +36,8 @@ class IPOPCMAES : public Optimizer
   Vt optimum;
   fpt optimumValue;
 
+  fpt sigma0;
+
 public:
   IPOPCMAES();
   virtual ~IPOPCMAES();
@@ -48,6 +50,7 @@ public:
   bool terminated();
   virtual Vt result();
   virtual std::string name();
+  void setSigma0(fpt sigma0);
 };
 
 }

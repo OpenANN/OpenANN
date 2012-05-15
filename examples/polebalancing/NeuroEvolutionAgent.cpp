@@ -1,5 +1,6 @@
 #include "NeuroEvolutionAgent.h"
 #include <AssertionMacros.h>
+#include <cmath>
 
 NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,
                                          bool compress, int m,
@@ -76,9 +77,9 @@ void NeuroEvolutionAgent::chooseAction()
         fpt denom = 0.0;
         for(std::list<Vt>::iterator it = inputBuffer.begin(); it != inputBuffer.end(); it++)
         {
-          denom += fabs((*it)(0)); // position on the track
+          denom += std::fabs((*it)(0)); // position on the track
           for(int i = 1; i < inputSize; i+=2)
-            denom += fabs((*it)(i)); // velocities
+            denom += std::fabs((*it)(i)); // velocities
         }
         f2 = 0.75 / denom;
       }
@@ -221,4 +222,9 @@ void NeuroEvolutionAgent::setParameters(const Vt& parameters)
   {
     policy.setParameters(parameters);
   }
+}
+
+void NeuroEvolutionAgent::setSigma0(fpt sigma0)
+{
+  opt.setSigma0(sigma0);
 }

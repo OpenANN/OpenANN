@@ -160,24 +160,24 @@ bool SinglePoleBalancing::successful() const
 
 bool SinglePoleBalancing::terminalState() const
 {
-  return successful() || fabs(state(0)) > maxCartPosition
-      || fabs(state(2)) > maxPoleAngularPosition1;
+  return successful() || std::fabs(state(0)) > maxCartPosition
+      || std::fabs(state(2)) > maxPoleAngularPosition1;
 }
 
 OpenANN::Environment::State SinglePoleBalancing::derivative(const State& s, fpt force)
 {
-  fpt costheta1 = cos(s(2));
-  fpt sintheta1 = sin(s(2));
+  fpt costheta1 = std::cos(s(2));
+  fpt sintheta1 = std::sin(s(2));
   fpt gsintheta1 = gravity * sintheta1;
 
   fpt temp1 = mup * s(3) / massLength1;
 
-  fpt fi1 = massLength1 * pow(s(3), 2.0) * sintheta1
+  fpt fi1 = massLength1 * std::pow(s(3), 2.0) * sintheta1
       + 0.75 * pole1Mass * costheta1 * (temp1+gsintheta1);
 
   fpt mi1 = pole1Mass * (1.0 - 0.75 * costheta1 * gsintheta1);
 
-  fpt cartVelocityDot = (force - muc * (s(1) == 0.0 ? 0.0 : s(1) / fabs(s(1))) + fi1)
+  fpt cartVelocityDot = (force - muc * (s(1) == 0.0 ? 0.0 : s(1) / std::fabs(s(1))) + fi1)
       / (mi1 + cartMass);
   fpt poleAngularVelocity1Dot = -0.75 * (cartVelocityDot * costheta1 + gsintheta1 + temp1) / pole1Length;
 

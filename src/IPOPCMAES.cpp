@@ -20,7 +20,8 @@ IPOPCMAES::IPOPCMAES()
       evaluations(0),
       evaluationsAfterRestart(0),
       stopped(false),
-      optimumValue(std::numeric_limits<fpt>::max())
+      optimumValue(std::numeric_limits<fpt>::max()),
+      sigma0(10.0)
 {
 }
 
@@ -122,7 +123,7 @@ bool IPOPCMAES::restart()
       initialX[i] = (fpt) i / (fpt) N - (fpt) (N/2);
   }
   for(unsigned i = 0; i < N; i++)
-    initialStdDev[i] = 10.0; // TODO parameter
+    initialStdDev[i] = sigma0;
     
   parameters->init(N, initialX, initialStdDev);
   fitnessValues = cmaes->init(*parameters);
@@ -230,6 +231,11 @@ Vt IPOPCMAES::result()
 std::string IPOPCMAES::name()
 {
   return "Covariance Matrix Adaption Evolution Strategies";
+}
+
+void IPOPCMAES::setSigma0(fpt sigma0)
+{
+  this->sigma0 = sigma0;
 }
 
 }

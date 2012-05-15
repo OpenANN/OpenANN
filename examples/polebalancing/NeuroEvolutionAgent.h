@@ -54,4 +54,5 @@ public:
   virtual bool providesHessian();
   virtual bool providesInitialization();
   virtual void setParameters(const Vt& parameters);
+  void setSigma0(fpt sigma0);
 };

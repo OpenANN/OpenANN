@@ -11,6 +11,7 @@ class StateSpace
 public:
   typedef Vt State;
   typedef std::vector<State> S;
+  virtual ~StateSpace() {}
   virtual int stateSpaceDimension() const = 0;
   virtual bool stateSpaceContinuous() const = 0;
   virtual int stateSpaceElements() const = 0;

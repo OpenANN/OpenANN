@@ -112,6 +112,7 @@ void setup(OpenANN::MLP& mlp, int architecture)
     default:
       setupLogger << "Unknown architecture, quitting.\n";
       exit(EXIT_FAILURE);
+      break;
   }
   setupLogger << mlp.dimension() << " parameters\n";
 }
