@@ -51,6 +51,11 @@ public:
     {
       cache[std::make_pair(epoch, offset)] = instance;
     }
+
+    void clear()
+    {
+      cache.clear();
+    }
   };
 
   std::string directory;
@@ -77,13 +82,12 @@ public:
   std::vector<std::vector<Vt> > instanceLabel;
 
   Logger debugLogger;
-  Logger predictionLogger;
-  Logger scoreLogger;
   int trials;
 
   Vt tempInstance;
 
   int iteration;
+  int correct;
 
   bool comp;
   Compressor compressor;
@@ -96,9 +100,8 @@ public:
       const std::string dataType, bool loadNow = true)
     : directory(directory), subject(subject),
           dataType(dataType == "test" ? TEST : (dataType == "demo" ? DEMO : TRAINING)),
-          debugLogger(Logger::CONSOLE), predictionLogger(Logger::FILE, dataType == "test" ? "prediction-test" : "prediction-train"),
-          scoreLogger(Logger::NONE, "scores"), trials(15),
-          iteration(0),
+          debugLogger(Logger::NONE), trials(15),
+          iteration(0), correct(0),
           comp(false), decimated(false), downSamplingFactor(1),
           cache(1000, 0)
   {
@@ -259,6 +262,14 @@ public:
     cache.D = D;
   }
 
+  void clear()
+  {
+    cache.clear();
+    cache.D = D;
+    iteration = 0;
+    correct = 0;
+  }
+
   std::string fileName(const std::string& type)
   {
     return directory + "/Subject_" + subject + "_" +
@@ -270,6 +281,7 @@ public:
     downSamplingFactor = factor;
     D = sampling/downSamplingFactor * channels;
     decimated = true;
+    clear();
   }
 
   void compress(const Mt& compressionMatrix)
@@ -277,6 +289,7 @@ public:
     comp = true;
     compressor.init(compressionMatrix);
     D = compressionMatrix.rows();
+    clear();
   }
 
   virtual int samples()
@@ -395,15 +408,10 @@ public:
       "56789_"
     };
     Vt y(1);
-    int correct = 0;
+    correct = 0;
+    ++iteration;
     std::vector<char> predictions(readEpochs, 0);
 
-    predictionLogger << "=== Iteration " << ++iteration
-        << (dataType == TEST ? " (test set)" : " (training set)") << " ===\n"
-        << "Actual\t\t";
-    for(int e = 0; e < readEpochs; e++)
-      predictionLogger << targetChar[e];
-    predictionLogger << "\n\t\t";
     for(int e = 0; e < readEpochs; e++)
     {
       double score[12] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -446,30 +454,7 @@ public:
       char actual = targetChar[e];
       predictions[e] = characters[maxRow][maxCol];
       if(actual == predictions[e])
-      {
         correct++;
-        predictionLogger << "=";
-      }
-      else
-        predictionLogger << "!";
-
-      if(scoreLogger.isActive())
-      {
-        scoreLogger << "Episode " << (e+1) << ", actual = " << actual << ", prediction = " << predictions[e] << "\n";
-        for(int r = 0; r < 6; r++)
-        {
-          for(int c = 0; c < 6; c++)
-          {
-            scoreLogger << (score[c]+score[r+6]) << "\t";
-          }
-          scoreLogger << "\n";
-        }
-      }
     }
-
-    predictionLogger << "\nPredicted\t";
-    for(int e = 0; e < readEpochs; e++)
-      predictionLogger << predictions[e];
-    predictionLogger << "\n" << correct << "/" << readEpochs << "\n";
   }
 };

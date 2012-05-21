@@ -11,7 +11,7 @@ class CompressionMatrixFactory
 public:
   bool compress;
   enum Transformation {
-    DCT, GAUSSIAN, AVERAGE, EDGE
+    DCT, GAUSSIAN, SPARSE_RANDOM, AVERAGE, EDGE
   } transformation;
   int inputDim;
   int paramDim;

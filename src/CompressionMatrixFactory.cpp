@@ -46,6 +46,17 @@ void CompressionMatrixFactory::fillCompressionMatrix(Mt& cm)
         case GAUSSIAN:
           cm(m, i) = rng.sampleNormalDistribution<fpt>() / (fpt) paramDim;
           break;
+        case SPARSE_RANDOM:
+        {
+          fpt r = rng.generate<fpt>((fpt) 0, (fpt) 1);
+          if(r < (fpt) (1.0/6.0))
+            cm(m, i) = (fpt) 1 / std::sqrt((fpt) paramDim);
+          else if(r < (fpt) (5.0/6.0))
+            cm(m, i) = (fpt) 0;
+          else
+            cm(m, i) = (fpt) -1 / std::sqrt((fpt) paramDim);
+          break;
+        }
         case AVERAGE:
           {
           if(i / compressionRatio == m)
