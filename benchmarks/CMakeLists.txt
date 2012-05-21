@@ -1,2 +1,3 @@
-add_subdirectory(twospirals)
+add_subdirectory(p300speller)
 add_subdirectory(polebalancing)
+add_subdirectory(twospirals)
