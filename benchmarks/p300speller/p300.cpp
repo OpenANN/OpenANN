@@ -134,7 +134,7 @@ int main(int argc, char** argv)
   stop.minimalValueDifferences = 0.001;
 
   int runs = 10;
-  interfaceLogger << "Iter.\tDuration\tTrain.\tTest\n";
+  interfaceLogger << "Iter.\tTime\tTrain.\tTest\n";
   Result result;
   runTest(result, trainingSetA, testSetA, runs, stop, 15, 800, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, 800, true, 11);
