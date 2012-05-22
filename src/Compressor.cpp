@@ -64,9 +64,12 @@ Vt Compressor::compress(const Vt& instance)
   if(instance.rows() > maxInputDimensionWithoutCuda)
   {
     Vt result(cm.rows());
-    CUBLASContext::instance.setMatrix(instance.data(), inputOnDevice, instance.rows(), 1);
-    CUBLASContext::instance.multiplyMatrixVector(cmOnDevice, inputOnDevice, outputOnDevice, cm.rows(), cm.cols());
-    CUBLASContext::instance.getMatrix(result.data(), outputOnDevice, result.rows(), 1);
+    if(!CUBLASContext::instance.setMatrix(instance.data(), inputOnDevice, instance.rows(), 1))
+      abort();
+    if(!CUBLASContext::instance.multiplyMatrixVector(cmOnDevice, inputOnDevice, outputOnDevice, cm.rows(), cm.cols()))
+      abort();
+    if(!CUBLASContext::instance.getMatrix(result.data(), outputOnDevice, result.rows(), 1))
+      abort();
     return result;
   }
   else
