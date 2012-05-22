@@ -38,31 +38,24 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     int runs, OpenANN::StopCriteria stop, int csDimension, bool filter,
     int subsamplingFactor = 1)
 {
+  trainingSet.reset();
+  testSet.reset();
+  if(filter)
+  {
+    trainingSet.decimate(subsamplingFactor);
+    testSet.decimate(subsamplingFactor);
+  }
+
   OpenANN::MLP mlp(OpenANN::Logger::NONE, OpenANN::Logger::NONE);
-  mlp.input(trainingSet.inputs())
+  mlp.input(csDimension > 0 ? csDimension : trainingSet.inputs())
     .output(trainingSet.outputs())
     .training(OpenANN::MLP::BATCH_LMA)
     .trainingSet(trainingSet)
     .testSet(testSet);
 
+  OpenANN::Logger progressLogger(OpenANN::Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
   {
-    trainingSet.reset();
-    testSet.reset();
-    if(filter)
-    {
-      trainingSet.decimate(subsamplingFactor);
-      testSet.decimate(subsamplingFactor);
-    }
-    if(csDimension > 0)
-    {
-      Mt compressionMatrix;
-      OpenANN::CompressionMatrixFactory cmf(trainingSet.inputs(), csDimension,
-          OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
-      cmf.createCompressionMatrix(compressionMatrix);
-      trainingSet.compress(compressionMatrix);
-      testSet.compress(compressionMatrix);
-    }
 
     Stopwatch sw;
     mlp.fit(stop);
@@ -70,7 +63,9 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     result.iterations += trainingSet.iteration;
     result.correct5 += testSet.evaluate(mlp, 5);
     result.correct15 += testSet.evaluate(mlp, 15);
+    progressLogger << ".";
   }
+  progressLogger << "\n";
 }
 
 void printResult(Result& result, int runs)
