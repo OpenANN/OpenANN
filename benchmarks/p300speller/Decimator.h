@@ -38,24 +38,6 @@ public:
     a1 << 1.;
     filter(x, y1, b1, a1);
 
-    // High pass filter
-    // scipy (spectral inversion):
-    //  a = signal.firwin(30+1, 0.1/fs, window='hamming')
-    //  a = -a
-    //  a[31/2]=a[31/2]+1
-    //  print(a)
-    /*Mt y2(x.rows(), x.cols());
-    Vt b2(31);
-    b2 << -0.00491374, -0.00553121, -0.00735655, -0.01031002, -0.01426255, -0.01904143,
-        -0.02443779, -0.03021579, -0.03612292, -0.04190098, -0.04729746, -0.05207649,
-        -0.05602919, -0.0589828,  -0.06080824,  0.93857429, -0.06080824, -0.0589828,
-        -0.05602919, -0.05207649, -0.04729746, -0.04190098, -0.03612292, -0.03021579,
-        -0.02443779, -0.01904143, -0.01426255, -0.01031002, -0.00735655, -0.00553121,
-        -0.00491374;
-    Vt a2(1);
-    a2 << 1.;
-    filter(y1, y2, b2, a2);*/
-
     Mt d(x.rows(), x.cols()/downSamplingFactor);
     downsample(y1, d);
     return d;
@@ -103,11 +85,8 @@ public:
   void downsample(const Mt& y, Mt& d)
   {
     for(int c = 0; c < y.rows(); c++)
-    {
-      for(int target = 0, source = 0; target < d.cols(); target++, source+=downSamplingFactor)
-      {
+      for(int target = 0, source = 0; target < d.cols();
+          target++, source+=downSamplingFactor)
         d(c, target) = y(c, source);
-      }
-    }
   }
 };

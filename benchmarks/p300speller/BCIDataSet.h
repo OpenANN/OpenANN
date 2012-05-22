@@ -126,7 +126,6 @@ public:
   {
     std::ifstream file(fileName("Flashing").c_str());
     OPENANN_CHECK(file.is_open());
-    // TODO determine epochs dynamically
     sampling = 240;
     channels = 64;
     epochs = dataType == TEST ? 100 : 85;
@@ -290,6 +289,14 @@ public:
     compressor.init(compressionMatrix);
     D = compressionMatrix.rows();
     clear();
+  }
+
+  void reset()
+  {
+    downSamplingFactor = 1;
+    decimated = false;
+    comp = false;
+    cache.clear();
   }
 
   virtual int samples()

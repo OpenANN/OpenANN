@@ -45,6 +45,8 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
 {
   OpenANN::Logger setupLogger(OpenANN::Logger::CONSOLE);
 
+  trainingSet.reset();
+  testSet.reset();
   if(filter)
   {
     trainingSet.decimate(subsamplingFactor);
@@ -136,6 +138,12 @@ int main(int argc, char** argv)
   int runs = 10;
   interfaceLogger << "Iter.\tTime\tTrain.\tTest\n";
   Result result;
+  runTest(result, trainingSetA, testSetA, runs, stop, 15, -1, true, 11);
+  runTest(result, trainingSetB, testSetB, runs, stop, 15, -1, true, 11);
+  printResult(result, 2*runs);
+  runTest(result, trainingSetA, testSetA, runs, stop, 5, -1, true, 11);
+  runTest(result, trainingSetB, testSetB, runs, stop, 5, -1, true, 11);
+  printResult(result, 2*runs);
   runTest(result, trainingSetA, testSetA, runs, stop, 15, 800, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, 800, true, 11);
   printResult(result, 2*runs);
@@ -147,12 +155,6 @@ int main(int argc, char** argv)
   printResult(result, 2*runs);
   runTest(result, trainingSetA, testSetA, runs, stop, 5, 800, true, 1);
   runTest(result, trainingSetB, testSetB, runs, stop, 5, 800, true, 1);
-  printResult(result, 2*runs);
-  runTest(result, trainingSetA, testSetA, runs, stop, 15, -1, true, 11);
-  runTest(result, trainingSetB, testSetB, runs, stop, 15, -1, true, 11);
-  printResult(result, 2*runs);
-  runTest(result, trainingSetA, testSetA, runs, stop, 5, -1, true, 11);
-  runTest(result, trainingSetB, testSetB, runs, stop, 5, -1, true, 11);
   printResult(result, 2*runs);
   runTest(result, trainingSetA, testSetA, runs, stop, 15, 1200, false);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, 1200, false);
