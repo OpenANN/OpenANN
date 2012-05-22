@@ -1,10 +1,8 @@
 #include "BCIDataSet.h"
-#include <MLP.h>
+#include <OpenANN>
 #include <CompressionMatrixFactory.h>
 #include <io/Logger.h>
 #include <Test/Stopwatch.h>
-#include <vector>
-#include <OpenANN>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -40,11 +38,9 @@ struct Result
 };
 
 void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
-    int runs, StopCriteria stop, int trials, int csDimension, bool filter,
+    int runs, OpenANN::StopCriteria stop, int trials, int csDimension, bool filter,
     int subsamplingFactor = -1)
 {
-  OpenANN::Logger setupLogger(OpenANN::Logger::CONSOLE);
-
   trainingSet.reset();
   testSet.reset();
   if(filter)
@@ -55,8 +51,8 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
   if(csDimension > 0)
   {
     Mt compressionMatrix;
-    CompressionMatrixFactory cmf(trainingSet.inputs(), csDimension,
-        CompressionMatrixFactory::SPARSE_RANDOM);
+    OpenANN::CompressionMatrixFactory cmf(trainingSet.inputs(), csDimension,
+        OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
     cmf.createCompressionMatrix(compressionMatrix);
     trainingSet.compress(compressionMatrix);
     testSet.compress(compressionMatrix);
@@ -64,15 +60,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
   trainingSet.trials = trials;
   testSet.trials = trials;
 
-  setupLogger << (filter ? "lowpass filter" : "no filter") << ", ";
-  if(subsamplingFactor > 0)
-    setupLogger << "subsampling factor " << subsamplingFactor << ", ";
-  if(csDimension > 0)
-    setupLogger << "random compression, ";
-  setupLogger << trainingSet.inputs() << " parameters, ";
-  setupLogger << trials << " trials\n";
-
-  MLP mlp(Logger::NONE, Logger::NONE);
+  OpenANN::MLP mlp(OpenANN::Logger::NONE, OpenANN::Logger::NONE);
   mlp.input(trainingSet.inputs())
     .output(trainingSet.outputs())
     .training(OpenANN::MLP::BATCH_LMA)
@@ -107,7 +95,7 @@ int main(int argc, char** argv)
   omp_set_num_threads(PARALLEL_CORES);
 #endif
 
-  Logger interfaceLogger(Logger::CONSOLE);
+  OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
 
   std::string directory = ".";
   if(argc > 1)
@@ -131,34 +119,42 @@ int main(int argc, char** argv)
   testSetB.load();
   interfaceLogger << "Loaded test set B in " << sw.stop(Stopwatch::SECONDS) << " s.\n";
 
-  StopCriteria stop;
+  OpenANN::StopCriteria stop;
   stop.maximalIterations = 20;
   stop.minimalValueDifferences = 0.001;
 
-  int runs = 10;
+  int runs = 5;
   interfaceLogger << "Iter.\tTime\tTrain.\tTest\n";
   Result result;
+  interfaceLogger << "decimation, 15 trials, 1344 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 15, -1, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, -1, true, 11);
   printResult(result, 2*runs);
+  interfaceLogger << "decimation, 5 trials, 1344 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 5, -1, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 5, -1, true, 11);
   printResult(result, 2*runs);
+  interfaceLogger << "decimation, compression, 15 trials, 800 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 15, 800, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, 800, true, 11);
   printResult(result, 2*runs);
+  interfaceLogger << "decimation, compression, 5 trials, 800 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 5, 800, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 5, 800, true, 11);
   printResult(result, 2*runs);
+  interfaceLogger << "lowpass filter, compression, 15 trials, 800 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 15, 800, true, 1);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, 800, true, 1);
   printResult(result, 2*runs);
+  interfaceLogger << "lowpass filter, compression, 5 trials, 800 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 5, 800, true, 1);
   runTest(result, trainingSetB, testSetB, runs, stop, 5, 800, true, 1);
   printResult(result, 2*runs);
+  interfaceLogger << "compression, 15 trials, 1200 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 15, 1200, false);
   runTest(result, trainingSetB, testSetB, runs, stop, 15, 1200, false);
   printResult(result, 2*runs);
+  interfaceLogger << "compression, 5 trials, 1200 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 5, 1200, false);
   runTest(result, trainingSetB, testSetB, runs, stop, 5, 1200, false);
   printResult(result, 2*runs);

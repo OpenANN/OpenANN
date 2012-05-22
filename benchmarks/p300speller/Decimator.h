@@ -1,16 +1,16 @@
-#pragma once
+#ifndef DECIMATOR_H
+#define DECIMATOR_H
 
 #include <Eigen/Dense>
 #include <cmath>
 #include <complex>
 
-#include <iostream>
 class Decimator
 {
-public:
   int downSamplingFactor;
   Vt a, b;
 
+public:
   Decimator(int downSamplingFactor)
     : downSamplingFactor(downSamplingFactor)
   {
@@ -46,9 +46,11 @@ public:
   /**
    * Apply a filter on the input signal.
    * See scipy, example:
-   *    >>> import scipy.signal as signal
-   *        fs = 240
-   *        signal.cheby1(8, 0.05, [0.1/(fs/2), 10.0/(fs/2)],btype='band')
+   * \code
+     import scipy.signal as signal
+     fs = 240
+     signal.cheby1(8, 0.05, [0.1/(fs/2), 10.0/(fs/2)],btype='band')
+     \endcode
    */
   void filter(const Mt& x, Mt& y, const Mt& b, const Mt& a)
   {
@@ -90,3 +92,5 @@ public:
         d(c, target) = y(c, source);
   }
 };
+
+#endif // DECIMATOR_H
