@@ -56,12 +56,10 @@ public:
   std::vector<std::vector<Vt> > instanceLabel;
 
   OpenANN::Logger debugLogger;
-  int trials;
 
   Vt tempInstance;
 
   int iteration;
-  int correct;
 
   bool comp;
   OpenANN::Compressor compressor;
@@ -98,6 +96,7 @@ public:
   int getStimulusCode(int i);
   char getTargetChar(int i);
   virtual void finishIteration(OpenANN::MLP& mlp);
+  int evaluate(OpenANN::MLP& mlp, int trials);
 };
 
 #endif // BCIDATASET_H

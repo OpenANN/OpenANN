@@ -1,14 +1,13 @@
-#pragma once
+#ifndef COMPRESSOR_H
+#define COMPRESSOR_H
 
-#include <CompressionMatrixFactory.h>
-#include <io/Logger.h>
+#include <Eigen/Dense>
 
 namespace OpenANN
 {
 
 class Compressor
 {
-  Logger debugLogger;
   Mt cm;
 #ifdef CUDA_AVAILABLE
   float* cmOnDevice;
@@ -18,8 +17,11 @@ class Compressor
 public:
   Compressor();
   ~Compressor();
+  void reset();
   void init(const Mt& cm);
   Vt compress(const Vt& instance);
 };
 
 }
+
+#endif // COMPRESSOR_H

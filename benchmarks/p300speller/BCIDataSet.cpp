@@ -38,8 +38,8 @@ BCIDataSet::BCIDataSet(const std::string directory, const std::string& subject,
     const std::string dataType, bool loadNow)
     : directory(directory), subject(subject),
           dataType(dataType == "test" ? TEST : (dataType == "demo" ? DEMO : TRAINING)),
-          debugLogger(OpenANN::Logger::NONE), trials(15),
-          iteration(0), correct(0),
+          debugLogger(OpenANN::Logger::NONE),
+          iteration(0),
           comp(false), decimated(false), downSamplingFactor(1),
           cache(1000, 0)
 {
@@ -194,15 +194,14 @@ void BCIDataSet::setupInterface()
       lastFlashing[e] = (int) flashing(t, e);
     }
   }
-  cache.D = D;
+  clear();
 }
 
 void BCIDataSet::clear()
 {
   cache.clear();
   cache.D = D;
-  iteration = 0;
-  correct = 0;
+  tempInstance.resize(D);
 }
 
 std::string BCIDataSet::fileName(const std::string& type)
@@ -229,10 +228,13 @@ void BCIDataSet::compress(const Mt& compressionMatrix)
 
 void BCIDataSet::reset()
 {
-  downSamplingFactor = 1;
   decimated = false;
+  downSamplingFactor = 1;
   comp = false;
+  compressor.reset();
   cache.clear();
+  iteration = 0;
+  D = sampling * channels;
 }
 
 Vt& BCIDataSet::getInstance(int i)
@@ -327,6 +329,11 @@ char BCIDataSet::getTargetChar(int i)
 
 void BCIDataSet::finishIteration(OpenANN::MLP& mlp)
 {
+  ++iteration;
+}
+
+int BCIDataSet::evaluate(OpenANN::MLP& mlp, int trials)
+{
   char characters[6][7] = {
     "ABCDEF",
     "GHIJKL",
@@ -336,8 +343,7 @@ void BCIDataSet::finishIteration(OpenANN::MLP& mlp)
     "56789_"
   };
   Vt y(1);
-  correct = 0;
-  ++iteration;
+  int correct = 0;
   std::vector<char> predictions(readEpochs, 0);
 
   for(int e = 0; e < readEpochs; e++)
@@ -384,4 +390,5 @@ void BCIDataSet::finishIteration(OpenANN::MLP& mlp)
     if(actual == predictions[e])
       correct++;
   }
+  return correct;
 }

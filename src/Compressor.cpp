@@ -9,14 +9,18 @@ namespace OpenANN
 {
 
 Compressor::Compressor()
-  : debugLogger(Logger::NONE)
 #ifdef CUDA_AVAILABLE
-  , cmOnDevice(0), inputOnDevice(0), outputOnDevice(0)
+  : cmOnDevice(0), inputOnDevice(0), outputOnDevice(0)
 #endif
 {
 }
 
 Compressor::~Compressor()
+{
+  reset();
+}
+
+void Compressor::reset()
 {
 #ifdef CUDA_AVAILABLE
   if(cmOnDevice)
@@ -38,20 +42,10 @@ void Compressor::init(const Mt& cm)
 #ifdef CUDA_AVAILABLE
   if(cm.cols() > maxInputDimensionWithoutCuda && cm.cols() < maxInputDimensionWithCuda)
   {
-    debugLogger << "Creating compression matrix on device...\n";
     CUBLASContext::instance.allocateMatrix(&cmOnDevice, cm.rows(), cm.cols());
     CUBLASContext::instance.allocateMatrix(&inputOnDevice, cm.cols(), 1);
     CUBLASContext::instance.allocateMatrix(&outputOnDevice, cm.rows(), 1);
     CUBLASContext::instance.setMatrix(cm.data(), cmOnDevice, cm.rows(), cm.cols());
-    if(debugLogger.isActive())
-    {
-      Vt t = Vt::Constant(cm.cols(), (fpt) 1.0);
-      Vt woCUDA = (cm*t).transpose();
-      Vt wCUDA = compress(t).transpose();
-      for(int i = 0; i < woCUDA.rows(); i++)
-        if(std::fabs(woCUDA(i) - wCUDA(i)) > 1e-3f)
-          debugLogger << i << ") " << woCUDA(i) << "!=" << wCUDA(i) << "\n";
-    }
   }
   else
     cmOnDevice = 0;
