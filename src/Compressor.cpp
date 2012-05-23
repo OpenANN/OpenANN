@@ -37,6 +37,7 @@ void Compressor::reset()
 
 void Compressor::init(const Mt& cm)
 {
+  reset();
   this->cm.resize(cm.rows(), cm.cols());
   this->cm = cm;
 #ifdef CUDA_AVAILABLE

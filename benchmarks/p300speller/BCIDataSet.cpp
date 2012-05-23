@@ -220,9 +220,9 @@ void BCIDataSet::decimate(int factor)
 
 void BCIDataSet::compress(const Mt& compressionMatrix)
 {
-  comp = true;
   compressor.init(compressionMatrix);
   D = compressionMatrix.rows();
+  comp = true;
   clear();
 }
 
