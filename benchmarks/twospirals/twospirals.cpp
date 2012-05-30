@@ -8,6 +8,10 @@
 #include <omp.h>
 #endif
 
+/**
+ * \page TwoSpiralsBenchmark Two Spirals
+ */
+
 class EvaluatableDataset : public OpenANN::DirectStorageDataSet
 {
 public:

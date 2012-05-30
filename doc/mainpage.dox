@@ -116,6 +116,9 @@ Reinforcement Learning
 
   - \ref PB
 
+We also have some \ref Benchmarks that show how you can use ANNs and compare
+different architectures.
+
 \section TodoList Todo List
 
   @todo Classes for layer types

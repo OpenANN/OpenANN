@@ -1,0 +1,19 @@
+namespace OpenANN
+{
+
+/**
+
+\page Benchmarks
+
+Classification
+
+  - \ref P300SpellerBenchmark
+  - \ref TwoSpiralsBenchmark
+
+Reinforcement Learning
+
+  - \ref PoleBalancingBenchmark
+
+*/
+
+}

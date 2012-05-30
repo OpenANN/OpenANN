@@ -8,15 +8,55 @@
 #endif
 
 /**
- * \page P300Speller P300 Speller
+ * \page P300SpellerBenchmark P300 Speller
  *
  * This program demonstrates how neural networks can be used to classify
  * electroencephalography (EEG) data. In this example we train a single layer
  * perceptron (SLP) to recognize P300 potentials. This is needed in order to
  * spell characters with brain-computer interfaces (BCI).
  *
- * You can download the data set from http://www.bbci.de/competition/iii. Note
- * that you have to register first. You need the ASCII format.
+ * The benchmarks can be accelerated with CUDA. We need at least 6 GByte RAM.
+ *
+ * Here we use the data set II from the BCI competition III. You can download
+ * the data set from http://www.bbci.de/competition/iii. Note that you have to
+ * register first. You need the ASCII format. The downloaded files will be
+ *
+ * - Subject_A_Train_Flashing.txt
+ * - Subject_A_Train_Signal.txt
+ * - Subject_A_Train_StimulusCode.txt
+ * - Subject_A_Train_StimulusType.txt
+ * - Subject_A_Train_TargetChar.txt
+ * - Subject_A_Test_Flashing.txt
+ * - Subject_A_Test_Signal.txt
+ * - Subject_A_Test_StimulusCode.txt
+ * - Subject_B_Train_Flashing.txt
+ * - Subject_B_Train_Signal.txt
+ * - Subject_B_Train_StimulusCode.txt
+ * - Subject_B_Train_StimulusType.txt
+ * - Subject_B_Train_TargetChar.txt
+ * - Subject_B_Test_Flashing.txt
+ * - Subject_B_Test_Signal.txt
+ * - Subject_B_Test_StimulusCode.txt
+ *
+ * In order to test the performance on the test set, we have to download the
+ * target characters of the test set separately and we must generate the
+ * expected targets for the classifier. You find the target characters at
+ *
+ * - http://www.bbci.de/competition/iii/results/albany/true_labels_a.txt
+ * - http://www.bbci.de/competition/iii/results/albany/true_labels_b.txt
+ * 
+ * You can generate the files
+ *
+ * - Subject_A_Test_StimulusCode.txt
+ * - Subject_A_Test_TargetChar.txt
+ * - Subject_B_Test_StimulusCode.txt
+ * - Subject_B_Test_TargetChar.txt
+ *
+ * with the ruby script "targets":
+ *
+ * \code
+ * ruby targets /path/to/dataset-directory/
+ * \endcode
  */
 
 struct Result

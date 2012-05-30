@@ -9,6 +9,10 @@
 #include <omp.h>
 #endif
 
+/**
+ * \page PoleBalancingBenchmark Pole Balancing
+ */
+
 struct Result
 {
   bool success;
