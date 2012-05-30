@@ -47,16 +47,51 @@
  * 
  * You can generate the files
  *
- * - Subject_A_Test_StimulusCode.txt
+ * - Subject_A_Test_StimulusType.txt
  * - Subject_A_Test_TargetChar.txt
  * - Subject_B_Test_StimulusCode.txt
- * - Subject_B_Test_TargetChar.txt
+ * - Subject_B_Test_TargetType.txt
  *
  * with the ruby script "targets":
  *
  * \code
  * ruby targets /path/to/dataset-directory/
  * \endcode
+ *
+ * The directory /path/to/dataset-directory/ should contain all data set files
+ * and will contain the labels after you run the script. Now, you can start
+ * the benchmark:
+ * \code
+ * ./P300Speller /path/to/dataset-directory/
+ * \endcode
+ *
+ * The output could be
+ * \verbatim
+$ P300Speller /path/to/dataset-directory/
+Loaded data set A in 33 s.
+Loaded data set B in 33 s.
+Iter.   Time    5 trials        15 trials       (average of 10 runs, 2 data sets)
+decimation, 1344 parameters
+..........
+..........
+16.60   145.45  64.10           93.50
+decimation, compression, 800 parameters
+..........
+..........
+12.35   59.60   63.75           93.90
+lowpass filter, compression, 800 parameters
+..........
+..........
+16.10   85.30   64.15           94.05
+compression, 1200 parameters
+..........
+..........
+16.10   143.75  55.30           87.80
+\endverbatim
+ * Here we tested 4 configurations with different preprocessing and
+ * compression methods. We performed 10 runs for each configuration and
+ * calculated the average number of iterations (Iter.), training time (Time),
+ * accuracy with 5 trials and accuracy with 15 trials.
  */
 
 struct Result

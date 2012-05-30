@@ -313,13 +313,6 @@ Vt& BCIDataSet::getTarget(int i)
   return instanceLabel[epoch][number];
 }
 
-int BCIDataSet::getStimulusCode(int i)
-{
-  int epoch = 0, t0 = 0;
-  getOffsets(i, epoch, t0);
-  return stimulusCode(t0, epoch);
-}
-
 char BCIDataSet::getTargetChar(int i)
 {
   int epoch = 0, t0 = 0;

@@ -1,5 +1,16 @@
 # !/usr/bin/env ruby
 
+# This script will generate these files:
+# - Subject_A_Test_StimulusType.txt
+# - Subject_A_Test_TargetChar.txt
+# - Subject_B_Test_StimulusCode.txt
+# - Subject_B_Test_TargetType.txt
+# You need these files:
+# - Subject_A_Test_StimulusType.txt
+# - Subject_B_Test_StimulusType.txt
+# - true_labels_a.txt
+# - true_labels_b.txt
+
 CHAR_MATRIX = [
     "ABCDEF",
     "GHIJKL",
@@ -9,41 +20,53 @@ CHAR_MATRIX = [
     "56789_"
 ]
 
-directory = if ARGV.empty? then "." else ARGV[0] end
-puts "Generating classifier targets in #{directory}..."
+directory = "."
+if ARGV.empty?
+  puts "No directory given, using '.'"
+else
+  ARGV[0]
+end
+puts "Generating classifier targets in '#{directory}'..."
 
 ["a", "b"].each do |subject|
   char_file_name = "true_labels_#{subject}.txt"
   target_characters = ""
-  File.open directory + "/" + char_file_name do |file|
+  File.open directory + File::SEPARATOR + char_file_name do |file|
     target_characters = file.read.strip
   end
   target_ascii = []
   (0...target_characters.size).each do |i|
     target_ascii << target_characters[i]
   end
-  File.open directory + "/Subject_#{subject.capitalize}_Test_TargetChar.txt", "w" do |file|
+  File.open directory+ File::SEPARATOR + "Subject_#{subject.capitalize}_Test_TargetChar.txt", "w" do |file|
     file.write target_ascii * "\n"
   end
-  stimulus_code = ""
-  File.open directory + "/Subject_#{subject.capitalize}_Test_StimulusType.txt" do |file|
+  stimulus_type = File.new directory+ File::SEPARATOR + "Subject_#{subject.capitalize}_Test_StimulusType.txt", "w"
+  File.open directory+ File::SEPARATOR + "Subject_#{subject.capitalize}_Test_StimulusCode.txt" do |file|
     while line = file.gets
       types = line.split
       (0...types.size).each do |epoch|
         type = types[epoch].to_i
-        # TODO implement
-        if type < 6 # col
-          col = type
+        if type == 0
+          stimulus_type.write "0\t"
+        elsif type <= 6 # col
+          col = type - 1
+          contains = false
           (0...6).each do |row|
-            
+            contains = true if CHAR_MATRIX[row][col] == target_ascii[epoch]
           end
+          stimulus_type.write(if contains then "1\t" else "0\t" end)
         else # row
-          row = type - 6
+          row = type - 7
+          contains = false
           (0...6).each do |col|
-            
+            contains = true if CHAR_MATRIX[row][col] == target_ascii[epoch]
           end
+          stimulus_type.write(if contains then "1\t" else "0\t" end)
         end
       end
+      stimulus_type.write "\n"
     end
   end
+  stimulus_type.close
 end

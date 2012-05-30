@@ -93,7 +93,6 @@ public:
   Mt extractInstance(int epoch, int t0);
   Vt toVector(const Mt& matrix);
   virtual Vt& getTarget(int i);
-  int getStimulusCode(int i);
   char getTargetChar(int i);
   virtual void finishIteration(OpenANN::MLP& mlp);
   int evaluate(OpenANN::MLP& mlp, int trials);
