@@ -1,6 +1,7 @@
 #include <MLP.h>
 #include <optimization/IPOPCMAES.h>
 #include <optimization/LMA.h>
+#include <optimization/SGD.h>
 #include <io/DirectStorageDataSet.h>
 #include <AssertionMacros.h>
 #include <ActivationFunctions.h>
@@ -271,6 +272,9 @@ MLP& MLP::training(Training training, bool reinit)
       optimizer = new LMA(true);
       break;
 #endif
+    case BATCH_SGD:
+      optimizer = new SGD;
+      break;
     default:
       OPENANN_CHECK(false && "unknown optimizer");
       break;
@@ -300,6 +304,7 @@ Vt MLP::fit(StopCriteria stop)
     parameterLogger << "\n# " << configuration << "\n\n";
 
   optimizer->setStopCriteria(stop);
+  sw.start();
   optimizer->optimize();
   return optimizer->result();
 }
@@ -570,7 +575,7 @@ void MLP::finishedIteration()
     const int correctTest = tetn + tetp;
     const int wrongTest = tefn + tefp;
 
-    errorLogger << iteration++ << " ";
+    errorLogger << ++iteration << " ";
     if(trainingData)
     {
       errorLogger << trainingError << " " << correctTrain << " " << wrongTrain
@@ -581,7 +586,7 @@ void MLP::finishedIteration()
       errorLogger << testError << " " << correctTest << " " << wrongTest << " "
           << tefp << " " << tetp << " " << tefn << " " << tetn;
     }
-    errorLogger << "\n";
+    errorLogger << " " << sw.stop(Stopwatch::MILLISECOND) << "\n";
   }
 
   if(parameterLogger.isActive())

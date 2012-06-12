@@ -6,6 +6,7 @@
 #include <StopCriteria.h>
 #include <io/DataSet.h>
 #include <io/Logger.h>
+#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -34,7 +35,8 @@ public:
   {
     NOT_INITIALIZED,
     BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies
-    BATCH_LMA     //!< Levenberg-Marquardt Algorithm
+    BATCH_LMA,    //!< Levenberg-Marquardt Algorithm
+    BATCH_SGD     //!< Stochastic Gradient Descent
   };
 
   /** Layer initialization state. */
@@ -69,6 +71,7 @@ public:
   Optimizer* optimizer;
   bool reinitialize;
   int iteration;
+  Stopwatch sw;
   /** Training set size. */
   int N;
   Logger errorLogger;
