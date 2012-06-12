@@ -10,6 +10,63 @@
 
 /**
  * \page TwoSpiralsBenchmark Two Spirals
+ *
+ * This benchmark is based on the example program \ref TwoSpirals. It requires
+ * the same data set and takes the directory of the data set as argument:
+ * \verbatim ./TwoSpiralsBenchmark [directory] \endverbatim
+ *
+ * The result will look like this:
+ * \verbatim
+Loaded training set.
+Loaded test set.
+Architecture: 2-20-10-1 (bias)
+281 parameters
+....................................................................................................
+Finished 100 runs.
+                Correct         Accuracy        Time/ms         Iterations
+Mean+-StdDev    192.490+-0.795  0.997+-0.057    2575            313+-8.560
+[min,max]       [190,193]       [0.984,1.000]                   [11,598]
+
+Architecture: 2-20-20-1 (bias)
+501 parameters
+....................................................................................................
+Finished 100 runs.
+                Correct         Accuracy        Time/ms         Iterations
+Mean+-StdDev    192.660+-0.705  0.998+-0.051    7176            251+-6.060
+[min,max]       [190,193]       [0.984,1.000]                   [127,490]
+
+Architecture: 2-20-20-1 (bias), Compression: 3-21-21
+501 parameters
+....................................................................................................
+Finished 100 runs.
+                Correct         Accuracy        Time/ms         Iterations
+Mean+-StdDev    192.330+-0.843  0.997+-0.061    8344            286+-6.599
+[min,max]       [189,193]       [0.979,1.000]                   [163,561]
+
+Architecture: 2-20-20-1 (bias), Compression: 3-12-12
+312 parameters
+....................................................................................................
+Finished 100 runs.
+                Correct         Accuracy        Time/ms         Iterations
+Mean+-StdDev    192.460+-0.805  0.997+-0.058    3430            323+-7.802
+[min,max]       [190,193]       [0.984,1.000]                   [12,635]
+
+Architecture: 2-20-20-1 (bias), Compression: 3-6-6
+186 parameters
+....................................................................................................
+Finished 100 runs.
+                Correct         Accuracy        Time/ms         Iterations
+Mean+-StdDev    191.970+-0.941  0.995+-0.068    1740            401+-9.261
+[min,max]       [184,193]       [0.953,1.000]                   [67,988]
+
+Architecture: 2-20-20-1 (bias), Compression: 3-6-3
+183 parameters
+....................................................................................................
+Finished 100 runs.
+                Correct         Accuracy        Time/ms         Iterations
+Mean+-StdDev    192.220+-0.883  0.996+-0.064    2042            484+-11.672
+[min,max]       [186,193]       [0.964,1.000]                   [101,997]
+   \endverbatim
  */
 
 class EvaluatableDataset : public OpenANN::DirectStorageDataSet

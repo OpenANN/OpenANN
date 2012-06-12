@@ -11,6 +11,84 @@
 
 /**
  * \page PoleBalancingBenchmark Pole Balancing
+ *
+ * This benchmark is based on the example \ref PB.
+ *
+ * We compare the number of episodes that is needed to learn a successful
+ * policy. We use a Single Layer Perceptron (SLP) to represent the policy
+ * \f$ \pi : S \rightarrow A \f$. In case of a partially observable
+ * environment, we estimate the velocities with \f$ \alpha - \beta \f$
+ * filters. We do 1000 runs per configuration. The output of the program could
+ * be
+ * \verbatim
+SPB, MDP, uncompressed
+....................................................................................................
+0/1000 failed
+episodes:       33.088+-20.8315
+range:          [1,142]
+median:         28
+time:           118.6 ms
+
+SPB, MDP, compressed (1)
+....................................................................................................
+0/1000 failed
+episodes:       2.476+-2.4391
+range:          [1,40]
+median:         2
+time:           104.3 ms
+
+DPB, MDP, uncompressed
+....................................................................................................
+0/1000 failed
+episodes:       261.146+-174.2955
+range:          [28,1410]
+median:         224
+time:           210.9 ms
+
+DPB, MDP, compressed (5)
+....................................................................................................
+0/1000 failed
+episodes:       201.384+-229.8003
+range:          [10,1336]
+median:         139
+time:           159.6 ms
+
+SPB, POMDP, uncompressed
+....................................................................................................
+0/1000 failed
+episodes:       31.381+-15.4108
+range:          [1,102]
+median:         30
+time:           117.2 ms
+
+SPB, POMDP, compressed (3)
+....................................................................................................
+0/1000 failed
+episodes:       14.318+-9.5876
+range:          [1,57]
+median:         12
+time:           114.2 ms
+
+DPB, POMDP, uncompressed
+....................................................................................................
+0/1000 failed
+episodes:       425.499+-220.8568
+range:          [3,1714]
+median:         388
+time:           228.7 ms
+
+DPB, POMDP, compressed (5)
+....................................................................................................
+0/1000 failed
+episodes:       434.321+-318.3513
+range:          [25,1909]
+median:         352
+time:           195.4 ms
+\endverbatim
+ * Here SPB means Single Pole Balancing, DPB Double Pole Balancing, MDP
+ * (Fully Observable) Markov Decision Process and POMDP Partially Observabe
+ * Markov Decision Process. The number of compressed SLPs' parameters are
+ * given in brackets.
  */
 
 struct Result
