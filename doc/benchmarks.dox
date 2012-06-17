@@ -14,6 +14,7 @@ Classification
 Reinforcement Learning
 
   - \ref PoleBalancingBenchmark
+  - \ref OctopusArm
 
 */
 

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+
+<constants>
+    <!-- On a real octopus, tangential friction is about 50 times less than perpendicular friction -->
+    <frictionTangential>0.02</frictionTangential>
+    <frictionPerpendicular>0.01</frictionPerpendicular>
+    <pressure>10</pressure>
+    <gravity>0.01</gravity>
+    <surfaceLevel>5</surfaceLevel>
+    <buoyancy>0.02</buoyancy>
+    <muscleActive>0.1</muscleActive>
+    <musclePassive>0.05</musclePassive>
+    <muscleNormalizedMinLength>0.4</muscleNormalizedMinLength>
+    <muscleDamping>-0.3</muscleDamping>
+    <!-- the values 0.04 and 2.3 produce good behaviour for a 40-compartment arm -->
+    <repulsionConstant>.04</repulsionConstant> 
+    <repulsionPower>2.3</repulsionPower>
+    <repulsionThreshold>.7</repulsionThreshold>
+</constants>
+
+<environment>
+
+<targetTask timeLimit="300" stepReward="-0.01">
+    <sequence>
+        <target position="6.5 2.5" reward="0.1" />
+        <target position="6.25 2.5" reward="0.1" />
+        <target position="6 2.5" reward="0.1" />
+        <target position="5.75 2.5" reward="0.1" />
+        <target position="5.5 2.5" reward="0.1" />
+        <target position="4.25 3.75" reward="0.3" />
+        <target position="4.5 3.75" reward="0.3" />
+        <target position="4.75 3.75" reward="0.3" />
+        <target position="5 3.75" reward="0.3" />
+        <target position="5.25 3.75" reward="0.3" />
+        <target position="7 -2.5" reward="0.5" />
+        <target position="6.75 -2.5" reward="0.5" />
+        <target position="6.5 -2.5" reward="0.5" />
+        <target position="6.25 -2.5" reward="0.5" />
+        <target position="6 -2.5" reward="0.5" />
+        <target position="4 -4.75" reward="1.0" />
+        <target position="4.25 -4.75" reward="1.0" />
+        <target position="4.5 -4.75" reward="1.0" />
+        <target position="4.75 -4.75" reward="1.0" />
+        <target position="5 -4.75" reward="1.0" />
+    </sequence>
+</targetTask>
+
+<arm>
+  <nodePair>
+    <upper velocity='0 0' position='0 1' mass='1' />
+    <lower velocity='0 0' position='0 0' mass='1' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='1 1' mass='0.9900990099' />
+    <lower velocity='0 0' position='1 0' mass='0.9900990099' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='2 1' mass='0.9803921569' />
+    <lower velocity='0 0' position='2 0' mass='0.9803921569' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='3 1' mass='0.9708737864' />
+    <lower velocity='0 0' position='3 0' mass='0.9708737864' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='4 1' mass='0.9615384615' />
+    <lower velocity='0 0' position='4 0' mass='0.9615384615' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='5 1' mass='0.9523809524' />
+    <lower velocity='0 0' position='5 0' mass='0.9523809524' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='6 1' mass='0.8433962264' />
+    <lower velocity='0 0' position='6 0' mass='0.8433962264' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='7 1' mass='0.8345794393' />
+    <lower velocity='0 0' position='7 0' mass='0.8345794393' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='8 1' mass='0.8259259259' />
+    <lower velocity='0 0' position='8 0' mass='0.8259259259' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='9 1' mass='0.8174311927' />
+    <lower velocity='0 0' position='9 0' mass='0.8174311927' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='10 1' mass='0.7090909091' />
+    <lower velocity='0 0' position='10 0' mass='0.7090909091' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='11 1' mass='0.7009009009' />
+    <lower velocity='0 0' position='11 0' mass='0.7009009009' />
+  </nodePair>
+  <nodePair>
+    <upper velocity='0 0' position='12 1' mass='0.7928571429' />
+    <lower velocity='0 0' position='12 0' mass='0.7928571429' />
+  </nodePair>
+</arm>
+
+</environment>
+
+</config>
