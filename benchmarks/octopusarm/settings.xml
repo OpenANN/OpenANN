@@ -4,12 +4,12 @@
 
 <constants>
     <!-- On a real octopus, tangential friction is about 50 times less than perpendicular friction -->
-    <frictionTangential>0.02</frictionTangential>
-    <frictionPerpendicular>0.01</frictionPerpendicular>
+    <frictionTangential>0.2</frictionTangential>
+    <frictionPerpendicular>1</frictionPerpendicular>
     <pressure>10</pressure>
     <gravity>0.01</gravity>
     <surfaceLevel>5</surfaceLevel>
-    <buoyancy>0.02</buoyancy>
+    <buoyancy>0.08</buoyancy>
     <muscleActive>0.1</muscleActive>
     <musclePassive>0.05</musclePassive>
     <muscleNormalizedMinLength>0.4</muscleNormalizedMinLength>
@@ -21,31 +21,25 @@
 </constants>
 
 <environment>
+    
 
-<targetTask timeLimit="300" stepReward="-0.01">
-    <sequence>
-        <target position="6.5 2.5" reward="0.1" />
-        <target position="6.25 2.5" reward="0.1" />
-        <target position="6 2.5" reward="0.1" />
-        <target position="5.75 2.5" reward="0.1" />
-        <target position="5.5 2.5" reward="0.1" />
-        <target position="4.25 3.75" reward="0.3" />
-        <target position="4.5 3.75" reward="0.3" />
-        <target position="4.75 3.75" reward="0.3" />
-        <target position="5 3.75" reward="0.3" />
-        <target position="5.25 3.75" reward="0.3" />
-        <target position="7 -2.5" reward="0.5" />
-        <target position="6.75 -2.5" reward="0.5" />
-        <target position="6.5 -2.5" reward="0.5" />
-        <target position="6.25 -2.5" reward="0.5" />
-        <target position="6 -2.5" reward="0.5" />
-        <target position="4 -4.75" reward="1.0" />
-        <target position="4.25 -4.75" reward="1.0" />
-        <target position="4.5 -4.75" reward="1.0" />
-        <target position="4.75 -4.75" reward="1.0" />
-        <target position="5 -4.75" reward="1.0" />
-    </sequence>
+<foodTask timeLimit="1000" stepReward="-0.01">
+    <mouth x="5" y="3.5" width="2" height="2" />
+    <food velocity="0 0" position="5 3" mass="1" reward="5" />
+    <food velocity="0 0" position="6 3" mass="2" reward="7" />
+</foodTask>
+
+<!--
+<targetTask timeLimit="10000" stepReward="0">
+    <choice>
+        <sequence>
+            <target position="9 1.5" reward="2" />
+            <target position="10.5 1.5" reward="1" />
+        </sequence>
+        <target position="10 -0.5" reward="3" />
+    </choice>
 </targetTask>
+-->
 
 <arm>
   <nodePair>

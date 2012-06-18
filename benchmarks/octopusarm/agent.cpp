@@ -15,7 +15,54 @@ using namespace OpenANN;
 /**
  * \page OctopusArm Octopus Arm
  *
- * TODO: description
+ * This is a reinforcement learning problem that has large dimensional state
+ * and action space. Both are continuous, thus, we apply neuroevolution to
+ * solve this problem.
+ *
+ * The octopus arm environment is available at <a href=
+ * "http://www.cs.mcgill.ca/~dprecup/workshops/ICML06/octopus.html" target=
+ * _blank>http://www.cs.mcgill.ca/~dprecup/workshops/ICML06/octopus.html</a>.
+ * You have to unpack the archive octopus-code-distribution.zip to the working
+ * directory.
+ *
+ * In this case, we only use the default environment settings. These are very
+ * easy to learn. You see it in this picture:
+ *
+ * \image html octopusarm.png
+ *
+ * The octopus consists of 12 distinct compartments. It can move 36 muscles
+ * and the state space has 106 components. The agent has to move the orange
+ * pieces of food into the black mouth. We use an MLP with 106-10-36 topology
+ * and bias. The action's components have to be in [0, 1]. Therefore, the
+ * activation function of the output layer is logistic sigmoid. In the hidden
+ * layer it is tangens hyperbolicus. In this benchmark we compare several
+ * compression configurations. The weights of a neuron in the first layer are
+ * represented by varying numbers of parameters (5-107) and the weights of a
+ * neuron in the second layer are represented by 11 parameters.
+ *
+ * You can start the benchmark with
+\verbatim
+ruby run
+\endverbatim
+ * and evaluate the results with
+\verbatim
+ruby evaluate
+\endverbatim
+ * The log files that are needed for the evaluation script are collected in
+ * the folder "logs" in the working directory. The evaluation script will list
+ * the average return and the maximal return for each run and will calculate
+ * the mean and standard deviation of the average returns and the maximum of
+ * the maximal returns for each configuration. The average return indicates
+ * how fast the agent learns a good strategy and the maximal returns indicates
+ * how good the best representable strategy is.
+ *
+ * If you run this benchmark on one computer, it takes about 20 days. Thus,
+ * it is recommended to start the benchmark on multiple computers. You can
+ * modify the variable "runs" in the ruby script "run" and set it to a desired
+ * number, start the script on separate computers, merge the results in a
+ * single directory "logs" and run the script "evaluate". Each run will take
+ * approximately two days. If you set the number of runs to 2 and run the
+ * script on 5 computers, it will take about 4 days to finish.
  */
 
 int num_states = 0, num_actions = 0;
@@ -41,8 +88,8 @@ int agent_init(int num_state_variables, int num_action_variables, int argc, cons
     hiddenUnits = atoi(agent_param[1]);
 
   mlp.input(num_states)
-    .fullyConnectedHiddenLayer(hiddenUnits, MLP::TANH, parameters > 0 ? parameters : -1, "random");
-  mlp.output(num_actions, MLP::SSE, MLP::SIGMOID, parameters > 0 ? hiddenUnits+1 : -1, "random");
+    .fullyConnectedHiddenLayer(hiddenUnits, MLP::TANH, parameters > 0 ? parameters : -1, "dct");
+  mlp.output(num_actions, MLP::SSE, MLP::SIGMOID, parameters > 0 ? hiddenUnits+1 : -1, "dct");
   bestParameters = mlp.currentParameters();
   bestReturn = -std::numeric_limits<double>::max();
 

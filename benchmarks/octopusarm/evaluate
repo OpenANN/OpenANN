@@ -1,0 +1,51 @@
+#! /usr/bin/env ruby
+
+MAX_EPISODES = 1000
+
+puts "Average returns:"
+puts "Start time".ljust(25) + "Episodes".ljust(10) + "Avg. return".ljust(15) + "Max. return".ljust(15) + "Std. Dev."
+averages = {}
+maxima = {}
+Dir["logs/*.log"].each do |file_name|
+  m = file_name.match(/Neuroevolution_h_((\d+)_p_(\d+))?_?-(.*)\.log/)
+  if m
+    hidden_units = 10 or m[2].to_i
+    parameters = m[3].to_i
+    run_time = m[4]
+    setup = "#{parameters.to_s} parameters"
+
+    file = File.new file_name, "r"
+    data = file.read
+    file.close
+
+    data_per_episode = data.split "\n"
+    reward_per_episode = data_per_episode.map do |episode| episode.split(" ").map do |reward| reward.to_f end end
+    return_per_episode = reward_per_episode.map do |rewards| rewards.inject(:+) end[0...MAX_EPISODES]
+    best_return = return_per_episode.max
+    if return_per_episode.size >= MAX_EPISODES
+      avg_return = return_per_episode.inject(:+).to_f / return_per_episode.size.to_f
+      # calculate std dev
+      puts (run_time + ":").ljust(25, ".") + return_per_episode.size.to_s.ljust(10, ".") +
+          ((avg_return < 0.0 ? "" : "+") + sprintf("%.2f", avg_return.to_s)).ljust(15, ".") +
+          sprintf("%.2f", best_return)
+      averages[setup] = [] if not averages[setup]
+      maxima[setup] = [] if not maxima[setup]
+      averages[setup] << avg_return
+      maxima[setup] << best_return
+    end
+  end
+end
+
+puts "".ljust(80, "-")
+averages.keys.each do |setup|
+  average = averages[setup].inject(:+).to_f/averages[setup].size.to_f
+  std_dev = 0.0
+  averages[setup].each do |avg|
+    std_dev += (average - avg.to_f)**2.0
+  end
+  std_dev = Math.sqrt(std_dev/averages[setup].size.to_f)
+  puts setup.ljust(25, ".") + averages[setup].size.to_s.ljust(10, ".") +
+      sprintf("%.2f", (average).to_s).ljust(15, ".") +
+      sprintf("%.2f", (maxima[setup].max).to_s).ljust(15, ".") +
+      sprintf("%.2f", (std_dev).to_s)
+end
