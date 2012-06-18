@@ -41,8 +41,8 @@ int agent_init(int num_state_variables, int num_action_variables, int argc, cons
     hiddenUnits = atoi(agent_param[1]);
 
   mlp.input(num_states)
-    .fullyConnectedHiddenLayer(hiddenUnits, MLP::TANH, parameters > 0 ? parameters : -1);
-  mlp.output(num_actions, MLP::SSE, MLP::SIGMOID, parameters > 0 ? hiddenUnits+1 : -1);
+    .fullyConnectedHiddenLayer(hiddenUnits, MLP::TANH, parameters > 0 ? parameters : -1, "random");
+  mlp.output(num_actions, MLP::SSE, MLP::SIGMOID, parameters > 0 ? hiddenUnits+1 : -1, "random");
   bestParameters = mlp.currentParameters();
   bestReturn = -std::numeric_limits<double>::max();
 

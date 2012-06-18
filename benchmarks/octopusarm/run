@@ -14,7 +14,7 @@ setup = {
   :env_dir => "octopus-code-distribution/environment/",
   :settings_dir => "./",
   :cmd_mod => " > /dev/null 2> /dev/null < /dev/null",
-  :episodes => 1,
+  :episodes => 5000,
   :gui => false,
   :hidden_units => 10
 }
@@ -28,9 +28,9 @@ param_configs.each do |params|
     start_server setup, port
     runs.times do |run|
       sleep 2
-      puts "Starting run \##{run.to_s} with #{params.to_s} parameters."
+      puts "Starting run \##{(run+1).to_s} with #{params.to_s} parameters."
       start_client setup, port, params, setup[:hidden_units]
-      puts "Finished run \##{run.to_s} with #{params.to_s} parameters."
+      puts "Finished run \##{(run+1).to_s} with #{params.to_s} parameters."
     end
   end
 end

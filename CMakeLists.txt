@@ -15,7 +15,7 @@ if(NOT EIGEN3_FOUND)
 endif()
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-  message(FATAL_ERROR "Usage: mkdir build; cmake .. ")
+  message(FATAL_ERROR "Usage: mkdir build; cmake ..")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -72,7 +72,7 @@ if(OPENMP_FOUND AND CMAKE_COMPILER_IS_GNUCXX)
   set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lgomp")
 endif()
 
-option(USE_GPL_LICENSE "Enable use of libraries that are under GPL license" OFF)
+option(USE_GPL_LICENSE "Enable use of libraries under GPL license" OFF)
 if(USE_GPL_LICENSE)
   set(OPENANN_COMPILER_FLAGS "${OPENANN_COMPILER_FLAGS} -DUSE_GPL_LICENSE")
 endif()

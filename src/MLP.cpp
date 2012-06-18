@@ -124,11 +124,11 @@ MLP& MLP::fullyConnectedHiddenLayer(int units, ActivationFunction a, int paramet
   return *this;
 }
 
-MLP& MLP::output(int units, ErrorFunction e, ActivationFunction a, int numberOfParameters)
+MLP& MLP::output(int units, ErrorFunction e, ActivationFunction a, int numberOfParameters, std::string compression)
 {
   makeOutputLayer(units, e, a);
   if(numberOfParameters > 0)
-    mlp.layerInfos[mlp.layerInfos.size()-1].compress(numberOfParameters);
+    mlp.layerInfos[mlp.layerInfos.size()-1].compress(numberOfParameters, compression);
   finishInitialization();
   return *this;
 }

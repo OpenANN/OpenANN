@@ -161,9 +161,10 @@ public:
    * @param a activation function
    * @param numberOfParameters number of compression parameters per node (set to
    *                           -1 for now compression)
+   * @param compression Type of compression matrix. ("dct", "random")
    */
   MLP& output(int units, ErrorFunction e = SSE, ActivationFunction a = NO_ACT_FUN,
-      int numberOfParameters = -1);
+      int numberOfParameters = -1, std::string compression = "dct");
   /**
    * Defines a fully connected output vector with two-dimensional compression of
    * the incoming weights.
