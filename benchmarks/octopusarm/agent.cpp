@@ -53,8 +53,8 @@ ruby evaluate
  * the average return and the maximal return for each run and will calculate
  * the mean and standard deviation of the average returns and the maximum of
  * the maximal returns for each configuration. The average return indicates
- * how fast the agent learns a good strategy and the maximal returns indicates
- * how good the best representable strategy is.
+ * how fast the agent learns a good policy and the maximal returns indicates
+ * how good the best representable policy is.
  *
  * If you run this benchmark on one computer, it takes about 20 days. Thus,
  * it is recommended to start the benchmark on multiple computers. You can
