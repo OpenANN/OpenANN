@@ -37,7 +37,7 @@ Guidelines for Developers
 -------------------------
 
 * Here is a todo list: https://github.com/AlexanderFabisch/OpenANN/wiki/Todo
-* TODO link to coding style
+* We have a coding style: https://github.com/AlexanderFabisch/OpenANN/wiki/Coding-Style
 * Use the namespace OpenANN.
 
 Directory Structure
