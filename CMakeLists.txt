@@ -85,6 +85,7 @@ add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(benchmarks)
 add_subdirectory(test)
+add_subdirectory(ruby)
 
 install(DIRECTORY OpenANN DESTINATION include)
 

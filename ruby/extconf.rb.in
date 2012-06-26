@@ -1,0 +1,21 @@
+require "rubygems"
+require "mkmf-rice"
+
+BASE_DIR = "${CMAKE_SOURCE_DIR}/"
+BINARY_DIR = "${CMAKE_BINARY_DIR}/"
+puts "BASE_DIR = " + BASE_DIR
+puts "BINARY_DIR = " + BINARY_DIR
+
+$CFLAGS << "${OPENANN_COMPILER_FLAGS}"
+
+have_library("stdc++")
+have_library("rt")
+
+openann_path = BINARY_DIR + "src"
+dir_config("openann", [BASE_DIR + "OpenANN", "${EIGEN3_INCLUDE_DIRS}", BASE_DIR + "test/lib/CPP-Test"], openann_path)
+unless have_library("openann")
+  abort "OpenANN is missing. Please compile OpenANN."
+end
+$LDFLAGS << " -Wl,-rpath,#{openann_path}"
+
+create_makefile("openann")
