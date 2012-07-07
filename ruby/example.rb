@@ -15,8 +15,11 @@ mlp.input 1
 mlp.fully_connected_hidden_layer 3, "tanh", -1
 mlp.output 1, "sse", "tanh", -1
 mlp.training_set training_input, training_output
+# mlp.test_set training_input, training_output
 mlp.training "lma"
 mlp.fit_to_diff 1e-8
+# mlp.fit_to_error 1e-8
+# puts mlp.parameters
 
 puts "t".ljust(10) + "y"
 (0...training_input.size).each do |i|
