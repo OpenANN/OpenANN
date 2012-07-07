@@ -10,6 +10,7 @@ if(RUBY_FOUND)
 
   file(COPY ${ruby_extension_src} DESTINATION .)
   file(COPY ${ruby_extension_h} DESTINATION .)
+  file(COPY example.rb DESTINATION .)
 
   add_custom_command(
     OUTPUT ruby_extension_command
