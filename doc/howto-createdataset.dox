@@ -1,0 +1,88 @@
+/**
+\page CreateDataSet Creating a data set
+
+In order to train a neural network, we need a training set consisting of
+\f$ N \f$ inputs \f$ x_n \f$ and outputs \f$ y_n \f$ of an underlying unknown
+function \f$ f \f$ we want to approximate.
+
+There are two ways to pass a data set to the neural network:
+
+ - You can arrange your data in matrices.
+ - You can subclass the abstract class OpenANN::DataSet and create an object
+   of it.
+
+\section MatrixDataSet Arranging data in matrices
+
+\code
+int main()
+{
+  const int N = 10; // data set size
+  const int D = 2;  // input space dimension
+  const int F = 1;  // output space dimension
+  // here we generate a random data set
+  Eigen::MatrixXf X = Eigen::MatrixXf::Random(D, N);
+  Eigen::MatrixXf T = Eigen::MatrixXf::Random(F, N);
+  // We could e. g. get the input vector x_n with X.col(n-1).
+  // Now we can train the neural network:
+  MLP mlp;
+  ... // initialize mlp
+  mlp.trainingSet(X, T)
+     .training(MLP::BATCH_LMA);
+  mlp.fit();
+}
+\endcode
+
+\section CustomDataSet Subclassing OpenANN::DataSet
+
+\code
+class MyDataSet : public DataSet
+{
+public:
+  MyDataSet(...)
+  {
+    ...
+  }
+  virtual ~DirectStorageDataSet()
+  {
+    ...
+  }
+  virtual int samples()
+  {
+    // return size of the data set here
+  }
+  virtual int inputs()
+  {
+    // return input space dimension
+  }
+  virtual int outputs()
+  {
+    // return output space dimension
+  }
+  virtual Vt& getInstance(int i)
+  {
+    // return the i-th instance (x_i)
+  }
+  virtual Vt& getTarget(int i);
+  {
+    // return the desired output for the i-th instance (y_i)
+  }
+  virtual void finishIteration(MLP& mlp)
+  {
+    // Here you can place code that will be iterated after every iteration
+    // of the optimization algorithm during the training phase. You could
+    // e. g. print the confusion matrix, error on a test set, etc.
+  }
+};
+
+int main()
+{
+  MyDataSet dataSet = ...; // create a data set
+  // Now we can train the neural network:
+  MLP mlp;
+  ... // initialize mlp
+  mlp.trainingSet(dataSet)
+     .training(MLP::BATCH_LMA);
+  mlp.fit();
+}
+\endcode
+*/

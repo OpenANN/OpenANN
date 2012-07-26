@@ -11,6 +11,7 @@ namespace OpenANN
   - \ref Features
   - \ref SimpleExample
   - \ref MoreExamples
+  - \ref Howtos
   - \ref TodoList
 
 \section License
@@ -118,6 +119,10 @@ Reinforcement Learning
 
 We also have some \ref Benchmarks that show how you can use ANNs and compare
 different architectures.
+
+\section Howtos
+
+  - \ref CreateDataSet
 
 \section TodoList Todo List
 
