@@ -11,7 +11,8 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     : width(500), height(500),
       trainingSet(trainingInput, trainingOutput), testSet(testInput, testOutput),
       showTraining(true), showTest(true), showPrediction(true), showSmooth(true),
-      mlp(new MLP), eventLogger(Logger::CONSOLE)
+      gpPrediction(false), mlp(new MLP), gp(new GP(100, 1.0, 1000.0, 0.0, 0.0)),
+      eventLogger(Logger::CONSOLE)
 {
   std::memset(classes, 0, sizeof(fpt)*100*100);
   trainingSet.setVisualization(this);
@@ -22,9 +23,10 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     .fullyConnectedHiddenLayer(20, MLP::TANH, 3)
     .fullyConnectedHiddenLayer(20, MLP::TANH, 6)
     .output(trainingOutput.rows(), MLP::SSE, MLP::TANH, 1)
-    .trainingSet(trainingSet)
-    .testSet(testSet)
-    .training(MLP::BATCH_LMA);
+    .trainingSet(trainingSet);
+  mlp->testSet(testSet).training(MLP::BATCH_LMA);
+  gp->trainingSet(trainingSet);
+  gp->buildModel();
 
   // set stop criteria
   stop.maximalIterations = 10000;
@@ -98,7 +100,12 @@ void TwoSpiralsVisualization::paintPrediction()
     {
       classesMutex.lock();
       float c;
-      if(showSmooth)
+      Vt v(2);
+      v(0) = (fpt) x / 100.0f;
+      v(1) = (fpt) y / 100.0f;
+      if(gpPrediction)
+        c = (*gp)(v)(0, 0)/2.0f + 0.5f;
+      else if(showSmooth)
         c = classes[x][y]/2.0f + 0.5f;
       else
         c = classes[x][y] < 0.0 ? 0.0f : 1.0f;
@@ -161,6 +168,11 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
       eventLogger << "Training with restart (" << mlp->dimension() << " parameters)...";
       mlp->fit(stop);
       eventLogger << " finished.\n";
+      break;
+    case Qt::Key_G:
+      eventLogger << "Show Gaussian process prediction on/off.\n";
+      gpPrediction = !gpPrediction;
+      update();
       break;
     case Qt::Key_P:
       eventLogger << "Parameters:\n" << mlp->currentParameters().transpose() << "\n";

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenANN>
+#include <GP.h>
 #include <io/Logger.h>
 #include <io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
@@ -37,8 +38,9 @@ class TwoSpiralsVisualization : public QGLWidget
   fpt classes[100][100];
   TwoSpiralsDataSet trainingSet;
   TwoSpiralsDataSet testSet;
-  bool showTraining, showTest, showPrediction, showSmooth;
+  bool showTraining, showTest, showPrediction, showSmooth, gpPrediction;
   MLP* mlp;
+  GP* gp;
   StopCriteria stop;
   Logger eventLogger;
 

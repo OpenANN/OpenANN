@@ -1,6 +1,7 @@
 #pragma once
 
 #include <MLPImplementation.h>
+#include <Learner.h>
 #include <Optimizable.h>
 #include <Optimizer.h>
 #include <StopCriteria.h>
@@ -10,7 +11,7 @@
 
 namespace OpenANN {
 
-class MLP : public Optimizable
+class MLP : public Learner, public Optimizable
 {
 public:
   enum ErrorFunction
@@ -196,18 +197,8 @@ private:
   MLP& compressWith(int parametersX, int parametersY, int parametersZ, const std::vector<std::vector<fpt> >& t);
   MLP& finishInitialization();
 public:
-  /**
-   * Set the current training set.
-   * @param trainingInput input vectors, each instance should be in a new column
-   * @param trainingOutput output vectors, each instance should be in a new
-   *                       column
-   */
-  MLP& trainingSet(Mt& trainingInput, Mt& trainingOutput);
-  /**
-   * Set the current training set.
-   * @param trainingSet custom training set
-   */
-  MLP& trainingSet(DataSet& trainingSet);
+  virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
+  virtual Learner& trainingSet(DataSet& trainingSet);
   /**
    * Set the current test set.
    * @param testInput input vectors, each instance should be in a new column
@@ -249,7 +240,7 @@ public:
   virtual unsigned int examples();
   virtual fpt error(unsigned int i);
   virtual Vt gradient(unsigned int i);
-  Vt operator()(const Vt& x);
+  virtual Vt operator()(const Vt& x);
   virtual int operator()(const Vt& x, Vt& fvec);
   virtual int df(const Vt& x, Vt& fjac);
   virtual void VJ(Vt& values, Mt& jacobian);

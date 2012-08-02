@@ -51,6 +51,7 @@
  *  - R: Toggle display of smooth prediction transitions (black+white or grey)
  *  - A: Start visible training
  *  - P: Print current MLP parameters
+ *  - G: Shows the prediction of a Gaussian process.
  *  - Escape: Quit application.
  *
  * A trained model could make these predictions:

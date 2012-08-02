@@ -43,8 +43,8 @@ int main(int argc, char** argv)
     .fullyConnectedHiddenLayer(200, OpenANN::MLP::TANH)
     .fullyConnectedHiddenLayer(100, OpenANN::MLP::TANH)
     .output(loader.F, OpenANN::MLP::CE, OpenANN::MLP::SM)
-    .trainingSet(loader.trainingInput, loader.trainingOutput)
-    .testSet(loader.testInput, loader.testOutput)
+    .trainingSet(loader.trainingInput, loader.trainingOutput);
+  mlp.testSet(loader.testInput, loader.testOutput)
     .training(OpenANN::MLP::BATCH_SGD);
   OpenANN::StopCriteria stop;
   stop.maximalIterations = 15;

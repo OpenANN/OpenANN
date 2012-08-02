@@ -211,7 +211,7 @@ MLP& MLP::noBias()
   return *this;
 }
 
-MLP& MLP::trainingSet(Mt& trainingInput, Mt& trainingOutput)
+Learner& MLP::trainingSet(Mt& trainingInput, Mt& trainingOutput)
 {
   if(deleteDataSetOnDestruction && trainingData)
     delete trainingData;
@@ -219,10 +219,10 @@ MLP& MLP::trainingSet(Mt& trainingInput, Mt& trainingOutput)
   trainingData = new DirectStorageDataSet(trainingInput, trainingOutput);
   N = trainingInput.cols();
   initializationState = INITIALIZED;
-  return *this;
+  return (Learner&) *this;
 }
 
-MLP& MLP::trainingSet(DataSet& trainingSet)
+Learner& MLP::trainingSet(DataSet& trainingSet)
 {
   if(deleteDataSetOnDestruction && trainingData)
     delete trainingData;
@@ -230,7 +230,7 @@ MLP& MLP::trainingSet(DataSet& trainingSet)
   trainingData = &trainingSet;
   N = trainingSet.samples();
   initializationState = INITIALIZED;
-  return *this;
+  return (Learner&) *this;
 }
 
 MLP& MLP::testSet(Mt& testInput, Mt& testOutput)

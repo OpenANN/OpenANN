@@ -117,8 +117,8 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
   mlp.input(csDimension > 0 ? csDimension : trainingSet.inputs())
     .output(trainingSet.outputs())
     .training(OpenANN::MLP::BATCH_LMA)
-    .trainingSet(trainingSet)
-    .testSet(testSet);
+    .testSet(testSet)
+    .trainingSet(trainingSet);
 
   OpenANN::Logger progressLogger(OpenANN::Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
