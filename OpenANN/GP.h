@@ -19,6 +19,7 @@ private:
 
   Mt covarianceInv;
   Mt t;
+  fpt var;
 public:
   GP(fpt beta, fpt theta0, fpt theta1, fpt theta2, fpt theta3);
   ~GP();
@@ -36,6 +37,7 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
   void buildModel();
   virtual Vt operator()(const Vt& x);
+  fpt variance();
 
 private:
   fpt kernel(const Vt& x1, const Vt& x2);

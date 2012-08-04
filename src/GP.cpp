@@ -34,7 +34,10 @@ unsigned int GP::dimension()
 
 fpt GP::error()
 {
-  return 0.0; // TODO implement
+  fpt e = 0.0;
+  for(int n = 0; n < dataSet->samples(); n++)
+    e += ((*this)(dataSet->getInstance(n)) - dataSet->getTarget(n)).squaredNorm();
+  return e;
 }
 
 Vt GP::gradient()
@@ -51,7 +54,7 @@ Mt GP::hessian()
 
 void GP::initialize()
 {
-  // TODO implement
+  buildModel();
 }
 
 bool GP::providesGradient()
@@ -72,6 +75,7 @@ bool GP::providesInitialization()
 void GP::setParameters(const Vt& parameters)
 {
   this-> parameters = parameters;
+  buildModel();
 }
 
 Learner& GP::trainingSet(Mt& trainingInput, Mt& trainingOutput)
@@ -95,12 +99,13 @@ void GP::buildModel()
   {
     for(int m = 0; m <= n; m++)
     {
-      covariance(n, m) = kernel(dataSet->getInstance(n),
-          dataSet->getInstance(m)) + (n == m) ? (fpt) 1.0 / beta : (fpt) 0.0;
-      covariance(n, m) = covariance(m, n);
+      fpt knm = kernel(dataSet->getInstance(n), dataSet->getInstance(m));
+      covariance(n, m) = knm;
+      covariance(m, n) = knm;
     }
     t.row(n) = dataSet->getTarget(n);
   }
+  covariance += 1.0 / beta * Mt::Identity(N, N);
   covarianceInv.resize(N, N);
   covarianceInv = covariance.inverse();
 }
@@ -111,13 +116,22 @@ Vt GP::operator()(const Vt& x)
   Mt k(N, 1);
   for(int n = 0; n < N; n++)
     k(n, 0) = kernel(dataSet->getInstance(n), x);
-  return k.transpose() * covarianceInv * t;
+  Mt kCovInv = k.transpose() * covarianceInv;
+  var = kernel(x, x) - (kCovInv * k).eval()(0, 0);
+  OPENANN_CHECK(var >= (fpt) 0.0);
+  OPENANN_CHECK_INF_AND_NAN(var);
+  return kCovInv * t;
+}
+
+fpt GP::variance()
+{
+  return var;
 }
 
 fpt GP::kernel(const Vt& x1, const Vt& x2)
 {
-  return theta0 * std::exp(-theta1/(fpt)2.0*(x1-x2).squaredNorm() + theta2 +
-      theta3 * x1.dot(x2));
+  return theta0 * std::exp(-theta1/(fpt)2.0*(x1-x2).squaredNorm()) + theta2 +
+      theta3 * x1.dot(x2);
 }
 
 }

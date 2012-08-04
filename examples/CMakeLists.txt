@@ -1,2 +1,3 @@
 add_subdirectory(polebalancing)
+add_subdirectory(gaussianprocesses)
 add_subdirectory(twospirals)
