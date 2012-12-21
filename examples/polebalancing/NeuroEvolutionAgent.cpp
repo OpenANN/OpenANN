@@ -4,10 +4,12 @@
 
 NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,
                                          bool compress, int m,
-                                         bool fullyObservable, bool alphaBetaFilter)
+                                         bool fullyObservable, bool alphaBetaFilter,
+                                         bool doubleExponentialSmoothing)
   : h(h), b(b), a(a),
     compress(compress), m(m),
     fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
+    doubleExponentialSmoothing(doubleExponentialSmoothing),
     gruauFitness(false)
 {
 }
@@ -39,6 +41,14 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
         alphaBetaFilters[i].setDeltaT(environment.deltaT());
         alphaBetaFilters[i].restart();
         alphaBetaFilters[i].random();
+      }
+    }
+    else if(doubleExponentialSmoothing)
+    {
+      des.resize(environment.stateSpaceDimension());
+      for(int i  = 0; i < environment.stateSpaceDimension(); i++)
+      {
+        des[i].restart();
       }
     }
     else
@@ -94,6 +104,8 @@ void NeuroEvolutionAgent::chooseAction()
     firstStep = true;
     for(size_t i = 0; i < alphaBetaFilters.size(); i++)
       alphaBetaFilters[i].restart();
+    for(size_t i = 0; i < des.size(); i++)
+      des[i].restart();
   }
 }
 
@@ -113,6 +125,16 @@ void NeuroEvolutionAgent::chooseOptimalAction()
       for(int i = 0; i < state.rows(); i++)
       {
         Vt estimation = alphaBetaFilters[i](state(i));
+        input(in_idx++) = estimation(0);
+        input(in_idx++) = estimation(1);
+      }
+    }
+    else if(doubleExponentialSmoothing)
+    {
+      int in_idx = 0;
+      for(int i = 0; i < state.rows(); i++)
+      {
+        Vt estimation = des[i](state(i));
         input(in_idx++) = estimation(0);
         input(in_idx++) = estimation(1);
       }

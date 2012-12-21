@@ -4,6 +4,7 @@
 #include <MLP.h>
 #include <optimization/IPOPCMAES.h>
 #include "AlphaBetaFilter.h"
+#include "DoubleExponentialSmoothing.h"
 #include <vector>
 #include <list>
 
@@ -25,6 +26,9 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
   bool fullyObservable;
   //! Use alpha beta filters to estimate missing state variables?
   bool alphaBetaFilter;
+  //! Use double exponential smoothing to estimate missing state variables?
+  bool doubleExponentialSmoothing;
+  //! Use Gruau's fitness function.
   bool gruauFitness;
 
   Environment* environment;
@@ -34,11 +38,13 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
   Vt lastState;
   bool firstStep;
   std::vector<AlphaBetaFilter> alphaBetaFilters;
+  std::vector<DoubleExponentialSmoothing> des;
   std::list<Vt> inputBuffer;
 public:
   NeuroEvolutionAgent(int h, bool b, const std::string a,
                       bool compress = false, int m = 0,
-                      bool fullyObservable = true, bool alphaBetaFilter = false);
+                      bool fullyObservable = true, bool alphaBetaFilter = false,
+                      bool doubleExponentialSmoothing = false);
   ~NeuroEvolutionAgent();
   virtual void abandoneIn(Environment& environment);
   virtual void chooseAction();

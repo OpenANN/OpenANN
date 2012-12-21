@@ -18,10 +18,12 @@
 
 DoublePoleBalancingVisualization::DoublePoleBalancingVisualization(
     bool singlePole, bool fullyObservable, bool alphaBetaFilter,
-    QWidget* parent, const QGLWidget* shareWidget, Qt::WindowFlags f)
+    bool doubleExponentialSmoothing, QWidget* parent,
+    const QGLWidget* shareWidget, Qt::WindowFlags f)
     : QGLWidget(parent, shareWidget, f),
       width(800), height(400), singlePole(singlePole),
       fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
+      doubleExponentialSmoothing(doubleExponentialSmoothing),
       position(0.0), angle1(4.0*M_PI/180.0), angle2(0.0), force(0.0),
       pause(1000)
 {
@@ -151,7 +153,7 @@ void DoublePoleBalancingVisualization::run()
     env = new DoublePoleBalancing(fullyObservable);
   Environment& environment = *env;
   NeuroEvolutionAgent agent(0, false, "linear", true, singlePole? 1 : 5,
-      fullyObservable, alphaBetaFilter);
+      fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
   agent.abandoneIn(environment);
   int best = -1;
   for(int i = 0; i < 100000; i++)

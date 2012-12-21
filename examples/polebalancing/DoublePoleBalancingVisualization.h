@@ -7,14 +7,15 @@ class DoublePoleBalancingVisualization : public QGLWidget
 {
   Q_OBJECT
   int width, height;
-  bool singlePole, fullyObservable, alphaBetaFilter;
+  bool singlePole, fullyObservable, alphaBetaFilter, doubleExponentialSmoothing;
   double position, angle1, angle2, force;
   int pause;
 
 public:
   DoublePoleBalancingVisualization(bool singlePole, bool fullyObservable,
-      bool alphaBetaFilter, QWidget* parent = 0,
-      const QGLWidget* shareWidget = 0, Qt::WindowFlags f = 0);
+      bool alphaBetaFilter, bool doubleExponentialSmoothing,
+      QWidget* parent = 0, const QGLWidget* shareWidget = 0,
+      Qt::WindowFlags f = 0);
 
 protected:
   virtual void initializeGL();

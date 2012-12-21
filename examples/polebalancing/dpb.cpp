@@ -10,6 +10,17 @@
  * DoublePoleBalancing with or without velocities. The NeuroEvolutionAgent
  * solves this problem.
  *
+ * Usage:
+ *
+ * Available command line arguments are:
+ * - "-spb": Single Pole Balancing
+ * - "-po": Partially Observable (without velocities)
+ * - "-ab": Use alpha beta filters to estimate the velocities
+ * - "-des": Use double exponential smoothing to estimate the velocities
+ *
+ * Start the experiment with the key "r". Increase the simulation speed with
+ * "+" and decrease the simulation speed with "-".
+ *
  * \image html polebalancing.png
  */
 
@@ -18,7 +29,8 @@ void printUsage()
   std::cout << "unrecognized option, usage:" << std::endl
       << "\t-spb\tSingle Pole Balancing" << std::endl
       << "\t-po\tPartially Observable (without velocities)" << std::endl
-      << "\t-ab\tUse alpha beta filters to estimate the velocities" << std::endl;
+      << "\t-ab\tUse alpha beta filters to estimate the velocities" << std::endl
+      << "\t-des\tUse double exponential smoothing to estimate the velocities" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -28,6 +40,7 @@ int main(int argc, char** argv)
   bool singlePoleBalancing = false;
   bool partiallyObservable = false;
   bool useAlphaBetaFilters = false;
+  bool useDoubleExponentialSmoothing = false;
   for(int i = 1; i < argc; i++)
   {
     std::string argument(argv[i]);
@@ -37,12 +50,14 @@ int main(int argc, char** argv)
       partiallyObservable = true;
     else if(argument == std::string("-ab"))
       useAlphaBetaFilters = true;
+    else if(argument == std::string("-des"))
+      useDoubleExponentialSmoothing = true;
     else
       printUsage();
   }
 
   QApplication app(argc, argv);
-  DoublePoleBalancingVisualization dpbv(singlePoleBalancing, !partiallyObservable, useAlphaBetaFilters);
+  DoublePoleBalancingVisualization dpbv(singlePoleBalancing, !partiallyObservable, useAlphaBetaFilters, useDoubleExponentialSmoothing);
   dpbv.show();
   dpbv.resize(800, 400);
 

@@ -17,9 +17,9 @@
  * We compare the number of episodes that is needed to learn a successful
  * policy. We use a Single Layer Perceptron (SLP) to represent the policy
  * \f$ \pi : S \rightarrow A \f$. In case of a partially observable
- * environment, we estimate the velocities with \f$ \alpha - \beta \f$
- * filters. We do 1000 runs per configuration. The output of the program could
- * be
+ * environment, we estimate the velocities either with \f$ \alpha - \beta \f$
+ * filters or by double exponential smoothing. We do 1000 runs per
+ * configuration. The output of the program could be
  * \verbatim
 SPB, MDP, uncompressed
 ....................................................................................................
@@ -53,7 +53,7 @@ range:          [10,1336]
 median:         139
 time:           159.6 ms
 
-SPB, POMDP, uncompressed
+SPB, POMDP (ABF), uncompressed
 ....................................................................................................
 0/1000 failed
 episodes:       31.381+-15.4108
@@ -61,7 +61,7 @@ range:          [1,102]
 median:         30
 time:           117.2 ms
 
-SPB, POMDP, compressed (3)
+SPB, POMDP (ABF), compressed (3)
 ....................................................................................................
 0/1000 failed
 episodes:       14.318+-9.5876
@@ -69,7 +69,7 @@ range:          [1,57]
 median:         12
 time:           114.2 ms
 
-DPB, POMDP, uncompressed
+DPB, POMDP (ABF), uncompressed
 ....................................................................................................
 0/1000 failed
 episodes:       425.499+-220.8568
@@ -77,18 +77,51 @@ range:          [3,1714]
 median:         388
 time:           228.7 ms
 
-DPB, POMDP, compressed (5)
+DPB, POMDP (ABF), compressed (5)
 ....................................................................................................
 0/1000 failed
 episodes:       434.321+-318.3513
 range:          [25,1909]
 median:         352
 time:           195.4 ms
+
+SPB, POMDP (DES), uncompressed
+....................................................................................................
+0/1000 failed
+episodes:       25.485+-15.8919
+range:          [1,97]
+median:         22
+time:           209.3 ms
+
+SPB, POMDP (DES), compressed (3)
+....................................................................................................
+0/1000 failed
+episodes:       12.169+-7.9433
+range:          [1,56]
+median:         11
+time:           149.2 ms
+
+DPB, POMDP (DES), uncompressed
+....................................................................................................
+0/1000 failed
+episodes:       225.166+-196.6204
+range:          [27,1532]
+median:         173
+time:           584.4 ms
+
+DPB, POMDP (DES), compressed (5)
+....................................................................................................
+0/1000 failed
+episodes:       203.143+-241.2319
+range:          [7,1331]
+median:         133
+time:           322.9 ms
 \endverbatim
  * Here SPB means Single Pole Balancing, DPB Double Pole Balancing, MDP
- * (Fully Observable) Markov Decision Process and POMDP Partially Observabe
- * Markov Decision Process. The number of compressed SLPs' parameters are
- * given in brackets.
+ * (Fully Observable) Markov Decision Process, POMDP Partially Observable
+ * Markov Decision Process, ABF \f$ \alpha - \beta \f$ Filters, DES Double
+ * Exponential Smoothing (with \f$ \alpha = 0.9, \beta = 0.9 \f$). The number
+ * of compressed SLPs' parameters are given in brackets.
  */
 
 struct Result
@@ -137,7 +170,8 @@ Result benchmarkSingleRun(OpenANN::Environment& environment, OpenANN::Agent& age
 }
 
 Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
-    bool alphaBetaFilter, int parameters, int runs, fpt sigma0)
+    bool alphaBetaFilter, bool doubleExponentialSmoothing, int parameters,
+    int runs, fpt sigma0)
 {
   OpenANN::Environment* env;
   if(doublePole)
@@ -153,7 +187,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
   for(int run = 0; run < runs; run++)
   {
     NeuroEvolutionAgent agent(0, false, "linear", true, parameters,
-        fullyObservable, alphaBetaFilter);
+        fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
     agent.setSigma0(sigma0);
     Result result = benchmarkSingleRun(*env, agent);
     if(run % 10 == 0)
@@ -203,27 +237,39 @@ int main(int argc, char** argv)
   int runs = 1000;
 
   configLogger << "SPB, MDP, uncompressed\n";
-  Results results = benchmarkConfiguration(false, true, false, -1, runs, 10.0);
+  Results results = benchmarkConfiguration(false, true, false, false, -1, runs, 10.0);
   printResults(results);
   configLogger << "SPB, MDP, compressed (1)\n";
-  results = benchmarkConfiguration(false, true, false, 1, runs, 100.0);
+  results = benchmarkConfiguration(false, true, false, false, 1, runs, 100.0);
   printResults(results);
   configLogger << "DPB, MDP, uncompressed\n";
-  results = benchmarkConfiguration(true, true, false, -1, runs, 10.0);
+  results = benchmarkConfiguration(true, true, false, false, -1, runs, 10.0);
   printResults(results);
   configLogger << "DPB, MDP, compressed (5)\n";
-  results = benchmarkConfiguration(true, true, false, 5, runs, 10.0);
+  results = benchmarkConfiguration(true, true, false, false, 5, runs, 10.0);
   printResults(results);
-  configLogger << "SPB, POMDP, uncompressed\n";
-  results = benchmarkConfiguration(false, false, true, -1, runs, 10.0);
+  configLogger << "SPB, POMDP (ABF), uncompressed\n";
+  results = benchmarkConfiguration(false, false, true, false, -1, runs, 10.0);
   printResults(results);
-  configLogger << "SPB, POMDP, compressed (3)\n";
-  results = benchmarkConfiguration(false, false, true, 3, runs, 10.0);
+  configLogger << "SPB, POMDP (ABF), compressed (3)\n";
+  results = benchmarkConfiguration(false, false, true, false, 3, runs, 10.0);
   printResults(results);
-  configLogger << "DPB, POMDP, uncompressed\n";
-  results = benchmarkConfiguration(true, false, true, -1, runs, 10.0);
+  configLogger << "DPB, POMDP (ABF), uncompressed\n";
+  results = benchmarkConfiguration(true, false, true, false, -1, runs, 10.0);
   printResults(results);
-  configLogger << "DPB, POMDP, compressed (5)\n";
-  results = benchmarkConfiguration(true, false, true, 5, runs, 10.0);
+  configLogger << "DPB, POMDP (ABF), compressed (5)\n";
+  results = benchmarkConfiguration(true, false, true, false, 5, runs, 10.0);
+  printResults(results);
+  configLogger << "SPB, POMDP (DES), uncompressed\n";
+  results = benchmarkConfiguration(false, false, false, true, -1, runs, 10.0);
+  printResults(results);
+  configLogger << "SPB, POMDP (DES), compressed (3)\n";
+  results = benchmarkConfiguration(false, false, false, true, 3, runs, 10.0);
+  printResults(results);
+  configLogger << "DPB, POMDP (DES), uncompressed\n";
+  results = benchmarkConfiguration(true, false, false, true, -1, runs, 10.0);
+  printResults(results);
+  configLogger << "DPB, POMDP (DES), compressed (5)\n";
+  results = benchmarkConfiguration(true, false, false, true, 5, runs, 10.0);
   printResults(results);
 }
