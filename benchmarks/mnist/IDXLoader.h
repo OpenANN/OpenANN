@@ -14,6 +14,7 @@ class IDXLoader
 public:
   int padToX;
   int padToY;
+  std::string directory;
   int trainingN;
   int testN;
   int D;
@@ -21,8 +22,10 @@ public:
   Mt trainingInput, trainingOutput, testInput, testOutput;
   OpenANN::Logger debugLogger;
 
-  IDXLoader(int padToX = 29, int padToY = 29, int loadTraininN = -1, int loadTestN = -1)
-    : padToX(padToX), padToY(padToY), trainingN(0), testN(0), D(0), F(0), debugLogger(OpenANN::Logger::CONSOLE)
+  IDXLoader(int padToX = 29, int padToY = 29, int loadTraininN = -1,
+            int loadTestN = -1, std::string directory = "mnist/")
+    : padToX(padToX), padToY(padToY), directory(directory), trainingN(0),
+      testN(0), D(0), F(0), debugLogger(OpenANN::Logger::CONSOLE)
   {
     load(true, loadTraininN);
     load(false, loadTestN);
@@ -39,9 +42,16 @@ public:
     Mt& output = train ? trainingOutput : testOutput;
     unsigned char tmp = 0;
 
-    std::fstream inputFile(train ? "mnist/train-images-idx3-ubyte"
-        : "mnist/t10k-images-idx3-ubyte", std::ios::in | std::ios::binary);
-    OPENANN_CHECK(inputFile.is_open());
+    std::string fileName = train ?
+            directory + std::string("train-images-idx3-ubyte") :
+            directory + std::string("t10k-images-idx3-ubyte");
+    std::fstream inputFile(fileName.c_str(), std::ios::in | std::ios::binary);
+    if(!inputFile.is_open())
+    {
+      debugLogger << "Could not find file \"" << fileName << "\".\n"
+                  << "Please download the MNIST data set.\n";
+      exit(1);
+    }
     int8_t zero = 0, encoding = 0, dimension = 0;
     int32_t images = 0, rows = 0, cols = 0, items = 0;
     inputFile.read(reinterpret_cast<char*>(&zero), sizeof(zero));
@@ -92,9 +102,16 @@ public:
       }
     }
 
-    std::fstream labelFile(train ? "mnist/train-labels-idx1-ubyte"
-        : "mnist/t10k-labels-idx1-ubyte", std::ios::in | std::ios::binary);
-    OPENANN_CHECK(labelFile.is_open());
+    std::string labelFileName = train ?
+            directory + std::string("train-labels-idx1-ubyte") :
+            directory + std::string("t10k-labels-idx1-ubyte");
+    std::fstream labelFile(labelFileName.c_str(), std::ios::in | std::ios::binary);
+    if(!labelFile.is_open())
+    {
+      debugLogger << "Could not find file \"" << labelFileName << "\".\n"
+                  << "Please download the MNIST data set.\n";
+      exit(1);
+    }
     labelFile.read(reinterpret_cast<char*>(&zero), sizeof(zero));
     OPENANN_CHECK_EQUALS(0, (int) zero);
     labelFile.read(reinterpret_cast<char*>(&zero), sizeof(zero));

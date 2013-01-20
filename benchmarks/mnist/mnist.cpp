@@ -12,7 +12,8 @@
  * <a href="http://yann.lecun.com/exdb/mnist/" target=_blank>THE MNIST
  * DATABASE of handwritten digits</a>. You need all four files. Create the
  * directory "mnist" in your working directory, move the data set to this
- * directory and execute the benchmark. The sum of squared errors on training
+ * directory and execute the benchmark or pass the directory of the MNIST
+ * data set as argument to the program. The sum of squared errors on training
  * and test set, the correct and wrong predictions on training and test set
  * and the training time will be recorded during the training and saved in the
  * file "mlp-error.log".
@@ -36,7 +37,12 @@ int main(int argc, char** argv)
   omp_set_num_threads(PARALLEL_CORES);
 #endif
   OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
-  IDXLoader loader(28, 28, 60000, 10000);
+
+  std::string directory = "mnist/";
+  if(argc > 1)
+    directory = std::string(argv[1]);
+
+  IDXLoader loader(28, 28, 60000, 10000, directory);
 
   OpenANN::MLP mlp(OpenANN::Logger::APPEND_FILE, OpenANN::Logger::NONE);
   mlp.input(loader.D)
