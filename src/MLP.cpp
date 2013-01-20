@@ -299,7 +299,11 @@ Vt MLP::fit(StopCriteria stop)
   configuration = stream.str();
 
   if(errorLogger.isActive())
-    errorLogger << "\n# " << configuration << "\n\n";
+    errorLogger << "\n# " << configuration << "\n"
+                << "# Order of outputs:\n"
+                << "# Training: SSE, correct, wrong, FP, TP, FN, TN\n"
+                << "# (Test: SSE, correct, wrong, FP, TP, FN, TN)\n"
+                << "# training time (ms)\n\n";
   if(parameterLogger.isActive())
     parameterLogger << "\n# " << configuration << "\n\n";
 
