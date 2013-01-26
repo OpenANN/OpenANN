@@ -31,27 +31,24 @@ void FullyConnected::initialize(std::list<fpt*>& parameterPointers,
 void FullyConnected::forwardPropagate(Vt* x, Vt*& y)
 {
   this->x = x;
+  // Activate neurons
   a = W * *x;
+  // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
 
-void FullyConnected::accumulate(Vt* e)
+void FullyConnected::backpropagate(Vt* ein, Vt*& eout)
 {
+  // Derive activations
   activationFunctionDerivative(act, y, yd);
   for(int j = 0; j < J; j++)
-    deltas(j) = yd(j) * (*e)(j);
-}
-
-void FullyConnected::gradient()
-{
+    deltas(j) = yd(j) * (*ein)(j);
+  // Weight derivatives
   Wd = deltas * x->transpose();
-}
-
-void FullyConnected::backpropagate(Vt*& e)
-{
+  // Prepare error signals for previous layer
   this->e = W.transpose() * deltas;
-  e = &(this->e);
+  eout = &(this->e);
 }
 
 }

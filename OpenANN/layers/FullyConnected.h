@@ -26,9 +26,7 @@ public:
   FullyConnected(int I, int J, bool bias, ActivationFunction act, fpt stdDev);
   virtual void initialize(std::list<fpt*>& parameterPointers, std::list<fpt*>& parameterDerivativePointers);
   virtual void forwardPropagate(Vt* x, Vt*& y);
-  virtual void accumulate(Vt* e);
-  virtual void gradient();
-  virtual void backpropagate(Vt*& e);
+  virtual void backpropagate(Vt* ein, Vt*& eout);
 };
 
 }

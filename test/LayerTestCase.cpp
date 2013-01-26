@@ -31,8 +31,8 @@ void LayerTestCase::fullyConnectedActivate()
   ASSERT_EQUALS_DELTA((*y)(1), (fpt) tanh(3.5), (fpt) 1e-10);
   ASSERT_EQUALS_DELTA((*y)(2), (fpt) 1.0, (fpt) 1e-10);
 
-  layer.accumulate(&e);
-  layer.gradient();
+  Vt* e2;
+  layer.backpropagate(&e, e2);
   Vt Wd(6);
   int i = 0;
   for(std::list<fpt*>::iterator it = parameterDerivativePointers.begin();
@@ -44,8 +44,5 @@ void LayerTestCase::fullyConnectedActivate()
   ASSERT_EQUALS_DELTA(Wd(3), (fpt) (0.5*(1.0-(*y)(1)*(*y)(1))*2.0), (fpt) 1e-7);
   ASSERT_EQUALS_DELTA(Wd(4), (fpt) (1.0*(1.0-(*y)(1)*(*y)(1))*2.0), (fpt) 1e-7);
   ASSERT_EQUALS_DELTA(Wd(5), (fpt) (2.0*(1.0-(*y)(1)*(*y)(1))*2.0), (fpt) 1e-7);
-
-  Vt* e2;
-  layer.backpropagate(e2);
   ASSERT(e2 != 0);
 }
