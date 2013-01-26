@@ -5,6 +5,46 @@
 namespace OpenANN
 {
 
+void activationFunction(ActivationFunction act, const Vt& a, Vt& z)
+{
+  switch(act)
+  {
+    case LOGISTIC:
+      logistic(a, z);
+      break;
+    case TANH:
+      normaltanh(a, z);
+      break;
+    case TANH_SCALED:
+      scaledtanh(a, z);
+      break;
+    case LINEAR:
+    default:
+      linear(a, z);
+      break;
+  }
+}
+
+void activationFunctionDerivative(ActivationFunction act, const Vt& z, Vt& gd)
+{
+  switch(act)
+  {
+    case LOGISTIC:
+      logisticDerivative(z, gd);
+      break;
+    case TANH:
+      normaltanhDerivative(z, gd);
+      break;
+    case TANH_SCALED:
+      scaledtanhDerivative(z, gd);
+      break;
+    case LINEAR:
+    default:
+      linearDerivative(gd);
+      break;
+  }
+}
+
 void softmax(Vt& y)
 {
   const int F = y.rows();
@@ -45,16 +85,6 @@ void normaltanhDerivative(const Vt& z, Vt& gd)
     gd(j) = 1.0 - z(j)*z(j);
 }
 
-void linear(const Vt& a, Vt& z)
-{
-  z.middleRows(0, a.rows()) = a;
-}
-
-void linearDerivative(Vt& gd)
-{
-  gd.fill(1.0);
-}
-
 void scaledtanh(const Vt& a, Vt& z)
 {
   for(int j = 0; j < a.rows(); j++)
@@ -65,6 +95,16 @@ void scaledtanhDerivative(const Vt& z, Vt& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
     gd(j) = 0.66666667/1.7159*(1.7159+z(j))*(1.7159-z(j));
+}
+
+void linear(const Vt& a, Vt& z)
+{
+  z.middleRows(0, a.rows()) = a;
+}
+
+void linearDerivative(Vt& gd)
+{
+  gd.fill(1.0);
 }
 
 }
