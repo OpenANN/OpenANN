@@ -3,5 +3,6 @@
 class LayerTestCase : public TestCase
 {
   virtual void run();
-  void fullyConnectedActivate();
+  void fullyConnected();
+  void convolutional();
 };

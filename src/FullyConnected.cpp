@@ -3,19 +3,17 @@
 
 namespace OpenANN {
 
-FullyConnected::FullyConnected(int I, int J, bool bias, ActivationFunction act, fpt stdDev)
-  : debugLogger(Logger::CONSOLE), I(I), J(J), bias(bias), act(act),
-    stdDev(stdDev), W(J, I), Wd(J, I), x(0), a(J), y(J+bias), yd(J), deltas(J),
-    e(I)
+FullyConnected::FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act, fpt stdDev)
+  : debugLogger(Logger::CONSOLE), I(info.outputs()), J(J), bias(bias),
+    act(act), stdDev(stdDev), W(J, I), Wd(J, I), x(0), a(J), y(J+bias), yd(J),
+    deltas(J), e(I)
 {
 }
 
-void FullyConnected::initialize(std::list<fpt*>& parameterPointers,
-                                std::list<fpt*>& parameterDerivativePointers)
+OutputInfo FullyConnected::initialize(std::list<fpt*>& parameterPointers,
+                                      std::list<fpt*>& parameterDerivativePointers)
 {
   RandomNumberGenerator rng;
-  parameterPointers.clear();
-  parameterDerivativePointers.clear();
   for(int j = 0; j < J; j++)
     for(int i = 0; i < I; i++)
     {
@@ -26,6 +24,10 @@ void FullyConnected::initialize(std::list<fpt*>& parameterPointers,
   // Bias component will not change after initialization
   if(bias)
     y(J) = fpt(1.0);
+  OutputInfo info;
+  info.bias = bias;
+  info.dimensions.push_back(J+bias);
+  return info;
 }
 
 void FullyConnected::forwardPropagate(Vt* x, Vt*& y)
