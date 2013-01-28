@@ -4,5 +4,7 @@ class LayerTestCase : public TestCase
 {
   virtual void run();
   void fullyConnected();
+  void fullyConnectedGradient();
   void convolutional();
+  void convolutionalGradient();
 };

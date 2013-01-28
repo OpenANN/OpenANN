@@ -49,8 +49,8 @@ void FullyConnected::backpropagate(Vt* ein, Vt*& eout)
   // Weight derivatives
   Wd = deltas * x->transpose();
   // Prepare error signals for previous layer
-  this->e = W.transpose() * deltas;
-  eout = &(this->e);
+  e = W.transpose() * deltas;
+  eout = &e;
 }
 
 }
