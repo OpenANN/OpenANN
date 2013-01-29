@@ -55,6 +55,7 @@ public:
   virtual fpt error(unsigned int i);
   virtual fpt error();
   virtual bool providesGradient();
+  virtual Vt gradient(unsigned int i);
   virtual Vt gradient();
   virtual bool providesHessian();
   virtual Mt hessian();

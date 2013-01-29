@@ -160,9 +160,39 @@ bool DeepNetwork::providesGradient()
   return true;
 }
 
+Vt DeepNetwork::gradient(unsigned int i)
+{
+  Vt y = (*this)(dataSet->getInstance(i));
+  Vt diff = y - dataSet->getTarget(i);
+  Vt* e;
+  for(std::vector<Layer*>::iterator layer = layers.begin();
+      layer != layers.end(); layer++)
+  {
+    (**layer).backpropagate(e, e);
+  }
+  Vt d(derivatives.size());
+  std::list<fpt*>::iterator it = derivatives.begin();
+  for(int i = 0; i < dimension(); i++, it++)
+    d(i) = **it;
+  return d;
+}
+
 Vt DeepNetwork::gradient()
 {
-  // TODO implement
+  Vt g(dimension());
+  g.fill(0.0);
+  for(int n = 0; n < dimension(); n++)
+  {
+    g += gradient(n);
+  }
+  switch(errorFunction)
+  {
+    case MSE:
+      g /= (fpt) dimension();
+    default:
+      break;
+  }
+  return g;
 }
 
 bool DeepNetwork::providesHessian()
