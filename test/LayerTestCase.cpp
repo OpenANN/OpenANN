@@ -1,6 +1,7 @@
 #include "LayerTestCase.h"
 #include <layers/FullyConnected.h>
 #include <layers/Convolutional.h>
+#include <layers/Subsampling.h>
 #include <Optimizable.h>
 
 using namespace OpenANN;
@@ -104,6 +105,8 @@ void LayerTestCase::run()
   RUN(LayerTestCase, fullyConnectedGradient);
   RUN(LayerTestCase, convolutional);
   RUN(LayerTestCase, convolutionalGradient);
+  RUN(LayerTestCase, subsampling);
+  RUN(LayerTestCase, subsamplingGradient);
 }
 
 void LayerTestCase::fullyConnected()
@@ -210,11 +213,57 @@ void LayerTestCase::convolutionalGradient()
   info.dimensions.push_back(3);
   info.dimensions.push_back(15);
   info.dimensions.push_back(15);
-  Convolutional layer(info, 2, 3, 3, true, TANH, 0.05);
+  Convolutional layer(info, 2, 3, 3, true, LINEAR, 0.05);
   LayerOptimizable opt(layer, info);
 
   Vt gradient = opt.gradient();
   Vt estimatedGradient = opt.gradientFD();
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-1);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-2);
+}
+
+void LayerTestCase::subsampling()
+{
+  Logger debugLogger(Logger::CONSOLE);
+
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(2);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  Subsampling layer(info, 2, 2, true, TANH, 0.05);
+  std::list<fpt*> parameterPointers;
+  std::list<fpt*> parameterDerivativePointers;
+  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  ASSERT_EQUALS(info2.dimensions.size(), 3);
+  ASSERT_EQUALS(info2.dimensions[0], 2);
+  ASSERT_EQUALS(info2.dimensions[1], 3);
+  ASSERT_EQUALS(info2.dimensions[2], 3);
+
+  for(std::list<fpt*>::iterator it = parameterPointers.begin();
+      it != parameterPointers.end(); it++)
+    **it = 0.1;
+
+  Vt x(info.outputs());
+  x.fill(1.0);
+  Vt* y;
+  layer.forwardPropagate(&x, y);
+  for(int i = 0; i < 18; i++)
+    ASSERT_EQUALS_DELTA((*y)(i), (fpt) tanh(0.4), (fpt) 1e-5);
+}
+
+void LayerTestCase::subsamplingGradient()
+{
+  OutputInfo info;
+  info.bias = true;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  Subsampling layer(info, 3, 3, true, LINEAR, 0.05);
+  LayerOptimizable opt(layer, info);
+
+  Vt gradient = opt.gradient();
+  Vt estimatedGradient = opt.gradientFD();
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
 }

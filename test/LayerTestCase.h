@@ -7,4 +7,6 @@ class LayerTestCase : public TestCase
   void fullyConnectedGradient();
   void convolutional();
   void convolutionalGradient();
+  void subsampling();
+  void subsamplingGradient();
 };

@@ -118,32 +118,6 @@ void Convolutional::backpropagate(Vt* ein, Vt*& eout)
     deltas(j) = yd(j) * (*ein)(j);
 
   e.fill(0.0);
-  for(int fmo = 0; fmo < fmout; fmo++)
-  {
-    int fmInBase = 0;
-    for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
-    {
-      int outputIdx = fmo * fmOutSize;
-      for(int row = 0; row < maxRow; row++)
-      {
-        for(int col = 0; col < maxCol; col++, outputIdx++)
-        {
-          int rowBase = fmInBase+row*inCols;
-          for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
-          {
-            int inputIdx = rowBase+col;
-            for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
-            {
-              OPENANN_CHECK(outputIdx < a.rows());
-              OPENANN_CHECK(inputIdx < x->rows());
-              e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(outputIdx);
-            }
-          }
-        }
-      }
-    }
-  }
-
   Wbd.fill(0.0);
   for(int fmo = 0; fmo < fmout; fmo++)
   {
@@ -164,6 +138,7 @@ void Convolutional::backpropagate(Vt* ein, Vt*& eout)
             {
               OPENANN_CHECK(outputIdx < a.rows());
               OPENANN_CHECK(inputIdx < x->rows());
+              e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(outputIdx);
               Wd[fmo][fmi](kr, kc) += deltas(outputIdx) * (*x)(inputIdx);
             }
           }
