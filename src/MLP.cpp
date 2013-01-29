@@ -416,7 +416,7 @@ fpt MLP::error(unsigned int i)
     temporaryOutput = mlp(trainingData->getInstance(i));
     OpenANN::softmax(temporaryOutput);
     for(int f = 0; f < temporaryOutput.rows(); f++)
-      e -= trainingData->getInstance(i)(f) * std::log(temporaryOutput(f));
+      e -= trainingData->getTarget(i)(f) * std::log(temporaryOutput(f));
   }
   else
   {
