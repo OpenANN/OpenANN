@@ -278,7 +278,7 @@ int main(int argc, char** argv)
   {
     long unsigned time = 0;
     std::vector<Result> results;
-    OpenANN::MLP mlp(OpenANN::Logger::NONE, OpenANN::Logger::NONE);
+    OpenANN::MLP mlp(OpenANN::Logger::FILE, OpenANN::Logger::NONE);
     setup(mlp, architecture);
     for(int run = 0; run < runs; run++)
     {

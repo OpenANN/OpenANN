@@ -267,10 +267,15 @@ MLP& MLP::training(Training training, bool reinit)
     case BATCH_CMAES:
       optimizer = new IPOPCMAES;
       break;
-#ifdef USE_GPL_LICENSE
     case BATCH_LMA:
+#ifdef USE_GPL_LICENSE
       optimizer = new LMA(true);
       break;
+#else
+      errorLogger << "\n\nLMA is not available for LGPL license. Please compile"
+            << " OpenANN with activated GPL license flag. See README.md for"
+            << " instructions.\n\n";
+      abort(1);
 #endif
     case BATCH_SGD:
       optimizer = new SGD;
