@@ -3,6 +3,8 @@
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <Optimizable.h>
+#include <DeepNetwork.h>
+#include <io/DirectStorageDataSet.h>
 
 using namespace OpenANN;
 
@@ -107,6 +109,7 @@ void LayerTestCase::run()
   RUN(LayerTestCase, convolutionalGradient);
   RUN(LayerTestCase, subsampling);
   RUN(LayerTestCase, subsamplingGradient);
+  RUN(LayerTestCase, multilayerNetwork);
 }
 
 void LayerTestCase::fullyConnected()
@@ -266,4 +269,24 @@ void LayerTestCase::subsamplingGradient()
   Vt estimatedGradient = opt.gradientFD();
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
+}
+
+void LayerTestCase::multilayerNetwork()
+{
+  int samples = 10;
+  Mt X = Mt::Random(36, samples);
+  Mt Y = Mt::Random(3, samples);
+  DirectStorageDataSet ds(X, Y);
+
+  DeepNetwork net(DeepNetwork::SSE);
+  net.inputLayer(true, 1, 6, 6);
+  net.convolutionalLayer(true, 3, 3, 3, TANH);
+  net.subsamplingLayer(true, 2, 2, TANH);
+  net.fullyConnectedLayer(false, 3, LINEAR);
+  net.trainingSet(ds);
+
+  Vt g = net.gradient();
+  Vt e = net.gradientFD();
+  for(int j = 0; j < net.dimension(); j++)
+    ASSERT_EQUALS_DELTA(g(j), e(j), (fpt) 1e-4);
 }

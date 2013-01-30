@@ -31,18 +31,16 @@ private:
 public:
   DeepNetwork(ErrorFunction errorFunction);
   virtual ~DeepNetwork();
-  DeepNetwork& inputLayer();
-  DeepNetwork& fullyConnectedLayer(int units, bool bias,
+  DeepNetwork& inputLayer(bool bias, int dim1, int dim2 = 1, int dim3 = 1);
+  DeepNetwork& fullyConnectedLayer(bool bias, int units,
                                    ActivationFunction act,
                                    fpt stdDev = (fpt) 0.05);
-  DeepNetwork& convolutionalLayer(int featureMaps, int kernelRows,
-                                  int kernelCols, bool bias,
-                                  ActivationFunction act,
+  DeepNetwork& convolutionalLayer(bool bias, int featureMaps, int kernelRows,
+                                  int kernelCols, ActivationFunction act,
                                   fpt stdDev = (fpt) 0.05);
-  DeepNetwork& subsamplingLayer(int kernelRows, int kernelCols, bool bias,
+  DeepNetwork& subsamplingLayer(bool bias, int kernelRows, int kernelCols,
                                 ActivationFunction act,
                                 fpt stdDev = (fpt) 0.05);
-  DeepNetwork& outputLayer();
 
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);

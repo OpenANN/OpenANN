@@ -1,4 +1,5 @@
 #include <DeepNetwork.h>
+#include <layers/Input.h>
 #include <layers/FullyConnected.h>
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
@@ -21,11 +22,15 @@ DeepNetwork::~DeepNetwork()
   layers.clear();
 }
 
-DeepNetwork& DeepNetwork::inputLayer()
+DeepNetwork& DeepNetwork::inputLayer(bool bias, int dim1, int dim2, int dim3)
 {
+  Layer* layer = new Input(dim1, dim2, dim3, bias);
+  OutputInfo info = layer->initialize(parameters, derivatives);
+  layers.push_back(layer);
+  infos.push_back(info);
 }
 
-DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, bool bias,
+DeepNetwork& DeepNetwork::fullyConnectedLayer(bool bias, int units,
                                               ActivationFunction act,
                                               fpt stdDev)
 {
@@ -35,8 +40,8 @@ DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, bool bias,
   infos.push_back(info);
 }
 
-DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
-                                             int kernelCols, bool bias,
+DeepNetwork& DeepNetwork::convolutionalLayer(bool bias, int featureMaps,
+                                             int kernelRows, int kernelCols,
                                              ActivationFunction act,
                                              fpt stdDev)
 {
@@ -47,19 +52,15 @@ DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
   infos.push_back(info);
 }
 
-DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
-                                           bool bias, ActivationFunction act,
-                                           fpt stdDev)
+DeepNetwork& DeepNetwork::subsamplingLayer(bool bias, int kernelRows,
+                                           int kernelCols,
+                                           ActivationFunction act, fpt stdDev)
 {
   Layer* layer = new Subsampling(infos.back(), kernelRows, kernelCols, bias,
                                  act, stdDev);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
-}
-
-DeepNetwork& DeepNetwork::outputLayer()
-{
 }
 
 Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
@@ -142,14 +143,14 @@ fpt DeepNetwork::error(unsigned int i)
 fpt DeepNetwork::error()
 {
   fpt e = 0.0;
-  for(int n = 0; n < dimension(); n++)
+  for(int n = 0; n < dataSet->samples(); n++)
     e += error(n);
   switch(errorFunction)
   {
     case SSE:
-      return e / 2.0;
+      return e;
     case MSE:
-      return e / (fpt) dimension();
+      return e / (fpt) dataSet->samples();
     default:
       return e;
   }
@@ -164,9 +165,9 @@ Vt DeepNetwork::gradient(unsigned int i)
 {
   Vt y = (*this)(dataSet->getInstance(i));
   Vt diff = y - dataSet->getTarget(i);
-  Vt* e;
-  for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); layer++)
+  Vt* e = &diff;
+  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+      layer != layers.rend(); layer++)
   {
     (**layer).backpropagate(e, e);
   }
@@ -181,7 +182,7 @@ Vt DeepNetwork::gradient()
 {
   Vt g(dimension());
   g.fill(0.0);
-  for(int n = 0; n < dimension(); n++)
+  for(int n = 0; n < dataSet->samples(); n++)
   {
     g += gradient(n);
   }
