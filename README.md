@@ -29,7 +29,9 @@ Linux
     cd path/to/OpenANN/dir
     mkdir build
     cd build
-    cmake -D CMAKE_BUILD_TYPE:String=Release ..
+    cmake -D CMAKE_BUILD_TYPE:String=Release -D USE_GPL_LICENSE:Boolean=True ..
+    # USE_GPL_LICENSE is optional. Note that optimization algorithms like LMA
+    # require GPL license. Available CMAKE_BUILD_TYPEs are Debug and Release.
     sudo make install
     sudo ldconfig
 
