@@ -328,7 +328,7 @@ fpt MLP::error()
   switch(errorFunction)
   {
     case SSE:
-      return e / 2.0;
+      return e;
     case MSE:
       return e / (fpt) N;
     default:
