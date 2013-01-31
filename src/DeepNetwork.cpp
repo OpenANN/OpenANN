@@ -165,17 +165,15 @@ unsigned int DeepNetwork::examples()
 
 Vt DeepNetwork::currentParameters()
 {
-  std::vector<fpt*>::iterator it = parameters.begin();
-  for(int p = 0; p < P; p++, it++)
-    tempParameters(p) = **it;
+  for(int p = 0; p < P; p++)
+    tempParameters(p) = *parameters[p];
   return tempParameters;
 }
 
 void DeepNetwork::setParameters(const Vt& parameters)
 {
-  std::vector<fpt*>::iterator it = this->parameters.begin();
-  for(int p = 0; p < P; p++, it++)
-    **it = parameters(p);
+  for(int p = 0; p < P; p++)
+    *(this->parameters[p]) = parameters(p);
 }
 
 bool DeepNetwork::providesInitialization()
@@ -186,9 +184,8 @@ bool DeepNetwork::providesInitialization()
 void DeepNetwork::initialize()
 {
   RandomNumberGenerator rng;
-  for(std::vector<fpt*>::iterator it = parameters.begin();
-      it != parameters.end(); it++)
-    **it = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
+  for(int i = 0; i < P; i++)
+    *parameters[i] = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
 }
 
 fpt DeepNetwork::error(unsigned int i)
@@ -239,9 +236,8 @@ Vt DeepNetwork::gradient(unsigned int i)
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
     (**layer).backpropagate(e, e);
-  std::vector<fpt*>::iterator it = derivatives.begin();
-  for(int i = 0; i < P; i++, it++)
-    tempParameters(i) = **it;
+  for(int i = 0; i < P; i++)
+    tempParameters(i) = *derivatives[i];
   return tempParameters;
 }
 
@@ -270,9 +266,8 @@ void DeepNetwork::VJ(Vt& values, Mt& jacobian)
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
       (**layer).backpropagate(e, e);
-    std::vector<fpt*>::iterator it = derivatives.begin();
-    for(int i = 0; i < P; i++, it++)
-      tempParameters(i) = **it;
+    for(int i = 0; i < P; i++)
+      tempParameters(i) = *derivatives[i];
     jacobian.row(n) = tempParameters;
   }
 }
