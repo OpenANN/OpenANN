@@ -33,12 +33,12 @@ int main(int argc, char** argv)
   OpenANN::Logger::deactivate = true;
 
   TestSuite ts("OpenANN");
-  //ts.addTestCase(new ActivationFunctionsTestCase);
-  //ts.addTestCase(new CMAESTestCase);
-  //ts.addTestCase(new CompressionMatrixFactoryTestCase);
-  //ts.addTestCase(new MLPImplementationTestCase);
-  //ts.addTestCase(new MLPTestCase);
-  //ts.addTestCase(new RandomTestCase);
+  ts.addTestCase(new ActivationFunctionsTestCase);
+  ts.addTestCase(new CMAESTestCase);
+  ts.addTestCase(new CompressionMatrixFactoryTestCase);
+  ts.addTestCase(new MLPImplementationTestCase);
+  ts.addTestCase(new MLPTestCase);
+  ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new LayerTestCase);
 
   if(qt)

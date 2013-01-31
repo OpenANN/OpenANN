@@ -13,7 +13,7 @@ namespace OpenANN {
 
 DeepNetwork::DeepNetwork(ErrorFunction errorFunction)
   : debugLogger(Logger::NONE), deleteDataSet(false),
-    errorFunction(errorFunction)
+    errorFunction(errorFunction), initialized(false)
 {
 }
 
@@ -73,7 +73,14 @@ DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
 DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
                                       fpt stdDev)
 {
-  return fullyConnectedLayer(units, act, stdDev, false);
+  fullyConnectedLayer(units, act, stdDev, false);
+  tempInput.resize(infos[0].outputs()-infos[0].bias);
+  tempOutput.resize(units);
+  tempError.resize(units);
+  tempParameters.resize(parameters.size());
+  tempParametersSum.resize(parameters.size());
+  initialized = true;
+  return *this;
 }
 
 Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
@@ -126,8 +133,8 @@ void DeepNetwork::finishedIteration()
 
 Vt DeepNetwork::operator()(const Vt& x)
 {
-  Vt in = x;
-  Vt* y = &in;
+  tempInput = x;
+  Vt* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
   {
@@ -151,11 +158,10 @@ unsigned int DeepNetwork::examples()
 
 Vt DeepNetwork::currentParameters()
 {
-  Vt p(parameters.size());
   std::list<fpt*>::iterator it = parameters.begin();
   for(int i = 0; i < dimension(); i++, it++)
-    p(i) = **it;
-  return p;
+    tempParameters(i) = **it;
+  return tempParameters;
 }
 
 void DeepNetwork::setParameters(const Vt& parameters)
@@ -220,57 +226,56 @@ bool DeepNetwork::providesGradient()
 
 Vt DeepNetwork::gradient(unsigned int i)
 {
-  Vt y = (*this)(dataSet->getInstance(i));
-  Vt diff = y - dataSet->getTarget(i);
-  Vt* e = &diff;
+  tempOutput = (*this)(dataSet->getInstance(i));
+  tempError = tempOutput - dataSet->getTarget(i);
+  Vt* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
   {
     (**layer).backpropagate(e, e);
   }
-  Vt d(derivatives.size());
+  tempParameters(derivatives.size());
   std::list<fpt*>::iterator it = derivatives.begin();
   for(int i = 0; i < dimension(); i++, it++)
-    d(i) = **it;
-  return d;
+    tempParameters(i) = **it;
+  return tempParameters;
 }
 
 Vt DeepNetwork::gradient()
 {
-  Vt g(dimension());
-  g.fill(0.0);
+  tempParametersSum.fill(0.0);
   for(int n = 0; n < dataSet->samples(); n++)
   {
-    g += gradient(n);
+    tempParametersSum += gradient(n);
   }
   switch(errorFunction)
   {
     case MSE:
-      g /= (fpt) dimension();
+      tempParametersSum /= (fpt) dimension();
     default:
       break;
   }
-  return g;
+  return tempParametersSum;
 }
 
 void DeepNetwork::VJ(Vt& values, Mt& jacobian)
 {
   for(unsigned n = 0; n < dataSet->samples(); n++)
   {
-    Vt diff = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
-    Eigen::Matrix<fpt, 1, 1> err = diff.transpose() * diff / (fpt) 2.0;
+    tempError = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
+    Eigen::Matrix<fpt, 1, 1> err = tempError.transpose() * tempError / (fpt) 2.0;
     values(n) = err(0, 0);
-    Vt* e = &diff;
+    Vt* e = &tempOutput;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
     {
       (**layer).backpropagate(e, e);
     }
-    Vt d(derivatives.size());
+    tempParameters(derivatives.size());
     std::list<fpt*>::iterator it = derivatives.begin();
     for(int i = 0; i < dimension(); i++, it++)
-      d(i) = **it;
-    jacobian.row(n) = d;
+      tempParameters(i) = **it;
+    jacobian.row(n) = tempParameters;
   }
 }
 

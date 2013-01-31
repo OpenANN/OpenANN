@@ -39,6 +39,9 @@ private:
   bool deleteDataSet;
   ErrorFunction errorFunction;
 
+  bool initialized;
+  Vt tempInput, tempOutput, tempError, tempParameters, tempParametersSum;
+
 public:
   DeepNetwork(ErrorFunction errorFunction);
   virtual ~DeepNetwork();
