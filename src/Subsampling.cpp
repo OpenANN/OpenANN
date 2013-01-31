@@ -13,8 +13,8 @@ Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
 {
 }
 
-OutputInfo Subsampling::initialize(std::list<fpt*>& parameterPointers,
-                                   std::list<fpt*>& parameterDerivativePointers)
+OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
+                                   std::vector<fpt*>& parameterDerivativePointers)
 {
   y.resize(0);
   RandomNumberGenerator rng;

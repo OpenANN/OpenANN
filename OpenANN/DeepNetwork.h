@@ -33,14 +33,14 @@ private:
   Logger debugLogger;
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
-  std::list<fpt*> parameters;
-  std::list<fpt*> derivatives;
+  std::vector<fpt*> parameters;
+  std::vector<fpt*> derivatives;
   DataSet* dataSet;
   bool deleteDataSet;
   ErrorFunction errorFunction;
 
   bool initialized;
-  int P;
+  int P, N, L;
   Vt tempInput, tempOutput, tempError, tempParameters, tempParametersSum;
 
 public:

@@ -8,10 +8,11 @@ using namespace OpenANN;
 
 int main()
 {
-  int D = 1000;
-  int F = 5;
-  int N = 10;
   Logger logger(Logger::CONSOLE);
+
+  int D = 1000;
+  int F = 10;
+  int N = 10;
   Mt X(D, N);
   Mt Y(F, N);
   DirectStorageDataSet ds(X, Y);

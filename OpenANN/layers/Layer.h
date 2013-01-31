@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <list>
 #include <vector>
 
 namespace OpenANN {
@@ -18,7 +17,7 @@ public:
 class Layer
 {
 public:
-  virtual OutputInfo initialize(std::list<fpt*>& parameterPointers, std::list<fpt*>& parameterDerivativePointers) = 0;
+  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers) = 0;
   virtual void forwardPropagate(Vt* x, Vt*& y) = 0;
   virtual void backpropagate(Vt* ein, Vt*& eout) = 0;
 };

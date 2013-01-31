@@ -14,8 +14,8 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
 {
 }
 
-OutputInfo Convolutional::initialize(std::list<fpt*>& parameterPointers,
-                                     std::list<fpt*>& parameterDerivativePointers)
+OutputInfo Convolutional::initialize(std::vector<fpt*>& parameterPointers,
+                                     std::vector<fpt*>& parameterDerivativePointers)
 {
   y.resize(0);
   RandomNumberGenerator rng;

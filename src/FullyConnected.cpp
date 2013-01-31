@@ -10,8 +10,8 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias, ActivationFunc
 {
 }
 
-OutputInfo FullyConnected::initialize(std::list<fpt*>& parameterPointers,
-                                      std::list<fpt*>& parameterDerivativePointers)
+OutputInfo FullyConnected::initialize(std::vector<fpt*>& parameterPointers,
+                                      std::vector<fpt*>& parameterDerivativePointers)
 {
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)

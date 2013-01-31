@@ -13,8 +13,10 @@ namespace OpenANN {
 
 DeepNetwork::DeepNetwork(ErrorFunction errorFunction)
   : debugLogger(Logger::NONE), deleteDataSet(false),
-    errorFunction(errorFunction), initialized(false)
+    errorFunction(errorFunction), initialized(false), N(0), L(0)
 {
+  layers.reserve(3);
+  infos.reserve(3);
 }
 
 DeepNetwork::~DeepNetwork()
@@ -32,6 +34,7 @@ DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias)
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  L++;
   return *this;
 }
 
@@ -42,6 +45,7 @@ DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  L++;
   return *this;
 }
 
@@ -55,6 +59,7 @@ DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  L++;
   return *this;
 }
 
@@ -67,6 +72,7 @@ DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  L++;
   return *this;
 }
 
@@ -74,6 +80,8 @@ DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
                                       fpt stdDev)
 {
   fullyConnectedLayer(units, act, stdDev, false);
+  L++;
+
   tempInput.resize(infos[0].outputs()-infos[0].bias);
   tempOutput.resize(units);
   tempError.resize(units);
@@ -81,6 +89,7 @@ DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
   tempParametersSum.resize(parameters.size());
   P = parameters.size();
   initialized = true;
+
   return *this;
 }
 
@@ -88,6 +97,7 @@ Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
 {
   dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
   deleteDataSet = true;
+  N = dataSet->samples();
   return *this;
 }
 
@@ -95,6 +105,7 @@ Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
 {
   dataSet = &trainingSet;
   deleteDataSet = false;
+  N = dataSet->samples();
   return *this;
 }
 
@@ -138,9 +149,7 @@ Vt DeepNetwork::operator()(const Vt& x)
   Vt* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
-  {
     (**layer).forwardPropagate(y, y);
-  }
   return *y;
 }
 
@@ -151,15 +160,12 @@ unsigned int DeepNetwork::dimension()
 
 unsigned int DeepNetwork::examples()
 {
-  if(dataSet)
-    return dataSet->samples();
-  else
-    return 0;
+  return N;
 }
 
 Vt DeepNetwork::currentParameters()
 {
-  std::list<fpt*>::iterator it = parameters.begin();
+  std::vector<fpt*>::iterator it = parameters.begin();
   for(int p = 0; p < P; p++, it++)
     tempParameters(p) = **it;
   return tempParameters;
@@ -167,7 +173,7 @@ Vt DeepNetwork::currentParameters()
 
 void DeepNetwork::setParameters(const Vt& parameters)
 {
-  std::list<fpt*>::iterator it = this->parameters.begin();
+  std::vector<fpt*>::iterator it = this->parameters.begin();
   for(int p = 0; p < P; p++, it++)
     **it = parameters(p);
 }
@@ -180,8 +186,8 @@ bool DeepNetwork::providesInitialization()
 void DeepNetwork::initialize()
 {
   RandomNumberGenerator rng;
-  std::list<fpt*>::iterator it = parameters.begin();
-  for(int p = 0; p < P; p++, it++)
+  for(std::vector<fpt*>::iterator it = parameters.begin();
+      it != parameters.end(); it++)
     **it = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
 }
 
@@ -190,15 +196,15 @@ fpt DeepNetwork::error(unsigned int i)
   fpt e = 0.0;
   if(errorFunction == CE)
   {
-    Vt y = (*this)(dataSet->getInstance(i));
-    OpenANN::softmax(y);
-    for(int f = 0; f < y.rows(); f++)
-      e -= dataSet->getTarget(i)(f) * std::log(y(f));
+    tempOutput = (*this)(dataSet->getInstance(i));
+    OpenANN::softmax(tempOutput);
+    for(int f = 0; f < tempOutput.rows(); f++)
+      e -= dataSet->getTarget(i)(f) * std::log(tempOutput(f));
   }
   else
   {
-    Vt y = (*this)(dataSet->getInstance(i));
-    tempError = y - dataSet->getTarget(i);
+    tempOutput = (*this)(dataSet->getInstance(i));
+    tempError = tempOutput - dataSet->getTarget(i);
     e += tempError.dot(tempError);
   }
   return e / 2.0;
@@ -207,14 +213,14 @@ fpt DeepNetwork::error(unsigned int i)
 fpt DeepNetwork::error()
 {
   fpt e = 0.0;
-  for(int n = 0; n < dataSet->samples(); n++)
+  for(int n = 0; n < N; n++)
     e += error(n);
   switch(errorFunction)
   {
     case SSE:
       return e;
     case MSE:
-      return e / (fpt) dataSet->samples();
+      return e / (fpt) N;
     default:
       return e;
   }
@@ -232,12 +238,9 @@ Vt DeepNetwork::gradient(unsigned int i)
   Vt* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
-  {
     (**layer).backpropagate(e, e);
-  }
-  tempParameters(derivatives.size());
-  std::list<fpt*>::iterator it = derivatives.begin();
-  for(int i = 0; i < dimension(); i++, it++)
+  std::vector<fpt*>::iterator it = derivatives.begin();
+  for(int i = 0; i < P; i++, it++)
     tempParameters(i) = **it;
   return tempParameters;
 }
@@ -245,10 +248,8 @@ Vt DeepNetwork::gradient(unsigned int i)
 Vt DeepNetwork::gradient()
 {
   tempParametersSum.fill(0.0);
-  for(int n = 0; n < dataSet->samples(); n++)
-  {
+  for(int n = 0; n < N; n++)
     tempParametersSum += gradient(n);
-  }
   switch(errorFunction)
   {
     case MSE:
@@ -261,20 +262,16 @@ Vt DeepNetwork::gradient()
 
 void DeepNetwork::VJ(Vt& values, Mt& jacobian)
 {
-  for(unsigned n = 0; n < dataSet->samples(); n++)
+  for(unsigned n = 0; n < N; n++)
   {
     tempError = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
-    Eigen::Matrix<fpt, 1, 1> err = tempError.transpose() * tempError / (fpt) 2.0;
-    values(n) = err(0, 0);
+    values(n) = tempError.dot(tempError) / (fpt) 2.0;
     Vt* e = &tempOutput;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
-    {
       (**layer).backpropagate(e, e);
-    }
-    tempParameters(derivatives.size());
-    std::list<fpt*>::iterator it = derivatives.begin();
-    for(int i = 0; i < dimension(); i++, it++)
+    std::vector<fpt*>::iterator it = derivatives.begin();
+    for(int i = 0; i < P; i++, it++)
       tempParameters(i) = **it;
     jacobian.row(n) = tempParameters;
   }

@@ -11,8 +11,8 @@ using namespace OpenANN;
 class LayerOptimizable : public Optimizable
 {
   Layer& layer;
-  std::list<fpt*> parameters;
-  std::list<fpt*> derivatives;
+  std::vector<fpt*> parameters;
+  std::vector<fpt*> derivatives;
   OutputInfo info;
   Vt input;
   Vt desired;
@@ -33,7 +33,7 @@ public:
   virtual Vt currentParameters()
   {
     Vt params(dimension());
-    std::list<fpt*>::const_iterator it = parameters.begin();
+    std::vector<fpt*>::const_iterator it = parameters.begin();
     for(int i = 0; i < dimension(); i++, it++)
       params(i) = **it;
     return params;
@@ -41,7 +41,7 @@ public:
 
   virtual void setParameters(const Vt& parameters)
   {
-    std::list<fpt*>::const_iterator it = this->parameters.begin();
+    std::vector<fpt*>::const_iterator it = this->parameters.begin();
     for(int i = 0; i < dimension(); i++, it++)
       **it = parameters(i);
   }
@@ -69,7 +69,7 @@ public:
     Vt* e;
     layer.backpropagate(&diff, e);
     Vt derivs(dimension());
-    std::list<fpt*>::const_iterator it = derivatives.begin();
+    std::vector<fpt*>::const_iterator it = derivatives.begin();
     for(int i = 0; i < dimension(); i++, it++)
       derivs(i) = **it;
     return derivs;
@@ -118,14 +118,14 @@ void LayerTestCase::fullyConnected()
   info.dimensions.push_back(3);
   FullyConnected layer(info, 2, true, TANH, 0.05);
 
-  std::list<fpt*> parameterPointers;
-  std::list<fpt*> parameterDerivativePointers;
+  std::vector<fpt*> parameterPointers;
+  std::vector<fpt*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
   ASSERT(info2.bias);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 3);
 
-  for(std::list<fpt*>::iterator it = parameterPointers.begin();
+  for(std::vector<fpt*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
     **it = 1.0;
   Vt x(3);
@@ -144,7 +144,7 @@ void LayerTestCase::fullyConnected()
   layer.backpropagate(&e, e2);
   Vt Wd(6);
   int i = 0;
-  for(std::list<fpt*>::iterator it = parameterDerivativePointers.begin();
+  for(std::vector<fpt*>::iterator it = parameterDerivativePointers.begin();
       it != parameterDerivativePointers.end(); it++)
     Wd(i++) = **it;
   ASSERT_EQUALS_DELTA(Wd(0), (fpt) (0.5*(1.0-(*y)(0)*(*y)(0))*1.0), (fpt) 1e-7);
@@ -178,15 +178,15 @@ void LayerTestCase::convolutional()
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
   Convolutional layer(info, 2, 3, 3, true, TANH, 0.05);
-  std::list<fpt*> parameterPointers;
-  std::list<fpt*> parameterDerivativePointers;
+  std::vector<fpt*> parameterPointers;
+  std::vector<fpt*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 2);
   ASSERT_EQUALS(info2.dimensions[2], 2);
 
-  for(std::list<fpt*>::iterator it = parameterPointers.begin();
+  for(std::vector<fpt*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
     **it = 0.01;
 
@@ -228,15 +228,15 @@ void LayerTestCase::subsampling()
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
   Subsampling layer(info, 2, 2, true, TANH, 0.05);
-  std::list<fpt*> parameterPointers;
-  std::list<fpt*> parameterDerivativePointers;
+  std::vector<fpt*> parameterPointers;
+  std::vector<fpt*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 3);
   ASSERT_EQUALS(info2.dimensions[2], 3);
 
-  for(std::list<fpt*>::iterator it = parameterPointers.begin();
+  for(std::vector<fpt*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
     **it = 0.1;
 
