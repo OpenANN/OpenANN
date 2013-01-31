@@ -2,6 +2,7 @@
 
 #include <OpenANN>
 #include <GP.h>
+#include <DeepNetwork.h>
 #include <io/Logger.h>
 #include <io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
@@ -27,7 +28,7 @@ public:
   virtual int outputs() { return dataSet.outputs(); }
   virtual Vt& getInstance(int i) { return dataSet.getInstance(i); }
   virtual Vt& getTarget(int i) { return dataSet.getTarget(i); }
-  virtual void finishIteration(MLP& mlp);
+  virtual void finishIteration(Learner& learner);
 };
 
 class TwoSpiralsVisualization : public QGLWidget
@@ -38,9 +39,8 @@ class TwoSpiralsVisualization : public QGLWidget
   fpt classes[100][100];
   TwoSpiralsDataSet trainingSet;
   TwoSpiralsDataSet testSet;
-  bool showTraining, showTest, showPrediction, showSmooth, gpPrediction;
-  MLP* mlp;
-  GP* gp;
+  bool showTraining, showTest, showPrediction, showSmooth;
+  DeepNetwork* net;
   StopCriteria stop;
   Logger eventLogger;
 

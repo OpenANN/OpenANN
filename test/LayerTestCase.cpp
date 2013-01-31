@@ -102,7 +102,6 @@ public:
 
 void LayerTestCase::run()
 {
-  Logger::deactivate = false; // TODO remove
   RUN(LayerTestCase, fullyConnected);
   RUN(LayerTestCase, fullyConnectedGradient);
   RUN(LayerTestCase, convolutional);
@@ -114,8 +113,6 @@ void LayerTestCase::run()
 
 void LayerTestCase::fullyConnected()
 {
-  Logger debugLogger(Logger::CONSOLE);
-
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
@@ -126,7 +123,7 @@ void LayerTestCase::fullyConnected()
   OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
   ASSERT(info2.bias);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
-  ASSERT_EQUALS(*(info2.dimensions.begin()), 3);
+  ASSERT_EQUALS(info2.outputs(), 3);
 
   for(std::list<fpt*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
@@ -175,8 +172,6 @@ void LayerTestCase::fullyConnectedGradient()
 
 void LayerTestCase::convolutional()
 {
-  Logger debugLogger(Logger::CONSOLE);
-
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(2);
@@ -227,8 +222,6 @@ void LayerTestCase::convolutionalGradient()
 
 void LayerTestCase::subsampling()
 {
-  Logger debugLogger(Logger::CONSOLE);
-
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(2);
@@ -279,10 +272,10 @@ void LayerTestCase::multilayerNetwork()
   DirectStorageDataSet ds(X, Y);
 
   DeepNetwork net(DeepNetwork::SSE);
-  net.inputLayer(true, 1, 6, 6);
-  net.convolutionalLayer(true, 3, 3, 3, TANH);
-  net.subsamplingLayer(true, 2, 2, TANH);
-  net.fullyConnectedLayer(false, 3, LINEAR);
+  net.inputLayer(1, 6, 6);
+  net.convolutionalLayer(3, 3, 3, TANH);
+  net.subsamplingLayer(2, 2, TANH);
+  net.outputLayer(3, LINEAR);
   net.trainingSet(ds);
 
   Vt g = net.gradient();

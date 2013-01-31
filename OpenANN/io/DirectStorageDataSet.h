@@ -24,7 +24,7 @@ public:
   virtual int outputs() { return F; }
   virtual Vt& getInstance(int i);
   virtual Vt& getTarget(int i);
-  virtual void finishIteration(MLP& mlp) {}
+  virtual void finishIteration(Learner& learner) {}
 };
 
 }

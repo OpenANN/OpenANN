@@ -4,7 +4,7 @@
 
 namespace OpenANN {
 
-class MLP;
+class Learner;
 
 class DataSet
 {
@@ -15,7 +15,7 @@ public:
   virtual int outputs() = 0;
   virtual Vt& getInstance(int i) = 0;
   virtual Vt& getTarget(int i) = 0;
-  virtual void finishIteration(MLP& mlp) = 0;
+  virtual void finishIteration(Learner& learner) = 0;
 };
 
 }

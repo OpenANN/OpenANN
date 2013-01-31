@@ -4,12 +4,16 @@
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <io/DirectStorageDataSet.h>
+#include <optimization/IPOPCMAES.h>
+#include <optimization/LMA.h>
+#include <optimization/SGD.h>
 #include <Random.h>
 
 namespace OpenANN {
 
 DeepNetwork::DeepNetwork(ErrorFunction errorFunction)
-  : deleteDataSet(false), errorFunction(errorFunction)
+  : debugLogger(Logger::NONE), deleteDataSet(false),
+    errorFunction(errorFunction)
 {
 }
 
@@ -22,57 +26,102 @@ DeepNetwork::~DeepNetwork()
   layers.clear();
 }
 
-DeepNetwork& DeepNetwork::inputLayer(bool bias, int dim1, int dim2, int dim3)
+DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias)
 {
   Layer* layer = new Input(dim1, dim2, dim3, bias);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  return *this;
 }
 
-DeepNetwork& DeepNetwork::fullyConnectedLayer(bool bias, int units,
-                                              ActivationFunction act,
-                                              fpt stdDev)
+DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
+                                              fpt stdDev, bool bias)
 {
   Layer* layer = new FullyConnected(infos.back(), units, bias, act, stdDev);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  return *this;
 }
 
-DeepNetwork& DeepNetwork::convolutionalLayer(bool bias, int featureMaps,
-                                             int kernelRows, int kernelCols,
+DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
+                                             int kernelCols,
                                              ActivationFunction act,
-                                             fpt stdDev)
+                                             fpt stdDev, bool bias)
 {
   Layer* layer = new Convolutional(infos.back(), featureMaps, kernelRows,
                                    kernelCols, bias, act, stdDev);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  return *this;
 }
 
-DeepNetwork& DeepNetwork::subsamplingLayer(bool bias, int kernelRows,
-                                           int kernelCols,
-                                           ActivationFunction act, fpt stdDev)
+DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
+                                           ActivationFunction act, fpt stdDev,
+                                           bool bias)
 {
   Layer* layer = new Subsampling(infos.back(), kernelRows, kernelCols, bias,
                                  act, stdDev);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
+  return *this;
+}
+
+DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
+                                      fpt stdDev)
+{
+  return fullyConnectedLayer(units, act, stdDev, false);
 }
 
 Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
 {
   dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
   deleteDataSet = true;
+  return *this;
 }
 
 Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
 {
   dataSet = &trainingSet;
   deleteDataSet = false;
+  return *this;
+}
+
+Vt DeepNetwork::train(Training algorithm, StopCriteria stop, bool reinitialize)
+{
+  if(reinitialize)
+    initialize();
+  Optimizer* opt;
+  switch(algorithm)
+  {
+    case BATCH_SGD:
+      opt = new SGD;
+      break;
+#ifdef USE_GPL_LICENSE
+    case BATCH_LMA:
+      opt = new LMA(true);
+      break;
+#endif
+    case BATCH_CMAES:
+    default:
+      opt = new IPOPCMAES;
+      break;
+  }
+  opt->setOptimizable(*this);
+  opt->setStopCriteria(stop);
+  opt->optimize();
+  Vt result = opt->result();
+  delete opt;
+  return result;
+}
+
+void DeepNetwork::finishedIteration()
+{
+  if(dataSet)
+    dataSet->finishIteration(*this);
 }
 
 Vt DeepNetwork::operator()(const Vt& x)
@@ -90,6 +139,14 @@ Vt DeepNetwork::operator()(const Vt& x)
 unsigned int DeepNetwork::dimension()
 {
   return parameters.size();
+}
+
+unsigned int DeepNetwork::examples()
+{
+  if(dataSet)
+    return dataSet->samples();
+  else
+    return 0;
 }
 
 Vt DeepNetwork::currentParameters()
@@ -194,6 +251,27 @@ Vt DeepNetwork::gradient()
       break;
   }
   return g;
+}
+
+void DeepNetwork::VJ(Vt& values, Mt& jacobian)
+{
+  for(unsigned n = 0; n < dataSet->samples(); n++)
+  {
+    Vt diff = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
+    Eigen::Matrix<fpt, 1, 1> err = diff.transpose() * diff / (fpt) 2.0;
+    values(n) = err(0, 0);
+    Vt* e = &diff;
+    for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+        layer != layers.rend(); layer++)
+    {
+      (**layer).backpropagate(e, e);
+    }
+    Vt d(derivatives.size());
+    std::list<fpt*>::iterator it = derivatives.begin();
+    for(int i = 0; i < dimension(); i++, it++)
+      d(i) = **it;
+    jacobian.row(n) = d;
+  }
 }
 
 bool DeepNetwork::providesHessian()

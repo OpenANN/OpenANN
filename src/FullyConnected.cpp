@@ -26,7 +26,7 @@ OutputInfo FullyConnected::initialize(std::list<fpt*>& parameterPointers,
     y(J) = fpt(1.0);
   OutputInfo info;
   info.bias = bias;
-  info.dimensions.push_back(J+bias);
+  info.dimensions.push_back(J);
   return info;
 }
 
