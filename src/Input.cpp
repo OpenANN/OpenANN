@@ -9,7 +9,7 @@ Input::Input(int dim1, int dim2, int dim3, bool bias)
 }
 
 OutputInfo Input::initialize(std::list<fpt*>& parameterPointers,
-                                      std::list<fpt*>& parameterDerivativePointers)
+                             std::list<fpt*>& parameterDerivativePointers)
 {
   // Bias component will not change after initialization
   if(bias)

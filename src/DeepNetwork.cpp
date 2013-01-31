@@ -79,6 +79,7 @@ DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
   tempError.resize(units);
   tempParameters.resize(parameters.size());
   tempParametersSum.resize(parameters.size());
+  P = parameters.size();
   initialized = true;
   return *this;
 }
@@ -145,7 +146,7 @@ Vt DeepNetwork::operator()(const Vt& x)
 
 unsigned int DeepNetwork::dimension()
 {
-  return parameters.size();
+  return P;
 }
 
 unsigned int DeepNetwork::examples()
@@ -159,16 +160,16 @@ unsigned int DeepNetwork::examples()
 Vt DeepNetwork::currentParameters()
 {
   std::list<fpt*>::iterator it = parameters.begin();
-  for(int i = 0; i < dimension(); i++, it++)
-    tempParameters(i) = **it;
+  for(int p = 0; p < P; p++, it++)
+    tempParameters(p) = **it;
   return tempParameters;
 }
 
 void DeepNetwork::setParameters(const Vt& parameters)
 {
   std::list<fpt*>::iterator it = this->parameters.begin();
-  for(int i = 0; i < dimension(); i++, it++)
-    **it = parameters(i);
+  for(int p = 0; p < P; p++, it++)
+    **it = parameters(p);
 }
 
 bool DeepNetwork::providesInitialization()
@@ -180,7 +181,7 @@ void DeepNetwork::initialize()
 {
   RandomNumberGenerator rng;
   std::list<fpt*>::iterator it = parameters.begin();
-  for(int i = 0; i < dimension(); i++, it++)
+  for(int p = 0; p < P; p++, it++)
     **it = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
 }
 
@@ -197,8 +198,8 @@ fpt DeepNetwork::error(unsigned int i)
   else
   {
     Vt y = (*this)(dataSet->getInstance(i));
-    const Vt diff = y - dataSet->getTarget(i);
-    e += diff.dot(diff);
+    tempError = y - dataSet->getTarget(i);
+    e += tempError.dot(tempError);
   }
   return e / 2.0;
 }

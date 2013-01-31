@@ -8,7 +8,7 @@ using namespace OpenANN;
 
 int main()
 {
-  int D = 100;
+  int D = 1000;
   int F = 5;
   int N = 10;
   Logger logger(Logger::CONSOLE);

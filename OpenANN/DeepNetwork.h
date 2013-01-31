@@ -40,6 +40,7 @@ private:
   ErrorFunction errorFunction;
 
   bool initialized;
+  int P;
   Vt tempInput, tempOutput, tempError, tempParameters, tempParametersSum;
 
 public:
