@@ -22,6 +22,11 @@ OutputInfo Input::initialize(std::vector<fpt*>& parameterPointers,
   return info;
 }
 
+void Input::initializeParameters()
+{
+  // Do nothing.
+}
+
 void Input::forwardPropagate(Vt* x, Vt*& y)
 {
   // Copy entries and add bias

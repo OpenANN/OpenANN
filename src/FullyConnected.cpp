@@ -15,21 +15,33 @@ OutputInfo FullyConnected::initialize(std::vector<fpt*>& parameterPointers,
 {
   parameterPointers.reserve(parameterPointers.size() + J*I);
   parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*I);
-  RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
+  {
     for(int i = 0; i < I; i++)
     {
-      W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
       parameterPointers.push_back(&W(j, i));
       parameterDerivativePointers.push_back(&Wd(j, i));
     }
+  }
+
   // Bias component will not change after initialization
   if(bias)
     y(J) = fpt(1.0);
+
+  initializeParameters();
+
   OutputInfo info;
   info.bias = bias;
   info.dimensions.push_back(J);
   return info;
+}
+
+void FullyConnected::initializeParameters()
+{
+  RandomNumberGenerator rng;
+  for(int j = 0; j < J; j++)
+    for(int i = 0; i < I; i++)
+      W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
 }
 
 void FullyConnected::forwardPropagate(Vt* x, Vt*& y)

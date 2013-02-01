@@ -16,8 +16,6 @@ Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
 OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
                                    std::vector<fpt*>& parameterDerivativePointers)
 {
-  y.resize(0);
-  RandomNumberGenerator rng;
   OutputInfo info;
   info.bias = bias;
   info.dimensions.push_back(fm);
@@ -47,18 +45,19 @@ OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
     {
       for(int c = 0; c < outCols; c++)
       {
-        W[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
         parameterPointers.push_back(&W[fmo](r, c));
         parameterDerivativePointers.push_back(&Wd[fmo](r, c));
         if(weightForBias)
         {
-          Wb[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
           parameterPointers.push_back(&Wb[fmo](r, c));
           parameterDerivativePointers.push_back(&Wbd[fmo](r, c));
         }
       }
     }
   }
+
+  initializeParameters();
+
   a.resize(info.outputs()-bias);
   y.resize(info.outputs());
   if(bias)
@@ -67,6 +66,23 @@ OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
   deltas.resize(info.outputs()-bias);
 
   return info;
+}
+
+void Subsampling::initializeParameters()
+{
+  RandomNumberGenerator rng;
+  for(int fmo = 0; fmo < fm; fmo++)
+  {
+    for(int r = 0; r < outRows; r++)
+    {
+      for(int c = 0; c < outCols; c++)
+      {
+        W[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
+        if(weightForBias)
+          Wb[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      }
+    }
+  }
 }
 
 void Subsampling::forwardPropagate(Vt* x, Vt*& y)

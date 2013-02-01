@@ -7,7 +7,6 @@
 #include <optimization/IPOPCMAES.h>
 #include <optimization/LMA.h>
 #include <optimization/SGD.h>
-#include <Random.h>
 
 namespace OpenANN {
 
@@ -184,12 +183,11 @@ bool DeepNetwork::providesInitialization()
 
 void DeepNetwork::initialize()
 {
-  RandomNumberGenerator rng;
+  for(std::vector<Layer*>::iterator layer = layers.begin();
+      layer != layers.end(); layer++)
+    (**layer).initializeParameters();
   for(int p = 0; p < P; p++)
-  {
-    *parameters[p] = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
     parameterVector(p) = *parameters[p];
-  }
 }
 
 fpt DeepNetwork::error(unsigned int i)
