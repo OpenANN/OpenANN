@@ -32,11 +32,15 @@ OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
 
   W.resize(fm, Mt(outRows, outCols));
   Wd.resize(fm, Mt(outRows, outCols));
+  int numParams = fm * outRows * outCols;
   if(weightForBias)
   {
     Wb.resize(fm, Mt(outRows, outCols));
     Wbd.resize(fm, Mt(outRows, outCols));
+    numParams += fm * outRows * outCols;
   }
+  parameterPointers.reserve(parameterPointers.size() + numParams);
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + numParams);
   for(int fmo = 0; fmo < fm; fmo++)
   {
     for(int r = 0; r < outRows; r++)

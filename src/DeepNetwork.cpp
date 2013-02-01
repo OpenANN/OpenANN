@@ -82,12 +82,14 @@ DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
   fullyConnectedLayer(units, act, stdDev, false);
   L++;
 
+  P = parameters.size();
   tempInput.resize(infos[0].outputs()-infos[0].bias);
   tempOutput.resize(units);
   tempError.resize(units);
-  tempParameters.resize(parameters.size());
-  tempParametersSum.resize(parameters.size());
-  P = parameters.size();
+  tempGradient.resize(P);
+  parameterVector.resize(P);
+  for(int p = 0; p < P; p++)
+    parameterVector(p) = *parameters[p];
   initialized = true;
 
   return *this;
@@ -165,13 +167,12 @@ unsigned int DeepNetwork::examples()
 
 Vt DeepNetwork::currentParameters()
 {
-  for(int p = 0; p < P; p++)
-    tempParameters(p) = *parameters[p];
-  return tempParameters;
+  return parameterVector;
 }
 
 void DeepNetwork::setParameters(const Vt& parameters)
 {
+  parameterVector = parameters;
   for(int p = 0; p < P; p++)
     *(this->parameters[p]) = parameters(p);
 }
@@ -184,8 +185,11 @@ bool DeepNetwork::providesInitialization()
 void DeepNetwork::initialize()
 {
   RandomNumberGenerator rng;
-  for(int i = 0; i < P; i++)
-    *parameters[i] = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
+  for(int p = 0; p < P; p++)
+  {
+    *parameters[p] = rng.sampleNormalDistribution<fpt>() * 0.05; // TODO remove magic number
+    parameterVector(p) = *parameters[p];
+  }
 }
 
 fpt DeepNetwork::error(unsigned int i)
@@ -237,23 +241,32 @@ Vt DeepNetwork::gradient(unsigned int i)
       layer != layers.rend(); layer++)
     (**layer).backpropagate(e, e);
   for(int i = 0; i < P; i++)
-    tempParameters(i) = *derivatives[i];
-  return tempParameters;
+    tempGradient(i) = *derivatives[i];
+  return tempGradient;
 }
 
 Vt DeepNetwork::gradient()
 {
-  tempParametersSum.fill(0.0);
+  tempGradient.fill(0.0);
   for(int n = 0; n < N; n++)
-    tempParametersSum += gradient(n);
+  {
+    tempOutput = (*this)(dataSet->getInstance(n));
+    tempError = tempOutput - dataSet->getTarget(n);
+    Vt* e = &tempError;
+    for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+        layer != layers.rend(); layer++)
+      (**layer).backpropagate(e, e);
+    for(int i = 0; i < P; i++)
+      tempGradient(i) += *derivatives[i];
+  }
   switch(errorFunction)
   {
     case MSE:
-      tempParametersSum /= (fpt) dimension();
+      tempGradient /= (fpt) dimension();
     default:
       break;
   }
-  return tempParametersSum;
+  return tempGradient;
 }
 
 void DeepNetwork::VJ(Vt& values, Mt& jacobian)
@@ -267,8 +280,8 @@ void DeepNetwork::VJ(Vt& values, Mt& jacobian)
         layer != layers.rend(); layer++)
       (**layer).backpropagate(e, e);
     for(int i = 0; i < P; i++)
-      tempParameters(i) = *derivatives[i];
-    jacobian.row(n) = tempParameters;
+      tempGradient(i) = *derivatives[i];
+    jacobian.row(n) = tempGradient;
   }
 }
 

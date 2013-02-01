@@ -13,6 +13,8 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias, ActivationFunc
 OutputInfo FullyConnected::initialize(std::vector<fpt*>& parameterPointers,
                                       std::vector<fpt*>& parameterDerivativePointers)
 {
+  parameterPointers.reserve(parameterPointers.size() + J*I);
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*I);
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
     for(int i = 0; i < I; i++)

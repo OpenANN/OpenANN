@@ -33,11 +33,15 @@ OutputInfo Convolutional::initialize(std::vector<fpt*>& parameterPointers,
 
   W.resize(fmout, std::vector<Mt>(fmin, Mt(kernelRows, kernelCols)));
   Wd.resize(fmout, std::vector<Mt>(fmin, Mt(kernelRows, kernelCols)));
+  int numParams = fmout*kernelRows*kernelCols;
   if(weightForBias)
   {
     Wb.resize(fmout, fmin);
     Wbd.resize(fmout, fmin);
+    numParams += fmout * fmin;
   }
+  parameterPointers.reserve(parameterPointers.size() + numParams);
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + numParams);
   for(int fmo = 0; fmo < fmout; fmo++)
   {
     for(int fmi = 0; fmi < fmin; fmi++)

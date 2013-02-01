@@ -41,7 +41,8 @@ private:
 
   bool initialized;
   int P, N, L;
-  Vt tempInput, tempOutput, tempError, tempParameters, tempParametersSum;
+  Vt parameterVector;
+  Vt tempInput, tempOutput, tempError, tempGradient;
 
 public:
   DeepNetwork(ErrorFunction errorFunction);
