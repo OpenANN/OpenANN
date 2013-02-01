@@ -36,7 +36,8 @@ private:
   std::vector<fpt*> parameters;
   std::vector<fpt*> derivatives;
   DataSet* dataSet;
-  bool deleteDataSet;
+  DataSet* testDataSet;
+  bool deleteDataSet, deleteTestSet;
   ErrorFunction errorFunction;
 
   bool initialized;
@@ -62,6 +63,8 @@ public:
 
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
+  virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
+  virtual DeepNetwork& testSet(DataSet& testDataSet);
   Vt train(Training algorithm, StopCriteria stop, bool reinitialize = true);
   virtual void finishedIteration();
 

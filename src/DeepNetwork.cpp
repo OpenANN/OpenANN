@@ -11,8 +11,9 @@
 namespace OpenANN {
 
 DeepNetwork::DeepNetwork(ErrorFunction errorFunction)
-  : debugLogger(Logger::NONE), deleteDataSet(false),
-    errorFunction(errorFunction), initialized(false), N(0), L(0)
+  : debugLogger(Logger::NONE), dataSet(0), testDataSet(0),
+    deleteDataSet(false), deleteTestSet(false), errorFunction(errorFunction),
+    initialized(false), N(0), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -22,6 +23,8 @@ DeepNetwork::~DeepNetwork()
 {
   if(deleteDataSet)
     delete dataSet;
+  if(deleteTestSet)
+    delete testDataSet;
   for(int i = 0; i < layers.size(); i++)
     delete layers[i];
   layers.clear();
@@ -110,6 +113,20 @@ Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
   return *this;
 }
 
+DeepNetwork& DeepNetwork::testSet(Mt& testInput, Mt& testOutput)
+{
+  testDataSet = new DirectStorageDataSet(testInput, testOutput);
+  deleteTestSet = true;
+  return *this;
+}
+
+DeepNetwork& DeepNetwork::testSet(DataSet& testSet)
+{
+  testDataSet = &testSet;
+  deleteTestSet = false;
+  return *this;
+}
+
 Vt DeepNetwork::train(Training algorithm, StopCriteria stop, bool reinitialize)
 {
   if(reinitialize)
@@ -142,6 +159,8 @@ void DeepNetwork::finishedIteration()
 {
   if(dataSet)
     dataSet->finishIteration(*this);
+  if(testDataSet)
+    testDataSet->finishIteration(*this);
 }
 
 Vt DeepNetwork::operator()(const Vt& x)

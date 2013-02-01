@@ -1,5 +1,6 @@
-#include <OpenANN>
+#include <DeepNetwork.h>
 #include "IDXLoader.h"
+#include <io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -16,7 +17,7 @@
  * data set as argument to the program. The sum of squared errors on training
  * and test set, the correct and wrong predictions on training and test set
  * and the training time will be recorded during the training and saved in the
- * file "mlp-error.log".
+ * file "dataset.log".
  *
  * You can display the accuracy on training set and test set during the
  * training with this Gnuplot script:
@@ -26,8 +27,8 @@
  * set key bottom
  * set xlabel "Training time / min"
  * set ylabel "Accuracy / %"
- * plot "mlp-error.log" u ($16/60000):($3/600) t "Training Set" w l, \
- *     "mlp-error.log" u ($16/60000):($10/100) t "Test Set" w l
+ * plot "dataset.log" u ($16/60000):($3/600) t "Training Set" w l, \
+ *     "dataset.log" u ($16/60000):($10/100) t "Test Set" w l
  * \endcode
  */
 
@@ -42,22 +43,28 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 60000, 10000, directory);
+  IDXLoader loader(32, 32, 60000, 10000, directory);
 
-  OpenANN::MLP mlp(OpenANN::Logger::APPEND_FILE, OpenANN::Logger::NONE);
-  mlp.input(loader.D)
-    .fullyConnectedHiddenLayer(200, OpenANN::MLP::TANH)
-    .fullyConnectedHiddenLayer(100, OpenANN::MLP::TANH)
-    .output(loader.F, OpenANN::MLP::CE, OpenANN::MLP::SM)
-    .trainingSet(loader.trainingInput, loader.trainingOutput);
-  mlp.testSet(loader.testInput, loader.testOutput)
-    .training(OpenANN::MLP::BATCH_SGD);
+  OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);
+  net.inputLayer(1, loader.padToX, loader.padToY)
+     .convolutionalLayer(6, 5, 5, OpenANN::TANH)
+     .subsamplingLayer(2, 2, OpenANN::TANH)
+     .convolutionalLayer(16, 5, 5, OpenANN::TANH)
+     .subsamplingLayer(2, 2, OpenANN::TANH)
+     .fullyConnectedLayer(120, OpenANN::TANH)
+     .fullyConnectedLayer(84, OpenANN::TANH)
+     .outputLayer(loader.F, OpenANN::LINEAR)
+     .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
+                                        OpenANN::DirectStorageDataSet::MULTICLASS,
+                                        OpenANN::Logger::APPEND_FILE);
+  net.testSet(testSet);
   OpenANN::StopCriteria stop;
   stop.maximalIterations = 15;
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
-      << loader.F << ", N = " << loader.trainingN << ", L = " << mlp.dimension() << "\n";
-  mlp.fit(stop);
-  interfaceLogger << "Error = " << mlp.error() << "\n\n";
+      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
+  net.train(OpenANN::DeepNetwork::BATCH_SGD, stop);
+  interfaceLogger << "Error = " << net.error() << "\n\n";
   interfaceLogger << "Wrote data to mlp-error.log.\n";
 
   return EXIT_SUCCESS;
