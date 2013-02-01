@@ -264,8 +264,6 @@ void LayerTestCase::subsamplingGradient()
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
 }
 
-#include <MLP.h>
-
 void LayerTestCase::multilayerNetwork()
 {
   int samples = 10;
@@ -285,4 +283,16 @@ void LayerTestCase::multilayerNetwork()
   Vt e = net.gradientFD();
   for(int j = 0; j < net.dimension(); j++)
     ASSERT_EQUALS_DELTA(g(j), e(j), (fpt) 1e-2);
+
+  Vt values(samples);
+  Mt gradients(samples, net.dimension());
+  net.VJ(values, gradients);
+  for(int n = 0; n < samples; n++)
+  {
+    Vt e = net.singleGradientFD(n);
+    for(int j = 0; j < net.dimension(); j++)
+      ASSERT_EQUALS_DELTA(gradients(n, j), e(j), (fpt) 1e-2);
+    fpt error = net.error(n);
+    ASSERT_EQUALS_DELTA(values(n), error, (fpt) 1e-2);
+  }
 }

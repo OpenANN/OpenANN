@@ -275,13 +275,12 @@ void DeepNetwork::VJ(Vt& values, Mt& jacobian)
   {
     tempError = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
     values(n) = tempError.dot(tempError) / (fpt) 2.0;
-    Vt* e = &tempOutput;
+    Vt* e = &tempError;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
       (**layer).backpropagate(e, e);
-    for(int i = 0; i < P; i++)
-      tempGradient(i) = *derivatives[i];
-    jacobian.row(n) = tempGradient;
+    for(int p = 0; p < P; p++)
+      jacobian(n, p) = *derivatives[p];
   }
 }
 
