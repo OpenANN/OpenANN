@@ -47,13 +47,13 @@ int main(int argc, char** argv)
 
   OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);
   net.inputLayer(1, loader.padToX, loader.padToY)
-     .convolutionalLayer(6, 5, 5, OpenANN::TANH)
+     .convolutionalLayer(6, 5, 5, OpenANN::TANH, 0.05)
      .maxPoolingLayer(2, 2)
-     .convolutionalLayer(16, 5, 5, OpenANN::TANH)
+     .convolutionalLayer(16, 5, 5, OpenANN::TANH, 0.05)
      .maxPoolingLayer(2, 2)
-     .fullyConnectedLayer(120, OpenANN::TANH)
-     .fullyConnectedLayer(84, OpenANN::TANH)
-     .outputLayer(loader.F, OpenANN::LINEAR)
+     .fullyConnectedLayer(120, OpenANN::TANH, 0.05)
+     .fullyConnectedLayer(84, OpenANN::TANH, 0.05)
+     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
