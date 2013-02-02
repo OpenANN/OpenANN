@@ -2,6 +2,7 @@
 #include <layers/FullyConnected.h>
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
+#include <layers/MaxPooling.h>
 #include <Optimizable.h>
 #include <DeepNetwork.h>
 #include <io/DirectStorageDataSet.h>
@@ -108,6 +109,8 @@ void LayerTestCase::run()
   RUN(LayerTestCase, convolutionalGradient);
   RUN(LayerTestCase, subsampling);
   RUN(LayerTestCase, subsamplingGradient);
+  RUN(LayerTestCase, maxPooling);
+  RUN(LayerTestCase, maxPoolingGradient);
   RUN(LayerTestCase, multilayerNetwork);
 }
 
@@ -262,6 +265,44 @@ void LayerTestCase::subsamplingGradient()
   Vt estimatedGradient = opt.gradientFD();
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
+}
+
+void LayerTestCase::maxPooling()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(2);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  MaxPooling layer(info, 2, 2, true);
+  std::vector<fpt*> parameterPointers;
+  std::vector<fpt*> parameterDerivativePointers;
+  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  ASSERT_EQUALS(info2.dimensions.size(), 3);
+  ASSERT_EQUALS(info2.dimensions[0], 2);
+  ASSERT_EQUALS(info2.dimensions[1], 3);
+  ASSERT_EQUALS(info2.dimensions[2], 3);
+
+  Vt x(info.outputs());
+  x.fill(1.0);
+  Vt* y;
+  layer.forwardPropagate(&x, y);
+  for(int i = 0; i < 18; i++)
+    ASSERT_EQUALS_DELTA((*y)(i), (fpt) 1.0, (fpt) 1e-5);
+}
+
+void LayerTestCase::maxPoolingGradient()
+{
+  OutputInfo info;
+  info.bias = true;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  MaxPooling layer(info, 3, 3, true);
+  LayerOptimizable opt(layer, info);
+
+  Vt gradient = opt.gradient();
+  Vt estimatedGradient = opt.gradientFD();
 }
 
 void LayerTestCase::multilayerNetwork()

@@ -126,7 +126,6 @@ different architectures.
 
 \section TodoList Todo List
 
-  @todo layer: Maxpooling layer (CNN)
   @todo layer: Radial basis functions layer (RBF)
   @todo layer: Support vector machines (SVM, maybe include libsvm?)
   @todo Unsupervised methods (RBM, DBN, SOM, ...)

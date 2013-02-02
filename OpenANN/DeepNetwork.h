@@ -58,6 +58,7 @@ public:
   DeepNetwork& subsamplingLayer(int kernelRows, int kernelCols,
                                 ActivationFunction act,
                                 fpt stdDev = (fpt) 0.5, bool bias = true);
+  DeepNetwork& maxPoolingLayer(int kernelRows, int kernelCols, bool bias = true);
   DeepNetwork& outputLayer(int units, ActivationFunction act,
                            fpt stdDev = (fpt) 0.5);
 

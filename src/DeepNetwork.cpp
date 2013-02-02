@@ -3,6 +3,7 @@
 #include <layers/FullyConnected.h>
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
+#include <layers/MaxPooling.h>
 #include <io/DirectStorageDataSet.h>
 #include <optimization/IPOPCMAES.h>
 #include <optimization/LMA.h>
@@ -71,6 +72,16 @@ DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
 {
   Layer* layer = new Subsampling(infos.back(), kernelRows, kernelCols, bias,
                                  act, stdDev);
+  OutputInfo info = layer->initialize(parameters, derivatives);
+  layers.push_back(layer);
+  infos.push_back(info);
+  L++;
+  return *this;
+}
+
+DeepNetwork& DeepNetwork::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
+{
+  Layer* layer = new MaxPooling(infos.back(), kernelRows, kernelCols, bias);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);

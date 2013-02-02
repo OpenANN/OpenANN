@@ -9,5 +9,7 @@ class LayerTestCase : public TestCase
   void convolutionalGradient();
   void subsampling();
   void subsamplingGradient();
+  void maxPooling();
+  void maxPoolingGradient();
   void multilayerNetwork();
 };
