@@ -26,9 +26,8 @@
  * set title "MNIST Data Set (MLP 784-200-100-10)"
  * set key bottom
  * set xlabel "Training time / min"
- * set ylabel "Accuracy / %"
- * plot "dataset.log" u ($16/60000):($3/600) t "Training Set" w l, \
- *     "dataset.log" u ($16/60000):($10/100) t "Test Set" w l
+ * set ylabel "Error / %"
+ * plot "dataset.log" u ($5/1000):($4/100) t "Test Set" w l
  * \endcode
  */
 
@@ -43,17 +42,17 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(32, 32, 60000, 10000, directory);
+  IDXLoader loader(28, 28, 60000, 10000, directory);
 
-  OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);
-  net.inputLayer(1, loader.padToX, loader.padToY)
-     .convolutionalLayer(6, 5, 5, OpenANN::TANH, 0.05)
-     .maxPoolingLayer(2, 2)
-     .convolutionalLayer(16, 5, 5, OpenANN::TANH, 0.05)
-     .maxPoolingLayer(2, 2)
-     .fullyConnectedLayer(120, OpenANN::TANH, 0.05)
-     .fullyConnectedLayer(84, OpenANN::TANH, 0.05)
-     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)
+  OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);        // Nodes per layer:
+  net.inputLayer(1, loader.padToX, loader.padToY)            //  1 x 28 x 28
+     .convolutionalLayer(6, 5, 5, OpenANN::RECTIFIER, 0.05)  //  6 x 24 x 24
+     .maxPoolingLayer(2, 2)                                  //  6 x 12 x 12
+     .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05) // 16 x  8 x  8
+     .maxPoolingLayer(2, 2)                                  // 16 x  4 x  4
+     .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)     // 120
+     .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)      // 84
+     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)           // 10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,

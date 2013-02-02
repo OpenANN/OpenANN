@@ -10,6 +10,7 @@ enum ActivationFunction
   LOGISTIC,
   TANH,
   TANH_SCALED,
+  RECTIFIER,
   LINEAR
 };
 
@@ -23,6 +24,8 @@ void normaltanh(const Vt& a, Vt& z);
 void normaltanhDerivative(const Vt& z, Vt& gd);
 void scaledtanh(const Vt& a, Vt& z);
 void scaledtanhDerivative(const Vt& z, Vt& gd);
+void rectifier(const Vt& a, Vt& z);
+void rectifierDerivative(const Vt& z, Vt& gd);
 void linear(const Vt& a, Vt& z);
 void linearDerivative(Vt& gd);
 

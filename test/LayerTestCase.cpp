@@ -314,16 +314,17 @@ void LayerTestCase::multilayerNetwork()
 
   DeepNetwork net(DeepNetwork::SSE);
   net.inputLayer(1, 6, 6);
-  //net.convolutionalLayer(10, 3, 3, TANH, 0.5);
-  //net.subsamplingLayer(2, 2, TANH, 0.5);
+  net.convolutionalLayer(10, 3, 3, TANH, 0.5);
+  net.subsamplingLayer(2, 2, TANH, 0.5);
   net.fullyConnectedLayer(20, TANH, 0.5);
   net.outputLayer(3, LINEAR, 0.5);
   net.trainingSet(ds);
 
   Vt g = net.gradient();
   Vt e = net.gradientFD();
+  fpt delta = std::max<fpt>((fpt) 1e-2, 1e-5*e.norm());
   for(int j = 0; j < net.dimension(); j++)
-    ASSERT_EQUALS_DELTA(g(j), e(j), (fpt) 1e-2);
+    ASSERT_EQUALS_DELTA(g(j), e(j), (fpt) delta);
 
   Vt values(samples);
   Mt gradients(samples, net.dimension());
@@ -331,8 +332,9 @@ void LayerTestCase::multilayerNetwork()
   for(int n = 0; n < samples; n++)
   {
     Vt e = net.singleGradientFD(n);
+    fpt delta = std::max<fpt>((fpt) 1e-2, 1e-5*e.norm());
     for(int j = 0; j < net.dimension(); j++)
-      ASSERT_EQUALS_DELTA(gradients(n, j), e(j), (fpt) 1e-2);
+      ASSERT_EQUALS_DELTA(gradients(n, j), e(j), (fpt) delta);
     fpt error = net.error(n);
     ASSERT_EQUALS_DELTA(values(n), error, (fpt) 1e-2);
   }

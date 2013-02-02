@@ -18,6 +18,9 @@ void activationFunction(ActivationFunction act, const Vt& a, Vt& z)
     case TANH_SCALED:
       scaledtanh(a, z);
       break;
+    case RECTIFIER:
+      rectifier(a, z);
+      break;
     case LINEAR:
     default:
       linear(a, z);
@@ -37,6 +40,9 @@ void activationFunctionDerivative(ActivationFunction act, const Vt& z, Vt& gd)
       break;
     case TANH_SCALED:
       scaledtanhDerivative(z, gd);
+      break;
+    case RECTIFIER:
+      rectifierDerivative(z, gd);
       break;
     case LINEAR:
     default:
@@ -95,6 +101,18 @@ void scaledtanhDerivative(const Vt& z, Vt& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
     gd(j) = 0.66666667/1.7159*(1.7159+z(j))*(1.7159-z(j));
+}
+
+void rectifier(const Vt& a, Vt& z)
+{
+  for(int j = 0; j < a.rows(); j++)
+    z(j) = std::max<fpt>((fpt) 0.0, a(j));
+}
+
+void rectifierDerivative(const Vt& z, Vt& gd)
+{
+  for(int j = 0; j < gd.rows(); j++)
+    gd(j) = z(j) == (fpt) 0.0 ? (fpt) 0.0 : (fpt) 1.0;
 }
 
 void linear(const Vt& a, Vt& z)
