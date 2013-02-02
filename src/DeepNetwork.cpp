@@ -170,7 +170,10 @@ Vt DeepNetwork::operator()(const Vt& x)
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
     (**layer).forwardPropagate(y, y);
-  return *y;
+  tempOutput = *y;
+  if(errorFunction == CE)
+    OpenANN::softmax(tempOutput);
+  return tempOutput;
 }
 
 unsigned int DeepNetwork::dimension()
@@ -215,7 +218,6 @@ fpt DeepNetwork::error(unsigned int i)
   if(errorFunction == CE)
   {
     tempOutput = (*this)(dataSet->getInstance(i));
-    OpenANN::softmax(tempOutput);
     for(int f = 0; f < tempOutput.rows(); f++)
       e -= dataSet->getTarget(i)(f) * std::log(tempOutput(f));
   }

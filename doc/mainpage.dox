@@ -126,10 +126,7 @@ different architectures.
 
 \section TodoList Todo List
 
-  @todo Classes for layer types
-  @todo layer: Subsampling layer (CNN)
   @todo layer: Maxpooling layer (CNN)
-  @todo layer: Ordinary convolutional layer (CNN)
   @todo layer: Radial basis functions layer (RBF)
   @todo layer: Support vector machines (SVM, maybe include libsvm?)
   @todo Unsupervised methods (RBM, DBN, SOM, ...)
