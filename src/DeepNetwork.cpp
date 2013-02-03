@@ -8,6 +8,7 @@
 #include <optimization/IPOPCMAES.h>
 #include <optimization/LMA.h>
 #include <optimization/SGD.h>
+#include <optimization/MBSGD.h>
 
 namespace OpenANN {
 
@@ -147,6 +148,9 @@ Vt DeepNetwork::train(Training algorithm, StopCriteria stop, bool reinitialize)
   {
     case BATCH_SGD:
       opt = new SGD;
+      break;
+    case MINIBATCH_SGD:
+      opt = new MBSGD;
       break;
 #ifdef USE_GPL_LICENSE
     case BATCH_LMA:

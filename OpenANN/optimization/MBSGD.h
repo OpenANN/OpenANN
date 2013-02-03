@@ -8,21 +8,26 @@
 namespace OpenANN {
 
 /**
- * Stochastic Gradient Descent.
+ * @class MBSGD
+ *
+ * Mini-Batch Stochastic Gradient Descent.
+ * Some tricks are used to speed up the optimization:
+ *  * momentum
+ *  * adaptive learning rates per parameter
  */
-class SGD : public Optimizer
+class MBSGD : public Optimizer
 {
   Logger debugLogger;
   StopCriteria stop;
   Optimizable* opt; // do not delete
   Vt optimum;
-
-  bool regularize;
-  fpt regularizationCoefficient;
+  //! Typical size of a mini-batch is 10 to a few hundred.
+  int batchSize;
+  fpt alpha, eta, minGain, maxGain;
 
 public:
-  SGD();
-  ~SGD();
+  MBSGD();
+  ~MBSGD();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StopCriteria& stop);
   virtual void optimize();
