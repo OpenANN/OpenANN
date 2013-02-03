@@ -76,7 +76,6 @@ void MBSGD::optimize()
     debugLogger << "\n";
 
     debugLogger << "iteration " << iteration++ << " finished in " << sw.stop(Stopwatch::MILLISECOND) << " ms\n\n";
-    debugLogger << "gains = " << gains.transpose() << "\n\n";
     sw.start();
     opt->finishedIteration();
     if(debugLogger.isActive())
