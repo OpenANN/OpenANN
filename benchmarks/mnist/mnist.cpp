@@ -8,19 +8,17 @@
 /**
  * \page MNISTBenchmark MNIST
  *
- * Here, we use an MLP with the architecture 784-200-100-10 to learn
- * handwritten digit recognition. Download the MNIST data set from
+ * Here, we use a CNN that is similar to Yann LeCun's LeNet 5 to learn
+ * handwritten digit  recognition. Download the MNIST data set from
  * <a href="http://yann.lecun.com/exdb/mnist/" target=_blank>THE MNIST
  * DATABASE of handwritten digits</a>. You need all four files. Create the
  * directory "mnist" in your working directory, move the data set to this
  * directory and execute the benchmark or pass the directory of the MNIST
- * data set as argument to the program. The sum of squared errors on training
- * and test set, the correct and wrong predictions on training and test set
- * and the training time will be recorded during the training and saved in the
- * file "dataset.log".
+ * data set as argument to the program. Some information about the
+ * classification of the test set will be logged in the file "dataset.log".
  *
- * You can display the accuracy on training set and test set during the
- * training with this Gnuplot script:
+ * You can display the accuracy on test set during the training with this
+ * Gnuplot script:
  * \code
  * reset
  * set title "MNIST Data Set (MLP 784-200-100-10)"
@@ -46,14 +44,12 @@ int main(int argc, char** argv)
 
   OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);         // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY)             //   1 x 28 x 28
-     .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)  //  20 x 26 x 26
-     .maxPoolingLayer(2, 2)                                   //  20 x 13 x 13
-     .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05)  //  40 x  9 x  9
-     .convolutionalLayer(80, 3, 3, OpenANN::RECTIFIER, 0.05)  //  80 x  7 x  7
-     .convolutionalLayer(40, 3, 3, OpenANN::RECTIFIER, 0.05)  //  40 x  5 x  5
-     .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)  //  20 x  3 x  3
-     .fullyConnectedLayer(80, OpenANN::RECTIFIER, 0.05)       //  80
-     .fullyConnectedLayer(40, OpenANN::RECTIFIER, 0.05)       //  40
+     .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)  //  10 x 24 x 24
+     .maxPoolingLayer(2, 2)                                   //  10 x 12 x 12
+     .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)  //  16 x 10 x 10
+     .maxPoolingLayer(2, 2)                                   //  16 x  5 x  5
+     .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)      // 120
+     .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)       //  84
      .outputLayer(loader.F, OpenANN::LINEAR, 0.05)            //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
