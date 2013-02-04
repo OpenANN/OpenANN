@@ -47,8 +47,9 @@ public:
    * Forward propagation in this layer.
    * @param x pointer to input of the layer (with bias)
    * @param y returns a pointer to output of the layer
+   * @param dropout enable dropout for regularization
    */
-  virtual void forwardPropagate(Vt* x, Vt*& y) = 0;
+  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout) = 0;
   /**
    * Backpropagation in this layer.
    * @param ein pointer to error signal of the higher layer

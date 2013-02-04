@@ -15,7 +15,7 @@ namespace OpenANN {
 DeepNetwork::DeepNetwork(ErrorFunction errorFunction)
   : debugLogger(Logger::NONE), dataSet(0), testDataSet(0),
     deleteDataSet(false), deleteTestSet(false), errorFunction(errorFunction),
-    initialized(false), N(0), L(0)
+    dropout(false), initialized(false), N(0), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -32,9 +32,10 @@ DeepNetwork::~DeepNetwork()
   layers.clear();
 }
 
-DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias)
+DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias,
+                                     fpt dropoutProbability)
 {
-  Layer* layer = new Input(dim1, dim2, dim3, bias);
+  Layer* layer = new Input(dim1, dim2, dim3, bias, dropoutProbability);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
@@ -43,9 +44,11 @@ DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias)
 }
 
 DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
-                                              fpt stdDev, bool bias)
+                                              fpt stdDev, bool bias,
+                                              fpt dropoutProbability)
 {
-  Layer* layer = new FullyConnected(infos.back(), units, bias, act, stdDev);
+  Layer* layer = new FullyConnected(infos.back(), units, bias, act, stdDev,
+                                    dropoutProbability);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
@@ -139,7 +142,8 @@ DeepNetwork& DeepNetwork::testSet(DataSet& testSet)
   return *this;
 }
 
-Vt DeepNetwork::train(Training algorithm, StopCriteria stop, bool reinitialize)
+Vt DeepNetwork::train(Training algorithm, StopCriteria stop,
+                      bool reinitialize, bool dropout)
 {
   if(reinitialize)
     initialize();
@@ -162,6 +166,7 @@ Vt DeepNetwork::train(Training algorithm, StopCriteria stop, bool reinitialize)
       opt = new IPOPCMAES;
       break;
   }
+  this->dropout = dropout;
   opt->setOptimizable(*this);
   opt->setStopCriteria(stop);
   opt->optimize();
@@ -172,10 +177,13 @@ Vt DeepNetwork::train(Training algorithm, StopCriteria stop, bool reinitialize)
 
 void DeepNetwork::finishedIteration()
 {
+  bool dropout = this->dropout;
+  this->dropout = false;
   if(dataSet)
     dataSet->finishIteration(*this);
   if(testDataSet)
     testDataSet->finishIteration(*this);
+  this->dropout = dropout;
 }
 
 Vt DeepNetwork::operator()(const Vt& x)
@@ -184,7 +192,7 @@ Vt DeepNetwork::operator()(const Vt& x)
   Vt* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
-    (**layer).forwardPropagate(y, y);
+    (**layer).forwardPropagate(y, y, dropout);
   tempOutput = *y;
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);

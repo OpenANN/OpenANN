@@ -39,7 +39,7 @@ void MaxPooling::initializeParameters()
 {
 }
 
-void MaxPooling::forwardPropagate(Vt* x, Vt*& y)
+void MaxPooling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
 

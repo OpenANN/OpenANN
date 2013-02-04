@@ -13,6 +13,7 @@ class FullyConnected : public Layer
   bool bias;
   ActivationFunction act;
   fpt stdDev;
+  fpt dropoutProbability;
   Mt W;
   Mt Wd;
   Vt* x;
@@ -23,10 +24,11 @@ class FullyConnected : public Layer
   Vt e;
 
 public:
-  FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act, fpt stdDev);
+  FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
+                 fpt stdDev, fpt dropoutProbability);
   virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers);
   virtual void initializeParameters();
-  virtual void forwardPropagate(Vt* x, Vt*& y);
+  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
   virtual void backpropagate(Vt* ein, Vt*& eout);
 };
 

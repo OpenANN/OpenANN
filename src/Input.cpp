@@ -1,10 +1,11 @@
 #include <layers/Input.h>
+#include <Random.h>
 
 namespace OpenANN {
 
-Input::Input(int dim1, int dim2, int dim3, bool bias)
+Input::Input(int dim1, int dim2, int dim3, bool bias, fpt dropoutProbability)
   : J(dim1*dim2*dim3), dim1(dim1), dim2(dim2), dim3(dim3), bias(bias),
-    y(J+bias)
+    dropoutProbability(dropoutProbability), y(J+bias)
 {
 }
 
@@ -27,11 +28,18 @@ void Input::initializeParameters()
   // Do nothing.
 }
 
-void Input::forwardPropagate(Vt* x, Vt*& y)
+void Input::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   // Copy entries and add bias
   for(int i = 0; i < J; i++)
     this->y(i) = (*x)(i);
+  if(dropout)
+  {
+    RandomNumberGenerator rng;
+    for(int j = 0; j < J; j++)
+      if(rng.generate<fpt>(0.0, 1.0) < dropoutProbability)
+        this->y(j) = (fpt) 0;
+  }
   y = &(this->y);
 }
 

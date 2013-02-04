@@ -32,7 +32,7 @@ public:
               ActivationFunction act, fpt stdDev);
   virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers);
   virtual void initializeParameters();
-  virtual void forwardPropagate(Vt* x, Vt*& y);
+  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
   virtual void backpropagate(Vt* ein, Vt*& eout);
 };
 

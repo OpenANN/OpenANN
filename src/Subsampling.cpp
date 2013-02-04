@@ -85,7 +85,7 @@ void Subsampling::initializeParameters()
   }
 }
 
-void Subsampling::forwardPropagate(Vt* x, Vt*& y)
+void Subsampling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
 

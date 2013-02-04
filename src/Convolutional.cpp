@@ -88,7 +88,7 @@ void Convolutional::initializeParameters()
   }
 }
 
-void Convolutional::forwardPropagate(Vt* x, Vt*& y)
+void Convolutional::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
 

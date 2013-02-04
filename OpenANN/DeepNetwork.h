@@ -23,7 +23,7 @@ namespace OpenANN {
  *   present in the network.
  * - Output layer: this has to be the last layer and must be present in every
  *   network. It is fully connected.
- * - Fully connected layer: each neuron is connected to each neuron of the
+ * - FullyConnected layer: each neuron is connected to each neuron of the
  *   previous layer.
  * - Convolutional layer: consists of a number of 2-dimensional feature maps.
  *   Each feature map is connected to each feature map of the previous layer.
@@ -35,7 +35,7 @@ namespace OpenANN {
  *   non-overlapping group of nodes is summed up, multiplied with a weight and
  *   added to a learnable bias to obtain the activation of a neuron. This is
  *   sometimes called average pooling.
- * - Max-pooling layer: this is an alternative to subsampling layers and works
+ * - MaxPooling layer: this is an alternative to subsampling layers and works
  *   usually better. Instead of the sum it computes the maximum of a group and
  *   has no learnable weights or biases.
  */
@@ -69,6 +69,7 @@ private:
   DataSet* testDataSet;
   bool deleteDataSet, deleteTestSet;
   ErrorFunction errorFunction;
+  bool dropout;
 
   bool initialized;
   int P, N, L;
@@ -86,20 +87,26 @@ public:
    * @param dim2 second dimension, e. g. number of rows of an image
    * @param dim3 third dimension, e. g. number of columns of an image
    * @param bias add bias term
+   * @param dropoutProbability probability of dropout during training, a
+   *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
-  DeepNetwork& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true);
+  DeepNetwork& inputLayer(int dim1, int dim2 = 1, int dim3 = 1,
+                          bool bias = true, fpt dropoutProbability = 0.0);
   /**
    * Add a fully connected hidden layer.
    * @param units number of nodes (neurons)
    * @param act activation function
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @param bias add bias term
+   * @param dropoutProbability probability of dropout during training, a
+   *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
   DeepNetwork& fullyConnectedLayer(int units,
                                    ActivationFunction act,
-                                   fpt stdDev = (fpt) 0.5, bool bias = true);
+                                   fpt stdDev = (fpt) 0.5, bool bias = true,
+                                   fpt dropoutProbability = 0.0);
   /**
    * Add a convolutional layer.
    * @param featureMaps number of feature maps
@@ -147,7 +154,8 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
   virtual DeepNetwork& testSet(DataSet& testDataSet);
-  Vt train(Training algorithm, StopCriteria stop, bool reinitialize = true);
+  Vt train(Training algorithm, StopCriteria stop, bool reinitialize = true,
+           bool dropout = false);
   virtual void finishedIteration();
 
   virtual Vt operator()(const Vt& x);

@@ -3,10 +3,12 @@
 
 namespace OpenANN {
 
-FullyConnected::FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act, fpt stdDev)
+FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
+                               ActivationFunction act, fpt stdDev,
+                               fpt dropoutProbability)
   : debugLogger(Logger::CONSOLE), I(info.outputs()), J(J), bias(bias),
-    act(act), stdDev(stdDev), W(J, I), Wd(J, I), x(0), a(J), y(J+bias), yd(J),
-    deltas(J), e(I)
+    act(act), stdDev(stdDev), dropoutProbability(dropoutProbability), W(J, I),
+    Wd(J, I), x(0), a(J), y(J+bias), yd(J), deltas(J), e(I)
 {
 }
 
@@ -44,13 +46,20 @@ void FullyConnected::initializeParameters()
       W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
 }
 
-void FullyConnected::forwardPropagate(Vt* x, Vt*& y)
+void FullyConnected::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
   // Activate neurons
   a = W * *x;
   // Compute output
   activationFunction(act, a, this->y);
+  if(dropout)
+  {
+    RandomNumberGenerator rng;
+    for(int j = 0; j < J; j++)
+      if(rng.generate<fpt>(0.0, 1.0) < dropoutProbability)
+        this->y(j) = (fpt) 0;
+  }
   y = &(this->y);
 }
 

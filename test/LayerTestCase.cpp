@@ -50,7 +50,7 @@ public:
   virtual fpt error()
   {
     Vt* output;
-    layer.forwardPropagate(&input, output);
+    layer.forwardPropagate(&input, output, false);
     fpt error = 0.0;
     for(int i = 0; i < desired.rows(); i++)
     {
@@ -63,7 +63,7 @@ public:
   virtual Vt gradient()
   {
     Vt* output;
-    layer.forwardPropagate(&input, output);
+    layer.forwardPropagate(&input, output, false);
     Vt diff = *output;
     for(int i = 0; i < desired.rows(); i++)
       diff(i) = (*output)(i) - desired(i);
@@ -119,7 +119,7 @@ void LayerTestCase::fullyConnected()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
 
   std::vector<fpt*> parameterPointers;
   std::vector<fpt*> parameterDerivativePointers;
@@ -137,7 +137,7 @@ void LayerTestCase::fullyConnected()
   e << 1.0, 2.0, 0.0;
 
   Vt* y;
-  layer.forwardPropagate(&x, y);
+  layer.forwardPropagate(&x, y, false);
   ASSERT(y != 0);
   ASSERT_EQUALS_DELTA((*y)(0), (fpt) tanh(3.5), (fpt) 1e-10);
   ASSERT_EQUALS_DELTA((*y)(1), (fpt) tanh(3.5), (fpt) 1e-10);
@@ -164,7 +164,7 @@ void LayerTestCase::fullyConnectedGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
   LayerOptimizable opt(layer, info);
 
   Vt gradient = opt.gradient();
@@ -196,7 +196,7 @@ void LayerTestCase::convolutional()
   Vt x(info.outputs());
   x.fill(1.0);
   Vt* y;
-  layer.forwardPropagate(&x, y);
+  layer.forwardPropagate(&x, y, false);
   ASSERT_EQUALS_DELTA((*y)(0), (fpt) tanh(0.18), (fpt) 1e-5);
   ASSERT_EQUALS_DELTA((*y)(1), (fpt) tanh(0.18), (fpt) 1e-5);
   ASSERT_EQUALS_DELTA((*y)(2), (fpt) tanh(0.18), (fpt) 1e-5);
@@ -246,7 +246,7 @@ void LayerTestCase::subsampling()
   Vt x(info.outputs());
   x.fill(1.0);
   Vt* y;
-  layer.forwardPropagate(&x, y);
+  layer.forwardPropagate(&x, y, false);
   for(int i = 0; i < 18; i++)
     ASSERT_EQUALS_DELTA((*y)(i), (fpt) tanh(0.4), (fpt) 1e-5);
 }
@@ -286,7 +286,7 @@ void LayerTestCase::maxPooling()
   Vt x(info.outputs());
   x.fill(1.0);
   Vt* y;
-  layer.forwardPropagate(&x, y);
+  layer.forwardPropagate(&x, y, false);
   for(int i = 0; i < 18; i++)
     ASSERT_EQUALS_DELTA((*y)(i), (fpt) 1.0, (fpt) 1e-5);
 }
