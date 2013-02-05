@@ -37,12 +37,18 @@ public:
    * @param parameterDerivativePointers pointers to derivatives of parameters
    * @return information about the output of the layer
    */
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers) = 0;
+  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
+                                std::vector<fpt*>& parameterDerivativePointers) = 0;
   /**
    * Initialize the parameters. This is usually called before each
    * optimization.
    */
   virtual void initializeParameters() = 0;
+  /**
+   * Generate internal parameters from externally visible parameters. This is
+   * usually called after each parameter update.
+   */
+  virtual void updatedParameters() = 0;
   /**
    * Forward propagation in this layer.
    * @param x pointer to input of the layer (with bias)

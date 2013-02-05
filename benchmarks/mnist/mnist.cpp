@@ -42,22 +42,22 @@ int main(int argc, char** argv)
 
   IDXLoader loader(28, 28, 60000, 10000, directory);
 
-  OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);         // Nodes per layer:
-  net.inputLayer(1, loader.padToX, loader.padToY, true, 0.2)  //   1 x 28 x 28
-     .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)  //  10 x 24 x 24
-     .maxPoolingLayer(2, 2)                                   //  10 x 12 x 12
-     .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)  //  16 x 10 x 10
-     .maxPoolingLayer(2, 2)                                   //  16 x  5 x  5
-     .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05, 0.5) // 120
-     .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05, 0.5)  //  84
-     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)            //  10
+  OpenANN::DeepNetwork net(OpenANN::DeepNetwork::CE);             // Nodes per layer:
+  net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28
+     .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  10 x 24 x 24
+     .maxPoolingLayer(2, 2)                                       //  10 x 12 x 12
+     .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)      //  16 x 10 x 10
+     .maxPoolingLayer(2, 2)                                       //  16 x  5 x  5
+     .compressedLayer(240, 100, OpenANN::RECTIFIER, "sparse")     // 120
+     .fullyConnectedLayer(84, OpenANN::RECTIFIER)                 //  84
+     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
   OpenANN::StopCriteria stop;
-  stop.maximalIterations = 15;
+  stop.maximalIterations = 100;
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
   net.train(OpenANN::DeepNetwork::MINIBATCH_SGD, stop, true, true);

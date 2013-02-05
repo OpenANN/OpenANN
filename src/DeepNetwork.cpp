@@ -1,6 +1,7 @@
 #include <DeepNetwork.h>
 #include <layers/Input.h>
 #include <layers/FullyConnected.h>
+#include <layers/Compressed.h>
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <layers/MaxPooling.h>
@@ -49,6 +50,21 @@ DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
 {
   Layer* layer = new FullyConnected(infos.back(), units, bias, act, stdDev,
                                     dropoutProbability);
+  OutputInfo info = layer->initialize(parameters, derivatives);
+  layers.push_back(layer);
+  infos.push_back(info);
+  L++;
+  return *this;
+}
+
+DeepNetwork& DeepNetwork::compressedLayer(int units, int params,
+                                          ActivationFunction act,
+                                          const std::string& compression,
+                                          fpt stdDev, bool bias,
+                                          fpt dropoutProbability)
+{
+  Layer* layer = new Compressed(infos.back(), units, params, bias, act,
+                                compression, stdDev, dropoutProbability);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
@@ -219,6 +235,9 @@ void DeepNetwork::setParameters(const Vt& parameters)
   parameterVector = parameters;
   for(int p = 0; p < P; p++)
     *(this->parameters[p]) = parameters(p);
+  for(std::vector<Layer*>::iterator layer = layers.begin();
+      layer != layers.end(); layer++)
+    (**layer).updatedParameters();
 }
 
 bool DeepNetwork::providesInitialization()

@@ -25,6 +25,8 @@ namespace OpenANN {
  *   network. It is fully connected.
  * - FullyConnected layer: each neuron is connected to each neuron of the
  *   previous layer.
+ * - Compressed layer: fully connected layer. The I incoming weights of a
+ *   neuron are represented by M (usually M < I) parameters.
  * - Convolutional layer: consists of a number of 2-dimensional feature maps.
  *   Each feature map is connected to each feature map of the previous layer.
  *   The activations are computed by applying a parametrizable convolution,
@@ -103,10 +105,27 @@ public:
    *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
-  DeepNetwork& fullyConnectedLayer(int units,
-                                   ActivationFunction act,
+  DeepNetwork& fullyConnectedLayer(int units, ActivationFunction act,
                                    fpt stdDev = (fpt) 0.5, bool bias = true,
                                    fpt dropoutProbability = 0.0);
+  /**
+   * Add a compressed fully connected hidden layer.
+   * @param units number of nodes (neurons)
+   * @param params number of parameters to represent the incoming weights of
+   *               a neuron in this layer
+   * @param act activation function
+   * @param compression type of compression matrix, possible values are
+   *        dct, gaussian, sparse, average, edge
+   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param bias add bias term
+   * @param dropoutProbability probability of dropout during training, a
+   *        reasonable value is usually between 0 and 0.5
+   * @return this for chaining
+   */
+  DeepNetwork& compressedLayer(int units, int params, ActivationFunction act,
+                               const std::string& compression,
+                               fpt stdDev = (fpt) 0.5, bool bias = true,
+                               fpt dropoutProbability = 0.0);
   /**
    * Add a convolutional layer.
    * @param featureMaps number of feature maps

@@ -1,5 +1,6 @@
 #include "LayerTestCase.h"
 #include <layers/FullyConnected.h>
+#include <layers/Compressed.h>
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <layers/MaxPooling.h>
@@ -45,6 +46,7 @@ public:
     std::vector<fpt*>::const_iterator it = this->parameters.begin();
     for(int i = 0; i < dimension(); i++, it++)
       **it = parameters(i);
+    layer.updatedParameters();
   }
 
   virtual fpt error()
@@ -105,6 +107,8 @@ void LayerTestCase::run()
 {
   RUN(LayerTestCase, fullyConnected);
   RUN(LayerTestCase, fullyConnectedGradient);
+  RUN(LayerTestCase, compressed);
+  RUN(LayerTestCase, compressedGradient);
   RUN(LayerTestCase, convolutional);
   RUN(LayerTestCase, convolutionalGradient);
   RUN(LayerTestCase, subsampling);
@@ -173,6 +177,51 @@ void LayerTestCase::fullyConnectedGradient()
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
 }
 
+void LayerTestCase::compressed()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  Compressed layer(info, 2, 3, true, TANH, "average", 0.05, 0.0);
+
+  std::vector<fpt*> parameterPointers;
+  std::vector<fpt*> parameterDerivativePointers;
+  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  ASSERT(info2.bias);
+  ASSERT_EQUALS(info2.dimensions.size(), 1);
+  ASSERT_EQUALS(info2.outputs(), 3);
+
+  for(std::vector<fpt*>::iterator it = parameterPointers.begin();
+      it != parameterPointers.end(); it++)
+    **it = 1.0;
+  layer.updatedParameters();
+  Vt x(3);
+  x << 0.5, 1.0, 2.0;
+  Vt e(3);
+  e << 1.0, 2.0, 0.0;
+
+  Vt* y;
+  layer.forwardPropagate(&x, y, false);
+  ASSERT(y != 0);
+  ASSERT_EQUALS_DELTA((*y)(0), (fpt) tanh(3.5), (fpt) 1e-10);
+  ASSERT_EQUALS_DELTA((*y)(1), (fpt) tanh(3.5), (fpt) 1e-10);
+  ASSERT_EQUALS_DELTA((*y)(2), (fpt) 1.0, (fpt) 1e-10);
+}
+
+void LayerTestCase::compressedGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, 0.0);
+  LayerOptimizable opt(layer, info);
+
+  Vt gradient = opt.gradient();
+  Vt estimatedGradient = opt.gradientFD();
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
+}
+
 void LayerTestCase::convolutional()
 {
   OutputInfo info;
@@ -192,6 +241,7 @@ void LayerTestCase::convolutional()
   for(std::vector<fpt*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
     **it = 0.01;
+  layer.updatedParameters();
 
   Vt x(info.outputs());
   x.fill(1.0);
