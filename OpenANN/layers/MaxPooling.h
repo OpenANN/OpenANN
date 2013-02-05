@@ -1,7 +1,6 @@
 #pragma once
 
 #include <layers/Layer.h>
-#include <io/Logger.h>
 #include <ActivationFunctions.h>
 
 namespace OpenANN {

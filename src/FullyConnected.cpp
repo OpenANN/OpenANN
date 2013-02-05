@@ -6,9 +6,9 @@ namespace OpenANN {
 FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, fpt stdDev,
                                fpt dropoutProbability)
-  : debugLogger(Logger::CONSOLE), I(info.outputs()), J(J), bias(bias),
-    act(act), stdDev(stdDev), dropoutProbability(dropoutProbability), W(J, I),
-    Wd(J, I), x(0), a(J), y(J+bias), yd(J), deltas(J), e(I)
+  : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
+    dropoutProbability(dropoutProbability), W(J, I), Wd(J, I), x(0), a(J),
+    y(J+bias), yd(J), deltas(J), e(I)
 {
 }
 

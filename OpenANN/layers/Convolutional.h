@@ -1,14 +1,12 @@
 #pragma once
 
 #include <layers/Layer.h>
-#include <io/Logger.h>
 #include <ActivationFunctions.h>
 
 namespace OpenANN {
 
 class Convolutional : public Layer
 {
-  Logger debugLogger;
   int I, fmin, inRows, inCols, fmout, kernelRows, kernelCols;
   bool bias, weightForBias;
   ActivationFunction act;
