@@ -124,7 +124,6 @@ DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
                                       fpt stdDev)
 {
   fullyConnectedLayer(units, act, stdDev, false);
-  L++;
   initializeNetwork();
   return *this;
 }
@@ -135,7 +134,6 @@ DeepNetwork& DeepNetwork::compressedOutputLayer(int units, int params,
                                                 fpt stdDev)
 {
   compressedLayer(units, params, act, compression, stdDev, false);
-  L++;
   initializeNetwork();
   return *this;
 }

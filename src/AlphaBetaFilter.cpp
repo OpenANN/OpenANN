@@ -1,8 +1,6 @@
 #include <layers/AlphaBetaFilter.h>
 #include <Random.h>
 
-// TODO find out why there is a bug
-
 namespace OpenANN {
 
 AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, fpt deltaT, bool bias, fpt stdDev)
@@ -39,7 +37,7 @@ void AlphaBetaFilter::initializeParameters()
   RandomNumberGenerator rng;
   for(int i = 0; i < I; i++)
   {
-    gamma(i) = fabs(rng.sampleNormalDistribution<fpt>() * stdDev);
+    gamma(i) = rng.sampleNormalDistribution<fpt>() * stdDev;
     gammad(i) = (fpt) 0;
   }
 }
@@ -48,6 +46,7 @@ void AlphaBetaFilter::updatedParameters()
 {
   for(int i = 0; i < I; i++)
   {
+    gamma(i) = fabs(gamma(i));
     const fpt r = (4.0 + gamma(i) - sqrt(8.0 * gamma(i) + gamma(i) * gamma(i))) / 4.0;
     alpha(i) = 1.0 - r*r;
     const fpt rr = 1.0 - r;
@@ -75,10 +74,9 @@ void AlphaBetaFilter::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 
   for(int i = 0, j = 0; i < I; i++, j+=2)
   {
-    const fpt a = (*x)(i) - this->y(j);
-    this->y(j) += alpha(i) * a;
-    this->y(j+1) += beta(i) / deltaT * a;
-    this->y(j) = this->y(j) + deltaT * this->y(j+1);
+    const fpt diff = (*x)(i) - this->y(j);
+    this->y(j+1) += beta(i) / deltaT * diff;
+    this->y(j) += alpha(i) * diff + deltaT * this->y(j+1);
   }
 
   y = &(this->y);

@@ -41,7 +41,8 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
 public:
   NeuroEvolutionAgent(int h, bool b, const std::string a,
                       bool compress = false, int m = 0,
-                      bool fullyObservable = true, bool alphaBetaFilter = false,
+                      bool fullyObservable = true,
+                      bool alphaBetaFilter = false,
                       bool doubleExponentialSmoothing = false);
   ~NeuroEvolutionAgent();
   virtual void abandoneIn(Environment& environment);

@@ -4,10 +4,10 @@
 
 NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,
                                          bool compress, int m,
-                                         bool fullyObservable, bool alphaBetaFilter,
+                                         bool fullyObservable,
+                                         bool alphaBetaFilter,
                                          bool doubleExponentialSmoothing)
-  : h(h), b(b), a(a),
-    compress(compress), m(m),
+  : h(h), b(b), a(a), compress(compress), m(m),
     fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
     doubleExponentialSmoothing(doubleExponentialSmoothing),
     gruauFitness(false), policy(DeepNetwork::SSE)
@@ -23,13 +23,14 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
   this->environment = &environment;
 
   ActivationFunction act = a == "tanh" ? TANH : LINEAR;
-  inputSize = (fullyObservable || alphaBetaFilter ? 1 : 2) * environment.stateSpaceDimension();
+  inputSize = (fullyObservable || alphaBetaFilter ? 1 : 2)
+      * environment.stateSpaceDimension();
   policy.inputLayer(inputSize, 1, 1, b);
 
   if(!fullyObservable)
   {
     if(alphaBetaFilter)
-      policy.alphaBetaFilterLayer(environment.deltaT(), 0.05, b);
+      policy.alphaBetaFilterLayer(environment.deltaT(), 5.0, b);
     else if(doubleExponentialSmoothing)
     {
       des.resize(environment.stateSpaceDimension());
@@ -49,14 +50,14 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
       policy.compressedLayer(h, m, act, std::string("dct"), 0.05, b);
     else
       policy.fullyConnectedLayer(h, act, 0.05, b);
-    policy.outputLayer(environment.actionSpaceDimension(), act);
+    policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
   }
   else
   {
     if(compress)
-      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"));
+      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"), 0.05);
     else
-      policy.outputLayer(environment.actionSpaceDimension(), act);
+      policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
   }
 
   StopCriteria stop;
@@ -114,7 +115,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
 
   // calculating network input
   Vt input(inputSize);
-  if(fullyObservable)
+  if(fullyObservable || alphaBetaFilter)
     input = state;
   else
   {
@@ -128,7 +129,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
         input(in_idx++) = estimation(1);
       }
     }
-    else if(!alphaBetaFilter)
+    else
     {
       if(firstStep)
       {
