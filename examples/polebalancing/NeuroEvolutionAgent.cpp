@@ -28,9 +28,9 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
   if(h > 0)
   {
     if(compress)
-      policy.compressedLayer(h, m, act, std::string("dct"));
+      policy.compressedLayer(h, m, act, std::string("dct"), 0.05, b);
     else
-      policy.fullyConnectedLayer(h, act);
+      policy.fullyConnectedLayer(h, act, 0.05, b);
     policy.outputLayer(environment.actionSpaceDimension(), act);
   }
   else

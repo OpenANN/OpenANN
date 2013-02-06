@@ -186,7 +186,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
   OpenANN::Logger progressLogger(Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
   {
-    NeuroEvolutionAgent agent(0, false, "linear", true, parameters,
+    NeuroEvolutionAgent agent(0, false, "linear", parameters > 0, parameters,
         fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
     agent.setSigma0(sigma0);
     Result result = benchmarkSingleRun(*env, agent);
