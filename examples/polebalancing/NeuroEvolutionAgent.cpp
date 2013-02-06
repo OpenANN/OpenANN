@@ -23,8 +23,26 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
   this->environment = &environment;
 
   ActivationFunction act = a == "tanh" ? TANH : LINEAR;
-  inputSize = (fullyObservable ? 1 : 2) * environment.stateSpaceDimension();
+  inputSize = (fullyObservable || alphaBetaFilter ? 1 : 2) * environment.stateSpaceDimension();
   policy.inputLayer(inputSize, 1, 1, b);
+
+  if(!fullyObservable)
+  {
+    if(alphaBetaFilter)
+      policy.alphaBetaFilterLayer(environment.deltaT(), 0.05, b);
+    else if(doubleExponentialSmoothing)
+    {
+      des.resize(environment.stateSpaceDimension());
+      for(int i  = 0; i < environment.stateSpaceDimension(); i++)
+        des[i].restart();
+    }
+    else
+    {
+      lastState.resize(environment.stateSpaceDimension());
+      firstStep = true;
+    }
+  }
+
   if(h > 0)
   {
     if(compress)
@@ -39,33 +57,6 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
       policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"));
     else
       policy.outputLayer(environment.actionSpaceDimension(), act);
-  }
-
-  if(!fullyObservable)
-  {
-    if(alphaBetaFilter)
-    {
-      alphaBetaFilters.resize(environment.stateSpaceDimension());
-      for(int i = 0; i < environment.stateSpaceDimension(); i++)
-      {
-        alphaBetaFilters[i].setDeltaT(environment.deltaT());
-        alphaBetaFilters[i].restart();
-        alphaBetaFilters[i].random();
-      }
-    }
-    else if(doubleExponentialSmoothing)
-    {
-      des.resize(environment.stateSpaceDimension());
-      for(int i  = 0; i < environment.stateSpaceDimension(); i++)
-      {
-        des[i].restart();
-      }
-    }
-    else
-    {
-      lastState.resize(environment.stateSpaceDimension());
-      firstStep = true;
-    }
   }
 
   StopCriteria stop;
@@ -112,8 +103,6 @@ void NeuroEvolutionAgent::chooseAction()
       opt.restart();
     setParameters(opt.getNext());
     firstStep = true;
-    for(size_t i = 0; i < alphaBetaFilters.size(); i++)
-      alphaBetaFilters[i].restart();
     for(size_t i = 0; i < des.size(); i++)
       des[i].restart();
   }
@@ -129,17 +118,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
     input = state;
   else
   {
-    if(alphaBetaFilter)
-    {
-      int in_idx = 0;
-      for(int i = 0; i < state.rows(); i++)
-      {
-        Vt estimation = alphaBetaFilters[i](state(i));
-        input(in_idx++) = estimation(0);
-        input(in_idx++) = estimation(1);
-      }
-    }
-    else if(doubleExponentialSmoothing)
+    if(doubleExponentialSmoothing)
     {
       int in_idx = 0;
       for(int i = 0; i < state.rows(); i++)
@@ -149,7 +128,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
         input(in_idx++) = estimation(1);
       }
     }
-    else
+    else if(!alphaBetaFilter)
     {
       if(firstStep)
       {
@@ -178,24 +157,12 @@ void NeuroEvolutionAgent::chooseOptimalAction()
 
 Vt NeuroEvolutionAgent::currentParameters()
 {
-  Vt parameters(dimension());
-  if(alphaBetaFilter)
-  {
-    Vt mlpParameters = policy.currentParameters();
-    int i = 0;
-    for(; i < (int) policy.dimension(); i++)
-      parameters(i) = mlpParameters(i);
-    for(int j = 0; j < (int) alphaBetaFilters.size(); i++, j++)
-      parameters(i) = alphaBetaFilters[j].currentParameter();
-    return parameters;
-  }
-  else
-    return policy.currentParameters();
+  return policy.currentParameters();
 }
 
 unsigned int NeuroEvolutionAgent::dimension()
 {
-  return policy.dimension() + (alphaBetaFilter ? alphaBetaFilters.size() : 0);
+  return policy.dimension();
 }
 
 fpt NeuroEvolutionAgent::error()
@@ -219,8 +186,6 @@ Mt NeuroEvolutionAgent::hessian()
 void NeuroEvolutionAgent::initialize()
 {
   policy.initialize();
-  for(size_t i = 0; i < alphaBetaFilters.size(); i++)
-    alphaBetaFilters[i].random();
 }
 
 bool NeuroEvolutionAgent::providesGradient()
@@ -240,20 +205,7 @@ bool NeuroEvolutionAgent::providesInitialization()
 
 void NeuroEvolutionAgent::setParameters(const Vt& parameters)
 {
-  if(alphaBetaFilter)
-  {
-    Vt mlpParameters(policy.dimension());
-    int i = 0;
-    for(; i < (int) policy.dimension(); i++)
-      mlpParameters(i) = parameters(i);
-    policy.setParameters(mlpParameters);
-    for(int j = 0; j < (int) alphaBetaFilters.size(); i++, j++)
-      alphaBetaFilters[j].setParameter(parameters(i));
-  }
-  else
-  {
-    policy.setParameters(parameters);
-  }
+  policy.setParameters(parameters);
 }
 
 void NeuroEvolutionAgent::setSigma0(fpt sigma0)

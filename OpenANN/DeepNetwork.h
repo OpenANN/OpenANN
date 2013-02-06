@@ -42,6 +42,10 @@ namespace OpenANN {
  * - MaxPooling layer: this is an alternative to subsampling layers and works
  *   usually better. Instead of the sum it computes the maximum of a group and
  *   has no learnable weights or biases.
+ * - AlphaBetaFilter layer: this is a recurrent layer that estimates the
+ *   position and velocity of the inputs from the noisy observation of the
+ *   positions. Usually we need this layer for partially observable markov
+ *   decision processes in reinforcement learning.
  */
 class DeepNetwork : public Optimizable, Learner
 {
@@ -99,6 +103,14 @@ public:
    */
   DeepNetwork& inputLayer(int dim1, int dim2 = 1, int dim3 = 1,
                           bool bias = true, fpt dropoutProbability = 0.0);
+  /**
+   * Add a alpha-beta filter layer.
+   * @param deltaT temporal difference between two steps
+   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param bias add bias term
+   * @return this for chaining
+   */
+  DeepNetwork& alphaBetaFilterLayer(fpt deltaT, fpt stdDev = (fpt) 0.5, bool bias = true);
   /**
    * Add a fully connected hidden layer.
    * @param units number of nodes (neurons)

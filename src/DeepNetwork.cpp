@@ -1,5 +1,6 @@
 #include <DeepNetwork.h>
 #include <layers/Input.h>
+#include <layers/AlphaBetaFilter.h>
 #include <layers/FullyConnected.h>
 #include <layers/Compressed.h>
 #include <layers/Convolutional.h>
@@ -37,6 +38,16 @@ DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias,
                                      fpt dropoutProbability)
 {
   Layer* layer = new Input(dim1, dim2, dim3, bias, dropoutProbability);
+  OutputInfo info = layer->initialize(parameters, derivatives);
+  layers.push_back(layer);
+  infos.push_back(info);
+  L++;
+  return *this;
+}
+
+DeepNetwork& DeepNetwork::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias)
+{
+  Layer* layer = new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);
@@ -133,8 +144,8 @@ void DeepNetwork::initializeNetwork()
 {
   P = parameters.size();
   tempInput.resize(infos[0].outputs()-infos[0].bias);
-  tempOutput.resize(infos[L-1].outputs());
-  tempError.resize(infos[L-1].outputs());
+  tempOutput.resize(infos.back().outputs());
+  tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
   for(int p = 0; p < P; p++)

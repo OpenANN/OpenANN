@@ -3,7 +3,6 @@
 #include <rl/Agent.h>
 #include <DeepNetwork.h>
 #include <optimization/IPOPCMAES.h>
-#include "AlphaBetaFilter.h"
 #include "DoubleExponentialSmoothing.h"
 #include <vector>
 #include <list>
@@ -37,7 +36,6 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
   IPOPCMAES opt;
   Vt lastState;
   bool firstStep;
-  std::vector<AlphaBetaFilter> alphaBetaFilters;
   std::vector<DoubleExponentialSmoothing> des;
   std::list<Vt> inputBuffer;
 public:
