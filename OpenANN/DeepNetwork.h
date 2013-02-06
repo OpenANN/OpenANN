@@ -110,7 +110,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& alphaBetaFilterLayer(fpt deltaT, fpt stdDev = (fpt) 0.5, bool bias = true);
+  DeepNetwork& alphaBetaFilterLayer(fpt deltaT, fpt stdDev = (fpt) 0.05, bool bias = true);
   /**
    * Add a fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -122,7 +122,7 @@ public:
    * @return this for chaining
    */
   DeepNetwork& fullyConnectedLayer(int units, ActivationFunction act,
-                                   fpt stdDev = (fpt) 0.5, bool bias = true,
+                                   fpt stdDev = (fpt) 0.05, bool bias = true,
                                    fpt dropoutProbability = 0.0);
   /**
    * Add a compressed fully connected hidden layer.
@@ -140,7 +140,7 @@ public:
    */
   DeepNetwork& compressedLayer(int units, int params, ActivationFunction act,
                                const std::string& compression,
-                               fpt stdDev = (fpt) 0.5, bool bias = true,
+                               fpt stdDev = (fpt) 0.05, bool bias = true,
                                fpt dropoutProbability = 0.0);
   /**
    * Add a convolutional layer.
@@ -154,7 +154,7 @@ public:
    */
   DeepNetwork& convolutionalLayer(int featureMaps, int kernelRows,
                                   int kernelCols, ActivationFunction act,
-                                  fpt stdDev = (fpt) 0.5, bool bias = true);
+                                  fpt stdDev = (fpt) 0.05, bool bias = true);
   /**
    * Add a subsampling layer.
    * @param kernelRows number of kernel rows
@@ -166,7 +166,7 @@ public:
    */
   DeepNetwork& subsamplingLayer(int kernelRows, int kernelCols,
                                 ActivationFunction act,
-                                fpt stdDev = (fpt) 0.5, bool bias = true);
+                                fpt stdDev = (fpt) 0.05, bool bias = true);
   /**
    * Add a max-pooling layer.
    * @param kernelRows number of kernel rows
@@ -183,7 +183,7 @@ public:
    * @return this for chaining
    */
   DeepNetwork& outputLayer(int units, ActivationFunction act,
-                           fpt stdDev = (fpt) 0.5);
+                           fpt stdDev = (fpt) 0.05);
   /**
    * Add a compressed output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -198,7 +198,7 @@ public:
   DeepNetwork& compressedOutputLayer(int units, int params,
                                      ActivationFunction act,
                                      const std::string& compression,
-                                     fpt stdDev = (fpt) 0.5);
+                                     fpt stdDev = (fpt) 0.05);
 
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);

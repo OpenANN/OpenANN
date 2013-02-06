@@ -21,12 +21,12 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
   net->inputLayer(trainingInput.rows())
     .fullyConnectedLayer(20, TANH)
     .fullyConnectedLayer(20, TANH)
-    .outputLayer(trainingOutput.rows(), LINEAR)
+    .outputLayer(trainingOutput.rows(), TANH)
     .trainingSet(trainingSet);
 
   // set stop criteria
-  stop.maximalIterations = 10000;
-  stop.minimalSearchSpaceStep = 1e-8;
+  stop.maximalIterations = 1000;
+  stop.minimalSearchSpaceStep = 1e-5;
 }
 
 TwoSpiralsVisualization::~TwoSpiralsVisualization()

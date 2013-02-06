@@ -161,6 +161,8 @@ Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
 
 Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
 {
+  if(deleteDataSet)
+    delete dataSet;
   dataSet = &trainingSet;
   deleteDataSet = false;
   N = dataSet->samples();
@@ -169,6 +171,8 @@ Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
 
 DeepNetwork& DeepNetwork::testSet(Mt& testInput, Mt& testOutput)
 {
+  if(deleteTestSet)
+    delete testDataSet;
   testDataSet = new DirectStorageDataSet(testInput, testOutput);
   deleteTestSet = true;
   return *this;
