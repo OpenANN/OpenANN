@@ -114,18 +114,32 @@ DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
 {
   fullyConnectedLayer(units, act, stdDev, false);
   L++;
+  initializeNetwork();
+  return *this;
+}
 
+DeepNetwork& DeepNetwork::compressedOutputLayer(int units, int params,
+                                                ActivationFunction act,
+                                                const std::string& compression,
+                                                fpt stdDev)
+{
+  compressedLayer(units, params, act, compression, stdDev, false);
+  L++;
+  initializeNetwork();
+  return *this;
+}
+
+void DeepNetwork::initializeNetwork()
+{
   P = parameters.size();
   tempInput.resize(infos[0].outputs()-infos[0].bias);
-  tempOutput.resize(units);
-  tempError.resize(units);
+  tempOutput.resize(infos[L-1].outputs());
+  tempError.resize(infos[L-1].outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
   for(int p = 0; p < P; p++)
     parameterVector(p) = *parameters[p];
   initialized = true;
-
-  return *this;
 }
 
 Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)

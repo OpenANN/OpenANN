@@ -1,7 +1,6 @@
 #pragma once
 
 #include <OpenANN>
-#include <GP.h>
 #include <DeepNetwork.h>
 #include <io/Logger.h>
 #include <io/DirectStorageDataSet.h>

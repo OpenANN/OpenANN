@@ -23,6 +23,8 @@ namespace OpenANN {
  *   present in the network.
  * - Output layer: this has to be the last layer and must be present in every
  *   network. It is fully connected.
+ * - Compressed output layer: this is an alternative to the output layer. It
+ *   is a fully connected output layer.
  * - FullyConnected layer: each neuron is connected to each neuron of the
  *   previous layer.
  * - Compressed layer: fully connected layer. The I incoming weights of a
@@ -77,6 +79,8 @@ private:
   int P, N, L;
   Vt parameterVector;
   Vt tempInput, tempOutput, tempError, tempGradient;
+
+  void initializeNetwork();
 
 public:
   DeepNetwork(ErrorFunction errorFunction);
@@ -168,6 +172,21 @@ public:
    */
   DeepNetwork& outputLayer(int units, ActivationFunction act,
                            fpt stdDev = (fpt) 0.5);
+  /**
+   * Add a compressed output layer. This will initialize the network.
+   * @param units number of nodes (neurons)
+   * @param params number of parameters to represent the incoming weights of
+   *               a neuron in this layer
+   * @param act activation function
+   * @param compression type of compression matrix, possible values are
+   *        dct, gaussian, sparse, average, edge
+   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @return this for chaining
+   */
+  DeepNetwork& compressedOutputLayer(int units, int params,
+                                     ActivationFunction act,
+                                     const std::string& compression,
+                                     fpt stdDev = (fpt) 0.5);
 
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);

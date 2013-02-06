@@ -10,7 +10,7 @@ NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,
     compress(compress), m(m),
     fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
     doubleExponentialSmoothing(doubleExponentialSmoothing),
-    gruauFitness(false)
+    gruauFitness(false), policy(DeepNetwork::SSE)
 {
 }
 
@@ -22,14 +22,24 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
 {
   this->environment = &environment;
 
-  MLP::ActivationFunction act = a == "tanh" ? MLP::TANH : MLP::ID;
+  ActivationFunction act = a == "tanh" ? TANH : LINEAR;
   inputSize = (fullyObservable ? 1 : 2) * environment.stateSpaceDimension();
-  if(!b)
-    policy.noBias();
-  policy.input(inputSize);
+  policy.inputLayer(inputSize, 1, 1, b);
   if(h > 0)
-    policy.fullyConnectedHiddenLayer(h, act, compress ? m : -1);
-  policy.output(environment.actionSpaceDimension(), MLP::SSE, act, compress ? (h > 0 ? h + b : m) : -1);
+  {
+    if(compress)
+      policy.compressedLayer(h, m, act, std::string("dct"));
+    else
+      policy.fullyConnectedLayer(h, act);
+    policy.outputLayer(environment.actionSpaceDimension(), act);
+  }
+  else
+  {
+    if(compress)
+      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"));
+    else
+      policy.outputLayer(environment.actionSpaceDimension(), act);
+  }
 
   if(!fullyObservable)
   {

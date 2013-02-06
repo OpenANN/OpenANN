@@ -48,8 +48,8 @@ int main(int argc, char** argv)
      .maxPoolingLayer(2, 2)                                       //  10 x 12 x 12
      .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)      //  16 x 10 x 10
      .maxPoolingLayer(2, 2)                                       //  16 x  5 x  5
-     .compressedLayer(240, 100, OpenANN::RECTIFIER, "sparse")     // 120
-     .fullyConnectedLayer(84, OpenANN::RECTIFIER)                 //  84
+     .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)          // 120
+     .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)           //  84
      .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
