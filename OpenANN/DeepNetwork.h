@@ -47,7 +47,7 @@ namespace OpenANN {
  *   positions. Usually we need this layer for partially observable markov
  *   decision processes in reinforcement learning.
  */
-class DeepNetwork : public Optimizable, Learner
+class DeepNetwork : public Optimizable, public Learner
 {
 public:
   enum ErrorFunction
