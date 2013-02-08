@@ -2,6 +2,7 @@
 #include <io/FANNFormatLoader.h>
 #include <QApplication>
 #include <OpenANN>
+#include "CreateTwoSpiralsDataSet.h"
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -87,9 +88,9 @@ int main(int argc, char** argv)
     loader.trainingOutput(0, n) -= 0.5;
     loader.trainingOutput(0, n) *= 2.0;
   }
-
-  TwoSpiralsVisualization visual(loader.trainingInput, loader.trainingOutput,
-                                 loader.testInput, loader.testOutput);
+  Mt Xtr, Ytr, Xte, Yte;
+  createTwoSpiralsDataSet(2, 1.0, Xtr, Ytr, Xte, Yte);
+  TwoSpiralsVisualization visual(Xtr, Ytr, Xte, Yte);
   visual.show();
   visual.resize(500, 500);
 
