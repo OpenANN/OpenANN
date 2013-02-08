@@ -24,11 +24,10 @@ int main()
   Eigen::MatrixXf T = Eigen::MatrixXf::Random(F, N);
   // We could e. g. get the input vector x_n with X.col(n-1).
   // Now we can train the neural network:
-  MLP mlp;
-  ... // initialize mlp
-  mlp.trainingSet(X, T)
-     .training(MLP::BATCH_LMA);
-  mlp.fit();
+  DeepNetwork net;
+  ... // initialize net
+  mlp.trainingSet(X, T);
+  mlp.train(...);
 }
 \endcode
 
@@ -66,9 +65,9 @@ public:
   {
     // return the desired output for the i-th instance (y_i)
   }
-  virtual void finishIteration(MLP& mlp)
+  virtual void finishIteration(Learner& learner)
   {
-    // Here you can place code that will be iterated after every iteration
+    // Here you can place code that will be executed after every iteration
     // of the optimization algorithm during the training phase. You could
     // e. g. print the confusion matrix, error on a test set, etc.
   }
@@ -78,11 +77,10 @@ int main()
 {
   MyDataSet dataSet = ...; // create a data set
   // Now we can train the neural network:
-  MLP mlp;
-  ... // initialize mlp
-  mlp.trainingSet(dataSet)
-     .training(MLP::BATCH_LMA);
-  mlp.fit();
+  DeepNetwork net;
+  ... // initialize net
+  net.trainingSet(dataSet);
+  mlp.train(...);
 }
 \endcode
 */
