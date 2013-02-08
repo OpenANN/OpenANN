@@ -12,9 +12,7 @@
 /**
  * \page TwoSpiralsBenchmark Two Spirals
  *
- * This benchmark is based on the example program \ref TwoSpirals. It requires
- * the same data set and takes the directory of the data set as argument:
- * \verbatim ./TwoSpiralsBenchmark [directory] \endverbatim
+ * This benchmark is based on the example program \ref TwoSpirals.
  *
  * The result will look like this:
  * \verbatim
@@ -280,14 +278,14 @@ int main(int argc, char** argv)
   {
     long unsigned time = 0;
     std::vector<Result> results;
-    OpenANN::DeepNetwork net(OpenANN::DeepNetwork::SSE);
+    OpenANN::DeepNetwork net;
     setup(net, architecture);
     for(int run = 0; run < runs; run++)
     {
       EvaluatableDataset ds(loader.trainingInput, loader.trainingOutput);
       net.trainingSet(ds);
       sw.start();
-      net.train(OpenANN::DeepNetwork::BATCH_LMA, stop);
+      net.train(OpenANN::DeepNetwork::BATCH_LMA, OpenANN::DeepNetwork::SSE, stop);
       time += sw.stop(Stopwatch::MILLISECOND);
       Result result = evaluate(net, loader, ds);
       results.push_back(result);

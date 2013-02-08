@@ -10,8 +10,6 @@
 #include "ActivationFunctionsTestCase.h"
 #include "CMAESTestCase.h"
 #include "CompressionMatrixFactoryTestCase.h"
-#include "MLPImplementationTestCase.h"
-#include "MLPTestCase.h"
 #include "RandomTestCase.h"
 #include "LayerTestCase.h"
 
@@ -36,8 +34,6 @@ int main(int argc, char** argv)
   ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
-  ts.addTestCase(new MLPImplementationTestCase);
-  ts.addTestCase(new MLPTestCase);
   ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new LayerTestCase);
 

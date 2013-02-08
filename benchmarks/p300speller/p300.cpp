@@ -114,7 +114,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     int runs, OpenANN::StopCriteria stop, int csDimension, bool filter,
     int subsamplingFactor = 1)
 {
-  OpenANN::DeepNetwork net(OpenANN::DeepNetwork::SSE);
+  OpenANN::DeepNetwork net;
   net.inputLayer(csDimension > 0 ? csDimension : trainingSet.inputs())
     .outputLayer(trainingSet.outputs(), OpenANN::TANH)
     .testSet(testSet)
@@ -141,7 +141,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     }
 
     Stopwatch sw;
-    net.train(OpenANN::DeepNetwork::BATCH_LMA, stop);
+    net.train(OpenANN::DeepNetwork::BATCH_LMA, OpenANN::DeepNetwork::SSE, stop);
     result.duration += sw.stop(Stopwatch::SECONDS);
     result.iterations += trainingSet.iteration;
     result.correct5 += testSet.evaluate(net, 5);

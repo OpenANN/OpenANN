@@ -1,5 +1,5 @@
 #include "agent.h"
-#include <MLP.h>
+#include <DeepNetwork.h>
 #include <optimization/IPOPCMAES.h>
 #include <AssertionMacros.h>
 #include <EigenWrapper.h>
@@ -67,7 +67,7 @@ ruby evaluate
 
 int num_states = 0, num_actions = 0;
 IPOPCMAES opt;
-MLP mlp;
+DeepNetwork net;
 double episodeReturn;
 Logger logger(Logger::CONSOLE);
 int hiddenUnits;
@@ -87,20 +87,28 @@ int agent_init(int num_state_variables, int num_action_variables, int argc, cons
   if(argc > 1)
     hiddenUnits = atoi(agent_param[1]);
 
-  mlp.input(num_states)
-    .fullyConnectedHiddenLayer(hiddenUnits, MLP::TANH, parameters > 0 ? parameters : -1, "dct");
-  mlp.output(num_actions, MLP::SSE, MLP::SIGMOID, parameters > 0 ? hiddenUnits+1 : -1, "dct");
-  bestParameters = mlp.currentParameters();
+  net.inputLayer(num_states);
+  if(parameters > 0)
+  {
+    net.compressedLayer(hiddenUnits, parameters, TANH, "dct");
+    net.compressedOutputLayer(num_actions, hiddenUnits+1, LOGISTIC, "dct");
+  }
+  else
+  {
+    net.fullyConnectedLayer(hiddenUnits, TANH);
+    net.outputLayer(num_actions, LOGISTIC);
+  }
+  bestParameters = net.currentParameters();
   bestReturn = -std::numeric_limits<double>::max();
 
   StopCriteria stop;
   stop.maximalFunctionEvaluations = 5000;
   stop.maximalRestarts = 1000;
-  opt.setOptimizable(mlp);
+  opt.setOptimizable(net);
   opt.setStopCriteria(stop);
   opt.restart();
 
-  logger << mlp.dimension() << " parameters, " << num_states
+  logger << net.dimension() << " parameters, " << num_states
       << " state components, " << num_actions << " action components\n";
   return 0;
 }
@@ -130,7 +138,7 @@ int chooseAction(double state_data[], double out_action[])
 {
   Vt state = convert(state_data);
   OPENANN_CHECK_MATRIX_BROKEN(state);
-  Vt y = mlp(state);
+  Vt y = net(state);
   Vt action(num_actions);
 
   action = y;
@@ -143,7 +151,7 @@ int chooseAction(double state_data[], double out_action[])
 
 int agent_start(double state_data[], double out_action[])
 {
-  mlp.setParameters(opt.getNext());
+  net.setParameters(opt.getNext());
   episodeReturn = 0;
   chooseAction(state_data, out_action);
   return 0;
@@ -162,7 +170,7 @@ int agent_end(double reward) {
   if(episodeReturn > bestReturn)
   {
     bestReturn = episodeReturn;
-    bestParameters = mlp.currentParameters();
+    bestParameters = net.currentParameters();
   }
   RandomNumberGenerator rng;
   opt.setError(-episodeReturn+0.1*episodeReturn*rng.sampleNormalDistribution<double>());

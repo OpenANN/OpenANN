@@ -87,7 +87,7 @@ private:
   void initializeNetwork();
 
 public:
-  DeepNetwork(ErrorFunction errorFunction);
+  DeepNetwork();
   virtual ~DeepNetwork();
 
   /**
@@ -204,8 +204,8 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
   virtual DeepNetwork& testSet(DataSet& testDataSet);
-  Vt train(Training algorithm, StopCriteria stop, bool reinitialize = true,
-           bool dropout = false);
+  Vt train(Training algorithm, ErrorFunction errorFunction, StopCriteria stop,
+           bool reinitialize = true, bool dropout = false);
   virtual void finishedIteration();
 
   virtual Vt operator()(const Vt& x);

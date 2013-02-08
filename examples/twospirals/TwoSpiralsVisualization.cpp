@@ -11,7 +11,7 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     : width(500), height(500),
       trainingSet(trainingInput, trainingOutput), testSet(testInput, testOutput),
       showTraining(true), showTest(true), showPrediction(true), showSmooth(true),
-      net(new DeepNetwork(DeepNetwork::SSE)), eventLogger(Logger::CONSOLE)
+      net(new DeepNetwork), eventLogger(Logger::CONSOLE)
 {
   std::memset(classes, 0, sizeof(fpt)*100*100);
   trainingSet.setVisualization(this);
@@ -160,7 +160,7 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
       break;
     case Qt::Key_A:
       eventLogger << "Training with restart (" << net->dimension() << " parameters)...";
-      net->train(DeepNetwork::BATCH_LMA, stop);
+      net->train(DeepNetwork::BATCH_LMA, OpenANN::DeepNetwork::SSE, stop);
       eventLogger << " finished.\n";
       break;
     case Qt::Key_Escape:

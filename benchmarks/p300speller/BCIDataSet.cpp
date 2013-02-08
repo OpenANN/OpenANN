@@ -1,6 +1,5 @@
 #include "BCIDataSet.h"
 #include "Decimator.h"
-#include <MLP.h>
 #include <AssertionMacros.h>
 #include <fstream>
 

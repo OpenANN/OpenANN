@@ -18,6 +18,6 @@ public:
 
 }
 
-#include <MLP.h>
+#include <DeepNetwork.h>
 
 #endif // OPENANN_INCLUDED
