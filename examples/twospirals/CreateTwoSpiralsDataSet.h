@@ -4,10 +4,20 @@
 #include <io/Logger.h>
 
 /**
+ * Creates two interlocked spirals that form different classes.
+ *
  * Source is available at
- * http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/areas/neural/bench/0.html
+ * <a href="http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/areas/neural/bench/0.html">
+ * CMU Neural Networks Benchmark Collection</a>
+ *
+ * @param density higher densities result in greater data sets
+ * @param maxDiameter diameter of the points on the outer side of the spirals
+ * @param Xtr training inputs
+ * @param Ytr training outputs
+ * @param Xte test inputs
+ * @param Yte test outputs
  */
-void createTwoSpiralsDataSet(int density, double maxRadius, Mt& Xtr, Mt& Ytr, Mt& Xte, Mt& Yte)
+void createTwoSpiralsDataSet(int density, double maxDiameter, Mt& Xtr, Mt& Ytr, Mt& Xte, Mt& Yte)
 {
   OpenANN::Logger logger(OpenANN::Logger::CONSOLE);
   // Number of interior data points per spiral to generate
@@ -21,7 +31,7 @@ void createTwoSpiralsDataSet(int density, double maxRadius, Mt& Xtr, Mt& Ytr, Mt
     // Angle is based on the iteration * PI/16, divided by point density
     const fpt angle = i * M_PI / (16.0 * density);
     // Radius is the maximum radius * the fraction of iterations left
-    const fpt radius = maxRadius * (104 * density - i) / (104 * density);
+    const fpt radius = maxDiameter * (104 * density - i) / (104 * density);
     // x and y are based upon cos and sin of the current radius
     const fpt x = radius * cos(angle);
     const fpt y = radius * sin(angle);
