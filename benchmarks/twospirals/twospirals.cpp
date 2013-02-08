@@ -18,55 +18,54 @@
  *
  * The result will look like this:
  * \verbatim
-Loaded training set.
-Loaded test set.
+$ ./TwoSpiralsBenchmark 
 Architecture: 2-20-10-1 (bias)
 281 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.490+-0.795  0.997+-0.057    2575            313+-8.560
-[min,max]       [190,193]       [0.984,1.000]                   [11,598]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	188.650+-1.469	0.977+-0.106	6216		840+-21.797
+[min,max]	[180,193]	[0.933,1.000]			[208,5156]
 
 Architecture: 2-20-20-1 (bias)
 501 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.660+-0.705  0.998+-0.051    7176            251+-6.060
-[min,max]       [190,193]       [0.984,1.000]                   [127,490]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	188.450+-1.407	0.976+-0.101	11487		436+-13.035
+[min,max]	[182,193]	[0.943,1.000]			[200,1247]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-21-21
 501 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.330+-0.843  0.997+-0.061    8344            286+-6.599
-[min,max]       [189,193]       [0.979,1.000]                   [163,561]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	185.610+-1.665	0.962+-0.120	7951		297+-9.877
+[min,max]	[176,192]	[0.912,0.995]			[174,1886]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-12-12
 312 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.460+-0.805  0.997+-0.058    3430            323+-7.802
-[min,max]       [190,193]       [0.984,1.000]                   [12,635]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	186.090+-1.580	0.964+-0.114	4880		481+-14.788
+[min,max]	[173,193]	[0.896,1.000]			[172,1608]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-6-6
 186 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    191.970+-0.941  0.995+-0.068    1740            401+-9.261
-[min,max]       [184,193]       [0.953,1.000]                   [67,988]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	184.680+-1.863	0.957+-0.134	3173		762+-19.506
+[min,max]	[172,192]	[0.891,0.995]			[236,2175]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-6-3
 183 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.220+-0.883  0.996+-0.064    2042            484+-11.672
-[min,max]       [186,193]       [0.964,1.000]                   [101,997]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	184.690+-1.904	0.957+-0.137	3327		809+-20.544
+[min,max]	[174,193]	[0.902,1.000]			[232,3246]
    \endverbatim
  */
 
