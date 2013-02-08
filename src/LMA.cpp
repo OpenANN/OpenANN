@@ -25,7 +25,7 @@ void LMA::setOptimizable(Optimizable& opt)
   this->opt = &opt;
 }
 
-void LMA::setStopCriteria(const StopCriteria& stop)
+void LMA::setStopCriteria(const StoppingCriteria& stop)
 {
   this->stop = stop;
 }
@@ -69,12 +69,12 @@ void LMA::optimize()
   }
 
   alglib::minlmsetcond(state,
-      stop.minimalSearchSpaceStep != StopCriteria::defaultValue.minimalSearchSpaceStep ?
+      stop.minimalSearchSpaceStep != StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
           stop.minimalSearchSpaceStep : 0.0,
-      stop.minimalValueDifferences != StopCriteria::defaultValue.minimalValueDifferences ?
+      stop.minimalValueDifferences != StoppingCriteria::defaultValue.minimalValueDifferences ?
           stop.minimalValueDifferences : 0.0,
       0.0,
-      stop.maximalIterations != StopCriteria::defaultValue.maximalIterations ?
+      stop.maximalIterations != StoppingCriteria::defaultValue.maximalIterations ?
           stop.maximalIterations : 0);
 
   // temporary vectors to avoid allocations

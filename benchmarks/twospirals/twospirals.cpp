@@ -262,7 +262,7 @@ int main(int argc, char** argv)
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   const int architectures = 6;
   const int runs = 100;
-  OpenANN::StopCriteria stop;
+  OpenANN::StoppingCriteria stop;
   stop.minimalSearchSpaceStep = 1e-5;
   stop.minimalValueDifferences = 1e-5;
   stop.maximalIterations = 1000;

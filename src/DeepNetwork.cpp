@@ -15,9 +15,8 @@
 namespace OpenANN {
 
 DeepNetwork::DeepNetwork()
-  : debugLogger(Logger::NONE), dataSet(0), testDataSet(0),
-    deleteDataSet(false), deleteTestSet(false), errorFunction(SSE),
-    dropout(false), initialized(false), N(0), L(0)
+  : dataSet(0), testDataSet(0), deleteDataSet(false), deleteTestSet(false),
+    errorFunction(SSE), dropout(false), initialized(false), N(0), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -186,7 +185,7 @@ DeepNetwork& DeepNetwork::testSet(DataSet& testSet)
 }
 
 Vt DeepNetwork::train(Training algorithm, ErrorFunction errorFunction,
-                      StopCriteria stop, bool reinitialize, bool dropout)
+                      StoppingCriteria stop, bool reinitialize, bool dropout)
 {
   if(reinitialize)
     initialize();

@@ -60,7 +60,7 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
       policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
   }
 
-  StopCriteria stop;
+  StoppingCriteria stop;
   stop.maximalFunctionEvaluations = 1000;
   stop.maximalRestarts = 1000;
   opt.setOptimizable(*this);

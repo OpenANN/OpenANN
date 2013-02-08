@@ -1,6 +1,6 @@
 #include <optimization/SGD.h>
 #include <Optimizable.h>
-#include <StopCriteria.h>
+#include <optimization/StoppingCriteria.h>
 #include <AssertionMacros.h>
 #include <Random.h>
 #include <Test/Stopwatch.h>
@@ -25,7 +25,7 @@ void SGD::setOptimizable(Optimizable& opt)
   this->opt = &opt;
 }
 
-void SGD::setStopCriteria(const StopCriteria& stop)
+void SGD::setStopCriteria(const StoppingCriteria& stop)
 {
   this->stop = stop;
 }
@@ -106,7 +106,7 @@ void SGD::optimize()
       if(learningRate < minimalLearningRate)
         learningRate = minimalLearningRate;
     }
-  } while(stop.maximalIterations == StopCriteria::defaultValue.maximalFunctionEvaluations || iteration <= stop.maximalIterations);
+  } while(stop.maximalIterations == StoppingCriteria::defaultValue.maximalFunctionEvaluations || iteration <= stop.maximalIterations);
 }
 
 Vt SGD::result()

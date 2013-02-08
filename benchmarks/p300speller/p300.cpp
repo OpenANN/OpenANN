@@ -111,7 +111,7 @@ struct Result
 };
 
 void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
-    int runs, OpenANN::StopCriteria stop, int csDimension, bool filter,
+    int runs, OpenANN::StoppingCriteria stop, int csDimension, bool filter,
     int subsamplingFactor = 1)
 {
   OpenANN::DeepNetwork net;
@@ -188,7 +188,7 @@ int main(int argc, char** argv)
   testSetB.load();
   interfaceLogger << "Loaded data set B in " << sw.stop(Stopwatch::SECONDS) << " s.\n";
 
-  OpenANN::StopCriteria stop;
+  OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 20;
   stop.minimalValueDifferences = 0.001;
 

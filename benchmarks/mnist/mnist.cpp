@@ -56,7 +56,7 @@ int main(int argc, char** argv)
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
-  OpenANN::StopCriteria stop;
+  OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";

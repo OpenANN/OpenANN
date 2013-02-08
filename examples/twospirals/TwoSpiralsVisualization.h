@@ -40,7 +40,7 @@ class TwoSpiralsVisualization : public QGLWidget
   TwoSpiralsDataSet testSet;
   bool showTraining, showTest, showPrediction, showSmooth;
   DeepNetwork* net;
-  StopCriteria stop;
+  StoppingCriteria stop;
   Logger eventLogger;
 
 public:

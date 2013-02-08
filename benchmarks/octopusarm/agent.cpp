@@ -101,7 +101,7 @@ int agent_init(int num_state_variables, int num_action_variables, int argc, cons
   bestParameters = net.currentParameters();
   bestReturn = -std::numeric_limits<double>::max();
 
-  StopCriteria stop;
+  StoppingCriteria stop;
   stop.maximalFunctionEvaluations = 5000;
   stop.maximalRestarts = 1000;
   opt.setOptimizable(net);

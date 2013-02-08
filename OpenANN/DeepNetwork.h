@@ -4,8 +4,7 @@
 #include <Learner.h>
 #include <layers/Layer.h>
 #include <ActivationFunctions.h>
-#include <StopCriteria.h>
-#include <io/Logger.h>
+#include <optimization/StoppingCriteria.h>
 #include <vector>
 
 namespace OpenANN {
@@ -68,7 +67,6 @@ public:
   };
 
 private:
-  Logger debugLogger;
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
   std::vector<fpt*> parameters;
@@ -204,7 +202,7 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
   virtual DeepNetwork& testSet(DataSet& testDataSet);
-  Vt train(Training algorithm, ErrorFunction errorFunction, StopCriteria stop,
+  Vt train(Training algorithm, ErrorFunction errorFunction, StoppingCriteria stop,
            bool reinitialize = true, bool dropout = false);
   virtual void finishedIteration();
 
