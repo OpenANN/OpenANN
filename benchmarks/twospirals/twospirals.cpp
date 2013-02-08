@@ -1,4 +1,4 @@
-#include <io/FANNFormatLoader.h>
+#include <CreateTwoSpiralsDataSet.h>
 #include <io/DirectStorageDataSet.h>
 #include <OpenANN>
 #include <DeepNetwork.h>
@@ -92,23 +92,6 @@ struct Result
 };
 
 /**
- * Scale the desired output to [-1,1].
- */
-void preprocess(OpenANN::FANNFormatLoader& loader)
-{
-  for(int n = 0; n < loader.trainingN; n++)
-  {
-    loader.trainingOutput(0, n) * 2.0;
-    loader.trainingOutput(0, n) - 1.0;
-  }
-  for(int n = 0; n < loader.testN; n++)
-  {
-    loader.testOutput(0, n) * 2.0;
-    loader.testOutput(0, n) - 1.0;
-  }
-}
-
-/**
  * Set up the desired MLP architecture.
  */
 void setup(OpenANN::DeepNetwork& net, int architecture)
@@ -182,26 +165,26 @@ void setup(OpenANN::DeepNetwork& net, int architecture)
 /**
  * Evaluate the learned model.
  */
-Result evaluate(OpenANN::DeepNetwork& net, OpenANN::FANNFormatLoader& loader,
-                EvaluatableDataset& ds)
+Result evaluate(OpenANN::DeepNetwork& net, const Mt& testInput,
+		const Mt& testOutput, EvaluatableDataset& ds)
 {
   Result result;
-  for(int n = 0; n < loader.testN; n++)
+  for(int n = 0; n < testInput.cols(); n++)
   {
-    fpt y = net(loader.testInput.col(n)).eval()(0);
-    fpt t = loader.testOutput(0, n);
-    if(y > 0 && t > 0)
+    fpt y = net(testInput.col(n)).eval()(0);
+    fpt t = testOutput(0, n);
+    if(y > 0.0 && t > 0.0)
       result.tp++;
-    else if(y > 0 && t < 0)
+    else if(y > 0.0 && t < 0.0)
       result.fp++;
-    else if(y < 0 && t > 0)
+    else if(y < 0.0 && t > 0.0)
       result.fn++;
     else
       result.tn++;
   }
   result.correct = result.tn + result.tp;
   result.wrong = result.fn + result.fp;
-  result.accuracy = (fpt) result.correct / (fpt) loader.testN;
+  result.accuracy = (fpt) result.correct / (fpt) testInput.cols();
   result.iterations = ds.iterations;
   return result;
 }
@@ -265,16 +248,13 @@ int main(int argc, char** argv)
   const int architectures = 6;
   const int runs = 100;
   OpenANN::StopCriteria stop;
-  stop.minimalSearchSpaceStep = 1e-5;
-  stop.minimalValueDifferences = 1e-5;
-  stop.maximalIterations = 1000;
+  stop.minimalSearchSpaceStep = 1e-16;
+  stop.minimalValueDifferences = 1e-16;
+  stop.maximalIterations = 10000;
   Stopwatch sw;
 
-  std::string directory = ".";
-  if(argc > 1)
-    directory = std::string(argv[1]);
-  OpenANN::FANNFormatLoader loader(directory + "/two-spiral");
-  preprocess(loader);
+  Mt Xtr, Ytr, Xte, Yte;
+  createTwoSpiralsDataSet(2, 1.0, Xtr, Ytr, Xte, Yte);
 
   for(int architecture = 0; architecture < architectures; architecture++)
   {
@@ -284,12 +264,12 @@ int main(int argc, char** argv)
     setup(net, architecture);
     for(int run = 0; run < runs; run++)
     {
-      EvaluatableDataset ds(loader.trainingInput, loader.trainingOutput);
+      EvaluatableDataset ds(Xtr, Ytr);
       net.trainingSet(ds);
       sw.start();
       net.train(OpenANN::DeepNetwork::BATCH_LMA, stop);
       time += sw.stop(Stopwatch::MILLISECOND);
-      Result result = evaluate(net, loader, ds);
+      Result result = evaluate(net, Xte, Yte, ds);
       results.push_back(result);
       resultLogger << ".";
     }

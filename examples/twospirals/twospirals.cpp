@@ -1,5 +1,4 @@
 #include "TwoSpiralsVisualization.h"
-#include <io/FANNFormatLoader.h>
 #include <QApplication>
 #include <OpenANN>
 #include "CreateTwoSpiralsDataSet.h"
@@ -17,16 +16,12 @@
  *
  * The two spirals data set was developed by Lang and Witbrock [1]. The data
  * set we use here is taken from the
- * <a href="http://leenissen.dk/fann/wp/" target=_blank>FANN</a> library. It
- * consists of 193 training instances and 193 test instances located on a 2D
- * surface. They belong to one of two spirals:
+ * <a href="http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/areas/neural/bench/0.html" target=_blank>
+ * CMU Neural Networks Benchmarks</a>. It consists of 193 training instances
+ * and 193 test instances located on a 2D surface. They belong to one of two
+ * spirals:
  *
  * \image html TwoSpirals-DataSet.png
- *
- * In order to use this example you have to download the FANN library which
- * includes the data set. The files are located in
- * "path/to/fann/lib/sources/datasets". The required files are
- * "two-spiral.train" and "two-spiral.test".
  *
  * \section Architecture Network Architecture
  *
@@ -40,11 +35,6 @@
  *
  * \section UI User Interface
  *
- * You can pass the directory where the data set is located as an argument to
- * the program. The default is '.'. Compile and start with
- * \code
-./TwoSpirals [directory]
-\endcode
  * You can use the following keys to control the program:
  *  - Q: Toggle display of training set
  *  - W: Toggle display of test set
@@ -72,22 +62,6 @@ int main(int argc, char** argv)
   OpenANNLibraryInfo::print();
   QApplication app(argc, argv);
 
-  std::string directory = ".";
-  if(argc > 1)
-    directory = std::string(argv[1]);
-
-  FANNFormatLoader loader(directory + "/two-spiral");
-  // scale the output to [-1, 1]
-  for(int n = 0; n < loader.testN; n++)
-  {
-    loader.testOutput(0, n) -= 0.5;
-    loader.testOutput(0, n) *= 2.0;
-  }
-  for(int n = 0; n < loader.trainingN; n++)
-  {
-    loader.trainingOutput(0, n) -= 0.5;
-    loader.trainingOutput(0, n) *= 2.0;
-  }
   Mt Xtr, Ytr, Xte, Yte;
   createTwoSpiralsDataSet(2, 1.0, Xtr, Ytr, Xte, Yte);
   TwoSpiralsVisualization visual(Xtr, Ytr, Xte, Yte);
