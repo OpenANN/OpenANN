@@ -60,7 +60,7 @@ int main(int argc, char** argv)
   stop.maximalIterations = 100;
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
-  net.train(OpenANN::DeepNetwork::MINIBATCH_SGD, OpenANN::DeepNetwork::CE,
+  net.train(OpenANN::MINIBATCH_SGD, OpenANN::CE,
             stop, true, true);
   interfaceLogger << "Error = " << net.error() << "\n\n";
   interfaceLogger << "Wrote data to mlp-error.log.\n";

@@ -285,7 +285,7 @@ int main(int argc, char** argv)
       EvaluatableDataset ds(loader.trainingInput, loader.trainingOutput);
       net.trainingSet(ds);
       sw.start();
-      net.train(OpenANN::DeepNetwork::BATCH_LMA, OpenANN::DeepNetwork::SSE, stop);
+      net.train(OpenANN::BATCH_LMA, OpenANN::SSE, stop);
       time += sw.stop(Stopwatch::MILLISECOND);
       Result result = evaluate(net, loader, ds);
       results.push_back(result);

@@ -160,7 +160,7 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
       break;
     case Qt::Key_A:
       eventLogger << "Training with restart (" << net->dimension() << " parameters)...";
-      net->train(DeepNetwork::BATCH_LMA, OpenANN::DeepNetwork::SSE, stop);
+      net->train(BATCH_LMA, SSE, stop);
       eventLogger << " finished.\n";
       break;
     case Qt::Key_Escape:
