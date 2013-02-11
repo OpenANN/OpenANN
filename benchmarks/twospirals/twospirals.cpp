@@ -12,9 +12,7 @@
 /**
  * \page TwoSpiralsBenchmark Two Spirals
  *
- * This benchmark is based on the example program \ref TwoSpirals. It requires
- * the same data set and takes the directory of the data set as argument:
- * \verbatim ./TwoSpiralsBenchmark [directory] \endverbatim
+ * This benchmark is based on the example program \ref TwoSpirals.
  *
  * The result will look like this:
  * \verbatim
@@ -246,7 +244,7 @@ int main(int argc, char** argv)
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   const int architectures = 6;
   const int runs = 100;
-  OpenANN::StopCriteria stop;
+  OpenANN::StoppingCriteria stop;
   stop.minimalSearchSpaceStep = 1e-16;
   stop.minimalValueDifferences = 1e-16;
   stop.maximalIterations = 10000;
@@ -259,14 +257,14 @@ int main(int argc, char** argv)
   {
     long unsigned time = 0;
     std::vector<Result> results;
-    OpenANN::DeepNetwork net(OpenANN::DeepNetwork::SSE);
+    OpenANN::DeepNetwork net;
     setup(net, architecture);
     for(int run = 0; run < runs; run++)
     {
       EvaluatableDataset ds(Xtr, Ytr);
       net.trainingSet(ds);
       sw.start();
-      net.train(OpenANN::DeepNetwork::BATCH_LMA, stop);
+      net.train(OpenANN::BATCH_LMA, OpenANN::SSE, stop);
       time += sw.stop(Stopwatch::MILLISECOND);
       Result result = evaluate(net, Xte, Yte, ds);
       results.push_back(result);

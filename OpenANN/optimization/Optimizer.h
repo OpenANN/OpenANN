@@ -7,7 +7,7 @@
 namespace OpenANN {
 
 class Optimizable;
-class StopCriteria;
+class StoppingCriteria;
 
 /**
  * The common interface of all optimization algorithms.
@@ -25,7 +25,7 @@ public:
    * Pass the stop criteria.
    * @param sc the parameters used to stop the optimization
    */
-  virtual void setStopCriteria(const StopCriteria& sc) = 0;
+  virtual void setStopCriteria(const StoppingCriteria& sc) = 0;
   /**
    * Optimize until the optimization meets the stop criteria.
    */

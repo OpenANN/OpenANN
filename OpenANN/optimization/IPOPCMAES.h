@@ -2,7 +2,7 @@
 
 #include "Optimizer.h"
 #include <io/Logger.h>
-#include <StopCriteria.h>
+#include <optimization/StoppingCriteria.h>
 #include <Eigen/Dense>
 
 template<typename T> class CMAES;
@@ -17,7 +17,7 @@ namespace OpenANN {
 class IPOPCMAES : public Optimizer
 {
   Logger logger;
-  StopCriteria stop;
+  StoppingCriteria stop;
   bool maxFunEvalsActive;
   Optimizable* opt; // do not delete
   CMAES<fpt>* cmaes;
@@ -42,7 +42,7 @@ public:
   IPOPCMAES();
   virtual ~IPOPCMAES();
   virtual void setOptimizable(Optimizable& opt);
-  virtual void setStopCriteria(const StopCriteria& stop);
+  virtual void setStopCriteria(const StoppingCriteria& stop);
   bool restart();
   virtual void optimize();
   Vt getNext();

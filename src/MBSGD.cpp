@@ -1,6 +1,6 @@
 #include <optimization/MBSGD.h>
 #include <Optimizable.h>
-#include <StopCriteria.h>
+#include <optimization/StoppingCriteria.h>
 #include <AssertionMacros.h>
 #include <Random.h>
 #include <Test/Stopwatch.h>
@@ -25,7 +25,7 @@ void MBSGD::setOptimizable(Optimizable& opt)
   this->opt = &opt;
 }
 
-void MBSGD::setStopCriteria(const StopCriteria& stop)
+void MBSGD::setStopCriteria(const StoppingCriteria& stop)
 {
   this->stop = stop;
 }
@@ -83,7 +83,7 @@ void MBSGD::optimize()
       debugLogger << "test in " << sw.stop(Stopwatch::MILLISECOND) << " ms\n";
       sw.start();
     }
-  } while(stop.maximalIterations == StopCriteria::defaultValue.maximalFunctionEvaluations || iteration <= stop.maximalIterations);
+  } while(stop.maximalIterations == StoppingCriteria::defaultValue.maximalFunctionEvaluations || iteration <= stop.maximalIterations);
 }
 
 Vt MBSGD::result()

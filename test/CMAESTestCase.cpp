@@ -15,7 +15,7 @@ void CMAESTestCase::rosenbrock()
 {
   OpenANN::IPOPCMAES cmaes;
   Rosenbrock<10> r;
-  OpenANN::StopCriteria s;
+  OpenANN::StoppingCriteria s;
   s.maximalFunctionEvaluations = 100000;
   s.maximalIterations = 10000;
   s.minimalValue = 0.001;
@@ -31,7 +31,7 @@ void CMAESTestCase::himmelblau()
 {
   OpenANN::IPOPCMAES cmaes;
   Himmelblau r;
-  OpenANN::StopCriteria s;
+  OpenANN::StoppingCriteria s;
   s.maximalFunctionEvaluations = 10000;
   s.maximalIterations = 10000;
   s.minimalValue = 0.001;
@@ -46,7 +46,7 @@ void CMAESTestCase::ellinum()
 {
   OpenANN::IPOPCMAES cmaes;
   Ellinum<3> r;
-  OpenANN::StopCriteria s;
+  OpenANN::StoppingCriteria s;
   s.maximalIterations = 10000;
   s.minimalValue = 0.01;
   cmaes.setOptimizable(r);

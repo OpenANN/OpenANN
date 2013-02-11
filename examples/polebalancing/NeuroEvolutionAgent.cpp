@@ -10,7 +10,7 @@ NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,
   : h(h), b(b), a(a), compress(compress), m(m),
     fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
     doubleExponentialSmoothing(doubleExponentialSmoothing),
-    gruauFitness(false), policy(DeepNetwork::SSE)
+    gruauFitness(false)
 {
 }
 
@@ -60,7 +60,7 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
       policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
   }
 
-  StopCriteria stop;
+  StoppingCriteria stop;
   stop.maximalFunctionEvaluations = 1000;
   stop.maximalRestarts = 1000;
   opt.setOptimizable(*this);

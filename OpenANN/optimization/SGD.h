@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Optimizer.h>
-#include <StopCriteria.h>
+#include <optimization/Optimizer.h>
+#include <optimization/StoppingCriteria.h>
 #include <io/Logger.h>
 #include <Eigen/Dense>
 
@@ -13,7 +13,7 @@ namespace OpenANN {
 class SGD : public Optimizer
 {
   Logger debugLogger;
-  StopCriteria stop;
+  StoppingCriteria stop;
   Optimizable* opt; // do not delete
   Vt optimum;
 
@@ -24,7 +24,7 @@ public:
   SGD();
   ~SGD();
   virtual void setOptimizable(Optimizable& opt);
-  virtual void setStopCriteria(const StopCriteria& stop);
+  virtual void setStopCriteria(const StoppingCriteria& stop);
   virtual void optimize();
   virtual Vt result();
   virtual std::string name();

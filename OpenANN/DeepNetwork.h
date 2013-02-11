@@ -4,11 +4,27 @@
 #include <Learner.h>
 #include <layers/Layer.h>
 #include <ActivationFunctions.h>
-#include <StopCriteria.h>
-#include <io/Logger.h>
+#include <optimization/StoppingCriteria.h>
 #include <vector>
 
 namespace OpenANN {
+
+enum ErrorFunction
+{
+  NO_E_DEFINED,
+  SSE, //!< Sum of squared errors and identity (regression)
+  MSE, //!< Mean of squared errors and identity (regression)
+  CE   //!< Cross entropy and softmax (classification)
+};
+
+enum Training
+{
+  NOT_INITIALIZED,
+  BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies
+  BATCH_LMA,    //!< Levenberg-Marquardt Algorithm
+  BATCH_SGD,    //!< Stochastic Gradient Descent
+  MINIBATCH_SGD //!< Mini-Batch Stochastic Gradient Descent
+};
 
 /**
  * @class DeepNetwork
@@ -49,26 +65,6 @@ namespace OpenANN {
  */
 class DeepNetwork : public Optimizable, public Learner
 {
-public:
-  enum ErrorFunction
-  {
-    NO_E_DEFINED,
-    SSE, //!< Sum of squared errors and identity (regression)
-    MSE, //!< Mean of squared errors and identity (regression)
-    CE   //!< Cross entropy and softmax (classification)
-  };
-
-  enum Training
-  {
-    NOT_INITIALIZED,
-    BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies
-    BATCH_LMA,    //!< Levenberg-Marquardt Algorithm
-    BATCH_SGD,    //!< Stochastic Gradient Descent
-    MINIBATCH_SGD //!< Mini-Batch Stochastic Gradient Descent
-  };
-
-private:
-  Logger debugLogger;
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
   std::vector<fpt*> parameters;
@@ -87,7 +83,7 @@ private:
   void initializeNetwork();
 
 public:
-  DeepNetwork(ErrorFunction errorFunction);
+  DeepNetwork();
   virtual ~DeepNetwork();
 
   /**
@@ -204,8 +200,8 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
   virtual DeepNetwork& testSet(DataSet& testDataSet);
-  Vt train(Training algorithm, StopCriteria stop, bool reinitialize = true,
-           bool dropout = false);
+  Vt train(Training algorithm, ErrorFunction errorFunction, StoppingCriteria stop,
+           bool reinitialize = true, bool dropout = false);
   virtual void finishedIteration();
 
   virtual Vt operator()(const Vt& x);
