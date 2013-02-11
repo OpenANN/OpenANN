@@ -97,21 +97,21 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
     c_DeepNetwork& compressedOutputLayer(int units, int params,
                                          c_ActivationFunction act,
                                          string& compression, ${FPT} stdDev)
-    c_Learner& trainingSet(c_${PMT}& trainingInput, c_${PMT}& trainingOutput)
-    c_${PVT} train(c_Training algorithm, c_ErrorFunction errorFunction,
+    c_Learner& trainingSet(c_${MT}& trainingInput, c_${MT}& trainingOutput)
+    c_${VT} train(c_Training algorithm, c_ErrorFunction errorFunction,
                      c_StoppingCriteria stop, bool reinitialize, bool dropout)
-    c_${PVT} predict "operator()"(c_${PVT} x)
+    c_${VT} predict "operator()"(c_${VT} x)
   c_DeepNetwork *new_DeepNetwork "new OpenANN::DeepNetwork" ()
   void del_DeepNetwork "delete" (c_DeepNetwork *ptr)
 
 cdef class DeepNetwork:
   cdef c_DeepNetwork *thisptr,
   # TODO destroy ptrs on replacement
-  cdef c_${PMT} *inptr
-  cdef c_${PMT} *outptr
+  cdef c_${MT} *inptr
+  cdef c_${MT} *outptr
   cdef c_StoppingCriteria *stop
-  cdef c_${PVT} *xptr
-  cdef c_${PVT} *yptr
+  cdef c_${VT} *xptr
+  cdef c_${VT} *yptr
 
   def __cinit__(self):
     self.thisptr = new_DeepNetwork()
@@ -119,11 +119,11 @@ cdef class DeepNetwork:
 
   def __dealloc__(self):
     del_DeepNetwork(self.thisptr)
-    del_${PMT}(self.inptr)
-    del_${PMT}(self.outptr)
+    del_${MT}(self.inptr)
+    del_${MT}(self.outptr)
     del_StoppingCriteria(self.stop)
-    del_${PVT}(self.xptr)
-    del_${PVT}(self.yptr)
+    del_${VT}(self.xptr)
+    del_${VT}(self.yptr)
 
   def __get_dims(self, shape, max_dim):
     shape_array = numpy.asarray(shape).flatten()
@@ -201,8 +201,8 @@ cdef class DeepNetwork:
 
   def training_set(self, inputs, outputs):
     assert inputs.shape[1] == outputs.shape[1]
-    self.inptr = new_${PMT}(inputs.shape[0], inputs.shape[1])
-    self.outptr = new_${PMT}(outputs.shape[0], outputs.shape[1])
+    self.inptr = new_${MT}(inputs.shape[0], inputs.shape[1])
+    self.outptr = new_${MT}(outputs.shape[0], outputs.shape[1])
     self.__numpy_to_eigen_train(inputs, outputs)
     self.thisptr.trainingSet(deref(self.inptr), deref(self.outptr))
     return self
@@ -261,11 +261,11 @@ cdef class DeepNetwork:
 
   def __predict(self, x):
     self.__numpy_to_eigen_input(x)
-    self.yptr = new_${PVT}(self.thisptr.predict(deref(self.xptr)))
+    self.yptr = new_${VT}(self.thisptr.predict(deref(self.xptr)))
     return self.__eigen_to_numpy_output()
 
   def __numpy_to_eigen_input(self, x):
-    self.xptr = new_${PVT}(x.shape[0], 1) # TODO configure
+    self.xptr = new_${VT}(x.shape[0], 1) # TODO configure
     rows = x.shape[0]
     for r in range(rows):
       self.xptr.data()[r] = x[r]
