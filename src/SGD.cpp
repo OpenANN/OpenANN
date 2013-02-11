@@ -109,6 +109,10 @@ void SGD::optimize()
   } while(stop.maximalIterations == StoppingCriteria::defaultValue.maximalFunctionEvaluations || iteration <= stop.maximalIterations);
 }
 
+bool SGD::step()
+{
+}
+
 Vt SGD::result()
 {
   return optimum;

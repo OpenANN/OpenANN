@@ -31,6 +31,7 @@ public:
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);
   virtual void optimize();
+  virtual bool step();
   virtual Vt result();
   virtual std::string name();
 };

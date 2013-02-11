@@ -31,6 +31,10 @@ public:
    */
   virtual void optimize() = 0;
   /**
+   * Execute one optimization step.
+   */
+  virtual bool step() = 0;
+  /**
    * Determine the best result.
    * @return the best parameter the algorithm found
    */

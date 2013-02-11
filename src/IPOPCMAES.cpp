@@ -213,6 +213,10 @@ void IPOPCMAES::setError(fpt fitness)
   }
 }
 
+bool IPOPCMAES::step()
+{
+}
+
 bool IPOPCMAES::terminated()
 {
   return currentIndividual == 0 && (cmaes->testForTermination()

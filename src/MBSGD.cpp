@@ -86,6 +86,10 @@ void MBSGD::optimize()
   } while(stop.maximalIterations == StoppingCriteria::defaultValue.maximalFunctionEvaluations || iteration <= stop.maximalIterations);
 }
 
+bool MBSGD::step()
+{
+}
+
 Vt MBSGD::result()
 {
   return optimum;

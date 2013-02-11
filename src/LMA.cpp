@@ -5,14 +5,12 @@
 #include <AssertionMacros.h>
 #include <Random.h>
 #include <limits>
-#include <optimization.h>
-#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
 LMA::LMA(bool approximateHessian)
     : debugLogger(Logger::NONE), opt(0),
-      approximateHessian(approximateHessian)
+      approximateHessian(approximateHessian), iteration(-1)
 {
 }
 
@@ -23,6 +21,10 @@ LMA::~LMA()
 void LMA::setOptimizable(Optimizable& opt)
 {
   this->opt = &opt;
+  initialize();
+  allocate();
+  initALGLIB();
+  optimizerStopWatch.start();
 }
 
 void LMA::setStopCriteria(const StoppingCriteria& stop)
@@ -33,65 +35,17 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
+  while(step());
+}
 
-  const unsigned n = opt->dimension();
-  if(opt->providesInitialization())
-  {
-    opt->initialize();
-  }
-  else
-  {
-    RandomNumberGenerator rng;
-    Vt x(n);
-    for(unsigned i = 0; i < n; i++)
-      x(i) = rng.sampleNormalDistribution<fpt>();
-  }
-
-  double* xArray = new double[n];
-  Vt x = opt->currentParameters();
-  for(unsigned i = 0; i < n; i++)
-    xArray[i] = x(i);
-
-  alglib::minlmstate state;
-  alglib::minlmreport report;
-  alglib::real_1d_array xIn;
-  xIn.setcontent(n, xArray);
-  delete[] xArray;
-
-  if(approximateHessian)
-  {
-    const unsigned examples = opt->examples();
-    alglib::minlmcreatevj(examples, xIn, state);
-  }
-  else
-  {
-    alglib::minlmcreatefgh(xIn, state);
-  }
-
-  alglib::minlmsetcond(state,
-      stop.minimalSearchSpaceStep != StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
-          stop.minimalSearchSpaceStep : 0.0,
-      stop.minimalValueDifferences != StoppingCriteria::defaultValue.minimalValueDifferences ?
-          stop.minimalValueDifferences : 0.0,
-      0.0,
-      stop.maximalIterations != StoppingCriteria::defaultValue.maximalIterations ?
-          stop.maximalIterations : 0);
-
-  // temporary vectors to avoid allocations
-  Vt parameters(n);
-  Vt gradient(n);
-  Vt errorValues(opt->examples());
-  Mt jacobian(opt->examples(), n);
-
-  int iteration = -1;
-  alglib_impl::ae_state _alglib_env_state;
-  alglib_impl::ae_state_init(&_alglib_env_state);
+bool LMA::step()
+{
   try
   {
-    Stopwatch optimizerStopWatch;
     while(alglib_impl::minlmiteration(state.c_ptr(), &_alglib_env_state))
     {
-      debugLogger << "computed optimization step in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
+      debugLogger << "computed optimization step in "
+          << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
       if(state.needfi)
       {
         for(unsigned i = 0; i < n; i++)
@@ -109,7 +63,7 @@ void LMA::optimize()
           debugLogger << "finished iteration in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
         }
         optimizerStopWatch.start();
-        continue;
+        return true;
       }
       if(state.needfij)
       {
@@ -135,7 +89,7 @@ void LMA::optimize()
           debugLogger << "finished iteration in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
         }
         optimizerStopWatch.start();
-        continue;
+        return true;
       }
       if(!approximateHessian)
       {
@@ -184,12 +138,13 @@ void LMA::optimize()
             iteration = state.c_ptr()->repiterationscount;
             opt->finishedIteration();
           }
-          continue;
+          return true;
         }
       }
       if(state.xupdated)
-        continue;
-      throw alglib::ap_error("ALGLIB: error in 'minlmoptimize' (some derivatives were not provided?)");
+        return true;
+      throw alglib::ap_error("ALGLIB: error in 'minlmoptimize' (some "
+          "derivatives were not provided?)");
     }
     alglib_impl::ae_state_clear(&_alglib_env_state);
   }
@@ -201,14 +156,91 @@ void LMA::optimize()
   {
     throw;
   }
+
+  cleanUp();
+
+  return false;
+}
+
+Vt LMA::result()
+{
+  OPENANN_CHECK(opt);
+  opt->setParameters(optimum);
+  return optimum;
+}
+
+std::string LMA::name()
+{
+  std::stringstream stream;
+  stream << "Levenberg-Marquardt Algorithm (" << (approximateHessian ? "appr.)" : "exact)");
+  return stream.str();
+}
+
+void LMA::initialize()
+{
+  n = opt->dimension();
+  if(opt->providesInitialization())
+    opt->initialize();
+  else
+  {
+    RandomNumberGenerator rng;
+    Vt x(n);
+    for(unsigned i = 0; i < n; i++)
+      x(i) = rng.sampleNormalDistribution<fpt>();
+    opt->setParameters(x);
+  }
+  if(iteration > 0)
+    iteration = -1;
+}
+
+void LMA::allocate()
+{
+  // temporary vectors to avoid allocations
+  parameters.resize(n);
+  gradient.resize(n);
+  errorValues.resize(opt->examples());
+  jacobian.resize(opt->examples(), n);
+
+  double* xArray = new double[n];
+  Vt x = opt->currentParameters();
+  for(unsigned i = 0; i < n; i++)
+    xArray[i] = x(i);
+  xIn.setcontent(n, xArray);
+  delete[] xArray;
+}
+
+void LMA::initALGLIB()
+{
+  if(approximateHessian)
+    alglib::minlmcreatevj(opt->examples(), xIn, state);
+  else
+    alglib::minlmcreatefgh(xIn, state);
+
+  fpt minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
+      StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
+      stop.minimalSearchSpaceStep : 0.0;
+  fpt minimalValueDifferences = stop.minimalValueDifferences !=
+      StoppingCriteria::defaultValue.minimalValueDifferences ?
+      stop.minimalValueDifferences : 0.0;
+  int maximalIterations = stop.maximalIterations !=
+      StoppingCriteria::defaultValue.maximalIterations ?
+      stop.maximalIterations : 0;
+  alglib::minlmsetcond(state, minimalSearchSpaceStep, minimalValueDifferences,
+      0.0, maximalIterations);
+
+  alglib_impl::ae_state_init(&_alglib_env_state);
+}
+
+void LMA::cleanUp()
+{
   alglib::minlmresults(state, xIn, report);
   optimum.resize(n);
   for(unsigned i = 0; i < n; i++)
     optimum(i) = xIn[i];
+  opt->setParameters(optimum);
 
   if(debugLogger.isActive())
   {
-    opt->setParameters(optimum);
     debugLogger << "LMA terminated\n"
                 << "iterations= " << report.iterationscount << "\n"
                 << "function evaluations= " << report.nfunc << "\n"
@@ -240,20 +272,6 @@ void LMA::optimize()
       debugLogger << "Unknown.\n";
     }
   }
-}
-
-Vt LMA::result()
-{
-  OPENANN_CHECK(opt);
-  opt->setParameters(optimum);
-  return optimum;
-}
-
-std::string LMA::name()
-{
-  std::stringstream stream;
-  stream << "Levenberg-Marquardt Algorithm (" << (approximateHessian ? "appr.)" : "exact)");
-  return stream.str();
 }
 
 }

@@ -45,6 +45,7 @@ public:
   virtual void setStopCriteria(const StoppingCriteria& stop);
   bool restart();
   virtual void optimize();
+  virtual bool step();
   Vt getNext();
   void setError(fpt fitness);
   bool terminated();

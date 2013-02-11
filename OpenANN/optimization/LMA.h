@@ -7,6 +7,8 @@
 #include <optimization/StoppingCriteria.h>
 #include <io/Logger.h>
 #include <Eigen/Dense>
+#include <optimization.h>
+#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -28,6 +30,14 @@ class LMA : public Optimizer
   Optimizable* opt; // do not delete
   Vt optimum;
   bool approximateHessian;
+  int iteration, n;
+  alglib_impl::ae_state _alglib_env_state;
+  Vt parameters, gradient, errorValues;
+  Mt jacobian;
+  alglib::real_1d_array xIn;
+  alglib::minlmstate state;
+  alglib::minlmreport report;
+  Stopwatch optimizerStopWatch;
 
 public:
   LMA(bool approximateHessian = false);
@@ -35,8 +45,14 @@ public:
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);
   virtual void optimize();
+  virtual bool step();
   virtual Vt result();
   virtual std::string name();
+private:
+  void initialize();
+  void allocate();
+  void initALGLIB();
+  void cleanUp();
 };
 
 }
