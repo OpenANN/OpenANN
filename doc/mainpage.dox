@@ -48,28 +48,28 @@ Examples
   - libxmu
   - Qt4
 
-Ruby bindings
-  - <a href="http://www.ruby-lang.org" target=_blank>Ruby</a>
-  - <a href="http://rubygems.org" target=_blank>RubyGems</a>
-  - <a href="http://rice.rubyforge.org" target=_blank>Rice</a>
+Python bindings
+  - Python
+  - NumPy
+  - Cython
 
 sudo apt-get install ruby rubygems; sudo gem install rice
 
 \section Features List of Features
 
   - artificial neural networks
-    - multilayer perceptron (MLP)
-    - MLP with compressed weights
-    - convolutional neural network (CNN)
+    - multilayer neural network
+    - convolutional neural network (CNN) with convolutional layers,
+      subsampling layers and max-pooling layers
+    - random projections for data and network compression
   - optimization algorithms
-    - stochastic gradient descent (SGD)
-    - conjugate gradient (CG)
-    - Levenberg-Marquardt algorithm (LMA)
-    - sequential quadratic programming (SQP)
-    - (increasing population size) covariance matrix adaption evolution strategies (IPOPCMAES)
+    - stochastic gradient descent (SGD) for large networks
+    - Levenberg-Marquardt algorithm (LMA) for small networks
+    - (increasing population size) covariance matrix adaption evolution
+      strategies (IPOPCMAES) for reinforcement learning
   - supported languages
     - C++
-    - Ruby bindings
+    - Python bindings
 
 \section SimpleExample A Simple Example
 
@@ -130,6 +130,7 @@ different architectures.
   @todo Unsupervised methods (RBM, DBN, SOM, ...)
   @todo example: NORB data set
   @todo example: Caltech-101/256 data set
+  @todo example: ImageNet
   @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
   @todo port: Mac and Windows
   @todo port: test other compilers

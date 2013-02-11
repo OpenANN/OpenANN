@@ -9,9 +9,9 @@ cdef extern from "OpenANN/optimization/StoppingCriteria.h" namespace "OpenANN":
     int maximalFunctionEvaluations
     int maximalIterations
     int maximalRestarts
-    float minimalValue # TODO configure
-    float minimalValueDifferences # TODO configure
-    float minimalSearchSpaceStep # TODO configure
+    ${FPT} minimalValue
+    ${FPT} minimalValueDifferences
+    ${FPT} minimalSearchSpaceStep
   c_StoppingCriteria *new_StoppingCriteria "new OpenANN::StoppingCriteria" ()
   void del_StoppingCriteria "delete" (c_StoppingCriteria *ptr)
 
@@ -78,40 +78,40 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
 cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
   ctypedef struct c_DeepNetwork "OpenANN::DeepNetwork":
     c_DeepNetwork& inputLayer(int dim1, int dim2, int dim3, bool bias,
-                              float dropoutProbability) # TODO configure
-    c_DeepNetwork& alphaBetaFilterLayer(float deltaT, float stdDev, bool bias) # TODO configure
+                              ${FPT} dropoutProbability)
+    c_DeepNetwork& alphaBetaFilterLayer(${FPT} deltaT, ${FPT} stdDev, bool bias)
     c_DeepNetwork& fullyConnectedLayer(int units, c_ActivationFunction act,
-                                       float stdDev, bool bias,
-                                       float dropoutProbability) # TODO configure
+                                       ${FPT} stdDev, bool bias,
+                                       ${FPT} dropoutProbability)
     c_DeepNetwork& compressedLayer(int units, int params, c_ActivationFunction act,
-                                   string compression, float stdDev,
-                                   bool bias, float dropoutProbability) # TODO configure
+                                   string compression, ${FPT} stdDev,
+                                   bool bias, ${FPT} dropoutProbability)
     c_DeepNetwork& convolutionalLayer(int featureMaps, int kernelRows,
                                       int kernelCols, c_ActivationFunction act,
-                                      float stdDev, bool bias) # TODO configure
+                                      ${FPT} stdDev, bool bias)
     c_DeepNetwork& subsamplingLayer(int kernelRows, int kernelCols,
-                                    c_ActivationFunction act, float stdDev,
-                                    bool bias) # TODO configure
+                                    c_ActivationFunction act, ${FPT} stdDev,
+                                    bool bias)
     c_DeepNetwork& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
-    c_DeepNetwork& outputLayer(int units, c_ActivationFunction act, float stdDev) # TODO configure
+    c_DeepNetwork& outputLayer(int units, c_ActivationFunction act, ${FPT} stdDev)
     c_DeepNetwork& compressedOutputLayer(int units, int params,
                                          c_ActivationFunction act,
-                                         string& compression, float stdDev) # TODO configure
-    c_Learner& trainingSet(c_MatrixXf& trainingInput, c_MatrixXf& trainingOutput) # TODO configure
-    c_VectorXf train(c_Training algorithm, c_ErrorFunction errorFunction, # TODO configure
+                                         string& compression, ${FPT} stdDev)
+    c_Learner& trainingSet(c_${PMT}& trainingInput, c_${PMT}& trainingOutput)
+    c_${PVT} train(c_Training algorithm, c_ErrorFunction errorFunction,
                      c_StoppingCriteria stop, bool reinitialize, bool dropout)
-    c_VectorXf predict "operator()"(c_VectorXf x) # TODO configure
+    c_${PVT} predict "operator()"(c_${PVT} x)
   c_DeepNetwork *new_DeepNetwork "new OpenANN::DeepNetwork" ()
   void del_DeepNetwork "delete" (c_DeepNetwork *ptr)
 
 cdef class DeepNetwork:
   cdef c_DeepNetwork *thisptr,
   # TODO destroy ptrs on replacement
-  cdef c_MatrixXf *inptr # TODO configure
-  cdef c_MatrixXf *outptr # TODO configure
+  cdef c_${PMT} *inptr
+  cdef c_${PMT} *outptr
   cdef c_StoppingCriteria *stop
-  cdef c_VectorXf *xptr # TODO configure
-  cdef c_VectorXf *yptr # TODO configure
+  cdef c_${PVT} *xptr
+  cdef c_${PVT} *yptr
 
   def __cinit__(self):
     self.thisptr = new_DeepNetwork()
@@ -119,10 +119,11 @@ cdef class DeepNetwork:
 
   def __dealloc__(self):
     del_DeepNetwork(self.thisptr)
-    del_MatrixXf(self.inptr)
-    del_MatrixXf(self.outptr)
+    del_${PMT}(self.inptr)
+    del_${PMT}(self.outptr)
     del_StoppingCriteria(self.stop)
-    del_VectorXf(self.xptr)
+    del_${PVT}(self.xptr)
+    del_${PVT}(self.yptr)
 
   def __get_dims(self, shape, max_dim):
     shape_array = numpy.asarray(shape).flatten()
@@ -200,8 +201,8 @@ cdef class DeepNetwork:
 
   def training_set(self, inputs, outputs):
     assert inputs.shape[1] == outputs.shape[1]
-    self.inptr = new_MatrixXf(inputs.shape[0], inputs.shape[1])
-    self.outptr = new_MatrixXf(outputs.shape[0], outputs.shape[1])
+    self.inptr = new_${PMT}(inputs.shape[0], inputs.shape[1])
+    self.outptr = new_${PMT}(outputs.shape[0], outputs.shape[1])
     self.__numpy_to_eigen_train(inputs, outputs)
     self.thisptr.trainingSet(deref(self.inptr), deref(self.outptr))
     return self
@@ -260,11 +261,11 @@ cdef class DeepNetwork:
 
   def __predict(self, x):
     self.__numpy_to_eigen_input(x)
-    self.yptr = new_VectorXf(self.thisptr.predict(deref(self.xptr)))
+    self.yptr = new_${PVT}(self.thisptr.predict(deref(self.xptr)))
     return self.__eigen_to_numpy_output()
 
   def __numpy_to_eigen_input(self, x):
-    self.xptr = new_VectorXf(x.shape[0], 1) # TODO configure
+    self.xptr = new_${PVT}(x.shape[0], 1) # TODO configure
     rows = x.shape[0]
     for r in range(rows):
       self.xptr.data()[r] = x[r]
