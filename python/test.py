@@ -7,12 +7,8 @@ h = 100
 f = 1
 n = 100
 
-inputs = numpy.ndarray((d, n))
-outputs = numpy.ndarray((d, n))
-for i in range(n):
-  x = i*2*numpy.pi/n
-  inputs[:, i] = x
-  outputs[:, i] = numpy.cos(x)
+inputs = numpy.atleast_2d(numpy.linspace(0, 2*numpy.pi, n))
+outputs = numpy.cos(inputs)
 
 net = DeepNetwork()
 net.input_layer(d, True, 0.05)
@@ -26,7 +22,7 @@ net.output_layer(f, "linear")
 net.training_set(inputs, outputs)
 net.train("lma", "sse", {"maximalIterations" : 10, "minimalValueDifferences" : 1e-8})
 
-pylab.plot(inputs[0, :], net.predict(inputs)[0, :])
-pylab.plot(inputs[0, :], outputs[0, :])
+pylab.plot(inputs[0], net.predict(inputs)[0])
+pylab.plot(inputs[0], outputs[0])
 pylab.show()
 
