@@ -23,49 +23,49 @@ Architecture: 2-20-10-1 (bias)
 281 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.490+-0.795  0.997+-0.057    2575            313+-8.560
-[min,max]       [190,193]       [0.984,1.000]                   [11,598]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	188.250+-1.554	0.975+-0.112	5981		768+-21.979
+[min,max]	[177,193]	[0.917,1.000]			[206,4342]
 
 Architecture: 2-20-20-1 (bias)
 501 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.660+-0.705  0.998+-0.051    7176            251+-6.060
-[min,max]       [190,193]       [0.984,1.000]                   [127,490]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	188.570+-1.448	0.977+-0.104	12466		464+-13.867
+[min,max]	[180,193]	[0.933,1.000]			[192,1216]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-21-21
 501 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.330+-0.843  0.997+-0.061    8344            286+-6.599
-[min,max]       [189,193]       [0.979,1.000]                   [163,561]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	186.060+-1.533	0.964+-0.110	8174		305+-9.903
+[min,max]	[175,193]	[0.907,1.000]			[153,1038]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-12-12
 312 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.460+-0.805  0.997+-0.058    3430            323+-7.802
-[min,max]       [190,193]       [0.984,1.000]                   [12,635]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	185.660+-1.709	0.962+-0.123	5248		511+-16.075
+[min,max]	[168,192]	[0.870,0.995]			[192,2886]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-6-6
 186 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    191.970+-0.941  0.995+-0.068    1740            401+-9.261
-[min,max]       [184,193]       [0.953,1.000]                   [67,988]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	184.750+-1.914	0.957+-0.138	3033		679+-18.572
+[min,max]	[164,193]	[0.850,1.000]			[209,3023]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-6-3
 183 parameters
 ....................................................................................................
 Finished 100 runs.
-                Correct         Accuracy        Time/ms         Iterations
-Mean+-StdDev    192.220+-0.883  0.996+-0.064    2042            484+-11.672
-[min,max]       [186,193]       [0.964,1.000]                   [101,997]
+		Correct		Accuracy	Time/ms		Iterations
+Mean+-StdDev	185.140+-1.798	0.959+-0.129	3381		775+-20.821
+[min,max]	[172,193]	[0.891,1.000]			[234,6584]
    \endverbatim
  */
 
@@ -97,13 +97,13 @@ void preprocess(OpenANN::FANNFormatLoader& loader)
 {
   for(int n = 0; n < loader.trainingN; n++)
   {
-    loader.trainingOutput(0, n) * 2.0;
-    loader.trainingOutput(0, n) - 1.0;
+    loader.trainingOutput(0, n) *= 2.0;
+    loader.trainingOutput(0, n) -= 1.0;
   }
   for(int n = 0; n < loader.testN; n++)
   {
-    loader.testOutput(0, n) * 2.0;
-    loader.testOutput(0, n) - 1.0;
+    loader.testOutput(0, n) *= 2.0;
+    loader.testOutput(0, n) -= 1.0;
   }
 }
 
@@ -263,9 +263,9 @@ int main(int argc, char** argv)
   const int architectures = 6;
   const int runs = 100;
   OpenANN::StopCriteria stop;
-  stop.minimalSearchSpaceStep = 1e-8;
-  stop.minimalValueDifferences = 1e-8;
-  stop.maximalIterations = 1000;
+  stop.minimalSearchSpaceStep = 1e-16;
+  stop.minimalValueDifferences = 1e-16;
+  stop.maximalIterations = 10000;
   Stopwatch sw;
 
   std::string directory = ".";
