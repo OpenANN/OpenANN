@@ -29,7 +29,6 @@ class LMA : public Optimizer
   StoppingCriteria stop;
   Optimizable* opt; // do not delete
   Vt optimum;
-  bool approximateHessian;
   int iteration, n;
   alglib_impl::ae_state _alglib_env_state;
   Vt parameters, gradient, errorValues;
@@ -37,10 +36,8 @@ class LMA : public Optimizer
   alglib::real_1d_array xIn;
   alglib::minlmstate state;
   alglib::minlmreport report;
-  Stopwatch optimizerStopWatch;
-
 public:
-  LMA(bool approximateHessian = false);
+  LMA();
   virtual ~LMA();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);

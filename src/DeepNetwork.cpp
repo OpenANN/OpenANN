@@ -200,7 +200,7 @@ Vt DeepNetwork::train(Training algorithm, ErrorFunction errorFunction,
       break;
 #ifdef USE_GPL_LICENSE
     case BATCH_LMA:
-      opt = new LMA(true);
+      opt = new LMA;
       break;
 #endif
     case BATCH_CMAES:

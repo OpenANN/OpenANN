@@ -8,9 +8,8 @@
 
 namespace OpenANN {
 
-LMA::LMA(bool approximateHessian)
-    : debugLogger(Logger::NONE), opt(0),
-      approximateHessian(approximateHessian), iteration(-1)
+LMA::LMA()
+    : debugLogger(Logger::CONSOLE), opt(0), iteration(-1)
 {
 }
 
@@ -24,7 +23,6 @@ void LMA::setOptimizable(Optimizable& opt)
   initialize();
   allocate();
   initALGLIB();
-  optimizerStopWatch.start();
 }
 
 void LMA::setStopCriteria(const StoppingCriteria& stop)
@@ -35,7 +33,14 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
-  while(step());
+  while(step())
+  {
+    if(debugLogger.isActive())
+    {
+      debugLogger << "Iteration " << iteration << " finished.\n";
+      debugLogger << "Error = " << errorValues.sum() << ".\n";
+    }
+  }
 }
 
 bool LMA::step()
@@ -44,35 +49,27 @@ bool LMA::step()
   {
     while(alglib_impl::minlmiteration(state.c_ptr(), &_alglib_env_state))
     {
-      debugLogger << "computed optimization step in "
-          << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
       if(state.needfi)
       {
         for(unsigned i = 0; i < n; i++)
           parameters(i) = (fpt) state.x[i];
         opt->setParameters(parameters);
-        optimizerStopWatch.start();
         for(unsigned i = 0; i < opt->examples(); i++)
           state.fi[i] = (double) opt->error(i);
-        debugLogger << "computed errors in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
         if(iteration != state.c_ptr()->repiterationscount)
         {
-          optimizerStopWatch.start();
           iteration = state.c_ptr()->repiterationscount;
           opt->finishedIteration();
-          debugLogger << "finished iteration in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
+          return true;
         }
-        optimizerStopWatch.start();
-        return true;
+        continue;
       }
       if(state.needfij)
       {
         for(unsigned i = 0; i < n; i++)
           parameters(i) = (fpt) state.x[i];
         opt->setParameters(parameters);
-        optimizerStopWatch.start();
         opt->VJ(errorValues, jacobian);
-        debugLogger << "computed errors and jacobian in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
         for(unsigned ex = 0; ex < opt->examples(); ex++)
         {
           state.fi[ex] = (double) errorValues(ex);
@@ -83,66 +80,14 @@ bool LMA::step()
         }
         if(iteration != state.c_ptr()->repiterationscount)
         {
-          optimizerStopWatch.start();
           iteration = state.c_ptr()->repiterationscount;
           opt->finishedIteration();
-          debugLogger << "finished iteration in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
-        }
-        optimizerStopWatch.start();
-        return true;
-      }
-      if(!approximateHessian)
-      {
-        if(state.needf)
-        {
-          for(unsigned i = 0; i < n; i++)
-            parameters(i) = (fpt) state.x[i];
-          opt->setParameters(parameters);
-          state.f = (double) opt->error();
-          if(iteration != state.c_ptr()->repiterationscount)
-          {
-            iteration = state.c_ptr()->repiterationscount;
-            opt->finishedIteration();
-          }
-        }
-        if(state.needfg)
-        {
-          for(unsigned i = 0; i < n; i++)
-            parameters(i) = (fpt) state.x[i];
-          opt->setParameters(parameters);
-          state.f = opt->error();
-          gradient = opt->gradient();
-          for(int i = 0; i < gradient.rows(); i++)
-            state.g[i] = (double) gradient(i);
-          if(iteration != state.c_ptr()->repiterationscount)
-          {
-            iteration = state.c_ptr()->repiterationscount;
-            opt->finishedIteration();
-          }
-        }
-        if(state.needfgh)
-        {
-          for(unsigned i = 0; i < n; i++)
-            parameters(i) = (fpt) state.x[i];
-          opt->setParameters(parameters);
-          state.f = (double) opt->error();
-          gradient = opt->gradient();
-          for(int i = 0; i < gradient.rows(); i++)
-            state.g[i] = (double) gradient(i);
-          Mt hess = opt->hessian();
-          for(int i = 0; i < hess.rows(); i++)
-            for(int j = 0; j < hess.cols(); j++)
-              state.h[i][j] = hess(i, j);
-          if(iteration != state.c_ptr()->repiterationscount)
-          {
-            iteration = state.c_ptr()->repiterationscount;
-            opt->finishedIteration();
-          }
           return true;
         }
+        continue;
       }
       if(state.xupdated)
-        return true;
+        continue;
       throw alglib::ap_error("ALGLIB: error in 'minlmoptimize' (some "
           "derivatives were not provided?)");
     }
@@ -158,7 +103,6 @@ bool LMA::step()
   }
 
   cleanUp();
-
   return false;
 }
 
@@ -172,7 +116,7 @@ Vt LMA::result()
 std::string LMA::name()
 {
   std::stringstream stream;
-  stream << "Levenberg-Marquardt Algorithm (" << (approximateHessian ? "appr.)" : "exact)");
+  stream << "Levenberg-Marquardt Algorithm";
   return stream.str();
 }
 
@@ -209,11 +153,10 @@ void LMA::allocate()
 
 void LMA::initALGLIB()
 {
-  if(approximateHessian)
-    alglib::minlmcreatevj(opt->examples(), xIn, state);
-  else
-    alglib::minlmcreatefgh(xIn, state);
+  // Initialize optimizer
+  alglib::minlmcreatevj(opt->examples(), xIn, state);
 
+  // Set convergence criteria
   fpt minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
       StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
       stop.minimalSearchSpaceStep : 0.0;
@@ -226,38 +169,43 @@ void LMA::initALGLIB()
   alglib::minlmsetcond(state, minimalSearchSpaceStep, minimalValueDifferences,
       0.0, maximalIterations);
 
+  // Initialize optimizer state
   alglib_impl::ae_state_init(&_alglib_env_state);
 }
 
 void LMA::cleanUp()
 {
+  // Read out results
   alglib::minlmresults(state, xIn, report);
+
+  // Set optimum
   optimum.resize(n);
   for(unsigned i = 0; i < n; i++)
     optimum(i) = xIn[i];
   opt->setParameters(optimum);
 
+  // Log result
   if(debugLogger.isActive())
   {
     debugLogger << "LMA terminated\n"
-                << "iterations= " << report.iterationscount << "\n"
-                << "function evaluations= " << report.nfunc << "\n"
-                << "jacobi evaluations= " << report.njac << "\n"
-                << "gradient evaluations= " << report.ngrad << "\n"
-                << "hessian evaluations= " << report.nhess << "\n"
+                << "Iterations= " << report.iterationscount << "\n"
+                << "Function evaluations= " << report.nfunc << "\n"
+                << "Jacobi evaluations= " << report.njac << "\n"
+                << "Gradient evaluations= " << report.ngrad << "\n"
+                << "Hessian evaluations= " << report.nhess << "\n"
                 << "Cholesky decompositions= " << report.ncholesky << "\n"
-                << "value= " << opt->error() << "\n"
-                << "reason: ";
+                << "Value= " << opt->error() << "\n"
+                << "Reason: ";
     switch(report.terminationtype)
     {
     case 1:
-      debugLogger << "Relative function improvement is no more than EpsF.\n";
+      debugLogger << "Relative function improvement is below threshold.\n";
       break;
     case 2:
-      debugLogger << "Relative step is no more than EpsX.\n";
+      debugLogger << "Relative step is below threshold.\n";
       break;
     case 4:
-      debugLogger << "Gradient is no more than EpsG.\n";
+      debugLogger << "Gradient is below threshold.\n";
       break;
     case 5:
       debugLogger << "MaxIts steps was taken\n";
@@ -270,6 +218,7 @@ void LMA::cleanUp()
       debugLogger << "Unknown.\n";
     }
   }
+
   iteration = -1;
 }
 
