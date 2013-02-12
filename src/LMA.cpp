@@ -189,8 +189,6 @@ void LMA::initialize()
       x(i) = rng.sampleNormalDistribution<fpt>();
     opt->setParameters(x);
   }
-  if(iteration > 0)
-    iteration = -1;
 }
 
 void LMA::allocate()
@@ -272,6 +270,7 @@ void LMA::cleanUp()
       debugLogger << "Unknown.\n";
     }
   }
+  iteration = -1;
 }
 
 }
