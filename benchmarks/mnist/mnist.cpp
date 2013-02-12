@@ -1,4 +1,5 @@
 #include <DeepNetwork.h>
+#include <optimization/MBSGD.h>
 #include "IDXLoader.h"
 #include <io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
@@ -56,12 +57,19 @@ int main(int argc, char** argv)
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
-  OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 100;
+  net.setErrorFunction(OpenANN::CE);
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
-  net.train(OpenANN::MINIBATCH_SGD, OpenANN::CE,
-            stop, true, true);
+
+  OpenANN::StoppingCriteria stop;
+  stop.maximalIterations = 100;
+  //net.train(OpenANN::MINIBATCH_SGD, OpenANN::CE, stop, true, true);
+  OpenANN::MBSGD optimizer(0.01, 0.1, 0.01, 0.6, 0.0, 0.9, 10, 0.01, 100.0);
+  net.initialize();
+  optimizer.setOptimizable(net);
+  optimizer.setStopCriteria(stop);
+  while(optimizer.step());
+
   interfaceLogger << "Error = " << net.error() << "\n\n";
   interfaceLogger << "Wrote data to mlp-error.log.\n";
 

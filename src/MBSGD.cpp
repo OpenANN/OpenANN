@@ -41,13 +41,14 @@ void MBSGD::optimize()
     if(debugLogger.isActive())
     {
       debugLogger << "Iteration " << iteration << " finished\n"
-          << opt->error() << "\n";
+          << "Error = " << opt->error() << "\n";
     }
   }
 }
 
 bool MBSGD::step()
 {
+  OPENANN_CHECK(opt->providesInitialization());
   if(iteration < 0)
     initialize();
 
@@ -87,6 +88,7 @@ bool MBSGD::step()
   }
 
   iteration++;
+  debugLogger << "alpha = " << alpha << ", eta = " << eta << "\n";
   opt->finishedIteration();
 
   const bool run = (stop.maximalIterations == // Maximum iterations reached?

@@ -184,6 +184,11 @@ DeepNetwork& DeepNetwork::testSet(DataSet& testSet)
   return *this;
 }
 
+DeepNetwork& DeepNetwork::setErrorFunction(ErrorFunction errorFunction)
+{
+  this->errorFunction = errorFunction;
+}
+
 Vt DeepNetwork::train(Training algorithm, ErrorFunction errorFunction,
                       StoppingCriteria stop, bool reinitialize, bool dropout)
 {

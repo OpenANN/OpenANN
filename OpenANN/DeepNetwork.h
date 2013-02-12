@@ -200,6 +200,7 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
   virtual DeepNetwork& testSet(DataSet& testDataSet);
+  DeepNetwork& setErrorFunction(ErrorFunction errorFunction);
   Vt train(Training algorithm, ErrorFunction errorFunction, StoppingCriteria stop,
            bool reinitialize = true, bool dropout = false);
   virtual void finishedIteration();

@@ -60,7 +60,7 @@ public:
   MBSGD(fpt learningRate = 0.7, fpt learningRateDecay = 0.998,
         fpt minimalLearningRate = 0.0001, fpt momentum = 0.5,
         fpt momentumGain = 0.0005, fpt maximalMomentum = 0.99,
-        int batchSize = 50, fpt minGain = 0.1, fpt maxGain = 10.0);
+        int batchSize = 25, fpt minGain = 0.1, fpt maxGain = 10.0);
   ~MBSGD();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);
