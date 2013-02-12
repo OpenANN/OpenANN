@@ -9,7 +9,7 @@
 namespace OpenANN {
 
 LMA::LMA()
-    : debugLogger(Logger::CONSOLE), opt(0), iteration(-1)
+    : debugLogger(Logger::NONE), opt(0), iteration(-1)
 {
 }
 

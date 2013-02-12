@@ -25,8 +25,9 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     .trainingSet(trainingSet);
 
   // set stop criteria
-  stop.maximalIterations = 1000;
-  stop.minimalSearchSpaceStep = 1e-5;
+  stop.maximalIterations = 10000;
+  stop.minimalSearchSpaceStep = 1e-16;
+  stop.minimalValueDifferences = 1e-16;
 }
 
 TwoSpiralsVisualization::~TwoSpiralsVisualization()
