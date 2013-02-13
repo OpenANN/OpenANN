@@ -57,10 +57,10 @@ class MBSGD : public Optimizer
   Vt gradient, gains, parameters, momentum;
   std::vector<std::list<int> > batchAssignment;
 public:
-  MBSGD(fpt learningRate = 0.7, fpt learningRateDecay = 0.998,
-        fpt minimalLearningRate = 0.0001, fpt momentum = 0.5,
-        fpt momentumGain = 0.0005, fpt maximalMomentum = 0.99,
-        int batchSize = 25, fpt minGain = 0.1, fpt maxGain = 10.0);
+  MBSGD(fpt learningRate = 0.01, fpt learningRateDecay = 1.0,
+        fpt minimalLearningRate = 0.01, fpt momentum = 0.5,
+        fpt momentumGain = 0.0, fpt maximalMomentum = 0.5,
+        int batchSize = 10, fpt minGain = 1.0, fpt maxGain = 1.0);
   ~MBSGD();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);
