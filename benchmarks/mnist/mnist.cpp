@@ -16,17 +16,18 @@
  * directory "mnist" in your working directory, move the data set to this
  * directory and execute the benchmark or pass the directory of the MNIST
  * data set as argument to the program. Some information about the
- * classification of the test set will be logged in the file "dataset*.log".
+ * classification of the test set will be logged in the file "dataset-*.log",
+ * where '*' is the starting time.
  *
  * You can display the accuracy on test set during the training with this
  * Gnuplot script:
  * \code
  * reset
+ * unset key
  * set title "MNIST Data Set"
- * set key bottom
  * set xlabel "Training time / min"
  * set ylabel "Error / %"
- * plot "dataset*.log" u ($5/1000):($4/100) t "Test Set" w l
+ * plot "dataset-*.log" u ($5/60000):($4/100) w l
  * \endcode
  */
 
@@ -63,14 +64,14 @@ int main(int argc, char** argv)
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
-  OpenANN::MBSGD optimizer(0.1, 0.998, 0.001, 0.6, 0.0001, 0.9, 10, 0.01, 100.0);
+  OpenANN::MBSGD optimizer(0.01, 1.0, 0.01, 0.6, 0.0, 0.9, 10, 0.01, 100.0);
   net.initialize();
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
   while(optimizer.step());
 
   interfaceLogger << "Error = " << net.error() << "\n\n";
-  interfaceLogger << "Wrote data to mlp-error.log.\n";
+  interfaceLogger << "Wrote data to dataset-*.log.\n";
 
   return EXIT_SUCCESS;
 }
