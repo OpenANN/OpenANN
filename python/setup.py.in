@@ -4,7 +4,12 @@ if __name__ == "__main__":
   from Cython.Distutils import build_ext
 
   setup(
-    name = 'libopenann',
+    name = 'OpenANN',
+    version = "${OPENANN_VERSION_NUMBER}",
+    description = "Python bindings for OpenANN.",
+    author = "Alexander Fabisch",
+    author_email = "afabisch@googlemail.com",
+    url = "https://github.com/AlexanderFabisch/OpenANN",
     ext_modules=[
       Extension("openann",
                 sources=["openann.pyx"],

@@ -13,6 +13,15 @@ if(PYTHONINTERP_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   add_custom_target(python_extension ALL DEPENDS python_extension_command)
+
+  add_custom_command(
+    OUTPUT python_extension_install_command
+    COMMAND ${CMAKE_COMMAND} -E echo "Installing Python extension..."
+    COMMAND ${PYTHON_EXECUTABLE} setup.py install
+    COMMAND ${CMAKE_COMMAND} -E echo "Done."
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
+  add_custom_target(python_extension_install ALL DEPENDS python_extension_install_command)
 else()
   message(STATUS "Could not build Python extension. You must install Python, NumPy and Cython)")
 endif()
