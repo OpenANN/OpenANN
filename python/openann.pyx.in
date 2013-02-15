@@ -206,7 +206,11 @@ cdef class DeepNetwork:
 
   def training_set(self, inputs, outputs):
     assert inputs.shape[1] == outputs.shape[1]
+    if self.inptr != NULL:
+      del_${MT}(self.inptr)
     self.inptr = new_${MT}(inputs.shape[0], inputs.shape[1])
+    if self.outptr != NULL:
+      del_${MT}(self.outptr)
     self.outptr = new_${MT}(outputs.shape[0], outputs.shape[1])
     self.__numpy_to_eigen_train(inputs, outputs)
     self.thisptr.trainingSet(deref(self.inptr), deref(self.outptr))
@@ -266,11 +270,15 @@ cdef class DeepNetwork:
 
   def __predict(self, x):
     self.__numpy_to_eigen_input(x)
+    if self.yptr != NULL:
+      del_${VT}(self.yptr)
     self.yptr = new_${VT}(self.thisptr.predict(deref(self.xptr)))
     return self.__eigen_to_numpy_output()
 
   def __numpy_to_eigen_input(self, x):
-    self.xptr = new_${VT}(x.shape[0], 1) # TODO configure
+    if self.xptr != NULL:
+      del_${VT}(self.xptr)
+    self.xptr = new_${VT}(x.shape[0], 1)
     rows = x.shape[0]
     for r in range(rows):
       self.xptr.data()[r] = x[r]
@@ -281,5 +289,4 @@ cdef class DeepNetwork:
     for r in range(rows):
       y[r] = self.yptr.data()[r]
     return y
-
 
