@@ -9,6 +9,13 @@
 
 namespace OpenANN {
 
+/**
+ * @class DirectStorageDataSet
+ *
+ * Stores the inputs and outputs of the data set directly in two matrices.
+ *
+ * The data set can log results during optimization.
+ */
 class DirectStorageDataSet : public DataSet
 {
 public:
@@ -32,6 +39,13 @@ private:
   Stopwatch sw;
 
 public:
+  /**
+   * Create an instance of DirectStorageDataSet.
+   * @param in contains an instance in each column
+   * @param out cointains a target in each column
+   * @param logInfo activate evaluation of the model during optimization
+   * @param target target of evaluation logger
+   */
   DirectStorageDataSet(Mt& in, Mt& out, LogInfo logInfo = NONE,
                        Logger::Target target = Logger::CONSOLE);
   virtual ~DirectStorageDataSet() {}

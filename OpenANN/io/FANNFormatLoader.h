@@ -1,6 +1,5 @@
 #pragma once
 
-#include <CompressionMatrixFactory.h>
 #include <io/Logger.h>
 #include <Eigen/Dense>
 #include <fstream>
@@ -8,6 +7,11 @@
 namespace OpenANN
 {
 
+/**
+ * @class FANNFormatLoader
+ *
+ * Load training and test sets from Fast Artificial Neural Networks library.
+ */
 class FANNFormatLoader
 {
 public:
@@ -18,25 +22,23 @@ public:
   int F;
   Mt trainingInput, trainingOutput, testInput, testOutput;
 
-  int startInput;
-  int endInput;
-
   std::fstream trainingData;
   std::fstream testData;
-  int columns;
 
-  bool compress;
-  int uncompressedD;
-  Mt compressionMatrix;
-
-  FANNFormatLoader(const std::string& benchmark,
-      int maxTrainingSamples = -1, int maxTestSamples = -1,
-      int startInput = -1, int endInput = -1, bool loadNow = true);
+  /**
+   * Create a FANNFormatLoader.
+   * @param benchmark name of the benchmark
+   * @param maxTrainingSamples maximum number of training examples
+   * @param maxTestSamples maximum number of test examples
+   * @param loadNow load data sets during creation
+   */
+  FANNFormatLoader(const std::string& benchmark, int maxTrainingSamples = -1,
+                   int maxTestSamples = -1, bool loadNow = true);
+  void load();
+private:
   void prepareLoading(int maxTrainingSamples = -1, int maxTestSamples = -1);
   void allocateMemory();
-  void load();
   void load(bool train);
-  void compress1D(int paramDim, CompressionMatrixFactory::Transformation transformation);
 };
 
 }
