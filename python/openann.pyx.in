@@ -3,6 +3,13 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 import numpy
 
+cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
+  cdef enum c_ActivationFunction "OpenANN::ActivationFunction":
+    LOGISTIC
+    TANH
+    TANH_SCALED
+    RECTIFIER
+    LINEAR
 
 cdef extern from "OpenANN/optimization/StoppingCriteria.h" namespace "OpenANN":
   ctypedef struct c_StoppingCriteria "OpenANN::StoppingCriteria":
@@ -14,15 +21,6 @@ cdef extern from "OpenANN/optimization/StoppingCriteria.h" namespace "OpenANN":
     ${FPT} minimalSearchSpaceStep
   c_StoppingCriteria *new_StoppingCriteria "new OpenANN::StoppingCriteria" ()
   void del_StoppingCriteria "delete" (c_StoppingCriteria *ptr)
-
-
-cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
-  cdef enum c_ActivationFunction "OpenANN::ActivationFunction":
-    LOGISTIC
-    TANH
-    TANH_SCALED
-    RECTIFIER
-    LINEAR
 
 cdef extern from "Eigen/Dense" namespace "Eigen":
   ctypedef struct c_VectorXf "Eigen::VectorXf":
@@ -68,6 +66,7 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
     SSE
     MSE
     CE
+
   cdef enum c_Training "OpenANN::Training":
     NOT_INITIALIZED
     BATCH_CMAES
@@ -75,7 +74,6 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
     BATCH_SGD
     MINIBATCH_SGD
 
-cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
   ctypedef struct c_DeepNetwork "OpenANN::DeepNetwork":
     c_DeepNetwork& inputLayer(int dim1, int dim2, int dim3, bool bias,
                               ${FPT} dropoutProbability)
@@ -105,8 +103,7 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
   void del_DeepNetwork "delete" (c_DeepNetwork *ptr)
 
 cdef class DeepNetwork:
-  cdef c_DeepNetwork *thisptr,
-  # TODO destroy ptrs on replacement
+  cdef c_DeepNetwork *thisptr
   cdef c_${MT} *inptr
   cdef c_${MT} *outptr
   cdef c_StoppingCriteria *stop
@@ -116,14 +113,22 @@ cdef class DeepNetwork:
   def __cinit__(self):
     self.thisptr = new_DeepNetwork()
     self.stop = new_StoppingCriteria()
+    self.inptr = NULL
+    self.outptr = NULL
+    self.xptr = NULL
+    self.yptr = NULL
 
   def __dealloc__(self):
     del_DeepNetwork(self.thisptr)
-    del_${MT}(self.inptr)
-    del_${MT}(self.outptr)
     del_StoppingCriteria(self.stop)
-    del_${VT}(self.xptr)
-    del_${VT}(self.yptr)
+    if self.inptr != NULL:
+      del_${MT}(self.inptr)
+    if self.outptr != NULL:
+      del_${MT}(self.outptr)
+    if self.xptr != NULL:
+      del_${VT}(self.xptr)
+    if self.yptr != NULL:
+      del_${VT}(self.yptr)
 
   def __get_dims(self, shape, max_dim):
     shape_array = numpy.asarray(shape).flatten()
