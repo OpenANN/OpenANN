@@ -71,7 +71,6 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
     NOT_INITIALIZED
     BATCH_CMAES
     BATCH_LMA
-    BATCH_SGD
     MINIBATCH_SGD
 
   ctypedef struct c_DeepNetwork "OpenANN::DeepNetwork":
@@ -150,7 +149,6 @@ cdef class DeepNetwork:
 
   def __get_training(self, training):
     return {"lma" : BATCH_LMA,
-            "sgd" : BATCH_SGD,
             "cmaes" : BATCH_CMAES,
             "mbsgd" : MINIBATCH_SGD}[training]
 

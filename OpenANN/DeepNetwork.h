@@ -22,7 +22,6 @@ enum Training
   NOT_INITIALIZED,
   BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies
   BATCH_LMA,    //!< Levenberg-Marquardt Algorithm
-  BATCH_SGD,    //!< Stochastic Gradient Descent
   MINIBATCH_SGD //!< Mini-Batch Stochastic Gradient Descent
 };
 

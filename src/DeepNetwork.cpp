@@ -9,7 +9,6 @@
 #include <io/DirectStorageDataSet.h>
 #include <optimization/IPOPCMAES.h>
 #include <optimization/LMA.h>
-#include <optimization/SGD.h>
 #include <optimization/MBSGD.h>
 
 namespace OpenANN {
@@ -197,9 +196,6 @@ Vt DeepNetwork::train(Training algorithm, ErrorFunction errorFunction,
   Optimizer* opt;
   switch(algorithm)
   {
-    case BATCH_SGD:
-      opt = new SGD;
-      break;
     case MINIBATCH_SGD:
       opt = new MBSGD;
       break;
