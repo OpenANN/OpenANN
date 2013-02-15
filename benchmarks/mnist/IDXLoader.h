@@ -6,7 +6,6 @@
 #include <io/Logger.h>
 #include <stdint.h>
 #include <endian.h>
-#include <CompressionMatrixFactory.h>
 #include "Distorter.h"
 
 class IDXLoader
@@ -131,24 +130,6 @@ public:
       for(int c = 0; c < F; c++)
         output(c, n) = (255 - (int) tmp) == c ? 1.0 : 0.0;
     }
-  }
-
-  void compress(int paramDim, OpenANN::CompressionMatrixFactory::Transformation transformation)
-  {
-    OpenANN::CompressionMatrixFactory cmf(D, paramDim, transformation);
-    Mt compressionMatrix;
-    cmf.createCompressionMatrix(compressionMatrix);
-    {
-      Mt compressedInput = compressionMatrix * trainingInput;
-      trainingInput.resize(compressedInput.rows(), compressedInput.cols());
-      trainingInput = compressedInput;
-    }
-    {
-      Mt compressedInput = compressionMatrix * testInput;
-      testInput.resize(compressedInput.rows(), compressedInput.cols());
-      testInput = compressedInput;
-    }
-    D = paramDim;
   }
 
   void distort(int multiplier = 10)

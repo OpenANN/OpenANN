@@ -43,6 +43,7 @@ int main(int argc, char** argv)
     directory = std::string(argv[1]);
 
   IDXLoader loader(28, 28, 60000, 10000, directory);
+  loader.distort(10);
 
   OpenANN::DeepNetwork net;                                       // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28

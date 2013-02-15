@@ -5,15 +5,13 @@
 
 namespace OpenANN {
 
-class FullyConnected : public Layer
+class Extreme : public Layer
 {
   int I, J;
   bool bias;
   ActivationFunction act;
   fpt stdDev;
-  fpt dropoutProbability;
   Mt W;
-  Mt Wd;
   Vt* x;
   Vt a;
   Vt y;
@@ -22,8 +20,8 @@ class FullyConnected : public Layer
   Vt e;
 
 public:
-  FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
-                 fpt stdDev, fpt dropoutProbability);
+  Extreme(OutputInfo info, int J, bool bias, ActivationFunction act,
+          fpt stdDev);
   virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
                                 std::vector<fpt*>& parameterDerivativePointers);
   virtual void initializeParameters();

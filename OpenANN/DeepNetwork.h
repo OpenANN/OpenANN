@@ -44,6 +44,7 @@ enum Training
  *   previous layer.
  * - Compressed layer: fully connected layer. The I incoming weights of a
  *   neuron are represented by M (usually M < I) parameters.
+ * - Extreme layer: fully connected layer with fixed random weights.
  * - Convolutional layer: consists of a number of 2-dimensional feature maps.
  *   Each feature map is connected to each feature map of the previous layer.
  *   The activations are computed by applying a parametrizable convolution,
@@ -137,6 +138,16 @@ public:
                                const std::string& compression,
                                fpt stdDev = (fpt) 0.05, bool bias = true,
                                fpt dropoutProbability = 0.0);
+  /**
+   * Add a fully connected hidden layer with fixed weights.
+   * @param units number of nodes (neurons)
+   * @param act activation function
+   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param bias add bias term
+   * @return this for chaining
+   */
+  DeepNetwork& extremeLayer(int units, ActivationFunction act,
+                            fpt stdDev = (fpt) 5.0, bool bias = true);
   /**
    * Add a convolutional layer.
    * @param featureMaps number of feature maps

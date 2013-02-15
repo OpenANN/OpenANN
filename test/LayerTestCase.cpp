@@ -367,6 +367,7 @@ void LayerTestCase::multilayerNetwork()
   net.convolutionalLayer(10, 3, 3, TANH, 0.5);
   net.subsamplingLayer(2, 2, TANH, 0.5);
   net.fullyConnectedLayer(20, TANH, 0.5);
+  net.extremeLayer(10, TANH);
   net.outputLayer(3, LINEAR, 0.5);
   net.trainingSet(ds);
 

@@ -19,6 +19,8 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
 
   // initialize MLP
   net->inputLayer(trainingInput.rows())
+    // use this as only hidden layer to try extreme learning machine
+    //.extremeLayer(1500, RECTIFIER)
     .fullyConnectedLayer(20, TANH)
     .fullyConnectedLayer(20, TANH)
     .outputLayer(trainingOutput.rows(), TANH)
@@ -26,8 +28,8 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
 
   // set stop criteria
   stop.maximalIterations = 10000;
-  stop.minimalSearchSpaceStep = 1e-16;
-  stop.minimalValueDifferences = 1e-16;
+  stop.minimalSearchSpaceStep = 1e-8;
+  stop.minimalValueDifferences = 1e-8;
 }
 
 TwoSpiralsVisualization::~TwoSpiralsVisualization()
