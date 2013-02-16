@@ -12,6 +12,7 @@
 #include "CompressionMatrixFactoryTestCase.h"
 #include "RandomTestCase.h"
 #include "LayerTestCase.h"
+#include "PreprocessingTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -36,6 +37,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
   ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new LayerTestCase);
+  ts.addTestCase(new PreprocessingTestCase);
 
   if(qt)
   {

@@ -12,17 +12,17 @@ namespace OpenANN {
 enum ErrorFunction
 {
   NO_E_DEFINED,
-  SSE, //!< Sum of squared errors and identity (regression)
-  MSE, //!< Mean of squared errors and identity (regression)
-  CE   //!< Cross entropy and softmax (classification)
+  SSE, //!< Sum of squared errors (regression, two classes)
+  MSE, //!< Mean of squared errors (regression, two classes)
+  CE   //!< Cross entropy and softmax (multiple classes)
 };
 
 enum Training
 {
   NOT_INITIALIZED,
-  BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies
-  BATCH_LMA,    //!< Levenberg-Marquardt Algorithm
-  MINIBATCH_SGD //!< Mini-Batch Stochastic Gradient Descent
+  BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies (IPOPCMAES)
+  BATCH_LMA,    //!< Levenberg-Marquardt Algorithm (LMA)
+  MINIBATCH_SGD //!< Mini-Batch Stochastic Gradient Descent (MBSGD)
 };
 
 /**
@@ -32,7 +32,7 @@ enum Training
  * choose the architecture almost arbitrary. But there are no shortcut
  * connections allowed!
  *
- * So far we implemented the following types of layers:
+ * So far the following types of layers are implemented:
  *
  * - Input layer: adds a bias to the network's input. This layer must be
  *   present in the network.
@@ -205,16 +205,15 @@ public:
                                      ActivationFunction act,
                                      const std::string& compression,
                                      fpt stdDev = (fpt) 0.05);
-
+  DeepNetwork& setErrorFunction(ErrorFunction errorFunction);
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
   virtual DeepNetwork& testSet(DataSet& testDataSet);
-  DeepNetwork& setErrorFunction(ErrorFunction errorFunction);
   Vt train(Training algorithm, ErrorFunction errorFunction, StoppingCriteria stop,
            bool reinitialize = true, bool dropout = false);
-  virtual void finishedIteration();
 
+  virtual void finishedIteration();
   virtual Vt operator()(const Vt& x);
   virtual unsigned int dimension();
   virtual unsigned int examples();

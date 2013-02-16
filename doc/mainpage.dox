@@ -63,7 +63,7 @@ sudo apt-get install ruby rubygems; sudo gem install rice
       subsampling layers and max-pooling layers
     - random projections for data and network compression
   - optimization algorithms
-    - stochastic gradient descent (SGD) for large networks
+    - mini-batch stochastic gradient descent (MBSGD) for large networks
     - Levenberg-Marquardt algorithm (LMA) for small networks
     - (increasing population size) covariance matrix adaption evolution
       strategies (IPOPCMAES) for reinforcement learning

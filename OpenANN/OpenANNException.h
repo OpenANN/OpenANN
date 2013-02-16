@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+namespace OpenANN {
+
 /**
  * @class OpenANNException
  *
@@ -10,5 +12,8 @@
  */
 class OpenANNException : public std::logic_error
 {
+public:
   OpenANNException(const std::string& msg);
 };
+
+}
