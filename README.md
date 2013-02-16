@@ -49,6 +49,6 @@ Directory Structure
 * doc - Additional doxygen documentation files
 * examples - OpenANN showcase
 * lib - External libraries
-* ruby - Ruby language bindings
+* python - Python language bindings
 * src - Implementation files for libopenann
 * test - Contains the OpenANN test suite

@@ -13,6 +13,8 @@
 namespace OpenANN {
 
 /**
+ * @class LMA
+ *
  * Levenberg-Marquardt Algorithm.
  *
  * This algorithm works especially well for least squares optimization. The
@@ -22,6 +24,25 @@ namespace OpenANN {
  *  - \f$ |E^{t+1}-E^{t}| \leq \f$ stop.minimalValueDifferences
  *    \f$ \cdot max\{|E^{t+1}|,|E^{t}|,1\} \f$
  *  - \f$ t > \f$ stop.maximalIterations
+ *
+ * The optimization is cubic in each iteration, i. e. the complexity is
+ * \f$ O(L^3) \f$, where L is the number of parameters to optimize. In
+ * addition, the jacobian matrix is required for this algorithm, that is the
+ * required space is in \f$ O(L N) \f$, where N is the size of the training
+ * set. However, LMA requires only a few iterations to converge. Thus, it
+ * works very well up to a few thousand parameters and a few thousand training
+ * examples. In summary, the requirements are:
+ * - sum of squared error (SSE)
+ * - maximum of a few thousand parameters
+ * - maximum of a few thousand training examples
+ *
+ * [1] Kenneth Levenberg:
+ * A Method for the Solution of Certain Problems in Least Squares,
+ * Quarterly of Applied Mathematics 2, pp. 164-168, 1944.
+ * [2] Donald Marquardt:
+ * An Algorithm for Least-Squares Estimation of Nonlinear Parameters,
+ * Journal of the Society for Industrial and Applied Mathematics 11 (2),
+ * pp. 431-441, 1963.
  */
 class LMA : public Optimizer
 {

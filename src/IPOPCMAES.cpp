@@ -234,7 +234,7 @@ Vt IPOPCMAES::result()
 
 std::string IPOPCMAES::name()
 {
-  return "Covariance Matrix Adaption Evolution Strategies";
+  return "Increasing Population Covariance Matrix Adaption Evolution Strategies";
 }
 
 void IPOPCMAES::setSigma0(fpt sigma0)

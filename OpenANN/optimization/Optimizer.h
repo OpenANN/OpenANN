@@ -40,6 +40,7 @@ public:
    */
   virtual Vt result() = 0;
   /**
+   * Get the name of the optimization algorithm.
    * @return name of the optimization algorithm
    */
   virtual std::string name() = 0;
