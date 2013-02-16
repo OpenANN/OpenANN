@@ -14,6 +14,8 @@ There are two ways to pass a data set to the neural network:
 \section MatrixDataSet Arranging data in matrices
 
 \code
+using namespace OpenANN;
+
 int main()
 {
   const int N = 10; // data set size
@@ -27,13 +29,17 @@ int main()
   DeepNetwork net;
   ... // initialize net
   mlp.trainingSet(X, T);
-  mlp.train(...);
+  StoppingCriteria stop;
+  ... // set stopping criteria
+  mlp.train(BATCH_LMA, SSE, stop);
 }
 \endcode
 
 \section CustomDataSet Subclassing OpenANN::DataSet
 
 \code
+using namespace OpenANN;
+
 class MyDataSet : public DataSet
 {
 public:
@@ -41,7 +47,7 @@ public:
   {
     ...
   }
-  virtual ~DirectStorageDataSet()
+  virtual MyDataSet()
   {
     ...
   }
@@ -80,7 +86,9 @@ int main()
   DeepNetwork net;
   ... // initialize net
   net.trainingSet(dataSet);
-  mlp.train(...);
+  StoppingCriteria stop;
+  ... // set stopping criteria
+  mlp.train(BATCH_LMA, SSE, stop);
 }
 \endcode
 */

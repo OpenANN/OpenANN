@@ -12,6 +12,8 @@ class Learner;
  * Data set interface.
  *
  * A data set can be either a training set or a test set.
+ *
+ * See \ref CreateDataSet.
  */
 class DataSet
 {

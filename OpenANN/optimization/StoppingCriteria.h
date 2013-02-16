@@ -4,8 +4,11 @@
 namespace OpenANN {
 
 /**
- * The stop criteria for optimization algorithms. Note that not every
- * algorithm might check all criteria.
+ * @class StoppingCriteria
+ *
+ * Stopping criteria for optimization algorithms.
+ *
+ * Note that not every algorithm might check all criteria.
  */
 class StoppingCriteria
 {
