@@ -1,6 +1,7 @@
 #include <CompressionMatrixFactory.h>
 #include <AssertionMacros.h>
 #include <Random.h>
+#include <OpenANNException.h>
 
 namespace OpenANN
 {
@@ -10,10 +11,15 @@ CompressionMatrixFactory::CompressionMatrixFactory()
 {
 }
 
-CompressionMatrixFactory::CompressionMatrixFactory(int firstInputDim,
-    int firstParamDim, Transformation transformation)
-  : compress(true), transformation(transformation), inputDim(firstInputDim), paramDim(firstParamDim)
+CompressionMatrixFactory::CompressionMatrixFactory(int inputDim,
+    int paramDim, Transformation transformation)
+  : compress(true), transformation(transformation), inputDim(inputDim),
+    paramDim(paramDim)
 {
+  if(inputDim < 1)
+    throw OpenANNException("inputDim has to be at least 1.");
+  if(paramDim < 1)
+    throw OpenANNException("paramDim has to be at least 1.");
 }
 
 void CompressionMatrixFactory::createCompressionMatrix(Mt& cm)
