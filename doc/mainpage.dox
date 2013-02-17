@@ -61,7 +61,8 @@ sudo apt-get install ruby rubygems; sudo gem install rice
     - multilayer neural network
     - convolutional neural network (CNN) with convolutional layers,
       subsampling layers and max-pooling layers
-    - random projections for data and network compression
+    - random projections for data and network compression and extreme learning
+      machines
   - optimization algorithms
     - mini-batch stochastic gradient descent (MBSGD) for large networks
     - Levenberg-Marquardt algorithm (LMA) for small networks
