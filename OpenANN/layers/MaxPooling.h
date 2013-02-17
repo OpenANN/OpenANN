@@ -5,6 +5,21 @@
 
 namespace OpenANN {
 
+/**
+ * @class MaxPooling
+ *
+ * Performs max-pooling on 2D input feature maps.
+ *
+ * In comparison to average pooling this we have no weights or biases and no
+ * activation functions in a max-pooling layer. Instead of summing the inputs
+ * up, we only take the maximum value. Max-pooling layer are usually more
+ * efficient than subsampling layers and achieve better results.
+ *
+ * [1] D. Scherer, A. Müller and S. Behnke:
+ * Evaluation of Pooling Operations in Convolutional Architectures for Object
+ * Recognition.
+ * International Conference on Artificial Neural Networks, 2010.
+ */
 class MaxPooling : public Layer
 {
   int I, fm, inRows, inCols, kernelRows, kernelCols;

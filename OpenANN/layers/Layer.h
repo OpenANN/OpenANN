@@ -6,7 +6,9 @@
 namespace OpenANN {
 
 /**
- * Contains information about the output of a layer.
+ * @class OutputInfo
+ *
+ * Provides information about the output of a layer.
  */
 class OutputInfo
 {
@@ -17,6 +19,7 @@ public:
   std::vector<int> dimensions;
 
   /**
+   * Get number of outputs.
    * @return number of output nodes
    */
   int outputs();
