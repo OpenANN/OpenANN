@@ -1,14 +1,32 @@
 #pragma once
 
 #include <layers/Layer.h>
-#include <io/Logger.h>
 #include <ActivationFunctions.h>
 
 namespace OpenANN {
 
+/**
+ * @class Convolutional
+ *
+ * Applies a learnable filter on a 2D or 3D input.
+ *
+ * Hence, convolutional layers can be regarded as biologically inspired
+ * trainable feature extractors. Another perspective is that they combine
+ * weight sharing and sparse connections to reduce the number of weights
+ * drastically in contrast to fully connected layers.
+ *
+ * Each feature map in this layer is connected to each feature map in the
+ * previous layer such that we use one convolution kernel for each of these
+ * connections. After convolving the input feature maps, an activation
+ * function will be applied on the activations.
+ *
+ * [1] Yann LeCun, Léon Bottou, Yoshua Bengio and Patrick Haffner:
+ * Gradient-Based Learning Applied to Document Recognition,
+ * Intelligent Signal Processing, IEEE Press, S. Haykin and B. Kosko (Eds.),
+ * pp. 306-351, 2001.
+ */
 class Convolutional : public Layer
 {
-  Logger debugLogger;
   int I, fmin, inRows, inCols, fmout, kernelRows, kernelCols;
   bool bias, weightForBias;
   ActivationFunction act;
@@ -28,9 +46,14 @@ class Convolutional : public Layer
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
-  Convolutional(OutputInfo info, int featureMaps, int kernelRows, int kernelCols, bool bias, ActivationFunction act, fpt stdDev);
-  virtual OutputInfo initialize(std::list<fpt*>& parameterPointers, std::list<fpt*>& parameterDerivativePointers);
-  virtual void forwardPropagate(Vt* x, Vt*& y);
+  Convolutional(OutputInfo info, int featureMaps, int kernelRows,
+                int kernelCols, bool bias, ActivationFunction act,
+                fpt stdDev);
+  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
+                                std::vector<fpt*>& parameterDerivativePointers);
+  virtual void initializeParameters();
+  virtual void updatedParameters() {}
+  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
   virtual void backpropagate(Vt* ein, Vt*& eout);
 };
 

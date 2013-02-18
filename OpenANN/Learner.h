@@ -10,6 +10,7 @@ namespace OpenANN {
  */
 class Learner
 {
+public:
   /**
    * Set the current training set.
    * @param trainingInput input vectors, each instance should be in a new column

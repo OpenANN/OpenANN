@@ -4,6 +4,7 @@
 #include <Compressor.h>
 #include <io/DataSet.h>
 #include <io/Logger.h>
+#include <Learner.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -94,8 +95,8 @@ public:
   Vt toVector(const Mt& matrix);
   virtual Vt& getTarget(int i);
   char getTargetChar(int i);
-  virtual void finishIteration(OpenANN::MLP& mlp);
-  int evaluate(OpenANN::MLP& mlp, int trials);
+  virtual void finishIteration(OpenANN::Learner& mlp);
+  int evaluate(OpenANN::Learner& mlp, int trials);
 };
 
 #endif // BCIDATASET_H

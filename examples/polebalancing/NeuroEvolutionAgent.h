@@ -1,9 +1,8 @@
 #pragma once
 
 #include <rl/Agent.h>
-#include <MLP.h>
+#include <DeepNetwork.h>
 #include <optimization/IPOPCMAES.h>
-#include "AlphaBetaFilter.h"
 #include "DoubleExponentialSmoothing.h"
 #include <vector>
 #include <list>
@@ -33,17 +32,17 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
 
   Environment* environment;
   int inputSize;
-  MLP policy;
+  DeepNetwork policy;
   IPOPCMAES opt;
   Vt lastState;
   bool firstStep;
-  std::vector<AlphaBetaFilter> alphaBetaFilters;
   std::vector<DoubleExponentialSmoothing> des;
   std::list<Vt> inputBuffer;
 public:
   NeuroEvolutionAgent(int h, bool b, const std::string a,
                       bool compress = false, int m = 0,
-                      bool fullyObservable = true, bool alphaBetaFilter = false,
+                      bool fullyObservable = true,
+                      bool alphaBetaFilter = false,
                       bool doubleExponentialSmoothing = false);
   ~NeuroEvolutionAgent();
   virtual void abandoneIn(Environment& environment);

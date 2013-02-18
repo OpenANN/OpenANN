@@ -1,11 +1,11 @@
-#include <StopCriteria.h>
+#include <optimization/StoppingCriteria.h>
 #include <limits>
 
 namespace OpenANN {
 
-StopCriteria StopCriteria::defaultValue;
+StoppingCriteria StoppingCriteria::defaultValue;
 
-StopCriteria::StopCriteria()
+StoppingCriteria::StoppingCriteria()
     : maximalFunctionEvaluations(-1),
       maximalIterations(-1),
       maximalRestarts(0),

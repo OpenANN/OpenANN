@@ -48,28 +48,29 @@ Examples
   - libxmu
   - Qt4
 
-Ruby bindings
-  - <a href="http://www.ruby-lang.org" target=_blank>Ruby</a>
-  - <a href="http://rubygems.org" target=_blank>RubyGems</a>
-  - <a href="http://rice.rubyforge.org" target=_blank>Rice</a>
+Python bindings
+  - Python
+  - NumPy
+  - Cython
 
 sudo apt-get install ruby rubygems; sudo gem install rice
 
 \section Features List of Features
 
   - artificial neural networks
-    - multilayer perceptron (MLP)
-    - MLP with compressed weights
-    - convolutional neural network (CNN)
+    - multilayer neural network
+    - convolutional neural network (CNN) with convolutional layers,
+      subsampling layers and max-pooling layers
+    - random projections for data and network compression and extreme learning
+      machines
   - optimization algorithms
-    - stochastic gradient descent (SGD)
-    - conjugate gradient (CG)
-    - Levenberg-Marquardt algorithm (LMA)
-    - sequential quadratic programming (SQP)
-    - (increasing population size) covariance matrix adaption evolution strategies (IPOPCMAES)
+    - mini-batch stochastic gradient descent (MBSGD) for large networks
+    - Levenberg-Marquardt algorithm (LMA) for small networks
+    - (increasing population size) covariance matrix adaption evolution
+      strategies (IPOPCMAES) for reinforcement learning
   - supported languages
     - C++
-    - Ruby bindings
+    - Python bindings
 
 \section SimpleExample A Simple Example
 
@@ -86,16 +87,15 @@ int main()
   Eigen::MatrixXf t(1, 1);
   t.fill(5.0f);
 
-  MLP mlp;
-  mlp.input(1)
-     .fullyConnectedHiddenLayer(3, MLP::TANH)
-     .fullyConnectedHiddenLayer(3, MLP::TANH)
-     .output(1, MLP::MSE, MLP::ID)
-     .trainingSet(x, t)
-     .training(MLP::BATCH_LMA);
+  DeepNetwork net;
+  net.inputLayer(1)
+     .fullyConnectedLayer(3, TANH)
+     .fullyConnectedLayer(3, TANH)
+     .outputLayer(1, MLP::ID)
+     .trainingSet(x, t);
 
-  mlp.fit();
-  Eigen::VectorXf y = mlp(x);
+  net.train(DeepNetwork::BATCH_LMA, DeepNetwork::SSE, stop);
+  Eigen::VectorXf y = net(x);
 
   return 0;
 }
@@ -126,13 +126,12 @@ different architectures.
 
 \section TodoList Todo List
 
-  @todo Include two spirals data set generation
-  @todo layer: Maxpooling layer (CNN)
   @todo layer: Radial basis functions layer (RBF)
   @todo layer: Support vector machines (SVM, maybe include libsvm?)
   @todo Unsupervised methods (RBM, DBN, SOM, ...)
   @todo example: NORB data set
   @todo example: Caltech-101/256 data set
+  @todo example: ImageNet
   @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
   @todo port: Mac and Windows
   @todo port: test other compilers

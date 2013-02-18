@@ -1,6 +1,7 @@
-#include <io/FANNFormatLoader.h>
+#include <CreateTwoSpiralsDataSet.h>
 #include <io/DirectStorageDataSet.h>
 #include <OpenANN>
+#include <DeepNetwork.h>
 #include <Test/Stopwatch.h>
 #include <cstdlib>
 #include <vector>
@@ -11,14 +12,11 @@
 /**
  * \page TwoSpiralsBenchmark Two Spirals
  *
- * This benchmark is based on the example program \ref TwoSpirals. It requires
- * the same data set and takes the directory of the data set as argument:
- * \verbatim ./TwoSpiralsBenchmark [directory] \endverbatim
+ * This benchmark is based on the example program \ref TwoSpirals.
  *
  * The result will look like this:
  * \verbatim
-Loaded training set.
-Loaded test set.
+$ ./TwoSpiralsBenchmark 
 Architecture: 2-20-10-1 (bias)
 281 parameters
 ....................................................................................................
@@ -76,7 +74,7 @@ public:
   EvaluatableDataset(Mt& in, Mt& out)
     : DirectStorageDataSet(in, out), iterations(0)
   {}
-  virtual void finishIteration(OpenANN::MLP& mlp) { iterations++; }
+  virtual void finishIteration(OpenANN::Learner& learner) { iterations++; }
 };
 
 struct Result
@@ -91,26 +89,9 @@ struct Result
 };
 
 /**
- * Scale the desired output to [-1,1].
- */
-void preprocess(OpenANN::FANNFormatLoader& loader)
-{
-  for(int n = 0; n < loader.trainingN; n++)
-  {
-    loader.trainingOutput(0, n) *= 2.0;
-    loader.trainingOutput(0, n) -= 1.0;
-  }
-  for(int n = 0; n < loader.testN; n++)
-  {
-    loader.testOutput(0, n) *= 2.0;
-    loader.testOutput(0, n) -= 1.0;
-  }
-}
-
-/**
  * Set up the desired MLP architecture.
  */
-void setup(OpenANN::MLP& mlp, int architecture)
+void setup(OpenANN::DeepNetwork& net, int architecture)
 {
   OpenANN::Logger setupLogger(OpenANN::Logger::CONSOLE);
   setupLogger << "Architecture: ";
@@ -119,55 +100,55 @@ void setup(OpenANN::MLP& mlp, int architecture)
     case 0:
     {
       setupLogger << "2-20-10-1 (bias)\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
-        .fullyConnectedHiddenLayer(10, OpenANN::MLP::TANH)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
+      net.inputLayer(2)
+        .fullyConnectedLayer(20, OpenANN::TANH)
+        .fullyConnectedLayer(10, OpenANN::TANH)
+        .outputLayer(1, OpenANN::TANH);
       break;
     }
     case 1:
     {
       setupLogger << "2-20-20-1 (bias)\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH);
+      net.inputLayer(2)
+        .fullyConnectedLayer(20, OpenANN::TANH)
+        .fullyConnectedLayer(20, OpenANN::TANH)
+        .outputLayer(1, OpenANN::TANH);
       break;
     }
     case 2:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-21-21\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 3)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 21)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 21);
+      net.inputLayer(2)
+        .compressedLayer(20, 3, OpenANN::TANH, "dct")
+        .compressedLayer(20, 21, OpenANN::TANH, "dct")
+        .compressedOutputLayer(1, 21, OpenANN::TANH, "dct");
       break;
     }
     case 3:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-12-12\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 3)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 12)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 12);
+      net.inputLayer(2)
+        .compressedLayer(20, 3, OpenANN::TANH, "dct")
+        .compressedLayer(20, 12, OpenANN::TANH, "dct")
+        .compressedOutputLayer(1, 12, OpenANN::TANH, "dct");
       break;
     }
     case 4:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-6-6\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 3)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 6)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 6);
+      net.inputLayer(2)
+        .compressedLayer(20, 3, OpenANN::TANH, "dct")
+        .compressedLayer(20, 6, OpenANN::TANH, "dct")
+        .compressedOutputLayer(1, 6, OpenANN::TANH, "dct");
       break;
     }
     case 5:
     {
       setupLogger << "2-20-20-1 (bias), Compression: 3-6-3\n";
-      mlp.input(2)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 3)
-        .fullyConnectedHiddenLayer(20, OpenANN::MLP::TANH, 6)
-        .output(1, OpenANN::MLP::SSE, OpenANN::MLP::TANH, 3);
+      net.inputLayer(2)
+        .compressedLayer(20, 3, OpenANN::TANH, "dct")
+        .compressedLayer(20, 6, OpenANN::TANH, "dct")
+        .compressedOutputLayer(1, 3, OpenANN::TANH, "dct");
       break;
     }
     default:
@@ -175,31 +156,32 @@ void setup(OpenANN::MLP& mlp, int architecture)
       exit(EXIT_FAILURE);
       break;
   }
-  setupLogger << mlp.dimension() << " parameters\n";
+  setupLogger << net.dimension() << " parameters\n";
 }
 
 /**
  * Evaluate the learned model.
  */
-Result evaluate(OpenANN::MLP& mlp, OpenANN::FANNFormatLoader& loader, EvaluatableDataset& ds)
+Result evaluate(OpenANN::DeepNetwork& net, const Mt& testInput,
+		const Mt& testOutput, EvaluatableDataset& ds)
 {
   Result result;
-  for(int n = 0; n < loader.testN; n++)
+  for(int n = 0; n < testInput.cols(); n++)
   {
-    fpt y = mlp(loader.testInput.col(n)).eval()(0);
-    fpt t = loader.testOutput(0, n);
-    if(y > 0 && t > 0)
+    fpt y = net(testInput.col(n)).eval()(0);
+    fpt t = testOutput(0, n);
+    if(y > 0.0 && t > 0.0)
       result.tp++;
-    else if(y > 0 && t < 0)
+    else if(y > 0.0 && t < 0.0)
       result.fp++;
-    else if(y < 0 && t > 0)
+    else if(y < 0.0 && t > 0.0)
       result.fn++;
     else
       result.tn++;
   }
   result.correct = result.tn + result.tp;
   result.wrong = result.fn + result.fp;
-  result.accuracy = (fpt) result.correct / (fpt) loader.testN;
+  result.accuracy = (fpt) result.correct / (fpt) testInput.cols();
   result.iterations = ds.iterations;
   return result;
 }
@@ -262,33 +244,29 @@ int main(int argc, char** argv)
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   const int architectures = 6;
   const int runs = 100;
-  OpenANN::StopCriteria stop;
+  OpenANN::StoppingCriteria stop;
   stop.minimalSearchSpaceStep = 1e-16;
   stop.minimalValueDifferences = 1e-16;
   stop.maximalIterations = 10000;
   Stopwatch sw;
 
-  std::string directory = ".";
-  if(argc > 1)
-    directory = std::string(argv[1]);
-  OpenANN::FANNFormatLoader loader(directory + "/two-spiral");
-  preprocess(loader);
+  Mt Xtr, Ytr, Xte, Yte;
+  createTwoSpiralsDataSet(2, 1.0, Xtr, Ytr, Xte, Yte);
 
   for(int architecture = 0; architecture < architectures; architecture++)
   {
     long unsigned time = 0;
     std::vector<Result> results;
-    OpenANN::MLP mlp(OpenANN::Logger::FILE, OpenANN::Logger::NONE);
-    setup(mlp, architecture);
+    OpenANN::DeepNetwork net;
+    setup(net, architecture);
     for(int run = 0; run < runs; run++)
     {
-      EvaluatableDataset ds(loader.trainingInput, loader.trainingOutput);
-      mlp.trainingSet(ds);
-      mlp.training(OpenANN::MLP::BATCH_LMA);
+      EvaluatableDataset ds(Xtr, Ytr);
+      net.trainingSet(ds);
       sw.start();
-      mlp.fit(stop);
+      net.train(OpenANN::BATCH_LMA, OpenANN::SSE, stop);
       time += sw.stop(Stopwatch::MILLISECOND);
-      Result result = evaluate(mlp, loader, ds);
+      Result result = evaluate(net, Xte, Yte, ds);
       results.push_back(result);
       resultLogger << ".";
     }

@@ -54,29 +54,29 @@ void IPOPCMAES::setOptimizable(Optimizable& opt)
   this->opt = &opt;
 }
 
-void IPOPCMAES::setStopCriteria(const StopCriteria& stop)
+void IPOPCMAES::setStopCriteria(const StoppingCriteria& stop)
 {
   OPENANN_CHECK(!cmaes);
 
   this->stop = stop;
-  if(stop.maximalFunctionEvaluations != StopCriteria::defaultValue.maximalFunctionEvaluations)
+  if(stop.maximalFunctionEvaluations != StoppingCriteria::defaultValue.maximalFunctionEvaluations)
   {
     maxFunEvalsActive = true;
   }
-  if(stop.maximalIterations != StopCriteria::defaultValue.maximalIterations)
+  if(stop.maximalIterations != StoppingCriteria::defaultValue.maximalIterations)
   {
     parameters->stopMaxIter = (fpt) stop.maximalIterations;
   }
-  if(stop.minimalValue != StopCriteria::defaultValue.minimalValue)
+  if(stop.minimalValue != StoppingCriteria::defaultValue.minimalValue)
   {
     parameters->stStopFitness.flg = true;
     parameters->stStopFitness.val = stop.minimalValue;
   }
-  if(stop.minimalValueDifferences != StopCriteria::defaultValue.minimalValueDifferences)
+  if(stop.minimalValueDifferences != StoppingCriteria::defaultValue.minimalValueDifferences)
   {
     parameters->stopTolFun = stop.minimalValueDifferences;
   }
-  if(stop.minimalSearchSpaceStep != StopCriteria::defaultValue.minimalSearchSpaceStep)
+  if(stop.minimalSearchSpaceStep != StoppingCriteria::defaultValue.minimalSearchSpaceStep)
   {
     parameters->stopTolX = stop.minimalSearchSpaceStep;
   }
@@ -213,6 +213,10 @@ void IPOPCMAES::setError(fpt fitness)
   }
 }
 
+bool IPOPCMAES::step()
+{
+}
+
 bool IPOPCMAES::terminated()
 {
   return currentIndividual == 0 && (cmaes->testForTermination()
@@ -230,7 +234,7 @@ Vt IPOPCMAES::result()
 
 std::string IPOPCMAES::name()
 {
-  return "Covariance Matrix Adaption Evolution Strategies";
+  return "Increasing Population Covariance Matrix Adaption Evolution Strategies";
 }
 
 void IPOPCMAES::setSigma0(fpt sigma0)

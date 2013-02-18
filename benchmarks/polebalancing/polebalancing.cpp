@@ -186,7 +186,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
   OpenANN::Logger progressLogger(Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
   {
-    NeuroEvolutionAgent agent(0, false, "linear", true, parameters,
+    NeuroEvolutionAgent agent(0, false, "linear", parameters > 0, parameters,
         fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
     agent.setSigma0(sigma0);
     Result result = benchmarkSingleRun(*env, agent);
@@ -234,22 +234,10 @@ int main(int argc, char** argv)
 #endif
 
   OpenANN::Logger configLogger(OpenANN::Logger::CONSOLE);
-  int runs = 1000;
+  int runs = 50;
 
-  configLogger << "SPB, MDP, uncompressed\n";
-  Results results = benchmarkConfiguration(false, true, false, false, -1, runs, 10.0);
-  printResults(results);
-  configLogger << "SPB, MDP, compressed (1)\n";
-  results = benchmarkConfiguration(false, true, false, false, 1, runs, 100.0);
-  printResults(results);
-  configLogger << "DPB, MDP, uncompressed\n";
-  results = benchmarkConfiguration(true, true, false, false, -1, runs, 10.0);
-  printResults(results);
-  configLogger << "DPB, MDP, compressed (5)\n";
-  results = benchmarkConfiguration(true, true, false, false, 5, runs, 10.0);
-  printResults(results);
   configLogger << "SPB, POMDP (ABF), uncompressed\n";
-  results = benchmarkConfiguration(false, false, true, false, -1, runs, 10.0);
+  Results results = benchmarkConfiguration(false, false, true, false, -1, runs, 10.0);
   printResults(results);
   configLogger << "SPB, POMDP (ABF), compressed (3)\n";
   results = benchmarkConfiguration(false, false, true, false, 3, runs, 10.0);

@@ -14,6 +14,8 @@ There are two ways to pass a data set to the neural network:
 \section MatrixDataSet Arranging data in matrices
 
 \code
+using namespace OpenANN;
+
 int main()
 {
   const int N = 10; // data set size
@@ -24,17 +26,20 @@ int main()
   Eigen::MatrixXf T = Eigen::MatrixXf::Random(F, N);
   // We could e. g. get the input vector x_n with X.col(n-1).
   // Now we can train the neural network:
-  MLP mlp;
-  ... // initialize mlp
-  mlp.trainingSet(X, T)
-     .training(MLP::BATCH_LMA);
-  mlp.fit();
+  DeepNetwork net;
+  ... // initialize net
+  mlp.trainingSet(X, T);
+  StoppingCriteria stop;
+  ... // set stopping criteria
+  mlp.train(BATCH_LMA, SSE, stop);
 }
 \endcode
 
 \section CustomDataSet Subclassing OpenANN::DataSet
 
 \code
+using namespace OpenANN;
+
 class MyDataSet : public DataSet
 {
 public:
@@ -42,7 +47,7 @@ public:
   {
     ...
   }
-  virtual ~DirectStorageDataSet()
+  virtual MyDataSet()
   {
     ...
   }
@@ -66,9 +71,9 @@ public:
   {
     // return the desired output for the i-th instance (y_i)
   }
-  virtual void finishIteration(MLP& mlp)
+  virtual void finishIteration(Learner& learner)
   {
-    // Here you can place code that will be iterated after every iteration
+    // Here you can place code that will be executed after every iteration
     // of the optimization algorithm during the training phase. You could
     // e. g. print the confusion matrix, error on a test set, etc.
   }
@@ -78,11 +83,12 @@ int main()
 {
   MyDataSet dataSet = ...; // create a data set
   // Now we can train the neural network:
-  MLP mlp;
-  ... // initialize mlp
-  mlp.trainingSet(dataSet)
-     .training(MLP::BATCH_LMA);
-  mlp.fit();
+  DeepNetwork net;
+  ... // initialize net
+  net.trainingSet(dataSet);
+  StoppingCriteria stop;
+  ... // set stopping criteria
+  mlp.train(BATCH_LMA, SSE, stop);
 }
 \endcode
 */

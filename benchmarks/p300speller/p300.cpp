@@ -1,5 +1,6 @@
 #include "BCIDataSet.h"
 #include <OpenANN>
+#include <DeepNetwork.h>
 #include <CompressionMatrixFactory.h>
 #include <io/Logger.h>
 #include <Test/Stopwatch.h>
@@ -110,13 +111,12 @@ struct Result
 };
 
 void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
-    int runs, OpenANN::StopCriteria stop, int csDimension, bool filter,
+    int runs, OpenANN::StoppingCriteria stop, int csDimension, bool filter,
     int subsamplingFactor = 1)
 {
-  OpenANN::MLP mlp(OpenANN::Logger::NONE, OpenANN::Logger::NONE);
-  mlp.input(csDimension > 0 ? csDimension : trainingSet.inputs())
-    .output(trainingSet.outputs())
-    .training(OpenANN::MLP::BATCH_LMA)
+  OpenANN::DeepNetwork net;
+  net.inputLayer(csDimension > 0 ? csDimension : trainingSet.inputs())
+    .outputLayer(trainingSet.outputs(), OpenANN::TANH)
     .testSet(testSet)
     .trainingSet(trainingSet);
 
@@ -141,11 +141,11 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     }
 
     Stopwatch sw;
-    mlp.fit(stop);
+    net.train(OpenANN::BATCH_LMA, OpenANN::SSE, stop);
     result.duration += sw.stop(Stopwatch::SECONDS);
     result.iterations += trainingSet.iteration;
-    result.correct5 += testSet.evaluate(mlp, 5);
-    result.correct15 += testSet.evaluate(mlp, 15);
+    result.correct5 += testSet.evaluate(net, 5);
+    result.correct15 += testSet.evaluate(net, 15);
     progressLogger << ".";
   }
   progressLogger << "\n";
@@ -188,7 +188,7 @@ int main(int argc, char** argv)
   testSetB.load();
   interfaceLogger << "Loaded data set B in " << sw.stop(Stopwatch::SECONDS) << " s.\n";
 
-  OpenANN::StopCriteria stop;
+  OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 20;
   stop.minimalValueDifferences = 0.001;
 

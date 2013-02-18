@@ -1,16 +1,19 @@
-#ifndef STOPCRITERIA_H
-#define STOPCRITERIA_H
+#ifndef STOPPINGCRITERIA_H
+#define STOPPINGCRITERIA_H
 
 namespace OpenANN {
 
 /**
- * The stop criteria for optimization algorithms. Note that not every
- * algorithm might check all criteria.
+ * @class StoppingCriteria
+ *
+ * Stopping criteria for optimization algorithms.
+ *
+ * Note that not every algorithm might check all criteria.
  */
-class StopCriteria
+class StoppingCriteria
 {
 public:
-  static StopCriteria defaultValue;
+  static StoppingCriteria defaultValue;
 
   /**
    * Maximal number of objective function evaluations. In backpropagation
@@ -41,9 +44,9 @@ public:
   /**
    * Create default stop criteria.
    */
-  StopCriteria();
+  StoppingCriteria();
 };
 
 }
 
-#endif // STOPCRITERIA_H
+#endif // STOPPINGCRITERIA_H

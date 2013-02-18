@@ -6,18 +6,16 @@ namespace OpenANN {
 
 Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
                          bool bias, ActivationFunction act, fpt stdDev)
-  : debugLogger(Logger::CONSOLE), I(info.outputs()), fm(info.dimensions[0]),
-    inRows(info.dimensions[1]), inCols(info.dimensions[2]),
-    kernelRows(kernelRows), kernelCols(kernelCols), bias(bias),
-    weightForBias(info.bias), act(act), stdDev(stdDev), x(0), e(I)
+  : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
+    inCols(info.dimensions[2]), kernelRows(kernelRows),
+    kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
+    stdDev(stdDev), x(0), e(I)
 {
 }
 
-OutputInfo Subsampling::initialize(std::list<fpt*>& parameterPointers,
-                                   std::list<fpt*>& parameterDerivativePointers)
+OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
+                                   std::vector<fpt*>& parameterDerivativePointers)
 {
-  y.resize(0);
-  RandomNumberGenerator rng;
   OutputInfo info;
   info.bias = bias;
   info.dimensions.push_back(fm);
@@ -32,29 +30,34 @@ OutputInfo Subsampling::initialize(std::list<fpt*>& parameterPointers,
 
   W.resize(fm, Mt(outRows, outCols));
   Wd.resize(fm, Mt(outRows, outCols));
+  int numParams = fm * outRows * outCols;
   if(weightForBias)
   {
     Wb.resize(fm, Mt(outRows, outCols));
     Wbd.resize(fm, Mt(outRows, outCols));
+    numParams += fm * outRows * outCols;
   }
+  parameterPointers.reserve(parameterPointers.size() + numParams);
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + numParams);
   for(int fmo = 0; fmo < fm; fmo++)
   {
     for(int r = 0; r < outRows; r++)
     {
       for(int c = 0; c < outCols; c++)
       {
-        W[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
         parameterPointers.push_back(&W[fmo](r, c));
         parameterDerivativePointers.push_back(&Wd[fmo](r, c));
         if(weightForBias)
         {
-          Wb[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
           parameterPointers.push_back(&Wb[fmo](r, c));
           parameterDerivativePointers.push_back(&Wbd[fmo](r, c));
         }
       }
     }
   }
+
+  initializeParameters();
+
   a.resize(info.outputs()-bias);
   y.resize(info.outputs());
   if(bias)
@@ -65,7 +68,24 @@ OutputInfo Subsampling::initialize(std::list<fpt*>& parameterPointers,
   return info;
 }
 
-void Subsampling::forwardPropagate(Vt* x, Vt*& y)
+void Subsampling::initializeParameters()
+{
+  RandomNumberGenerator rng;
+  for(int fmo = 0; fmo < fm; fmo++)
+  {
+    for(int r = 0; r < outRows; r++)
+    {
+      for(int c = 0; c < outCols; c++)
+      {
+        W[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
+        if(weightForBias)
+          Wb[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      }
+    }
+  }
+}
+
+void Subsampling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
 

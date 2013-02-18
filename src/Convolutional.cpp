@@ -7,18 +7,16 @@ namespace OpenANN {
 Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                              int kernelCols, bool bias, ActivationFunction act,
                              fpt stdDev)
-  : debugLogger(Logger::CONSOLE), I(info.outputs()), fmin(info.dimensions[0]),
-    inRows(info.dimensions[1]), inCols(info.dimensions[2]),
-    fmout(featureMaps), kernelRows(kernelRows), kernelCols(kernelCols),
-    bias(bias), weightForBias(info.bias), act(act), stdDev(stdDev), x(0), e(I)
+  : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
+    inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
+    kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
+    stdDev(stdDev), x(0), e(I)
 {
 }
 
-OutputInfo Convolutional::initialize(std::list<fpt*>& parameterPointers,
-                                     std::list<fpt*>& parameterDerivativePointers)
+OutputInfo Convolutional::initialize(std::vector<fpt*>& parameterPointers,
+                                     std::vector<fpt*>& parameterDerivativePointers)
 {
-  y.resize(0);
-  RandomNumberGenerator rng;
   OutputInfo info;
   info.bias = bias;
   info.dimensions.push_back(fmout);
@@ -33,11 +31,15 @@ OutputInfo Convolutional::initialize(std::list<fpt*>& parameterPointers,
 
   W.resize(fmout, std::vector<Mt>(fmin, Mt(kernelRows, kernelCols)));
   Wd.resize(fmout, std::vector<Mt>(fmin, Mt(kernelRows, kernelCols)));
+  int numParams = fmout*kernelRows*kernelCols;
   if(weightForBias)
   {
     Wb.resize(fmout, fmin);
     Wbd.resize(fmout, fmin);
+    numParams += fmout * fmin;
   }
+  parameterPointers.reserve(parameterPointers.size() + numParams);
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + numParams);
   for(int fmo = 0; fmo < fmout; fmo++)
   {
     for(int fmi = 0; fmi < fmin; fmi++)
@@ -46,19 +48,20 @@ OutputInfo Convolutional::initialize(std::list<fpt*>& parameterPointers,
       {
         for(int kc = 0; kc < kernelCols; kc++)
         {
-          W[fmo][fmi](kr, kc) = rng.sampleNormalDistribution<fpt>() * stdDev;
           parameterPointers.push_back(&W[fmo][fmi](kr, kc));
           parameterDerivativePointers.push_back(&Wd[fmo][fmi](kr, kc));
         }
       }
       if(weightForBias)
       {
-        Wb(fmo, fmi) = rng.sampleNormalDistribution<fpt>() * stdDev;
         parameterPointers.push_back(&Wb(fmo, fmi));
         parameterDerivativePointers.push_back(&Wbd(fmo, fmi));
       }
     }
   }
+
+  initializeParameters();
+
   a.resize(info.outputs()-bias);
   y.resize(info.outputs());
   if(bias)
@@ -69,7 +72,23 @@ OutputInfo Convolutional::initialize(std::list<fpt*>& parameterPointers,
   return info;
 }
 
-void Convolutional::forwardPropagate(Vt* x, Vt*& y)
+void Convolutional::initializeParameters()
+{
+  RandomNumberGenerator rng;
+  for(int fmo = 0; fmo < fmout; fmo++)
+  {
+    for(int fmi = 0; fmi < fmin; fmi++)
+    {
+      for(int kr = 0; kr < kernelRows; kr++)
+        for(int kc = 0; kc < kernelCols; kc++)
+          W[fmo][fmi](kr, kc) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      if(weightForBias)
+        Wb(fmo, fmi) = rng.sampleNormalDistribution<fpt>() * stdDev;
+    }
+  }
+}
+
+void Convolutional::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
 

@@ -1,0 +1,33 @@
+if __name__ == "__main__":
+  from distutils.core import setup
+  from distutils.extension import Extension
+  from Cython.Distutils import build_ext
+
+  setup(
+    name = 'OpenANN',
+    version = "${OPENANN_VERSION_NUMBER}",
+    description = "Python bindings for OpenANN.",
+    author = "Alexander Fabisch",
+    author_email = "afabisch@googlemail.com",
+    url = "https://github.com/AlexanderFabisch/OpenANN",
+    platforms = "Linux",
+    license = "(L)GPL",
+    ext_modules=[
+      Extension("openann",
+                sources=["openann.pyx"],
+                library_dirs=["${CMAKE_INSTALL_PREFIX}/lib"],
+                libraries=[${PYTHONEX_LINK_LIBRARIES}],
+                include_dirs=[".",
+                              "../..",
+                              "../../OpenANN",
+                              "../../test/lib/CPP-Test",
+                              "${EIGEN3_INCLUDE_DIRS}"],
+                define_macros=[("fpt", "${FPT}"), ("Vt", "Eigen::${VT}"),
+                               ("Mt", "Eigen::${MT}"), ("NDEBUG",)],
+                extra_compile_args=["-g0", "-s", "-O3", "-msse", "-msse2",
+                                    "-msse3", "-mssse3", "-msse4.1",
+                                    "-msse4.2", "-fopenmp"], # TODO configure
+                language="c++"),
+      ],
+    cmdclass = {'build_ext': build_ext},
+  )

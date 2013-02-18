@@ -1,6 +1,5 @@
 #include "BCIDataSet.h"
 #include "Decimator.h"
-#include <MLP.h>
 #include <AssertionMacros.h>
 #include <fstream>
 
@@ -320,12 +319,12 @@ char BCIDataSet::getTargetChar(int i)
   return targetChar[epoch];
 }
 
-void BCIDataSet::finishIteration(OpenANN::MLP& mlp)
+void BCIDataSet::finishIteration(OpenANN::Learner& learner)
 {
   ++iteration;
 }
 
-int BCIDataSet::evaluate(OpenANN::MLP& mlp, int trials)
+int BCIDataSet::evaluate(OpenANN::Learner& learner, int trials)
 {
   char characters[6][7] = {
     "ABCDEF",
@@ -349,7 +348,7 @@ int BCIDataSet::evaluate(OpenANN::MLP& mlp, int trials)
     {
       int t0 = offsets[i];
       buildInstance(e, t0);
-      y = mlp(tempInstance);
+      y = learner(tempInstance);
       int rowColCode = (int) stimulusCode(t0, e) - 1;
       if(repetitions[rowColCode] < trials)
       {
