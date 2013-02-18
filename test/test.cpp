@@ -13,6 +13,7 @@
 #include "RandomTestCase.h"
 #include "LayerTestCase.h"
 #include "PreprocessingTestCase.h"
+#include "IntrinsicPlasticityTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -38,6 +39,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new LayerTestCase);
   ts.addTestCase(new PreprocessingTestCase);
+  ts.addTestCase(new IntrinsicPlasticityTestCase);
 
   if(qt)
   {

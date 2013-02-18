@@ -10,6 +10,8 @@ class Optimizable;
 class StoppingCriteria;
 
 /**
+ * @class Optimizer
+ *
  * The common interface of all optimization algorithms.
  */
 class Optimizer

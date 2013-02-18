@@ -2,6 +2,7 @@
 #include <optimization/Optimizable.h>
 #include <optimization/StoppingCriteria.h>
 #include <AssertionMacros.h>
+#include <EigenWrapper.h>
 #include <Test/Stopwatch.h>
 #include <numeric>
 
@@ -60,6 +61,7 @@ bool MBSGD::step()
     for(std::list<int>::const_iterator it = batchAssignment[b].begin();
         it != batchAssignment[b].end(); it++)
       gradient += opt->gradient(*it);
+    OPENANN_CHECK_MATRIX_BROKEN(gradient);
     gradient /= (fpt) batchSize;
     batchAssignment[b].clear();
 
@@ -77,14 +79,18 @@ bool MBSGD::step()
     }
 
     momentum = eta * momentum - alpha * gradient;
+    OPENANN_CHECK_MATRIX_BROKEN(momentum);
     parameters += momentum;
+    OPENANN_CHECK_MATRIX_BROKEN(parameters);
     opt->setParameters(parameters);
 
     // Decay alpha, increase momentum
     alpha *= alphaDecay;
     alpha = std::max(alpha, minAlpha);
+    OPENANN_CHECK_INF_AND_NAN(alpha);
     eta += etaGain;
     eta = std::min(eta, maxEta);
+    OPENANN_CHECK_INF_AND_NAN(eta);
   }
 
   iteration++;
