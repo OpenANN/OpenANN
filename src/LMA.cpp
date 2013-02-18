@@ -1,7 +1,7 @@
 #ifdef USE_GPL_LICENSE
 
 #include <optimization/LMA.h>
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <AssertionMacros.h>
 #include <Random.h>
 #include <limits>

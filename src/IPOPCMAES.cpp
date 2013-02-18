@@ -1,5 +1,5 @@
 #include <optimization/IPOPCMAES.h>
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <AssertionMacros.h>
 #include <cma-es/cmaes.h>
 

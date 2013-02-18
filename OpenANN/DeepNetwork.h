@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <Learner.h>
 #include <layers/Layer.h>
 #include <ActivationFunctions.h>

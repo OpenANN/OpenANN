@@ -1,5 +1,5 @@
 #include <io/DirectStorageDataSet.h>
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <AssertionMacros.h>
 #include <Learner.h>
 

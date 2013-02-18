@@ -4,7 +4,7 @@
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <layers/MaxPooling.h>
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <DeepNetwork.h>
 #include <io/DirectStorageDataSet.h>
 

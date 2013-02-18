@@ -1,5 +1,5 @@
 #include <optimization/MBSGD.h>
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <optimization/StoppingCriteria.h>
 #include <AssertionMacros.h>
 #include <Test/Stopwatch.h>

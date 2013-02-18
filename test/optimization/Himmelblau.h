@@ -1,4 +1,4 @@
-#include <Optimizable.h>
+#include <optimization/Optimizable.h>
 #include <AssertionMacros.h>
 
 class Himmelblau : public OpenANN::Optimizable
