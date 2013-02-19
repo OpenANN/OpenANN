@@ -75,7 +75,7 @@ Vt IntrinsicPlasticity::gradient()
 {
   g.fill(0.0);
   for(int n = 0; n < dataSet->samples(); n++)
-    g -= gradient(n);
+    g += gradient(n);
   return g;
 }
 
@@ -94,7 +94,7 @@ Vt IntrinsicPlasticity::gradient(unsigned int n)
     g(i) = 1.0/s(i) + a(i) - tmp*a(i)*y(i) + a(i)*y(i)*y(i)/mu;
   for(int j = 0; j < nodes; j++, i++)
     g(i) = 1.0 - tmp*y(j) + y(j)*y(j)/mu;
-  return g;
+  return -g; // Allows using gradient descent algorithms
 }
 
 bool IntrinsicPlasticity::providesHessian()

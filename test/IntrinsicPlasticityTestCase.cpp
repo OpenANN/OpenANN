@@ -48,10 +48,10 @@ void IntrinsicPlasticityTestCase::learn()
   ASSERT_EQUALS_DELTA((fpt) mean(0), (fpt) 0.5, (fpt) 1e-2);
   ASSERT_EQUALS_DELTA((fpt) mean(1), (fpt) 0.5, (fpt) 1e-2);
 
+  ip.trainingSet(X, Y);
   OpenANN::MBSGD sgd(2e-5, 1.0, 2e-5, 0.0, 0.0, 0.0, 1);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 3;
-  ip.trainingSet(X, Y);
+  stop.maximalIterations = 50;
   sgd.setOptimizable(ip);
   sgd.setStopCriteria(stop);
   while(sgd.step());
@@ -60,6 +60,6 @@ void IntrinsicPlasticityTestCase::learn()
   for(int i = 0; i < samples; i++)
     y += ip(X.col(i));
   mean = y / (fpt) samples;
-  ASSERT_EQUALS_DELTA((fpt) mean(0), (fpt) 0.2, (fpt) 1e-3);
-  ASSERT_EQUALS_DELTA((fpt) mean(1), (fpt) 0.2, (fpt) 1e-3);
+  ASSERT_EQUALS_DELTA((fpt) mean(0), (fpt) 0.2, (fpt) 1e-2);
+  ASSERT_EQUALS_DELTA((fpt) mean(1), (fpt) 0.2, (fpt) 1e-2);
 }

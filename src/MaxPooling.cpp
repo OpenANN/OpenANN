@@ -43,7 +43,8 @@ void MaxPooling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fm * inRows * inRows);
+  OPENANN_CHECK(x->rows() == fm * inRows * inRows
+      || x->rows() == fm * inRows * inRows + 1);
   OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols + bias);
 
   int outputIdx = 0;
