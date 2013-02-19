@@ -50,6 +50,7 @@ public:
   virtual bool providesInitialization();
   virtual void initialize();
   virtual fpt error();
+  virtual fpt error(unsigned int n);
   virtual Vt currentParameters();
   virtual void setParameters(const Vt& parameters);
   virtual bool providesGradient();

@@ -44,7 +44,23 @@ void IntrinsicPlasticity::initialize()
 
 fpt IntrinsicPlasticity::error()
 {
-  return 0.0; // TODO
+  fpt e = 0.0;
+  const fpt N = dataSet->samples();
+  for(int n = 0; n < N; n++)
+    e += error(n);
+  return e;
+}
+
+fpt IntrinsicPlasticity::error(unsigned int n)
+{
+  fpt e = 0.0;
+  (*this)(dataSet->getInstance(n));
+  for(int i = 0; i < nodes; i++)
+  {
+    const fpt ei = y(i) - mu;
+    e += ei*ei;
+  }
+  return e;
 }
 
 Vt IntrinsicPlasticity::currentParameters()
