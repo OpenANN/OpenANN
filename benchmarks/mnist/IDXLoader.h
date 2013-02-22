@@ -42,8 +42,8 @@ public:
     unsigned char tmp = 0;
 
     std::string fileName = train ?
-            directory + std::string("train-images-idx3-ubyte") :
-            directory + std::string("t10k-images-idx3-ubyte");
+            directory + "/" + std::string("train-images-idx3-ubyte") :
+            directory + "/" + std::string("t10k-images-idx3-ubyte");
     std::fstream inputFile(fileName.c_str(), std::ios::in | std::ios::binary);
     if(!inputFile.is_open())
     {
@@ -102,8 +102,8 @@ public:
     }
 
     std::string labelFileName = train ?
-            directory + std::string("train-labels-idx1-ubyte") :
-            directory + std::string("t10k-labels-idx1-ubyte");
+            directory + "/" + std::string("train-labels-idx1-ubyte") :
+            directory + "/" + std::string("t10k-labels-idx1-ubyte");
     std::fstream labelFile(labelFileName.c_str(), std::ios::in | std::ios::binary);
     if(!labelFile.is_open())
     {
