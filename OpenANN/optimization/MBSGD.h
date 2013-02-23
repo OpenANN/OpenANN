@@ -50,6 +50,8 @@ class MBSGD : public Optimizer
   fpt maxGain;
   //! Use parameter adaption
   bool useGain;
+  //! Tikhonov regularization coefficient
+  fpt gamma;
 
   int iteration;
   RandomNumberGenerator rng;
@@ -60,7 +62,8 @@ public:
   MBSGD(fpt learningRate = 0.01, fpt learningRateDecay = 1.0,
         fpt minimalLearningRate = 0.01, fpt momentum = 0.5,
         fpt momentumGain = 0.0, fpt maximalMomentum = 0.5,
-        int batchSize = 10, fpt minGain = 1.0, fpt maxGain = 1.0);
+        int batchSize = 10, fpt minGain = 1.0, fpt maxGain = 1.0,
+        fpt gamma = 0.0);
   ~MBSGD();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);

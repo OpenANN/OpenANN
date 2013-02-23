@@ -10,13 +10,13 @@ namespace OpenANN {
 
 MBSGD::MBSGD(fpt learningRate, fpt learningRateDecay, fpt minimalLearningRate,
              fpt momentum, fpt momentumGain, fpt maximalMomentum,
-             int batchSize, fpt minGain, fpt maxGain)
+             int batchSize, fpt minGain, fpt maxGain, fpt gamma)
   : debugLogger(Logger::CONSOLE),
     alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
     maxGain(maxGain), useGain(minGain != (fpt) 1.0 || maxGain != (fpt) 1.0),
-    iteration(-1)
+    gamma(gamma), iteration(-1)
 {
 }
 
@@ -80,7 +80,7 @@ bool MBSGD::step()
 
     momentum = eta * momentum - alpha * gradient;
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
-    parameters += momentum;
+    parameters += momentum - gamma * parameters;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
     opt->setParameters(parameters);
 
