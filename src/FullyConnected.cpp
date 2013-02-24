@@ -51,12 +51,14 @@ void FullyConnected::initializeParameters()
 void FullyConnected::updatedParameters()
 {
   if(maxSquaredWeightNorm > 0.0)
+  {
     for(int j = 0; j < J; j++)
     {
       const fpt squaredNorm = W.row(j).squaredNorm();
       if(squaredNorm > maxSquaredWeightNorm)
-        W.row(j) *= maxSquaredWeightNorm / squaredNorm;
+        W.row(j) *= sqrt(maxSquaredWeightNorm / squaredNorm);
     }
+  }
 }
 
 void FullyConnected::forwardPropagate(Vt* x, Vt*& y, bool dropout)
