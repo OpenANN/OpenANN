@@ -39,6 +39,7 @@ class FullyConnected : public Layer
   ActivationFunction act;
   fpt stdDev;
   fpt dropoutProbability;
+  fpt maxSquaredWeightNorm;
   Mt W;
   Mt Wd;
   Vt* x;
@@ -50,11 +51,11 @@ class FullyConnected : public Layer
 
 public:
   FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
-                 fpt stdDev, fpt dropoutProbability);
+                 fpt stdDev, fpt dropoutProbability, fpt maxSquaredWeightNorm);
   virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
                                 std::vector<fpt*>& parameterDerivativePointers);
   virtual void initializeParameters();
-  virtual void updatedParameters() {}
+  virtual void updatedParameters();
   virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
   virtual void backpropagate(Vt* ein, Vt*& eout);
 };

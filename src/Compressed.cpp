@@ -79,6 +79,15 @@ void Compressed::forwardPropagate(Vt* x, Vt*& y, bool dropout)
       if(rng.generate<fpt>(0.0, 1.0) < dropoutProbability)
         this->y(j) = (fpt) 0;
   }
+  else if(dropoutProbability > 0.0)
+  {
+    // Hinton, 2012: "At test time, we use the "mean network" [...] to
+    // compensate for the fact that [all] of them are active."
+    // Scaling the outputs is equivalent to scaling the outgoing weights.
+    this->y *= (1.0 - dropoutProbability);
+    if(bias)
+      this->y(J) = 1.0;
+  }
   y = &(this->y);
 }
 

@@ -80,7 +80,9 @@ bool MBSGD::step()
 
     momentum = eta * momentum - alpha * gradient;
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
-    parameters += momentum - gamma * parameters;
+    if(gamma > 0.0) // Tikhonov (L2 norm) regularization
+      momentum -= gamma * parameters;
+    parameters += momentum;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
     opt->setParameters(parameters);
 

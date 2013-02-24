@@ -123,7 +123,7 @@ void LayerTestCase::fullyConnected()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
 
   std::vector<fpt*> parameterPointers;
   std::vector<fpt*> parameterDerivativePointers;
@@ -168,7 +168,7 @@ void LayerTestCase::fullyConnectedGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
   LayerOptimizable opt(layer, info);
 
   Vt gradient = opt.gradient();

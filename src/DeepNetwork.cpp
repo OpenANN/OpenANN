@@ -56,10 +56,11 @@ DeepNetwork& DeepNetwork::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias
 
 DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
                                               fpt stdDev, bool bias,
-                                              fpt dropoutProbability)
+                                              fpt dropoutProbability,
+                                              fpt maxSquaredWeightNorm)
 {
   Layer* layer = new FullyConnected(infos.back(), units, bias, act, stdDev,
-                                    dropoutProbability);
+                                    dropoutProbability, maxSquaredWeightNorm);
   OutputInfo info = layer->initialize(parameters, derivatives);
   layers.push_back(layer);
   infos.push_back(info);

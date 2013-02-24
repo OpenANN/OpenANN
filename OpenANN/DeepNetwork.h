@@ -115,11 +115,15 @@ public:
    * @param bias add bias term
    * @param dropoutProbability probability of dropout during training, a
    *        reasonable value is usually between 0 and 0.5
+   * @param maxSquaredWeightNorm when training with dropout it is helpful to
+   *        explore with a high learning rate and constrain the incoming
+   *        weights of a neuron to have a maximum norm
    * @return this for chaining
    */
   DeepNetwork& fullyConnectedLayer(int units, ActivationFunction act,
                                    fpt stdDev = (fpt) 0.05, bool bias = true,
-                                   fpt dropoutProbability = 0.0);
+                                   fpt dropoutProbability = 0.0,
+                                   fpt maxSquaredWeightNorm = 0.0);
   /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)
