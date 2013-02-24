@@ -42,7 +42,7 @@ void Input::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   }
   else if(dropoutProbability > 0.0)
   {
-    // Hinton, 2012: "At test time, we use the "mean network" [...] to
+    // Hinton et al., 2012: "At test time, we use the "mean network" [...] to
     // compensate for the fact that [all] of them are active."
     // Scaling the outputs is equivalent to scaling the outgoing weights.
     this->y *= (1.0 - dropoutProbability);
@@ -55,6 +55,11 @@ void Input::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 void Input::backpropagate(Vt* ein, Vt*& eout)
 {
   // Do nothing.
+}
+
+Vt& Input::getOutput()
+{
+  return y;
 }
 
 }

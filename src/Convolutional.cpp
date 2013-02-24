@@ -171,4 +171,9 @@ void Convolutional::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
+Vt& Convolutional::getOutput()
+{
+  return y;
+}
+
 }

@@ -98,4 +98,9 @@ void MaxPooling::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
+Vt& MaxPooling::getOutput()
+{
+  return y;
+}
+
 }

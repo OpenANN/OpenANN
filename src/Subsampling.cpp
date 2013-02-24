@@ -149,4 +149,9 @@ void Subsampling::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
+Vt& Subsampling::getOutput()
+{
+  return y;
+}
+
 }

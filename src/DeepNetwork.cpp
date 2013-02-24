@@ -149,6 +149,23 @@ DeepNetwork& DeepNetwork::compressedOutputLayer(int units, int params,
   return *this;
 }
 
+unsigned int DeepNetwork::numberOflayers()
+{
+  return L;
+}
+
+Layer& DeepNetwork::getLayer(unsigned int l)
+{
+  OPENANN_CHECK(l >= 0 && l < L);
+  return *layers[l];
+}
+
+OutputInfo DeepNetwork::getOutputInfo(unsigned int l)
+{
+  OPENANN_CHECK(l >= 0 && l < L);
+  return infos[l];
+}
+
 void DeepNetwork::initializeNetwork()
 {
   P = parameters.size();

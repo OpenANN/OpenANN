@@ -54,4 +54,9 @@ void Extreme::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
+Vt& Extreme::getOutput()
+{
+  return y;
+}
+
 }

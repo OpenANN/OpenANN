@@ -45,6 +45,7 @@ public:
   virtual void updatedParameters() {}
   virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
   virtual void backpropagate(Vt* ein, Vt*& eout);
+  virtual Vt& getOutput();
 };
 
 }

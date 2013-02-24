@@ -105,4 +105,9 @@ void Compressed::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
+Vt& Compressed::getOutput()
+{
+  return y;
+}
+
 }

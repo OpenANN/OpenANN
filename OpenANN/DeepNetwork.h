@@ -209,6 +209,9 @@ public:
                                      ActivationFunction act,
                                      const std::string& compression,
                                      fpt stdDev = (fpt) 0.05);
+  unsigned int numberOflayers();
+  Layer& getLayer(unsigned int l);
+  OutputInfo getOutputInfo(unsigned int l);
   DeepNetwork& setErrorFunction(ErrorFunction errorFunction);
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);

@@ -87,4 +87,9 @@ void AlphaBetaFilter::backpropagate(Vt* ein, Vt*& eout)
   // Do nothing.
 }
 
+Vt& AlphaBetaFilter::getOutput()
+{
+  return y;
+}
+
 }

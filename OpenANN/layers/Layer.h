@@ -65,6 +65,11 @@ public:
    * @param eout returns a pointer to error signal of the layer
    */
   virtual void backpropagate(Vt* ein, Vt*& eout) = 0;
+  /**
+   * Output after last forward propagation.
+   * @return output
+   */
+  virtual Vt& getOutput() = 0;
 };
 
 }
