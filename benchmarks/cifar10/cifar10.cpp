@@ -113,31 +113,31 @@ int main(int argc, char** argv)
 
   CIFARLoader loader(directory);
 
-  OpenANN::DeepNetwork net;                                             // Nodes per layer:
-  net.inputLayer(loader.C, loader.X, loader.Y, true, 0.2);              //   3 x 32 x 32
+  OpenANN::DeepNetwork net;                                                   // Nodes per layer:
+  net.inputLayer(loader.C, loader.X, loader.Y, true, 0.2);                    //   3 x 32 x 32
   if(bigNet)
   {
-     net.convolutionalLayer(100, 5, 5, OpenANN::RECTIFIER, 0.05)        // 100 x 28 x 28
-        .maxPoolingLayer(2, 2)                                          // 100 x 14 x 14
-        .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)        // 100 x 12 x 12
-        .maxPoolingLayer(2, 2)                                          // 100 x  6 x  6
-        .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)        // 100 x  4 x  4
-        .maxPoolingLayer(2, 2)                                          // 100 x  2 x  2
-        .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, 0.5, 15.0)  // 300
-        .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, 0.5, 15.0); // 100
+     net.convolutionalLayer(100, 5, 5, OpenANN::RECTIFIER, 0.05)              // 100 x 28 x 28
+        .maxPoolingLayer(2, 2)                                                // 100 x 14 x 14
+        .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)              // 100 x 12 x 12
+        .maxPoolingLayer(2, 2)                                                // 100 x  6 x  6
+        .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)              // 100 x  4 x  4
+        .maxPoolingLayer(2, 2)                                                // 100 x  2 x  2
+        .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, true, 0.5, 15.0)  // 300
+        .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 0.5, 15.0); // 100
   }
   else
   {
-     net.convolutionalLayer(50, 5, 5, OpenANN::RECTIFIER, 0.05)         //  50 x 28 x 28
-        .maxPoolingLayer(2, 2)                                          //  50 x 14 x 14
-        .convolutionalLayer(30, 3, 3, OpenANN::RECTIFIER, 0.05)         //  30 x 12 x 12
-        .maxPoolingLayer(2, 2)                                          //  30 x  6 x  6
-        .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)         //  20 x  4 x  4
-        .maxPoolingLayer(2, 2)                                          //  20 x  2 x  2
+     net.convolutionalLayer(50, 5, 5, OpenANN::RECTIFIER, 0.05)               //  50 x 28 x 28
+        .maxPoolingLayer(2, 2)                                                //  50 x 14 x 14
+        .convolutionalLayer(30, 3, 3, OpenANN::RECTIFIER, 0.05)               //  30 x 12 x 12
+        .maxPoolingLayer(2, 2)                                                //  30 x  6 x  6
+        .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)               //  20 x  4 x  4
+        .maxPoolingLayer(2, 2)                                                //  20 x  2 x  2
         .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 0.5, 15.0)  // 100
         .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true, 0.5, 15.0);  //  50
   }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                      //  10
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                            //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
