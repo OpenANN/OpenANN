@@ -318,7 +318,12 @@ fpt DeepNetwork::error(unsigned int i)
   {
     tempOutput = (*this)(dataSet->getInstance(i));
     for(int f = 0; f < tempOutput.rows(); f++)
-      e -= dataSet->getTarget(i)(f) * std::log(tempOutput(f));
+    {
+      fpt out = tempOutput(f);
+      if(out < 1e-45)
+	out = 1e-45;
+      e -= dataSet->getTarget(i)(f) * std::log(out);
+    }
   }
   else
   {

@@ -117,10 +117,10 @@ int main(int argc, char** argv)
   net.inputLayer(loader.C, loader.X, loader.Y, true, 0.2);                    //   3 x 32 x 32
   if(bigNet)
   {
-     net.convolutionalLayer(100, 5, 5, OpenANN::RECTIFIER, 0.05)              // 100 x 28 x 28
-        .maxPoolingLayer(2, 2)                                                // 100 x 14 x 14
-        .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)              // 100 x 12 x 12
-        .maxPoolingLayer(2, 2)                                                // 100 x  6 x  6
+     net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)              // 200 x 28 x 28
+        .maxPoolingLayer(2, 2)                                                // 200 x 14 x 14
+        .convolutionalLayer(150, 3, 3, OpenANN::RECTIFIER, 0.05)              // 150 x 12 x 12
+        .maxPoolingLayer(2, 2)                                                // 150 x  6 x  6
         .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)              // 100 x  4 x  4
         .maxPoolingLayer(2, 2)                                                // 100 x  2 x  2
         .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, true, 0.5, 15.0)  // 300
