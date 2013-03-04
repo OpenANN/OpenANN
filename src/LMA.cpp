@@ -139,7 +139,6 @@ void LMA::allocate()
 {
   // temporary vectors to avoid allocations
   parameters.resize(n);
-  gradient.resize(n);
   errorValues.resize(opt->examples());
   jacobian.resize(opt->examples(), n);
 

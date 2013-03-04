@@ -52,7 +52,7 @@ class LMA : public Optimizer
   Vt optimum;
   int iteration, n;
   alglib_impl::ae_state _alglib_env_state;
-  Vt parameters, gradient, errorValues;
+  Vt parameters, errorValues;
   Mt jacobian;
   alglib::real_1d_array xIn;
   alglib::minlmstate state;
