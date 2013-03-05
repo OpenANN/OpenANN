@@ -99,11 +99,15 @@ void Subsampling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   {
     for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
     {
+      int rowBase = fmo*fmInSize + ri*inCols;
       for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
       {
         for(int kr = 0; kr < kernelRows; kr++)
+        {
+          inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
             a(outputIdx) += (*x)(inputIdx) * W[fmo](ro, co);
+        }
         if(weightForBias)
           a(outputIdx) += Wb[fmo](ro, co);
       }
@@ -132,14 +136,18 @@ void Subsampling::backpropagate(Vt* ein, Vt*& eout)
       Wbd[fmo].fill(0.0);
     for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
     {
+      int rowBase = fmo*fmInSize + ri*inCols;
       for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
       {
         for(int kr = 0; kr < kernelRows; kr++)
+        {
+          inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
           {
             e(inputIdx) += W[fmo](ro, co)*deltas(outputIdx);
             Wd[fmo](ro, co) += deltas(outputIdx) * (*x)(inputIdx);
           }
+        }
         if(weightForBias)
           Wbd[fmo](ro, co) += deltas(outputIdx);
       }
