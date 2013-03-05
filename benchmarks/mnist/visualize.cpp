@@ -122,7 +122,7 @@ public:
         {
           for(int col = 0; col < cols; col++)
           {
-            float c = (layerOutput(row*cols+col) - mi) / (ma-mi);
+            float c = (layerOutput(fm*rows*cols+row*cols+col) - mi) / (ma-mi);
             float x = translateX + col * scale;
             float y = translateY + (rows - row) * scale;
             glColor3f(c, c, c);
@@ -194,6 +194,14 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
+
+  // Load parameters
+  std::ifstream file("weights.log");
+  Vt weights = net.currentParameters();
+  for(int i = 0; i < net.dimension(); i++)
+    file >> weights(i);
+  net.setParameters(weights);
+
   net.testSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "

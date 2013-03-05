@@ -112,7 +112,7 @@ bool MBSGD::step()
 
 Vt MBSGD::result()
 {
-  return optimum;
+  return parameters;
 }
 
 std::string MBSGD::name()
