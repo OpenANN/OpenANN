@@ -73,5 +73,8 @@ int main(int argc, char** argv)
   interfaceLogger << "Error = " << net.error() << "\n\n";
   interfaceLogger << "Wrote data to dataset-*.log.\n";
 
+  OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
+  resultLogger << optimizer.result();
+
   return EXIT_SUCCESS;
 }
