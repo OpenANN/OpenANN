@@ -34,7 +34,7 @@ endmacro()
 
 macro(install_documentation source target)
   if(UNIX)
-    install(DIRECTORY ${source} DESTINATION "/usr/share/doc/${target}")
+    install(DIRECTORY ${source} DESTINATION "share/doc/${target}")
   else()
     message(WARNING "I do not know where to install the documentation!")
   endif()
