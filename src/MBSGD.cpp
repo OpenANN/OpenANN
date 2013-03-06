@@ -96,7 +96,10 @@ bool MBSGD::step()
   }
 
   iteration++;
-  debugLogger << "alpha = " << alpha << ", eta = " << eta << "\n";
+  
+  if(debugLogger.isActive())
+      debugLogger << "alpha = " << alpha << ", eta = " << eta << "\n";
+
   opt->finishedIteration();
 
   const bool run = (stop.maximalIterations == // Maximum iterations reached?
