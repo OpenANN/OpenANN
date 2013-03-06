@@ -91,7 +91,11 @@ add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(benchmarks)
 add_subdirectory(test)
+
+option(BUILD_PYTHON "Build python extensions for OpenANN" ON)
+if(BUILD_PYTHON)
 add_subdirectory(python)
+endif()
 
 install(DIRECTORY OpenANN DESTINATION include)
 
