@@ -28,8 +28,6 @@ class MBSGD : public Optimizer
   StoppingCriteria stop;
   //! Optimizable problem
   Optimizable* opt; // do not delete
-  //! Optimum parameters
-  Vt optimum;
   //! Learning rate
   fpt alpha;
   //! Learning rate decay

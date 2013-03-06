@@ -53,12 +53,16 @@ void MaxPooling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   {
     for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
     {
+      int rowBase = fmo*fmInSize + ri*inCols;
       for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
       {
         fpt m = -std::numeric_limits<fpt>::max();
         for(int kr = 0; kr < kernelRows; kr++)
+        {
+          inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
             m = std::max(m, (*x)(inputIdx));
+        }
         this->y(outputIdx) = m;
       }
     }
@@ -79,17 +83,21 @@ void MaxPooling::backpropagate(Vt* ein, Vt*& eout)
   {
     for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
     {
+      int rowBase = fmo*fmInSize + ri*inCols;
       for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
       {
         fpt m = -std::numeric_limits<fpt>::max();
         int idx = -1;
         for(int kr = 0; kr < kernelRows; kr++)
+        {
+          inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
             if((*x)(inputIdx) > m)
             {
               m = (*x)(inputIdx);
               idx = inputIdx;
             }
+        }
         e(idx) += deltas(outputIdx);
       }
     }
