@@ -118,7 +118,7 @@ void SplitableDataSet::split(std::vector<SplitableDataSet*>& groups, int number_
     SplitableDataSet* current_set = new SplitableDataSet(dim_input, dim_output, this);
 
     for(int i = 0; i < data.size() && number_of_groups > 0; ++i) {
-        current_set->add(data[i]);
+        current_set->data.push_back(data[i]);
         ++samples_in_group;
 
         if(samples_in_group >= samples_per_group) {
@@ -149,9 +149,9 @@ void SplitableDataSet::split(std::vector<SplitableDataSet*>& groups, double rati
     // share sample pointers on the two datasets depending on the ratio
     for(int i = 0; i < data.size(); ++i, --samples) {
         if(samples > 0)
-            first_set->add(data[i]);
+            first_set->data.push_back(data[i]);
         else
-            second_set->add(data[i]);
+            second_set->data.push_back(data[i]);
     }
 
     // add splitted sets to group vector
