@@ -184,12 +184,14 @@ SplitableDataSet* SplitableDataSet::merge(const std::vector<SplitableDataSet*>& 
 }
 
 
-void SplitableDataSet::shuffle(int iteration)
+SplitableDataSet* SplitableDataSet::shuffle(int iteration)
 {
     OPENANN_CHECK(iteration > 0);
 
     for(int i = 0; i < iteration; ++i) 
         std::random_shuffle(data.begin(), data.end(), default_random);
+
+    return this;
 }
  
 

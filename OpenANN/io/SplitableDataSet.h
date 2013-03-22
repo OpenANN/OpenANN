@@ -100,8 +100,9 @@ public:
      * Shuffles the order of instances within this dataset
      *
      * @param iteration number of shuffle calls
+     * @return the current shuffled dataset
      */
-    virtual void shuffle(int iteration = 1);
+    virtual SplitableDataSet* shuffle(int iteration = 1);
 
     /**
      * Split the current dataset into a specific number of sub datasets (groups)
