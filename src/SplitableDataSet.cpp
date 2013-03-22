@@ -79,12 +79,16 @@ void SplitableDataSet::finishIteration(Learner& learner)
 
 void SplitableDataSet::add(Vt* instance, Vt* target)
 {
+    OPENANN_CHECK(parent == 0);
+
     data.push_back(std::pair<Vt*, Vt*>(instance, target));
 }
 
 
 void SplitableDataSet::add(Vt* instance, int klass)
 {
+    OPENANN_CHECK(parent == 0);
+
     Vt* target = new Vt(dim_output);
     target->setZero();
 
@@ -97,6 +101,8 @@ void SplitableDataSet::add(Vt* instance, int klass)
 
 void SplitableDataSet::add(const instance_pair& pair)
 {
+    OPENANN_CHECK(parent == 0);
+
     data.push_back(pair);
 }
 
@@ -158,7 +164,7 @@ void SplitableDataSet::split(std::vector<SplitableDataSet*>& groups, double rati
 }
 
 
-SplitableDataSet& SplitableDataSet::merge(const std::vector<SplitableDataSet*>& groups) 
+SplitableDataSet* SplitableDataSet::merge(const std::vector<SplitableDataSet*>& groups) 
 {
     OPENANN_CHECK(groups.size() > 0);
 
@@ -174,7 +180,7 @@ SplitableDataSet& SplitableDataSet::merge(const std::vector<SplitableDataSet*>& 
 
     parent->responsible_groups.push_back(merged_set);
 
-    return *merged_set;
+    return merged_set;
 }
 
 
