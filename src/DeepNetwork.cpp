@@ -33,40 +33,29 @@ DeepNetwork::~DeepNetwork()
   layers.clear();
 }
 
+
 DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias,
                                      fpt dropoutProbability)
 {
-  Layer* layer = new Input(dim1, dim2, dim3, bias, dropoutProbability);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new Input(dim1, dim2, dim3, bias, dropoutProbability));
 }
+
 
 DeepNetwork& DeepNetwork::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias)
 {
-  Layer* layer = new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev));
 }
+
 
 DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
                                               fpt stdDev, bool bias,
                                               fpt dropoutProbability,
                                               fpt maxSquaredWeightNorm)
 {
-  Layer* layer = new FullyConnected(infos.back(), units, bias, act, stdDev,
-                                    dropoutProbability, maxSquaredWeightNorm);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
+                                    dropoutProbability, maxSquaredWeightNorm));
 }
+
 
 DeepNetwork& DeepNetwork::compressedLayer(int units, int params,
                                           ActivationFunction act,
@@ -74,62 +63,53 @@ DeepNetwork& DeepNetwork::compressedLayer(int units, int params,
                                           fpt stdDev, bool bias,
                                           fpt dropoutProbability)
 {
-  Layer* layer = new Compressed(infos.back(), units, params, bias, act,
-                                compression, stdDev, dropoutProbability);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new Compressed(infos.back(), units, params, bias, act,
+                                compression, stdDev, dropoutProbability));
 }
+
 
 DeepNetwork& DeepNetwork::extremeLayer(int units, ActivationFunction act,
                                        fpt stdDev, bool bias)
 {
-  Layer* layer = new Extreme(infos.back(), units, bias, act, stdDev);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new Extreme(infos.back(), units, bias, act, stdDev));
 }
+
 
 DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
                                              int kernelCols,
                                              ActivationFunction act,
                                              fpt stdDev, bool bias)
 {
-  Layer* layer = new Convolutional(infos.back(), featureMaps, kernelRows,
-                                   kernelCols, bias, act, stdDev);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new Convolutional(infos.back(), featureMaps, kernelRows,
+                                   kernelCols, bias, act, stdDev));
 }
+
 
 DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
                                            ActivationFunction act, fpt stdDev,
                                            bool bias)
 {
-  Layer* layer = new Subsampling(infos.back(), kernelRows, kernelCols, bias,
-                                 act, stdDev);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
 }
+
 
 DeepNetwork& DeepNetwork::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
 {
-  Layer* layer = new MaxPooling(infos.back(), kernelRows, kernelCols, bias);
-  OutputInfo info = layer->initialize(parameters, derivatives);
-  layers.push_back(layer);
-  infos.push_back(info);
-  L++;
-  return *this;
+  return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols, bias));
 }
+
+
+DeepNetwork& DeepNetwork::addLayer(Layer* layer)
+{
+    OPENANN_CHECK(layer != 0);
+
+    OutputInfo info = layer->initialize(parameters, derivatives);
+    layers.push_back(layer);
+    infos.push_back(info);
+    L++;
+    return *this;
+}
+
 
 DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
                                       fpt stdDev)
