@@ -209,6 +209,16 @@ public:
                                      ActivationFunction act,
                                      const std::string& compression,
                                      fpt stdDev = (fpt) 0.05);
+
+  /** 
+   * Add a new layer to this deep neural network. 
+   * Never free/delete the added layer outside of this class. 
+   * Its cleaned up by DeepNetwork's destructor automatically.
+   * @param layer pointer to an instance that implements the Layer interface
+   * @return this for chaining
+   */
+  DeepNetwork& addLayer(Layer* layer);
+
   unsigned int numberOflayers();
   Layer& getLayer(unsigned int l);
   OutputInfo getOutputInfo(unsigned int l);
