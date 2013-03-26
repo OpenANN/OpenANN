@@ -39,8 +39,8 @@ void SigmaPi::initializeParameters()
 {
     RandomNumberGenerator rng;
     for(int i = 0; i < nodes.size(); ++i)
-        for(int j = 0; j < nodes[i].units.size(); ++j) 
-            (*nodes[i].units[j].pWeight) = rng.sampleNormalDistribution<fpt>() * stdDev;
+        for(int j = 0; j < nodes[i].size(); ++j) 
+            w[nodes[i][j].weight] = rng.sampleNormalDistribution<fpt>() * stdDev;
 }
 
 
@@ -48,7 +48,7 @@ void SigmaPi::updatedParameters()
 {
 }
 
-void SigmaPi::forwardPropagate(Vt* x, Vt*& y)
+void SigmaPi::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 {
     int J = nodes.size();
     this->x = x;
@@ -58,16 +58,16 @@ void SigmaPi::forwardPropagate(Vt* x, Vt*& y)
 
         double sum = 0.0;
 
-        for(int j = 0; j < neuron.units.size(); ++j) {
-            HigherOrderUnit& unit = neuron.units[j];
+        for(int j = 0; j < neuron.size(); ++j) {
+            HigherOrderUnit& unit = neuron[j];
 
             double korrelation = 1.0;
 
             for(int k = 0; k < unit.position.size(); ++k) {
-                korrelation *= (*x)(unit.position.at(k));
+               korrelation *= (*x)(unit.position.at(k));
             }
 
-            sum += (*unit.pWeight) * korrelation;
+            sum += w[unit.weight] * korrelation;
         }
 
         a(i) = sum;
@@ -89,22 +89,22 @@ void SigmaPi::backpropagate(Vt* error_in, Vt*& error_out)
     activationFunctionDerivative(act, y, yd);
 
     for(int i = 0; i < nodes.size(); ++i) {
-        HigherOrderNeuron& neuron = nodes[i];
+        HigherOrderNeuron& neuron = nodes.at(i);
 
         double sum = 0.0;
         deltas(i) = (*error_in)(i) * yd(i);
 
-        for(int j = 0; j < neuron.units.size(); ++j) {
-            HigherOrderUnit& unit = neuron.units[j];
+        for(int j = 0; j < neuron.size(); ++j) {
+            HigherOrderUnit& unit = neuron.at(j);
 
             double korrelation = 1.0;
 
             for(int k = 0; k < unit.position.size(); ++k) {
                 korrelation *= (*x)(unit.position.at(k));
-                e(unit.position.at(k)) += (*unit.pWeight) * deltas(i);
+                e(unit.position.at(k)) += w[unit.weight] * deltas(i);
             }
 
-            (*unit.pWeightDerivative) = deltas(i) * korrelation;
+            wd[unit.weight] = deltas(i) * korrelation;
         }
     }
 
@@ -124,46 +124,47 @@ SigmaPi& SigmaPi::secondOrderNodes(int numbers, const Constraint* constrain)
     for(int i = 0; i < numbers; ++i) {
         HigherOrderNeuron neuron;
 
-        for(int p1 = 0; p1 < I - 1; ++p1) {
+        for(int p1 = 0; p1 < (I - 1); ++p1) {
             for(int p2 = p1 + 1; p2 < I; ++p2) {
-                HigherOrderUnit snd_order_unit(2);
+                HigherOrderUnit snd_order_unit;
 
                 snd_order_unit.position.push_back(p1);
                 snd_order_unit.position.push_back(p2);
 
                 if(constrain != 0) {
-                   double weight = (*constrain)(p1, p2);
+                    double ref = (*constrain)(p1, p2);
+                    size_t found = neuron.size();
 
-                   std::vector<fpt>::iterator dt;
+                    for(int j = 0; j < neuron.size(); ++j) {
+                        if(std::fabs(w[neuron[j].weight] - ref) < 0.001) {
+                            found = j;
+                            j = neuron.size();
+                        }
+                    }
 
-                   dt = find(neuron.w.begin(), neuron.w.end(), weight);
+                    if(found >= neuron.size()) {
+                        snd_order_unit.weight = w.size();
+                        w.push_back(ref);
+                        wd.push_back(ref);
+                    } else { 
+                        snd_order_unit.weight = neuron[found].weight;
+                    }
 
-                   if(dt == neuron.w.end()) {
-                       neuron.w.push_back(weight);
-                       neuron.wd.push_back(weight);
-
-                       snd_order_unit.pWeight = &neuron.w.back();
-                       snd_order_unit.pWeightDerivative = &neuron.wd.back();
-                   } else {
-                       int index = (dt - neuron.w.begin());
-                       
-                       snd_order_unit.pWeight = &neuron.w[index];
-                       snd_order_unit.pWeightDerivative = &neuron.wd[index];
-                   }
                 } else {
-                    neuron.w.push_back(0.0);
-                    neuron.wd.push_back(0.0);
+                    snd_order_unit.weight = w.size(); 
 
-                    snd_order_unit.pWeight = &neuron.w.back();
-                    snd_order_unit.pWeightDerivative = &neuron.wd.back();
+                    w.push_back(0.0);
+                    wd.push_back(0.0);
                 }
 
-                neuron.units.push_back(snd_order_unit);                
+                neuron.push_back(snd_order_unit);                
             }
         }
 
         nodes.push_back(neuron);
     }
+
+    return *this;
 }
 
 
@@ -171,11 +172,9 @@ OutputInfo SigmaPi::initialize(std::vector<fpt*>& parameterPointers, std::vector
 {
     int J = nodes.size();
 
-    for(int i = 0; i < J; ++i) {
-        for(int j = 0; j < nodes[i].w.size(); ++j) {
-            parameterPointers.push_back(&(nodes[i].w[j]));
-            parameterDerivativePointers.push_back(&(nodes[i].wd[j]));
-        }
+    for(int i = 0; i < w.size(); ++i) {
+        parameterPointers.push_back(&(w[i]));
+        parameterDerivativePointers.push_back(&(wd[i]));
     }
 
     y.resize(J + bias);

@@ -13,21 +13,11 @@ class SigmaPi : public Layer
  protected:
     struct HigherOrderUnit 
     {
-        HigherOrderUnit(size_t space) {
-            position.reserve(space);
-        }
-
         std::vector<int> position;
-        fpt* pWeight;
-        fpt* pWeightDerivative;
+        size_t weight;
     };
 
-    struct HigherOrderNeuron 
-    {
-        std::vector<fpt> w;
-        std::vector<fpt> wd;
-        std::vector<HigherOrderUnit> units;
-    };
+    typedef std::vector<HigherOrderUnit> HigherOrderNeuron;
 
     OutputInfo info;
     bool bias;
@@ -40,7 +30,9 @@ class SigmaPi : public Layer
     Vt yd;
     Vt deltas;
     Vt e;
-    
+ 
+    std::vector<fpt> w;
+    std::vector<fpt> wd;
     std::vector<HigherOrderNeuron> nodes;
     
  public:
@@ -58,9 +50,12 @@ class SigmaPi : public Layer
 
   virtual SigmaPi& secondOrderNodes(int numbers, const Constraint* constrain = 0);
 
+  virtual size_t nodenumber() const { return nodes.size(); };
+  virtual size_t parameter() const { return w.size(); };
+  
   virtual void initializeParameters();
   virtual void updatedParameters();
-  virtual void forwardPropagate(Vt* x, Vt*& y);
+  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout = false);
   virtual void backpropagate(Vt* ein, Vt*& eout);
   virtual Vt& getOutput();
 };
