@@ -114,9 +114,7 @@ DeepNetwork& DeepNetwork::addLayer(Layer* layer)
 DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
                                       fpt stdDev)
 {
-  fullyConnectedLayer(units, act, stdDev, false);
-  initializeNetwork();
-  return *this;
+  return fullyConnectedLayer(units, act, stdDev, false);
 }
 
 DeepNetwork& DeepNetwork::compressedOutputLayer(int units, int params,
@@ -124,9 +122,7 @@ DeepNetwork& DeepNetwork::compressedOutputLayer(int units, int params,
                                                 const std::string& compression,
                                                 fpt stdDev)
 {
-  compressedLayer(units, params, act, compression, stdDev, false);
-  initializeNetwork();
-  return *this;
+  return compressedLayer(units, params, act, compression, stdDev, false);
 }
 
 unsigned int DeepNetwork::numberOflayers()
@@ -149,7 +145,7 @@ OutputInfo DeepNetwork::getOutputInfo(unsigned int l)
 void DeepNetwork::initializeNetwork()
 {
   P = parameters.size();
-  tempInput.resize(infos[0].outputs()-infos[0].bias);
+  tempInput.resize(infos[0].outputs() - infos[0].bias);
   tempOutput.resize(infos.back().outputs());
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
@@ -284,6 +280,9 @@ bool DeepNetwork::providesInitialization()
 
 void DeepNetwork::initialize()
 {
+    if(!initialized)
+        initializeNetwork();
+
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
     (**layer).initializeParameters();
