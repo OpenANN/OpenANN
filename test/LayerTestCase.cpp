@@ -4,6 +4,7 @@
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <layers/MaxPooling.h>
+#include <layers/SigmaPi.h>
 #include <optimization/Optimizable.h>
 #include <DeepNetwork.h>
 #include <io/DirectStorageDataSet.h>
@@ -116,6 +117,8 @@ void LayerTestCase::run()
   RUN(LayerTestCase, maxPooling);
   RUN(LayerTestCase, maxPoolingGradient);
   RUN(LayerTestCase, multilayerNetwork);
+  RUN(LayerTestCase, sigmaPiNoConstraintGradient);
+  RUN(LayerTestCase, sigmaPiWithConstraintGradient);
 }
 
 void LayerTestCase::fullyConnected()
@@ -176,6 +179,58 @@ void LayerTestCase::fullyConnectedGradient()
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
 }
+
+
+void LayerTestCase::sigmaPiNoConstraintGradient()
+{
+    OutputInfo info;
+    info.bias = false;
+    info.dimensions.push_back(5);
+    info.dimensions.push_back(5);
+    SigmaPi layer(info, true, TANH, 0.05);
+    layer.secondOrderNodes(2);
+
+    LayerOptimizable opt(layer, info);
+
+    Vt gradient = opt.gradient();
+    Vt estimatedGradient = opt.gradientFD();
+
+    for(int i = 0; i < gradient.rows(); i++)
+        ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
+}
+
+
+struct TestConstraint : public OpenANN::SigmaPi::Constraint
+{
+    virtual fpt operator() (int p1, int p2) const {
+        fpt x1 = p1 % 5;
+        fpt y1 = p1 / 5;
+        fpt x2 = p2 % 5;
+        fpt y2 = p2 / 5;
+
+        return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }
+};
+
+void LayerTestCase::sigmaPiWithConstraintGradient()
+{
+    OutputInfo info;
+    info.bias = false;
+    info.dimensions.push_back(5);
+    info.dimensions.push_back(5);
+    SigmaPi layer(info, true, TANH, 0.05);
+    layer.secondOrderNodes(2, new TestConstraint);
+
+    LayerOptimizable opt(layer, info);
+
+    Vt gradient = opt.gradient();
+    Vt estimatedGradient = opt.gradientFD();
+
+    for(int i = 0; i < gradient.rows(); i++)
+        ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
+}
+
+
 
 void LayerTestCase::compressed()
 {
@@ -354,6 +409,8 @@ void LayerTestCase::maxPoolingGradient()
   Vt gradient = opt.gradient();
   Vt estimatedGradient = opt.gradientFD();
 }
+
+
 
 void LayerTestCase::multilayerNetwork()
 {
