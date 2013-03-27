@@ -7,7 +7,6 @@
 
 namespace OpenANN {
 
-
 class SigmaPi : public Layer 
 {
  protected:
@@ -45,10 +44,17 @@ class SigmaPi : public Layer
       virtual fpt operator() (int p1, int p2) const;
       virtual fpt operator() (int p1, int p2, int p3) const;
       virtual fpt operator() (int p1, int p2, int p3, int p4) const;
-      virtual fpt operator() (const std::vector<int>& pos) const;
+      virtual bool isDefault() const;
   };
 
-  virtual SigmaPi& secondOrderNodes(int numbers, const Constraint* constrain = 0);
+  virtual SigmaPi& secondOrderNodes(int numbers, const Constraint& constrain);
+  virtual SigmaPi& secondOrderNodes(int numbers);
+  
+  virtual SigmaPi& thirdOrderNodes(int numbers, const Constraint& constrain);
+  virtual SigmaPi& thirdOrderNodes(int numbers);
+
+  virtual SigmaPi& fourthOrderNodes(int numbers, const Constraint& constrain);
+  virtual SigmaPi& fourthOrderNodes(int numbers);
 
   virtual size_t nodenumber() const { return nodes.size(); };
   virtual size_t parameter() const { return w.size(); };

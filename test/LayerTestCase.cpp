@@ -218,8 +218,9 @@ void LayerTestCase::sigmaPiWithConstraintGradient()
     info.bias = false;
     info.dimensions.push_back(5);
     info.dimensions.push_back(5);
+    TestConstraint constraint;
     SigmaPi layer(info, true, TANH, 0.05);
-    layer.secondOrderNodes(2, new TestConstraint);
+    layer.secondOrderNodes(2, constraint);
 
     LayerOptimizable opt(layer, info);
 
@@ -227,7 +228,7 @@ void LayerTestCase::sigmaPiWithConstraintGradient()
     Vt estimatedGradient = opt.gradientFD();
 
     for(int i = 0; i < gradient.rows(); i++)
-        ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-4);
+        ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), (fpt) 1e-3);
 }
 
 
