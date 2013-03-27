@@ -49,7 +49,6 @@ void MBSGD::optimize()
 
 bool MBSGD::step()
 {
-  OPENANN_CHECK(opt->providesInitialization());
   if(iteration < 0)
     initialize();
 
@@ -125,6 +124,9 @@ std::string MBSGD::name()
 
 void MBSGD::initialize()
 {
+  if(opt->providesInitialization())
+      opt->initialize();
+
   P = opt->dimension();
   N = opt->examples();
   batches = N / batchSize;
