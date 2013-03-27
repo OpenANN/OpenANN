@@ -94,6 +94,9 @@ void SigmaPi::backpropagate(Vt* error_in, Vt*& error_out)
 {
     e.fill(0.0);
 
+    for(int i = 0; i < wd.size(); ++i)
+        wd[i] = 0.0;
+
     activationFunctionDerivative(act, y, yd);
 
     for(int i = 0; i < nodes.size(); ++i) {
@@ -112,7 +115,7 @@ void SigmaPi::backpropagate(Vt* error_in, Vt*& error_out)
                 e(unit.position.at(k)) += w[unit.weight] * deltas(i);
             }
 
-            wd[unit.weight] = deltas(i) * korrelation;
+            wd[unit.weight] += deltas(i) * korrelation;
         }
     }
 
