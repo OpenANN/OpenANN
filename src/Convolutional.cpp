@@ -117,10 +117,10 @@ void Convolutional::forwardPropagate(Vt* x, Vt*& y, bool dropout)
               a(outputIdx) += W[fmo][fmi](kr, kc)*(*x)(inputIdx);
             }
           }
+          if(weightForBias && fmi == 0)
+            a(outputIdx) += Wb(fmo, fmi);
         }
       }
-      if(weightForBias)
-        a(outputIdx-1) += Wb(fmo, fmi);
     }
   }
 
@@ -161,10 +161,10 @@ void Convolutional::backpropagate(Vt* ein, Vt*& eout)
               Wd[fmo][fmi](kr, kc) += deltas(outputIdx) * (*x)(inputIdx);
             }
           }
+          if(weightForBias && fmi == 0)
+            Wbd(fmo, fmi) += deltas(outputIdx);
         }
       }
-      if(weightForBias)
-        Wbd(fmo, fmi) += deltas(outputIdx-1);
     }
   }
 
