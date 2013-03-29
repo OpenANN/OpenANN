@@ -59,13 +59,13 @@ int main(int argc, char** argv)
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
   net.setErrorFunction(OpenANN::CE);
+  net.initialize();
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
   OpenANN::MBSGD optimizer(0.01, 1.0, 0.01, 0.6, 0.0, 0.9, 10, 0.01, 100.0);
-  net.initialize();
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
   while(optimizer.step());
