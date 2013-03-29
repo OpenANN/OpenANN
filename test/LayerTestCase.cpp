@@ -370,6 +370,7 @@ void LayerTestCase::multilayerNetwork()
   net.extremeLayer(10, TANH, 0.05);
   net.outputLayer(3, LINEAR, 0.5);
   net.trainingSet(ds);
+  net.initialize();
 
   Vt g = net.gradient();
   Vt e = net.gradientFD();
