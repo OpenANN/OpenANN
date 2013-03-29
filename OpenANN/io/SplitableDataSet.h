@@ -10,13 +10,15 @@ class Learner;
 /**
  * @class SplitableDataSet
  *
- * A manipulable data set representation that can be splitted in several partitions
+ * A manipulable data set representation that can be splitted in several
+ * partitions.
  * 
  * In general all classification/regression instances should be stored in a 
  * root dataset and all necessary partitions should be generated from this
  * root set.
  *
- * The root is the one and only class that is responsible for freeing instances.
+ * The root is the one and only class that is responsible for freeing
+ * instances.
  *
  * No samples can be added to the partions directly.
  */
@@ -30,7 +32,8 @@ public:
      * Create an instance for a splitable dataset 
      * @param inputs size of input instances (feature vector)
      * @param outputs size of output instances (class vector)
-     * @param parent used by split and merge methods for defining the cleaning responsibility of instances
+     * @param parent used by split and merge methods for defining the cleaning
+     *               responsibility of instances
      */
     SplitableDataSet(int inputs, int outputs, const SplitableDataSet* parent = 0);
 
@@ -83,13 +86,16 @@ public:
      * Adds feature- and target instance to this dataset.
      * Never free/delete the instances (its managed by this class itself)
      *
-     * @param pair the complete instance pair consisting feature- and target pointer
+     * @param pair the complete instance pair consisting feature- and target
+     *             pointer
      */
     virtual void add(const instance_pair& pair);
 
     /**
-     * Generates a target vector and add it to this dataset with the corresponding features
-     * Never free/delete the instances (its managed by this class itself)
+     * Generates a target vector and add it to this dataset with the
+     * corresponding features.
+     *
+     * Never free/delete the instances (its managed by this class itself).
      *
      * @param instance pointer to the feature vector
      * @param klass label for the target class (0 <= klass <= max_classes)
@@ -114,11 +120,14 @@ public:
     virtual void split(std::vector<SplitableDataSet*>& groups, int number_of_groups);
 
     /**
-     * Split the current dataset into two sub datasets (groups) depending on a ratio
-     * Never free/delete the pointers from the groups
+     * Split the current dataset into two sub datasets (groups) depending on a
+     * ratio.
      *
-     * @param groups std::vector reference that will be filled with the two generated datasets
-     * @param number_of_groups sets the ratio of samples between the two sets.
+     * Never free/delete the pointers from the groups.
+     *
+     * @param groups std::vector reference that will be filled with the two
+     *               generated datasets
+     * @param ratio sets the ratio of samples between the two sets.
      *   - first_set.size() == ratio * samples()
      *   - second_set.size() == (1.0 - ratio) * samples()
      */
@@ -128,7 +137,8 @@ public:
      * Generate a new dataset from a group of partitions
      * Never free/delete the pointer from the generated dataset
      *
-     * @param groups vector of given datasets that should be merged into a single dataset.
+     * @param groups vector of given datasets that should be merged into a
+     *               single dataset.
      */
     static SplitableDataSet* merge(const std::vector<SplitableDataSet*>& groups);
         
