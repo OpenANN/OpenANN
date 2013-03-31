@@ -9,7 +9,7 @@ RandomNumberGenerator::RandomNumberGenerator()
   static bool seedInitialized = false;
   if(!seedInitialized)
   {
-    srand(time(0));
+    srand(0);
     seedInitialized = true;
   }
 }

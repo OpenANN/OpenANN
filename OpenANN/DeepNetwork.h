@@ -58,6 +58,8 @@ enum Training
  * - MaxPooling layer: this is an alternative to subsampling layers and works
  *   usually better. Instead of the sum it computes the maximum of a group and
  *   has no learnable weights or biases.
+ * - LocalResponseNormalization layer: lateral inhibition of neurons at the
+ *   same positions in adjacent feature maps.
  * - AlphaBetaFilter layer: this is a recurrent layer that estimates the
  *   position and velocity of the inputs from the noisy observation of the
  *   positions. Usually we need this layer for partially observable markov
@@ -186,6 +188,20 @@ public:
    */
   DeepNetwork& maxPoolingLayer(int kernelRows, int kernelCols, bool bias = true);
   /**
+   * Add a local response normalization layer.
+   * \f$ y^i_{rc} = x^i_{rc} / \left( k +
+   *     \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)}
+   *     x^j_{rc} \right)^{\beta} \f$
+   * @param k hyperparameter, e.g. 1 or 2
+   * @param n number of adjacent feature maps
+   * @param alpha controls strength of inhibition, e.g. 1e-4
+   * @param beta controls strength of inhibition, e.g. 0.75
+   * @param bias add bias term
+   * @return this for chaining
+   */
+  DeepNetwork& localReponseNormalizationLayer(fpt k, int n, fpt alpha,
+                                              fpt beta, bool bias = true);
+  /**
    * Add a fully connected output layer. This will initialize the network.
    * @param units number of nodes (neurons)
    * @param act activation function
@@ -209,7 +225,6 @@ public:
                                      ActivationFunction act,
                                      const std::string& compression,
                                      fpt stdDev = (fpt) 0.05);
-
   /** 
    * Add a new layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
