@@ -14,4 +14,6 @@ class LayerTestCase : public TestCase
   void maxPooling();
   void maxPoolingGradient();
   void multilayerNetwork();
+  void sigmaPiNoConstraintGradient();
+  void sigmaPiWithConstraintGradient();
 };
