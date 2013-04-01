@@ -39,6 +39,7 @@ namespace OpenANN {
 class LocalResponseNormalization : public Layer
 {
   int I, fm, rows, cols;
+  int fmSize;
   bool bias;
   fpt k;
   int n;
