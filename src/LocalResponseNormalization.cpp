@@ -58,7 +58,7 @@ void LocalResponseNormalization::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 void LocalResponseNormalization::backpropagate(Vt* ein, Vt*& eout)
 {
   for(int i = 0; i < I; i++)
-    etmp(i) = (*ein)(i)*(*x)(i) / denoms(i);
+    etmp(i) = (*ein)(i) * y(i) / denoms(i);
   etmp *= -2.0*alpha*beta;
 
   for(int fmOut=0, outputIdx=0; fmOut < fm; fmOut++)

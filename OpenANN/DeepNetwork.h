@@ -192,10 +192,10 @@ public:
    * \f$ y^i_{rc} = x^i_{rc} / \left( k +
    *     \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)}
    *     x^j_{rc} \right)^{\beta} \f$
-   * @param k hyperparameter, e.g. 1 or 2
+   * @param k hyperparameter, k >= 1, e.g. 1 or 2
    * @param n number of adjacent feature maps
-   * @param alpha controls strength of inhibition, e.g. 1e-4
-   * @param beta controls strength of inhibition, e.g. 0.75
+   * @param alpha controls strength of inhibition, alpha > 0, e.g. 1e-4
+   * @param beta controls strength of inhibition, beta > 0, e.g. 0.75
    * @param bias add bias term
    * @return this for chaining
    */
