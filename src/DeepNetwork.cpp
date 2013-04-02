@@ -7,6 +7,7 @@
 #include <layers/Convolutional.h>
 #include <layers/Subsampling.h>
 #include <layers/MaxPooling.h>
+#include <layers/LocalResponseNormalization.h>
 #include <io/DirectStorageDataSet.h>
 #include <optimization/IPOPCMAES.h>
 #include <optimization/LMA.h>
@@ -33,19 +34,16 @@ DeepNetwork::~DeepNetwork()
   layers.clear();
 }
 
-
 DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias,
                                      fpt dropoutProbability)
 {
   return addLayer(new Input(dim1, dim2, dim3, bias, dropoutProbability));
 }
 
-
 DeepNetwork& DeepNetwork::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias)
 {
   return addLayer(new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev));
 }
-
 
 DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
                                               fpt stdDev, bool bias,
@@ -55,7 +53,6 @@ DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                     dropoutProbability, maxSquaredWeightNorm));
 }
-
 
 DeepNetwork& DeepNetwork::compressedLayer(int units, int params,
                                           ActivationFunction act,
@@ -67,13 +64,11 @@ DeepNetwork& DeepNetwork::compressedLayer(int units, int params,
                                 compression, stdDev, dropoutProbability));
 }
 
-
 DeepNetwork& DeepNetwork::extremeLayer(int units, ActivationFunction act,
                                        fpt stdDev, bool bias)
 {
   return addLayer(new Extreme(infos.back(), units, bias, act, stdDev));
 }
-
 
 DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
                                              int kernelCols,
@@ -84,7 +79,6 @@ DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
                                    kernelCols, bias, act, stdDev));
 }
 
-
 DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
                                            ActivationFunction act, fpt stdDev,
                                            bool bias)
@@ -92,12 +86,18 @@ DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
   return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
 }
 
-
 DeepNetwork& DeepNetwork::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
 {
   return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols, bias));
 }
 
+DeepNetwork& DeepNetwork::localReponseNormalizationLayer(fpt k, int n,
+                                                         fpt alpha, fpt beta,
+                                                         bool bias)
+{
+  return addLayer(new LocalResponseNormalization(infos.back(), bias, k, n,
+                                                 alpha, beta));
+}
 
 DeepNetwork& DeepNetwork::addLayer(Layer* layer)
 {
@@ -109,7 +109,6 @@ DeepNetwork& DeepNetwork::addLayer(Layer* layer)
     L++;
     return *this;
 }
-
 
 DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
                                       fpt stdDev)
