@@ -365,7 +365,7 @@ void LayerTestCase::multilayerNetwork()
   DeepNetwork net;
   net.inputLayer(1, 6, 6);
   net.convolutionalLayer(4, 3, 3, TANH, 0.5);
-  net.localReponseNormalizationLayer(1, 3, 0.5, 0.75);
+  net.localReponseNormalizationLayer(2.0, 3, 0.01, 0.75);
   net.subsamplingLayer(2, 2, TANH, 0.5);
   net.fullyConnectedLayer(10, TANH, 0.5);
   net.extremeLayer(10, TANH, 0.05);

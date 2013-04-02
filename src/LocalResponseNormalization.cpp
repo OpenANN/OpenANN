@@ -5,7 +5,7 @@ namespace OpenANN {
 
 LocalResponseNormalization::LocalResponseNormalization(
         OutputInfo info, bool bias, fpt k, int n, fpt alpha, fpt beta)
-  : I(info.outputs()), fm(info.dimensions[0]), rows(info.dimensions[1]),
+  : I(info.outputs()-bias), fm(info.dimensions[0]), rows(info.dimensions[1]),
     cols(info.dimensions[2]), bias(bias), x(0), denoms(I), y(I+bias), etmp(I),
     e(I), k(k), n(n), alpha(alpha), beta(beta)
 {
