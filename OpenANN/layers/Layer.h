@@ -62,7 +62,8 @@ public:
   /**
    * Backpropagation in this layer.
    * @param ein pointer to error signal of the higher layer
-   * @param eout returns a pointer to error signal of the layer
+   * @param eout returns a pointer to error signal of the layer (derivative of
+   *             the error with respect to the input)
    */
   virtual void backpropagate(Vt* ein, Vt*& eout) = 0;
   /**

@@ -98,7 +98,7 @@ void MaxPooling::backpropagate(Vt* ein, Vt*& eout)
               idx = inputIdx;
             }
         }
-        e(idx) += deltas(outputIdx);
+        e(idx) = deltas(outputIdx);
       }
     }
   }
