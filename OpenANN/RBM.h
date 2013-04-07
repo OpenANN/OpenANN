@@ -35,6 +35,9 @@ public:
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
 
+  void train(fpt alpha = 0.01, int epochs = 10);
+  Vt reconstructProb(int n);
+  Vt reconstruct(int n);
 private:
   void reality(int n);
   void daydream();

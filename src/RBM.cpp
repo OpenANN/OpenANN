@@ -30,7 +30,7 @@ void RBM::initialize()
     for(int i = 0; i < D; i++)
       W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
   for(int i = 0; i < D; i++)
-    W(i) = rng.sampleNormalDistribution<fpt>() * stdDev;
+    bv(i) = rng.sampleNormalDistribution<fpt>() * stdDev;
   for(int j = 0; j < H; j++)
     bh(j) = rng.sampleNormalDistribution<fpt>() * stdDev;
 }
@@ -97,12 +97,12 @@ Vt RBM::gradient(unsigned int i)
   int idx = 0;
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
-      gradient(idx++) = -posGradW(j, i) + negGradW(j, i);
+      gradient(idx++) = posGradW(j, i) - negGradW(j, i);
   for(int i = 0; i < D; i++)
-    gradient(idx++) = -posGradBv(i) + negGradBv(i);
+    gradient(idx++) = posGradBv(i) - negGradBv(i);
   for(int j = 0; j < H; j++)
-    gradient(idx++) = -posGradBh(j) + negGradBh(j);
-  return gradient;
+    gradient(idx++) = posGradBh(j) - negGradBh(j);
+  return -gradient;
 }
 
 bool RBM::providesHessian()
@@ -125,12 +125,44 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
   trainSet = &trainingSet;
 }
 
+void RBM::train(fpt alpha, int epochs)
+{
+  RandomNumberGenerator rng;
+  for(int e = 0; e < epochs; e++)
+  {
+    for(int n = 0; n < trainSet->samples(); n++)
+    {
+      int idx = n;
+      reality(idx);
+      daydream();
+      W += alpha * (posGradW - negGradW);
+      bh += alpha * (posGradBh - negGradBh);
+      bv += alpha * (posGradBv - negGradBv);
+    }
+  }
+}
+
+Vt RBM::reconstructProb(int n)
+{
+  v = trainSet->getInstance(n);
+  sampleHgivenV();
+  sampleVgivenH();
+  return pv;
+}
+
+Vt RBM::reconstruct(int n)
+{
+  v = trainSet->getInstance(n);
+  sampleHgivenV();
+  sampleVgivenH();
+  return v;
+}
+
 void RBM::reality(int n)
 {
   v = trainSet->getInstance(n);
 
   sampleHgivenV();
-  sampleVgivenH();
 
   posGradW = ph * v.transpose();
   posGradBv = v;
@@ -139,8 +171,11 @@ void RBM::reality(int n)
 
 void RBM::daydream()
 {
-  sampleHgivenV();
-  sampleVgivenH();
+  for(int n = 0; n < cdN; n++)
+  {
+    sampleVgivenH();
+    sampleHgivenV();
+  }
 
   negGradW = ph * pv.transpose();
   negGradBv = pv;

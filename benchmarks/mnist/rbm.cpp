@@ -95,6 +95,42 @@ public:
     }
     glEnd();
 
+    Vt r = rbm.reconstruct(instance);
+    glBegin(GL_QUADS);
+    for(int xIdx = 0; xIdx < 28; xIdx++)
+    {
+      for(int yIdx = 0; yIdx < 28; yIdx++)
+      {
+        float c = r(yIdx*28+xIdx);
+        float x = 30.0f + xIdx*scale;
+        float y = 28.0f*scale - yIdx*scale;
+        glColor3f(c, c, c);
+        glVertex2f(x, y);
+        glVertex2f(x+scale, y);
+        glVertex2f(x+scale, y+scale);
+        glVertex2f(x, y+scale);
+      }
+    }
+    glEnd();
+
+    Vt rp = rbm.reconstructProb(instance);
+    glBegin(GL_QUADS);
+    for(int xIdx = 0; xIdx < 28; xIdx++)
+    {
+      for(int yIdx = 0; yIdx < 28; yIdx++)
+      {
+        float c = rp(yIdx*28+xIdx);
+        float x = 60.0f + xIdx*scale;
+        float y = 28.0f*scale - yIdx*scale;
+        glColor3f(c, c, c);
+        glVertex2f(x, y);
+        glVertex2f(x+scale, y);
+        glVertex2f(x+scale, y+scale);
+        glVertex2f(x, y+scale);
+      }
+    }
+    glEnd();
+
     for(int i = 0; i < visualizedNeurons; i++)
     {
       glBegin(GL_QUADS);
@@ -107,7 +143,7 @@ public:
         {
           float c = (rbm.W(i, yIdx*28+xIdx) - mi) / range;
           float x = i*30.0f*scale + xIdx*scale;
-          float y = 30.0f + 28.0f*scale - yIdx*scale;
+          float y = 30.0f + (28.0f-yIdx)*scale;
           glColor3f(c, c, c);
           glVertex2f(x, y);
           glVertex2f(x+scale, y);
@@ -160,20 +196,21 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 6000, 10000, directory);
+  IDXLoader loader(28, 28, 1, 1, directory);
   OpenANN::DirectStorageDataSet trainSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput);
 
-  OpenANN::RBM rbm(784, 100, 1, 0.1);
+  OpenANN::RBM rbm(784, 100, 1, 0.01);
   rbm.trainingSet(trainSet);
   rbm.initialize();
-  OpenANN::MBSGD optimizer(0.01, 1.0, 0.01, 0.5, 0.0, 0.5, 10, 1.0, 1.0, 0.0);
+  rbm.train();
+  /*OpenANN::MBSGD optimizer(0.001, 1.0, 0.0001, 0.0, 0.0, 0.0, 1, 1.0, 1.0, 0.0);
   optimizer.setOptimizable(rbm);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 1;
+  stop.maximalIterations = 10;
   optimizer.setStopCriteria(stop);
-  optimizer.optimize();
-  logger << rbm.currentParameters().transpose() << "\n";
+  optimizer.optimize();*/
+  //logger << rbm.currentParameters().transpose() << "\n";
 
   RBMVisualization visual(rbm, testSet, 5, 800, 600);
   visual.show();
