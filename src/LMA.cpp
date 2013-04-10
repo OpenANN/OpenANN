@@ -5,6 +5,7 @@
 #include <AssertionMacros.h>
 #include <Random.h>
 #include <limits>
+#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 

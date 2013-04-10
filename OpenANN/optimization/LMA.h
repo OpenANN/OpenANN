@@ -8,7 +8,6 @@
 #include <io/Logger.h>
 #include <Eigen/Dense>
 #include <optimization.h>
-#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
