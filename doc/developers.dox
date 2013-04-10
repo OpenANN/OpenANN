@@ -63,6 +63,18 @@ cmake -D CMAKE_BUILD_TYPE:String=Release ../..
 make
 \endcode
 
+\section TodoList Todo list
+
+  @todo layer: Radial basis functions layer (RBF)
+  @todo layer: Support vector machines (SVM, maybe include libsvm?)
+  @todo Unsupervised methods (RBM, DBN, SOM, ...)
+  @todo example: NORB data set
+  @todo example: Caltech-101/256 data set
+  @todo example: ImageNet
+  @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
+  @todo port: Mac and Windows
+  @todo port: test other compilers
+
 */
 
 }

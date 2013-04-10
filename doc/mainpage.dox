@@ -12,7 +12,6 @@ namespace OpenANN
   - \ref SimpleExample
   - \ref MoreExamples
   - \ref Howtos
-  - \ref TodoList
 
 \section License
 
@@ -124,19 +123,6 @@ different architectures.
 
   - \ref CreateDataSet
   - \ref Contributing
-
-\section TodoList Todo List
-
-  @todo layer: Radial basis functions layer (RBF)
-  @todo layer: Support vector machines (SVM, maybe include libsvm?)
-  @todo layer: local contrast normalization (Hinton: "implement a form of lateral inhibition found in real neurons")
-  @todo Unsupervised methods (RBM, DBN, SOM, ...)
-  @todo example: NORB data set
-  @todo example: Caltech-101/256 data set
-  @todo example: ImageNet
-  @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
-  @todo port: Mac and Windows
-  @todo port: test other compilers
 
 */
 
