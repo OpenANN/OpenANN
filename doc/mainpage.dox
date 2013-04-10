@@ -73,6 +73,7 @@ sudo apt-get install ruby rubygems; sudo gem install rice
 
 \section SimpleExample A Simple Example
 
+C++
 \code
 #include <OpenANN>
 #include <Eigen/Dense>
@@ -105,6 +106,29 @@ int main()
 
   return 0;
 }
+\endcode
+
+Python
+\code
+from openann import *
+import numpy
+
+
+if __name__ == "__main__":
+  # Create noisy sine
+  # Each column of these matrices contains an instance
+  inputs = numpy.atleast_2d(numpy.linspace(0, 2*numpy.pi, 500))
+  outputs = numpy.sin(numpy.random.normal(inputs, numpy.ones(500)*0.1))
+
+  # Setup network
+  net = DeepNetwork()
+  net.input_layer(1, True, 0.05)
+  net.fully_connected_layer(200, "rectifier", True)
+  net.output_layer(1, "linear")
+  net.training_set(inputs, outputs)
+  stop_dict = {"maximalIterations" : 10,
+               "minimalValueDifferences" : 1e-8}
+  net.train("lma", "sse", stop_dict)
 \endcode
 
 Compile it with pkg-config and g++:
