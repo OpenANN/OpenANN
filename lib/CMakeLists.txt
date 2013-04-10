@@ -26,6 +26,7 @@ if(USE_GPL_LICENSE)
   set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lalglib")
   set_target_properties(alglib PROPERTIES COMPILE_FLAGS "${OPENANN_OPTIMIZATION_FLAGS} ${ALGLIB_DEFINITIONS}")
   install(TARGETS alglib DESTINATION lib)
+  install(DIRECTORY ALGLIB/ DESTINATION include/alglib FILES_MATCHING PATTERN "*.h")
 endif()
 
 add_subdirectory(CMA-ESpp)
