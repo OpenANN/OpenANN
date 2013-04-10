@@ -38,6 +38,7 @@ namespace OpenANN {
  * [1] Kenneth Levenberg:
  * A Method for the Solution of Certain Problems in Least Squares,
  * Quarterly of Applied Mathematics 2, pp. 164-168, 1944.
+ *
  * [2] Donald Marquardt:
  * An Algorithm for Least-Squares Estimation of Nonlinear Parameters,
  * Journal of the Society for Industrial and Applied Mathematics 11 (2),
