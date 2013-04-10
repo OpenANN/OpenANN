@@ -76,6 +76,7 @@ sudo apt-get install ruby rubygems; sudo gem install rice
 \code
 #include <OpenANN>
 #include <Eigen/Dense>
+#include <iostream>
 
 using namespace OpenANN;
 
@@ -90,11 +91,17 @@ int main()
   net.inputLayer(1)
      .fullyConnectedLayer(3, TANH)
      .fullyConnectedLayer(3, TANH)
-     .outputLayer(1, MLP::ID)
+     .outputLayer(1, LINEAR)
      .trainingSet(x, t);
 
-  net.train(DeepNetwork::BATCH_LMA, DeepNetwork::SSE, stop);
+  StoppingCriteria stop;
+  stop.maximalIterations = 10;
+  std::cout << "Error on training set before training: " << net.error()
+      << std::endl;
+  net.train(BATCH_LMA, SSE, stop);
   Eigen::VectorXf y = net(x);
+  std::cout << "Error on training set after training: " << net.error()
+      << std::endl;
 
   return 0;
 }
