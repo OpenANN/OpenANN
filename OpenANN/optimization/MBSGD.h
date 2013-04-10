@@ -15,11 +15,20 @@ namespace OpenANN {
  *
  * Mini-Batch Stochastic Gradient Descent.
  * Some tricks are used to speed up the optimization:
- *  * momentum
- *  * adaptive learning rates per parameter
+ *
+ * - momentum
+ * - adaptive learning rates per parameter
+ * - decaying learning rate
+ * - increasing momentum
+ * - Tikhonov regularization
+ *
  * When the batch size equals 1, the algorithms degenerates to stochastic
  * gradient descent. When it equals the training set size, the algorithm is
  * like batch gradient descent.
+ *
+ * The advantage of stochastic optimization in comparison to batch
+ * optimization is that we can escape local minima. Hence, the generalization
+ * is usually better.
  */
 class MBSGD : public Optimizer
 {
