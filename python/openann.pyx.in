@@ -83,6 +83,8 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
     c_DeepNetwork& compressedLayer(int units, int params, c_ActivationFunction act,
                                    string compression, ${FPT} stdDev,
                                    bool bias, ${FPT} dropoutProbability)
+    c_DeepNetwork& extremeLayer(int units, c_ActivationFunction act,
+                                ${FPT} stdDev, bool bias)
     c_DeepNetwork& convolutionalLayer(int featureMaps, int kernelRows,
                                       int kernelCols, c_ActivationFunction act,
                                       ${FPT} stdDev, bool bias)
@@ -90,11 +92,15 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
                                     c_ActivationFunction act, ${FPT} stdDev,
                                     bool bias)
     c_DeepNetwork& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
+    c_DeepNetwork& localReponseNormalizationLayer(${FPT} k, int n,
+                                                  ${FPT} alpha, ${FPT} beta,
+                                                  bool bias)
     c_DeepNetwork& outputLayer(int units, c_ActivationFunction act, ${FPT} stdDev)
     c_DeepNetwork& compressedOutputLayer(int units, int params,
                                          c_ActivationFunction act,
                                          string& compression, ${FPT} stdDev)
     c_Learner& trainingSet(c_${MT}& trainingInput, c_${MT}& trainingOutput)
+    ${FPT} error()
     c_${VT} train(c_Training algorithm, c_ErrorFunction errorFunction,
                      c_StoppingCriteria stop, bool reinitialize, bool dropout)
     c_${VT} predict "operator()"(c_${VT} x)
@@ -173,6 +179,11 @@ cdef class DeepNetwork:
                                  string(comp), std_dev, bias, dropout_probability)
     return self
 
+  def extreme_layer(self, units, act, std_dev=5.0, bias=True):
+    self.thisptr.extremeLayer(units, self.__get_activation_function(act),
+                              std_dev, bias)
+    return self
+
   def convolutional_layer(self, featureMaps, kernelRows, kernelCols, act,
                           std_dev=0.05, bias=True):
     self.thisptr.convolutionalLayer(featureMaps, kernelRows, kernelCols,
@@ -189,6 +200,10 @@ cdef class DeepNetwork:
 
   def maxpooling_layer(self, kernelRows, kernelCols, bias=True):
     self.thisptr.maxPoolingLayer(kernelRows, kernelCols, bias)
+    return self
+
+  def local_response_normalization_layer(self, k, n, alpha, beta, bias=True):
+    self.thisptr.localReponseNormalizationLayer(k, n, alpha, beta, bias)
     return self
 
   def output_layer(self, units, act, std_dev=0.05):
@@ -288,3 +303,5 @@ cdef class DeepNetwork:
       y[r] = self.yptr.data()[r]
     return y
 
+  def error(self):
+    return self.thisptr.error()
