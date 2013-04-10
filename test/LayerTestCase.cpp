@@ -429,6 +429,8 @@ void LayerTestCase::multilayerNetwork()
   net.outputLayer(3, LINEAR, 0.5);
   net.trainingSet(ds);
 
+  net.initialize();
+
   Vt g = net.gradient();
   Vt e = net.gradientFD();
   fpt delta = std::max<fpt>((fpt) 1e-2, 1e-5*e.norm());
