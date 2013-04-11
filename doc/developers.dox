@@ -4,6 +4,13 @@ namespace OpenANN {
 
 \page Contributing
 
+\b Table \b of \b contents
+  - \ref ContributingCode
+  - \ref Directories
+  - \ref ImprovingQuality
+  - \ref FAQ
+  - \ref TodoList
+
 \section ContributingCode Contributing code
 
 We use the version control system <a href="http://git-scm.com/" target=_blank>
@@ -29,6 +36,18 @@ git push origin <BranchName>
 \endcode
 - Open a pull request to the main repository. A core developer will merge your
 request.
+
+\section Directories
+
+- OpenANN - Header files that are exposed to the user
+- benchmarks - Standard ANN benchmarks
+- cmake - CMake macros
+- doc - Additional doxygen documentation files
+- examples - OpenANN showcase
+- lib - External libraries
+- python - Python language bindings
+- src - Implementation files for libopenann
+- test - Contains the OpenANN test suite
 
 \section ImprovingQuality Improving the code quality
 
@@ -67,7 +86,7 @@ make
 
   @todo layer: Radial basis functions layer (RBF)
   @todo layer: Support vector machines (SVM, maybe include libsvm?)
-  @todo Unsupervised methods (RBM, DBN, SOM, ...)
+  @todo Unsupervised methods (RBM, DBN, SOM, autoencoders, ...)
   @todo example: NORB data set
   @todo example: Caltech-101/256 data set
   @todo example: ImageNet
