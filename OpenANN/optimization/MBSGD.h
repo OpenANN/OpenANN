@@ -150,14 +150,14 @@ public:
    * @param batchSize size of the mini-batches; range: [1, N], where N is the
    *                  size of the training set
    * @param gamma Tikhonov (squared norm) regularization coefficient; range:
-   *              [1e-10, 1]
+   *              [0, 1]
    * @param learningRateDecay will be multiplied with the learning rate after
    *                          each weight update; range: (0, 1]
    * @param minimalLearningRate minimum value for the learning rate; range:
-   *                            (0, 1]
+   *                            [0, 1]
    * @param momentumGain will be added to the momentum after each weight
    *                     update; range: [0, 1)
-   * @param maximalMomentum maximum value for the momentum; range [0, 1)
+   * @param maximalMomentum maximum value for the momentum; range [0, 1]
    * @param minGain minimum factor for individual learning rates
    * @param maxGain maximum factor for individual learning rates
    */

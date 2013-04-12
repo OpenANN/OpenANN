@@ -2,6 +2,7 @@
 #include <optimization/Optimizable.h>
 #include <optimization/StoppingCriteria.h>
 #include <AssertionMacros.h>
+#include <OpenANNException.h>
 #include <EigenWrapper.h>
 #include <Test/Stopwatch.h>
 #include <numeric>
@@ -18,6 +19,22 @@ MBSGD::MBSGD(fpt learningRate, fpt momentum, int batchSize, fpt gamma,
     maxGain(maxGain), useGain(minGain != (fpt) 1.0 || maxGain != (fpt) 1.0),
     gamma(gamma), iteration(-1)
 {
+  if(learningRate <= 0.0 || learningRate > 1.0)
+    throw OpenANNException("Invalid learning rate, should be within (0, 1]");
+  if(momentum < 0.0 || momentum >= 1.0)
+    throw OpenANNException("Invalid momentum, should be within [0, 1)");
+  if(batchSize < 1)
+    throw OpenANNException("Invalid batch size, should be greater than 0");
+  if(gamma < 0.0 || gamma > 1.0)
+    throw OpenANNException("Invalid gamma, should be within [0, 1]");
+  if(learningRateDecay <= 0.0 || learningRateDecay > 1.0)
+    throw OpenANNException("Invalid learning rate decay, should be within (0, 1]");
+  if(minimalLearningRate < 0.0 || minimalLearningRate > 1.0)
+    throw OpenANNException("Invalid minimum learning rate, should be within [0, 1]");
+  if(momentumGain < 0.0 || momentumGain >= 1.0)
+    throw OpenANNException("Invalid momentum gain, should be within [0, 1)");
+  if(maximalMomentum < 0.0 || maximalMomentum > 1.0)
+    throw OpenANNException("Invalid maximal momentum, should be within [0, 1]");
 }
 
 MBSGD::~MBSGD()
