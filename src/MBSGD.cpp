@@ -8,9 +8,9 @@
 
 namespace OpenANN {
 
-MBSGD::MBSGD(fpt learningRate, fpt learningRateDecay, fpt minimalLearningRate,
-             fpt momentum, fpt momentumGain, fpt maximalMomentum,
-             int batchSize, fpt minGain, fpt maxGain, fpt gamma)
+MBSGD::MBSGD(fpt learningRate, fpt momentum, int batchSize, fpt gamma,
+             fpt learningRateDecay, fpt minimalLearningRate, fpt momentumGain,
+             fpt maximalMomentum, fpt minGain, fpt maxGain)
   : debugLogger(Logger::CONSOLE),
     alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
@@ -80,7 +80,7 @@ bool MBSGD::step()
     momentum = eta * momentum - alpha * gradient;
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
     if(gamma > 0.0) // Tikhonov (L2 norm) regularization
-      momentum -= gamma * parameters;
+      momentum -= alpha * gamma * parameters;
     parameters += momentum;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
     opt->setParameters(parameters);

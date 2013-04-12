@@ -13,22 +13,98 @@ namespace OpenANN {
 /**
  * @class MBSGD
  *
- * Mini-Batch Stochastic Gradient Descent.
- * Some tricks are used to speed up the optimization:
+ * Mini-batch stochastic gradient descent.
  *
- * - momentum
- * - adaptive learning rates per parameter
- * - decaying learning rate
- * - increasing momentum
- * - Tikhonov regularization
+ * This implementation of gradient descent has some modifications:
+ *
+ * - it is stochastic, we update the weights with a randomly chosen subset of
+ *   the training set to escape local minima and thus increase the
+ *   generalization capabilities
+ * - we use a momentum to smooth the search direction
+ * - each weight has an adaptive learning rate
+ * - we can decrease the learning rate during optimization
+ * - we can increase the momentum during optimization
+ * - we can regularize the weights, so that the generalization will be better
+ *
+ * A good introduction to optimization with MBSGD can be found in Geoff
+ * Hinton's Coursera course "Neural Networks for Machine Learning". A detailed
+ * description of this implementation follows.
  *
  * When the batch size equals 1, the algorithms degenerates to stochastic
  * gradient descent. When it equals the training set size, the algorithm is
  * like batch gradient descent.
  *
- * The advantage of stochastic optimization in comparison to batch
- * optimization is that we can escape local minima. Hence, the generalization
- * is usually better.
+ * Standard mini-batch stochastic gradient descent updates the weight vector w
+ * in step t through
+ *
+ * \f$ w^t = w^{t-1} - \frac{\alpha}{|B_t|} \sum_{n \in B_t} \nabla E_n(w) \f$
+ *
+ * or
+ *
+ * \f$ \Delta w^t = - \frac{\alpha}{|B_t|} \sum_{n \in B_t} \nabla E_n(w),
+ *     \quad w^t = w^{t-1} + \Delta w^t, \f$
+ *
+ * where \f$ \alpha \f$ is the learning rate and \f$ B_t \f$ is the set of
+ * indices of the t-th mini-batch, which is drawn randomly. The random order
+ * of gradients prevents us from getting stuck in local minima. This is an
+ * advantage over batch gradient descent. However, we must not make the batch
+ * size too small. A bigger batch size makes the optimization more robust
+ * against noise of the training set. A reasonable batch size is between 10
+ * and 100. The learning rate has to be within [0, 1). High learning rates can
+ * result in divergence, i.e. the error increases. Too low learning rates
+ * might make learning too slow, i.e. the number of epochs required to find an
+ * optimum might be infeasibe. A reasonable value for :math:`\\alpha` is
+ * usually within [1e-5, 0.1].
+ *
+ * A momentum can increase the optimization stability. In this case, the
+ * update rule is
+ *
+ * \f$ \Delta w^t = \eta \Delta w^{t-1} - \frac{\alpha}{|B_t|}
+ *                  \sum_{n \in B_t} \nabla E_n(w), \quad w^t = w^{t-1} +
+ *                  \Delta w^t, \f$
+ *
+ * where \f$ \eta \f$ is called momentum and must lie in [0, 1). The momentum
+ * term incorporates past gradients with exponentially decaying influence.
+ * This reduces changes of the search direction. An intuitive explanation of
+ * this update rule is: we regard w as the position of a ball that is rolling
+ * down a hill. The gradient represents its acceleration and the acceleration
+ * modifies its momentum.
+ *
+ * Another trick is using different learning rates for each weight. For each
+ * weight \f$ w_{ji} \f$ we can introduce a gain \f$ g_{ji} \f$ which will be
+ * multiplied with the learning rate so that we obtain an update rule for each
+ * weight
+ *
+ * \f$ \Delta w_{ji}^t = \eta \Delta w_{ji}^{t-1} -
+ *     \frac{\alpha g_{ji}^{t-1}}{|B_t|} \sum_{n \in B_t} \nabla E_n(w_{ji}),
+ *     \quad w_{ji}^t = w_{ji}^{t-1} + \Delta w_{ji}^t, \f$
+ *
+ * where \f$ g_{ji}^0 = 1 \f$ and \f$ g_{ji} \f$ will be increased by 0.05 if
+ * \f$ \Delta w_{ji}^t \Delta w_{ji}^{t-1} \geq 0 \f$, i.e. the sign of the
+ * search direction did not change and \f$ g_{ji} \f$ will be multiplied by
+ * 0.95 otherwise. We set a minimum and a maximum value for each gain. Usually
+ * these are 0.1 and 10 or 0.001 and 100 respectively.
+ *
+ * During optimization it often makes sense to start with a more global
+ * search, i.e. with a high learning rate and decrease the learning rate as we
+ * approach the minimum so that we obtain an update rule for the learning
+ * rate:
+ *
+ * \f$ \alpha^t = max(\alpha_{decay} \alpha^{t-1}, \alpha_{min}). \f$
+ *
+ * In addition, we can allow the optimizer to change the search direction more
+ * often at the beginning of the optimization and reduce this possibility at
+ * the end. To do this, we can start with a low momentum and increase it over
+ * time until we reach a maximum:
+ *
+ * \f$ \eta^t = min(\eta^{t-1} + \eta_{inc}, \eta_{max}). \f$
+ *
+ * To avoid overfitting it is sometimes helpful to add a penalty on the
+ * squared weight norm, i.e. we substract
+ *
+ * \f$ \alpha \gamma w^{t-1} \f$
+ *
+ * from the weight vector in each update.
  */
 class MBSGD : public Optimizer
 {
@@ -66,11 +142,30 @@ class MBSGD : public Optimizer
   Vt gradient, gains, parameters, momentum;
   std::vector<std::list<int> > batchAssignment;
 public:
-  MBSGD(fpt learningRate = 0.01, fpt learningRateDecay = 1.0,
-        fpt minimalLearningRate = 0.01, fpt momentum = 0.5,
-        fpt momentumGain = 0.0, fpt maximalMomentum = 0.5,
-        int batchSize = 10, fpt minGain = 1.0, fpt maxGain = 1.0,
-        fpt gamma = 0.0);
+  /**
+   * Create mini-batch stochastic gradient descent optimizer.
+   *
+   * @param learningRate learning rate (usually called alpha); range: (0, 1]
+   * @param momentum momentum coefficient (usually called eta); range: [0, 1)
+   * @param batchSize size of the mini-batches; range: [1, N], where N is the
+   *                  size of the training set
+   * @param gamma Tikhonov (squared norm) regularization coefficient; range:
+   *              [1e-10, 1]
+   * @param learningRateDecay will be multiplied with the learning rate after
+   *                          each weight update; range: (0, 1]
+   * @param minimalLearningRate minimum value for the learning rate; range:
+   *                            (0, 1]
+   * @param momentumGain will be added to the momentum after each weight
+   *                     update; range: [0, 1)
+   * @param maximalMomentum maximum value for the momentum; range [0, 1)
+   * @param minGain minimum factor for individual learning rates
+   * @param maxGain maximum factor for individual learning rates
+   */
+  MBSGD(fpt learningRate = 0.01, fpt momentum = 0.5, int batchSize = 10,
+        fpt gamma = 0.0,
+        fpt learningRateDecay = 1.0, fpt minimalLearningRate = 0.0,
+        fpt momentumGain = 0.0, fpt maximalMomentum = 1.0,
+        fpt minGain = 1.0, fpt maxGain = 1.0);
   ~MBSGD();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);

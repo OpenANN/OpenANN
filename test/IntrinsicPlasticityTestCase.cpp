@@ -50,7 +50,7 @@ void IntrinsicPlasticityTestCase::learn()
   ASSERT_EQUALS_DELTA((fpt) mean(1), (fpt) 0.5, (fpt) 1e-2);
   const fpt e = ip.error();
 
-  OpenANN::MBSGD sgd(5e-5, 1.0, 5e-5, 0.9, 0.0, 0.9, 1);
+  OpenANN::MBSGD sgd(5e-5, 0.9, 1);
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 1;
   sgd.setOptimizable(ip);
