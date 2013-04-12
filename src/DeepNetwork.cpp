@@ -328,7 +328,7 @@ fpt DeepNetwork::error()
 fpt DeepNetwork::errorFromDataSet(DataSet& dataset)
 {
     fpt e = 0.0;
-    for(int n = 0; n < N; ++n) {
+    for(int n = 0; n < dataset.samples(); ++n) {
         fpt e_n  = 0.0;
 
         tempOutput = (*this)(dataset.getInstance(n));
