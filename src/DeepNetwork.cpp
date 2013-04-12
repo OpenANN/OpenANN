@@ -346,6 +346,16 @@ fpt DeepNetwork::errorFromDataSet(DataSet& dataset)
 
         e += (e_n / 2);
     }
+
+    switch(errorFunction) 
+    {
+        case SSE:
+            return e;
+        case MSE:
+            return e / (fpt) N;
+        default:
+            return e;
+    }
 }
 
 
