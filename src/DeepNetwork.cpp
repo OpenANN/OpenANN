@@ -324,6 +324,31 @@ fpt DeepNetwork::error()
   }
 }
 
+
+fpt DeepNetwork::errorFromDataSet(DataSet& dataset)
+{
+    fpt e = 0.0;
+    for(int n = 0; n < N; ++n) {
+        fpt e_n  = 0.0;
+
+        tempOutput = (*this)(dataset.getInstance(n));
+
+        if(errorFunction == CE) 
+        {
+            for(int f = 0; f < tempOutput.rows(); ++f)
+                e_n -= dataset.getTarget(n)(f) * std::log(tempOutput(f));
+        }
+        else 
+        {
+            tempError = tempOutput - dataset.getTarget(n);
+            e_n += tempError.dot(tempError);
+        }
+
+        e += (e_n / 2);
+    }
+}
+
+
 bool DeepNetwork::providesGradient()
 {
   return true;

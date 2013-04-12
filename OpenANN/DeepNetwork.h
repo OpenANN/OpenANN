@@ -240,6 +240,7 @@ public:
   virtual void initialize();
   virtual fpt error(unsigned int i);
   virtual fpt error();
+  virtual fpt errorFromDataSet(DataSet& dataset);
   virtual bool providesGradient();
   virtual Vt gradient(unsigned int i);
   virtual Vt gradient();
