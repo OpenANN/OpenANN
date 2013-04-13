@@ -26,11 +26,11 @@ enum Training
 };
 
 /**
- * @class DeepNetwork
+ * @class Net
  *
- * Deep neural network. You can specify many different types of layers and
- * choose the architecture almost arbitrary. But there are no shortcut
- * connections allowed!
+ * Feedforward multilayer neural network. You can specify many different types
+ * of layers and choose the architecture almost arbitrary. But there are no
+ * shortcut connections allowed!
  *
  * So far the following types of layers are implemented:
  *
@@ -65,7 +65,7 @@ enum Training
  *   positions. Usually we need this layer for partially observable markov
  *   decision processes in reinforcement learning.
  */
-class DeepNetwork : public Optimizable, public Learner
+class Net : public Optimizable, public Learner
 {
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
@@ -85,8 +85,8 @@ class DeepNetwork : public Optimizable, public Learner
   void initializeNetwork();
 
 public:
-  DeepNetwork();
-  virtual ~DeepNetwork();
+  Net();
+  virtual ~Net();
 
   /**
    * Add an input layer.
@@ -99,8 +99,8 @@ public:
    *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
-  DeepNetwork& inputLayer(int dim1, int dim2 = 1, int dim3 = 1,
-                          bool bias = true, fpt dropoutProbability = 0.0);
+  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true,
+                  fpt dropoutProbability = 0.0);
   /**
    * Add a alpha-beta filter layer.
    * @param deltaT temporal difference between two steps
@@ -108,7 +108,8 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& alphaBetaFilterLayer(fpt deltaT, fpt stdDev = (fpt) 0.05, bool bias = true);
+  Net& alphaBetaFilterLayer(fpt deltaT, fpt stdDev = (fpt) 0.05,
+                            bool bias = true);
   /**
    * Add a fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -122,7 +123,7 @@ public:
    *        weights of a neuron to have a maximum norm
    * @return this for chaining
    */
-  DeepNetwork& fullyConnectedLayer(int units, ActivationFunction act,
+  Net& fullyConnectedLayer(int units, ActivationFunction act,
                                    fpt stdDev = (fpt) 0.05, bool bias = true,
                                    fpt dropoutProbability = 0.0,
                                    fpt maxSquaredWeightNorm = 0.0);
@@ -140,7 +141,7 @@ public:
    *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
-  DeepNetwork& compressedLayer(int units, int params, ActivationFunction act,
+  Net& compressedLayer(int units, int params, ActivationFunction act,
                                const std::string& compression,
                                fpt stdDev = (fpt) 0.05, bool bias = true,
                                fpt dropoutProbability = 0.0);
@@ -152,7 +153,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& extremeLayer(int units, ActivationFunction act,
+  Net& extremeLayer(int units, ActivationFunction act,
                             fpt stdDev = (fpt) 5.0, bool bias = true);
   /**
    * Add a convolutional layer.
@@ -164,7 +165,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& convolutionalLayer(int featureMaps, int kernelRows,
+  Net& convolutionalLayer(int featureMaps, int kernelRows,
                                   int kernelCols, ActivationFunction act,
                                   fpt stdDev = (fpt) 0.05, bool bias = true);
   /**
@@ -176,7 +177,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& subsamplingLayer(int kernelRows, int kernelCols,
+  Net& subsamplingLayer(int kernelRows, int kernelCols,
                                 ActivationFunction act,
                                 fpt stdDev = (fpt) 0.05, bool bias = true);
   /**
@@ -186,7 +187,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& maxPoolingLayer(int kernelRows, int kernelCols, bool bias = true);
+  Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias = true);
   /**
    * Add a local response normalization layer.
    * \f$ y^i_{rc} = x^i_{rc} / \left( k +
@@ -199,8 +200,8 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  DeepNetwork& localReponseNormalizationLayer(fpt k, int n, fpt alpha,
-                                              fpt beta, bool bias = true);
+  Net& localReponseNormalizationLayer(fpt k, int n, fpt alpha, fpt beta,
+                                      bool bias = true);
   /**
    * Add a fully connected output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -208,8 +209,7 @@ public:
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @return this for chaining
    */
-  DeepNetwork& outputLayer(int units, ActivationFunction act,
-                           fpt stdDev = (fpt) 0.05);
+  Net& outputLayer(int units, ActivationFunction act, fpt stdDev = (fpt) 0.05);
   /**
    * Add a compressed output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -221,27 +221,26 @@ public:
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @return this for chaining
    */
-  DeepNetwork& compressedOutputLayer(int units, int params,
-                                     ActivationFunction act,
-                                     const std::string& compression,
-                                     fpt stdDev = (fpt) 0.05);
+  Net& compressedOutputLayer(int units, int params, ActivationFunction act,
+                             const std::string& compression,
+                             fpt stdDev = (fpt) 0.05);
   /** 
    * Add a new layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
-   * Its cleaned up by DeepNetwork's destructor automatically.
+   * Its cleaned up by Net's destructor automatically.
    * @param layer pointer to an instance that implements the Layer interface
    * @return this for chaining
    */
-  DeepNetwork& addLayer(Layer* layer);
+  Net& addLayer(Layer* layer);
 
   unsigned int numberOflayers();
   Layer& getLayer(unsigned int l);
   OutputInfo getOutputInfo(unsigned int l);
-  DeepNetwork& setErrorFunction(ErrorFunction errorFunction);
+  Net& setErrorFunction(ErrorFunction errorFunction);
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
-  virtual DeepNetwork& testSet(Mt& testInput, Mt& testOutput);
-  virtual DeepNetwork& testSet(DataSet& testDataSet);
+  virtual Net& testSet(Mt& testInput, Mt& testOutput);
+  virtual Net& testSet(DataSet& testDataSet);
   Vt train(Training algorithm, ErrorFunction errorFunction, StoppingCriteria stop,
            bool reinitialize = true, bool dropout = false);
 
