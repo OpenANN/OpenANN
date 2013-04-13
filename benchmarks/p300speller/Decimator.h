@@ -1,9 +1,9 @@
 #ifndef DECIMATOR_H
 #define DECIMATOR_H
 
+#include <OpenANN/Preprocessing.h>
 #include <Eigen/Dense>
 #include <cmath>
-#include <complex>
 
 class Decimator
 {
@@ -36,60 +36,11 @@ public:
         0.00256293;
     Vt a1(1);
     a1 << 1.;
-    filter(x, y1, b1, a1);
+    OpenANN::filter(x, y1, b1, a1);
 
     Mt d(x.rows(), x.cols()/downSamplingFactor);
-    downsample(y1, d);
+    OpenANN::downsample(y1, d, downSamplingFactor);
     return d;
-  }
-
-  /**
-   * Apply a filter on the input signal.
-   * See scipy, example:
-   * \code
-     import scipy.signal as signal
-     fs = 240
-     signal.cheby1(8, 0.05, [0.1/(fs/2), 10.0/(fs/2)],btype='band')
-     \endcode
-   */
-  void filter(const Mt& x, Mt& y, const Mt& b, const Mt& a)
-  {
-    y.fill(0.0);
-
-    for(int c = 0; c < x.rows(); c++)
-    {
-      for(int t = 0; t < x.cols(); t++)
-      {
-        const int maxPQ = std::max(b.rows(), a.rows());
-        for(int pq = 0; pq < maxPQ; pq++)
-        {
-          const double tSource = t-pq;
-          if(pq < b.rows())
-          {
-            if(tSource >= 0)
-              y(c, t) += b(pq) * x(c, tSource);
-            else
-              y(c, t) += b(pq) * x(c, -tSource);
-          }
-          if(pq > 0 && pq < a.rows())
-          {
-            if(tSource >= 0)
-              y(c, t) += a(pq) * x(c, tSource);
-            else
-              y(c, t) += a(pq) * x(c, -tSource);
-          }
-        }
-        y(c, t) /= a(0);
-      }
-    }
-  }
-
-  void downsample(const Mt& y, Mt& d)
-  {
-    for(int c = 0; c < y.rows(); c++)
-      for(int target = 0, source = 0; target < d.cols();
-          target++, source+=downSamplingFactor)
-        d(c, target) = y(c, source);
   }
 };
 
