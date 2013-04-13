@@ -26,6 +26,15 @@ public:
    */
   RandomNumberGenerator();
   /**
+   * Set the seed to ensure repeatability.
+   *
+   * Note that the seed is set globally, i.e. it might also be overwritten by
+   * another part of you program.
+   *
+   * @param seed initial parameter for random number generator
+   */
+  void seed(unsigned int seed);
+  /**
    * Draw an integer from a uniform distribution.
    * @param min minimal value
    * @param range range of the interval, must be greater than 0

@@ -7,11 +7,24 @@
 
 void RandomTestCase::run()
 {
+  RUN(RandomTestCase, seed);
   RUN(RandomTestCase, generateInt);
   RUN(RandomTestCase, generateIndex);
   RUN(RandomTestCase, generate);
   RUN(RandomTestCase, sampleNormalDistribution);
   RUN(RandomTestCase, generateIndices);
+}
+
+void RandomTestCase::seed()
+{
+  OpenANN::RandomNumberGenerator rng;
+  rng.seed(4);
+  int i = rng.generateInt(0, 100);
+  int j = rng.generateInt(0, 100);
+  rng.seed(4);
+  int k = rng.generateInt(0, 100);
+  ASSERT_EQUALS(i, k);
+  ASSERT_NOT_EQUALS(i, j);
 }
 
 void RandomTestCase::generateInt()

@@ -14,6 +14,11 @@ RandomNumberGenerator::RandomNumberGenerator()
   }
 }
 
+void RandomNumberGenerator::seed(unsigned int seed)
+{
+  srand(seed);
+}
+
 int RandomNumberGenerator::generateInt(int min, int range) const
 {
   OPENANN_CHECK(range >= 0);
