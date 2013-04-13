@@ -116,11 +116,17 @@ int main()
 }
 \endcode
 
-Compile it with pkg-config and g++:
+Compile it with pkg-config and g++ (and really make sure that pkg-config is
+installed otherwise you might got misleading errors):
 
 \code
 g++ main.cpp -o openann `pkg-config --cflags --libs openann`
 \endcode
+
+Note: Depending on whether you have a CUDA environment set up or not the
+floating point type is chosen. With a CUDA environment it is set to float and
+without it is set to double. That means all matrices and scalars must have the
+correct type!
 
 Python
 \code
