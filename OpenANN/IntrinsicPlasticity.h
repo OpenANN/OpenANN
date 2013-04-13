@@ -1,9 +1,9 @@
 #pragma once
 
-#include <optimization/Optimizable.h>
-#include <Learner.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/Learner.h>
+#include <OpenANN/io/DataSet.h>
 #include <Eigen/Dense>
-#include <io/DataSet.h>
 
 namespace OpenANN
 {

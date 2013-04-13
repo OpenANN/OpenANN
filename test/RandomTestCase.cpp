@@ -1,5 +1,5 @@
 #include "RandomTestCase.h"
-#include <Random.h>
+#include <OpenANN/util/Random.h>
 #include <algorithm>
 #include <cmath>
 #include <numeric>

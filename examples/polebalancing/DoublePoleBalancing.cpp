@@ -1,6 +1,6 @@
 #include "DoublePoleBalancing.h"
-#include <AssertionMacros.h>
-#include <EigenWrapper.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/EigenWrapper.h>
 #include <cmath>
 
 DoublePoleBalancing::DoublePoleBalancing(bool fullyObservable)

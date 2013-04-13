@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rl/Agent.h>
+#include <OpenANN/rl/Agent.h>
 
 namespace OpenANN
 {

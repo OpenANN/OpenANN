@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Optimizer.h"
-#include <io/Logger.h>
-#include <optimization/StoppingCriteria.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include <Eigen/Dense>
 
 template<typename T> class CMAES;

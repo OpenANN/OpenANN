@@ -1,9 +1,9 @@
-#include <optimization/MBSGD.h>
-#include <optimization/Optimizable.h>
-#include <optimization/StoppingCriteria.h>
-#include <AssertionMacros.h>
-#include <OpenANNException.h>
-#include <EigenWrapper.h>
+#include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
+#include <OpenANN/util/EigenWrapper.h>
 #include <Test/Stopwatch.h>
 #include <numeric>
 

@@ -1,6 +1,6 @@
 #include "BCIDataSet.h"
 #include "Decimator.h"
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <fstream>
 
 BCIDataSet::BCIDataCache::BCIDataCache(int size, int D)

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <OpenANN>
-#include <io/Logger.h>
-#include <io/DirectStorageDataSet.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
 #include <QGLWidget>
 #include <QKeyEvent>

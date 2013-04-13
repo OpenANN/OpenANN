@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 
 /**
  * Creates two interlocked spirals that form different classes.

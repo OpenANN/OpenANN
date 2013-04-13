@@ -1,7 +1,7 @@
-#include <io/DirectStorageDataSet.h>
-#include <optimization/Optimizable.h>
-#include <AssertionMacros.h>
-#include <Learner.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/Learner.h>
 
 namespace OpenANN {
 

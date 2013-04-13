@@ -1,5 +1,5 @@
 #include "CMAESTestCase.h"
-#include <optimization/IPOPCMAES.h>
+#include <OpenANN/optimization/IPOPCMAES.h>
 #include "optimization/Rosenbrock.h"
 #include "optimization/Himmelblau.h"
 #include "optimization/Ellinum.h"

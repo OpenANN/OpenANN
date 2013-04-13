@@ -1,5 +1,5 @@
-#include <layers/FullyConnected.h>
-#include <Random.h>
+#include <OpenANN/layers/FullyConnected.h>
+#include <OpenANN/util/Random.h>
 
 namespace OpenANN {
 

@@ -1,7 +1,7 @@
 #include "BCIDataSet.h"
-#include <OpenANN>
-#include <CompressionMatrixFactory.h>
-#include <io/Logger.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/CompressionMatrixFactory.h>
+#include <OpenANN/io/Logger.h>
 #include <Test/Stopwatch.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>

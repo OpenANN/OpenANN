@@ -1,17 +1,17 @@
-#include <Net.h>
-#include <layers/Input.h>
-#include <layers/AlphaBetaFilter.h>
-#include <layers/FullyConnected.h>
-#include <layers/Compressed.h>
-#include <layers/Extreme.h>
-#include <layers/Convolutional.h>
-#include <layers/Subsampling.h>
-#include <layers/MaxPooling.h>
-#include <layers/LocalResponseNormalization.h>
-#include <io/DirectStorageDataSet.h>
-#include <optimization/IPOPCMAES.h>
-#include <optimization/LMA.h>
-#include <optimization/MBSGD.h>
+#include <OpenANN/Net.h>
+#include <OpenANN/layers/Input.h>
+#include <OpenANN/layers/AlphaBetaFilter.h>
+#include <OpenANN/layers/FullyConnected.h>
+#include <OpenANN/layers/Compressed.h>
+#include <OpenANN/layers/Extreme.h>
+#include <OpenANN/layers/Convolutional.h>
+#include <OpenANN/layers/Subsampling.h>
+#include <OpenANN/layers/MaxPooling.h>
+#include <OpenANN/layers/LocalResponseNormalization.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/optimization/IPOPCMAES.h>
+#include <OpenANN/optimization/LMA.h>
+#include <OpenANN/optimization/MBSGD.h>
 
 namespace OpenANN {
 

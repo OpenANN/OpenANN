@@ -1,6 +1,6 @@
 #include <CreateTwoSpiralsDataSet.h>
-#include <io/DirectStorageDataSet.h>
-#include <OpenANN>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/OpenANN>
 #include <Test/Stopwatch.h>
 #include <cstdlib>
 #include <vector>

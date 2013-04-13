@@ -1,6 +1,6 @@
 #pragma once
 
-#include <io/DataSet.h>
+#include <OpenANN/io/DataSet.h>
 
 namespace OpenANN {
 

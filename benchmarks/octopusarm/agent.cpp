@@ -1,10 +1,10 @@
 #include "agent.h"
-#include <OpenANN>
-#include <optimization/IPOPCMAES.h>
-#include <AssertionMacros.h>
-#include <EigenWrapper.h>
-#include <io/Logger.h>
-#include <Random.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/IPOPCMAES.h>
+#include <OpenANN/AssertionMacros.h>
+#include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/util/Random.h>
 #include <ctime>
 #include <fstream>
 #include <stdlib.h>

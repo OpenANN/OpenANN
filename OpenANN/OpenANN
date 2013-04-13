@@ -18,6 +18,6 @@ public:
 
 }
 
-#include <Net.h>
+#include <OpenANN/Net.h>
 
 #endif // OPENANN_INCLUDED

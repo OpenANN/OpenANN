@@ -1,7 +1,7 @@
 #include "IntrinsicPlasticityTestCase.h"
-#include <IntrinsicPlasticity.h>
-#include <Random.h>
-#include <optimization/MBSGD.h>
+#include <OpenANN/IntrinsicPlasticity.h>
+#include <OpenANN/util/Random.h>
+#include <OpenANN/optimization/MBSGD.h>
 
 void IntrinsicPlasticityTestCase::run()
 {

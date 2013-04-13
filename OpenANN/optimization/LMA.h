@@ -3,9 +3,9 @@
 
 #ifdef USE_GPL_LICENSE
 
-#include <optimization/Optimizer.h>
-#include <optimization/StoppingCriteria.h>
-#include <io/Logger.h>
+#include <OpenANN/optimization/Optimizer.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/io/Logger.h>
 #include <Eigen/Dense>
 #include <optimization.h>
 

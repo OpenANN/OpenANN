@@ -1,9 +1,9 @@
 #pragma once
 
-#include <optimization/Optimizer.h>
-#include <optimization/StoppingCriteria.h>
-#include <io/Logger.h>
-#include <Random.h>
+#include <OpenANN/optimization/Optimizer.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/util/Random.h>
 #include <Eigen/Dense>
 #include <vector>
 #include <list>

@@ -18,7 +18,6 @@ if __name__ == "__main__":
                 library_dirs=["${CMAKE_INSTALL_PREFIX}/lib"],
                 libraries=[${PYTHONEX_LINK_LIBRARIES}],
                 include_dirs=["${PROJECT_SOURCE_DIR}",
-                              "${PROJECT_SOURCE_DIR}/OpenANN",
                               "${PROJECT_SOURCE_DIR}/test/lib/CPP-Test",
                               "${EIGEN3_INCLUDE_DIRS}"],
                 define_macros=[("fpt", "${FPT}"), ("Vt", "Eigen::${VT}"),

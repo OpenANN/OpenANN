@@ -85,7 +85,7 @@ set(OPENANN_COMPILER_FLAGS "${OPENANN_COMPILER_FLAGS} ${OPENANN_OPTIMIZATION_FLA
 set(OPENANN_COMPILER_FLAGS "${OPENANN_COMPILER_FLAGS} ${OPENANN_CUDA_FLAGS}")
 add_subdirectory(lib)
 
-include_directories(OpenANN ${EIGEN3_INCLUDE_DIRS} lib/CMA-ESpp lib/ALGLIB test/lib/CPP-Test)
+include_directories(. ${EIGEN3_INCLUDE_DIRS} lib/CMA-ESpp lib/ALGLIB test/lib/CPP-Test)
 add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(benchmarks)

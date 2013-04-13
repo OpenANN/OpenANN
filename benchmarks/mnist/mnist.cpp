@@ -1,7 +1,7 @@
-#include <OpenANN>
-#include <optimization/MBSGD.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/MBSGD.h>
 #include "IDXLoader.h"
-#include <io/DirectStorageDataSet.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif

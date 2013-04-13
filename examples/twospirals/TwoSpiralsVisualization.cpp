@@ -1,5 +1,5 @@
 #include "TwoSpiralsVisualization.h"
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <GL/glu.h>
 #include <QApplication>
 

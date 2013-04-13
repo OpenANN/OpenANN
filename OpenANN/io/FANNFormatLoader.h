@@ -1,6 +1,6 @@
 #pragma once
 
-#include <io/Logger.h>
+#include <OpenANN/io/Logger.h>
 #include <Eigen/Dense>
 #include <fstream>
 

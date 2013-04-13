@@ -1,6 +1,6 @@
 #include <iostream>
 #include <QApplication>
-#include <OpenANN>
+#include <OpenANN/OpenANN>
 #include "DoublePoleBalancingVisualization.h"
 
 /**

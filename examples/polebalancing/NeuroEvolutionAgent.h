@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rl/Agent.h>
-#include <Net.h>
-#include <optimization/IPOPCMAES.h>
+#include <OpenANN/rl/Agent.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/IPOPCMAES.h>
 #include "DoubleExponentialSmoothing.h"
 #include <vector>
 #include <list>

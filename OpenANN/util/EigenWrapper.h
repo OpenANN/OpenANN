@@ -1,6 +1,6 @@
 #pragma once
 
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Dense>
 #include <cmath>
 

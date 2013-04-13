@@ -1,5 +1,5 @@
-#include <io/FANNFormatLoader.h>
-#include <AssertionMacros.h>
+#include <OpenANN/io/FANNFormatLoader.h>
+#include <OpenANN/AssertionMacros.h>
 
 namespace OpenANN
 {

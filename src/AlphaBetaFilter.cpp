@@ -1,5 +1,5 @@
-#include <layers/AlphaBetaFilter.h>
-#include <Random.h>
+#include <OpenANN/layers/AlphaBetaFilter.h>
+#include <OpenANN/util/Random.h>
 
 namespace OpenANN {
 

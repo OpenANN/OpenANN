@@ -1,6 +1,6 @@
-#include <optimization/IPOPCMAES.h>
-#include <optimization/Optimizable.h>
-#include <AssertionMacros.h>
+#include <OpenANN/optimization/IPOPCMAES.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <cma-es/cmaes.h>
 
 namespace OpenANN {

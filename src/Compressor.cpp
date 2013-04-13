@@ -1,4 +1,4 @@
-#include <Compressor.h>
+#include <OpenANN/Compressor.h>
 #ifdef CUDA_AVAILABLE
 #include <cuBLASInterface.cuh>
 #define maxInputDimensionWithoutCuda 10000

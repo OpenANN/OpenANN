@@ -1,7 +1,7 @@
-#include <OpenANN>
+#include <OpenANN/OpenANN>
 #include "IDXLoader.h"
-#include <io/DirectStorageDataSet.h>
-#include <io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/io/Logger.h>
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QApplication>

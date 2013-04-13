@@ -24,7 +24,7 @@ if __name__ == "__main__":
   outputs = numpy.sin(numpy.random.normal(inputs, numpy.ones(n)*noise_std_dev))
 
   # Setup network
-  net = DeepNetwork()
+  net = Net()
   # Your input data can have up to 3 dimensions, e. g. an image could have
   # color channels x rows x columns: (3, 16, 16). Convolutional layers or
   # pooling layers require 3 dimensions!

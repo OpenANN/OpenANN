@@ -1,6 +1,6 @@
-#include <layers/Compressed.h>
-#include <CompressionMatrixFactory.h>
-#include <Random.h>
+#include <OpenANN/layers/Compressed.h>
+#include <OpenANN/CompressionMatrixFactory.h>
+#include <OpenANN/util/Random.h>
 
 namespace OpenANN {
 

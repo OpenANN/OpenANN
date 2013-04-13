@@ -1,7 +1,7 @@
-#include <IntrinsicPlasticity.h>
-#include <Random.h>
-#include <io/DirectStorageDataSet.h>
-#include <EigenWrapper.h>
+#include <OpenANN/IntrinsicPlasticity.h>
+#include <OpenANN/util/Random.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

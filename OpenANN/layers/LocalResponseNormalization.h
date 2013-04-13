@@ -1,6 +1,6 @@
 #pragma once
 
-#include <layers/Layer.h>
+#include <OpenANN/layers/Layer.h>
 
 namespace OpenANN {
 

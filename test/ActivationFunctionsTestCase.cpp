@@ -1,5 +1,5 @@
 #include "ActivationFunctionsTestCase.h"
-#include <ActivationFunctions.h>
+#include <OpenANN/ActivationFunctions.h>
 
 void ActivationFunctionsTestCase::run()
 {

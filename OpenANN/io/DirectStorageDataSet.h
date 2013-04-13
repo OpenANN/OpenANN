@@ -3,8 +3,8 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include <io/DataSet.h>
-#include "Logger.h"
+#include <OpenANN/io/DataSet.h>
+#include <OpenANN/io/Logger.h>
 #include <Test/Stopwatch.h>
 
 namespace OpenANN {

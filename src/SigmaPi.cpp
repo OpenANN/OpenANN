@@ -1,24 +1,24 @@
-#include <layers/SigmaPi.h>
-#include <Random.h>
-#include <stdexcept>
+#include <OpenANN/layers/SigmaPi.h>
+#include <OpenANN/util/Random.h>
+#include <OpenANN/util/OpenANNException.h>
 
 namespace OpenANN {
 
 fpt SigmaPi::Constraint::operator() (int p1, int p2) const 
 {
-    throw std::runtime_error("constrain operator (p1, p2) must be implemented");
+    throw OpenANNException("Constrain operator (p1, p2) must be implemented");
     return 0.0;
 }
 
 fpt SigmaPi::Constraint::operator() (int p1, int p2, int p3) const 
 {
-    throw std::runtime_error("constrain operator (p1, p2, p3) must be implemented");
+    throw OpenANNException("Constrain operator (p1, p2, p3) must be implemented");
     return 0.0;
 }
 
 fpt SigmaPi::Constraint::operator() (int p1, int p2, int p3, int p4) const 
 {
-    throw std::runtime_error("constrain operator (p1, p2, p3, p4) must be implemented");
+    throw OpenANNException("Constrain operator (p1, p2, p3, p4) must be implemented");
     return 0.0;
 }
 

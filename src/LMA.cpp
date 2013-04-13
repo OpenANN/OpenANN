@@ -1,9 +1,9 @@
 #ifdef USE_GPL_LICENSE
 
-#include <optimization/LMA.h>
-#include <optimization/Optimizable.h>
-#include <AssertionMacros.h>
-#include <Random.h>
+#include <OpenANN/optimization/LMA.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/Random.h>
 #include <limits>
 #include <Test/Stopwatch.h>
 

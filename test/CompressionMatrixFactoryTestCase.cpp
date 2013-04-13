@@ -1,5 +1,5 @@
 #include "CompressionMatrixFactoryTestCase.h"
-#include <CompressionMatrixFactory.h>
+#include <OpenANN/CompressionMatrixFactory.h>
 
 void CompressionMatrixFactoryTestCase::run()
 {

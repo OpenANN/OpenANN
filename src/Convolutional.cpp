@@ -1,6 +1,6 @@
-#include <layers/Convolutional.h>
-#include <Random.h>
-#include <AssertionMacros.h>
+#include <OpenANN/layers/Convolutional.h>
+#include <OpenANN/util/Random.h>
+#include <OpenANN/util/AssertionMacros.h>
 
 namespace OpenANN {
 

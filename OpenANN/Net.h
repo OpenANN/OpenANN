@@ -1,10 +1,10 @@
 #pragma once
 
-#include <optimization/Optimizable.h>
-#include <Learner.h>
-#include <layers/Layer.h>
-#include <ActivationFunctions.h>
-#include <optimization/StoppingCriteria.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/Learner.h>
+#include <OpenANN/layers/Layer.h>
+#include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
 namespace OpenANN {

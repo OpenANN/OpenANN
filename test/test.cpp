@@ -5,9 +5,9 @@
 #endif
 #include <iostream>
 #include <cstdlib>
-#include <io/Logger.h>
-#include <OpenANN>
-#include <Random.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/util/Random.h>
 #include "ActivationFunctionsTestCase.h"
 #include "CMAESTestCase.h"
 #include "CompressionMatrixFactoryTestCase.h"

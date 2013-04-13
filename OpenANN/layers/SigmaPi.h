@@ -2,8 +2,8 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include <layers/Layer.h>
-#include <ActivationFunctions.h>
+#include <OpenANN/layers/Layer.h>
+#include <OpenANN/ActivationFunctions.h>
 
 namespace OpenANN {
 

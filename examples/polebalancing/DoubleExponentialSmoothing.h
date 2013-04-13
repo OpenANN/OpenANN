@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <io/Logger.h>
+#include <OpenANN/io/Logger.h>
 
 class DoubleExponentialSmoothing
 {

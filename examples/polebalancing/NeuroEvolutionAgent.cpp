@@ -1,5 +1,5 @@
 #include "NeuroEvolutionAgent.h"
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
 
 NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,

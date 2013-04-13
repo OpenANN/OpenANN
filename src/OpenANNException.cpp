@@ -1,4 +1,4 @@
-#include <OpenANNException.h>
+#include <OpenANN/util/OpenANNException.h>
 
 namespace OpenANN {
 

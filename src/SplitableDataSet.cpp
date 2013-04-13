@@ -1,6 +1,6 @@
-#include <io/SplitableDataSet.h>
-#include <AssertionMacros.h>
-#include <Learner.h>
+#include <OpenANN/io/SplitableDataSet.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/Learner.h>
 #include <algorithm>
 #include <ctime>
 #include <cmath>
