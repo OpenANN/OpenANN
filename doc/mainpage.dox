@@ -83,7 +83,7 @@ sudo apt-get install ruby rubygems; sudo gem install rice
 
 C++
 \code
-#include <OpenANN>
+#include <OpenANN/OpenANN>
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -96,7 +96,7 @@ int main()
   Eigen::MatrixXf t(1, 1);
   t.fill(5.0f);
 
-  DeepNetwork net;
+  Net net;
   net.inputLayer(1)
      .fullyConnectedLayer(3, TANH)
      .fullyConnectedLayer(3, TANH)
@@ -116,6 +116,12 @@ int main()
 }
 \endcode
 
+Compile it with pkg-config and g++:
+
+\code
+g++ main.cpp -o openann `pkg-config --cflags --libs openann`
+\endcode
+
 Python
 \code
 from openann import *
@@ -128,7 +134,7 @@ if __name__ == "__main__":
   outputs = numpy.sin(numpy.random.normal(inputs, numpy.ones(500)*0.1))
 
   # Setup network
-  net = DeepNetwork()
+  net = Net()
   net.input_layer(1, True, 0.05)
   net.fully_connected_layer(200, "rectifier", True)
   net.output_layer(1, "linear")
@@ -136,12 +142,6 @@ if __name__ == "__main__":
   stop_dict = {"maximalIterations" : 10,
                "minimalValueDifferences" : 1e-8}
   net.train("lma", "sse", stop_dict)
-\endcode
-
-Compile it with pkg-config and g++:
-
-\code
-g++ main.cpp `pkg-config --cflags --libs openann`
 \endcode
 
 \section MoreExamples More Examples
