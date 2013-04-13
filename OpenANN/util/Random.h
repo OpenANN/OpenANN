@@ -6,7 +6,7 @@
 #ifndef OPENANN_RANDOM_H
 #define OPENANN_RANDOM_H
 
-#include <OpenANN/AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
 #include <cstdlib>
 #include <algorithm>
