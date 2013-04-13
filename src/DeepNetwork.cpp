@@ -149,8 +149,6 @@ void DeepNetwork::initializeNetwork()
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
-  for(int p = 0; p < P; p++)
-    parameterVector(p) = *parameters[p];
   initialized = true;
 }
 
@@ -327,6 +325,41 @@ fpt DeepNetwork::error()
       return e;
   }
 }
+
+
+fpt DeepNetwork::errorFromDataSet(DataSet& dataset)
+{
+    fpt e = 0.0;
+    for(int n = 0; n < dataset.samples(); ++n) {
+        fpt e_n  = 0.0;
+
+        tempOutput = (*this)(dataset.getInstance(n));
+
+        if(errorFunction == CE) 
+        {
+            for(int f = 0; f < tempOutput.rows(); ++f)
+                e_n -= dataset.getTarget(n)(f) * std::log(tempOutput(f));
+        }
+        else 
+        {
+            tempError = tempOutput - dataset.getTarget(n);
+            e_n += tempError.dot(tempError);
+        }
+
+        e += (e_n / 2);
+    }
+
+    switch(errorFunction) 
+    {
+        case SSE:
+            return e;
+        case MSE:
+            return e / (fpt) N;
+        default:
+            return e;
+    }
+}
+
 
 bool DeepNetwork::providesGradient()
 {
