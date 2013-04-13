@@ -18,6 +18,6 @@ public:
 
 }
 
-#include <DeepNetwork.h>
+#include <Net.h>
 
 #endif // OPENANN_INCLUDED

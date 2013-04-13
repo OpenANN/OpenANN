@@ -1,5 +1,5 @@
 #include "agent.h"
-#include <DeepNetwork.h>
+#include <Net.h>
 #include <optimization/IPOPCMAES.h>
 #include <AssertionMacros.h>
 #include <EigenWrapper.h>
@@ -67,7 +67,7 @@ ruby evaluate
 
 int num_states = 0, num_actions = 0;
 IPOPCMAES opt;
-DeepNetwork net;
+Net net;
 double episodeReturn;
 Logger logger(Logger::CONSOLE);
 int hiddenUnits;

@@ -60,7 +60,7 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
 cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   ctypedef struct c_Learner "OpenANN::Learner"
 
-cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
+cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef enum c_ErrorFunction "OpenANN::ErrorFunction":
     NO_E_DEFINED
     SSE
@@ -73,36 +73,36 @@ cdef extern from "OpenANN/DeepNetwork.h" namespace "OpenANN":
     BATCH_LMA
     MINIBATCH_SGD
 
-  ctypedef struct c_DeepNetwork "OpenANN::DeepNetwork":
-    c_DeepNetwork& inputLayer(int dim1, int dim2, int dim3, bool bias,
+  ctypedef struct c_Net "OpenANN::Net":
+    c_Net& inputLayer(int dim1, int dim2, int dim3, bool bias,
                               ${FPT} dropoutProbability)
-    c_DeepNetwork& alphaBetaFilterLayer(${FPT} deltaT, ${FPT} stdDev, bool bias)
-    c_DeepNetwork& fullyConnectedLayer(int units, c_ActivationFunction act,
+    c_Net& alphaBetaFilterLayer(${FPT} deltaT, ${FPT} stdDev, bool bias)
+    c_Net& fullyConnectedLayer(int units, c_ActivationFunction act,
                                        ${FPT} stdDev, bool bias,
                                        ${FPT} dropoutProbability)
-    c_DeepNetwork& compressedLayer(int units, int params, c_ActivationFunction act,
+    c_Net& compressedLayer(int units, int params, c_ActivationFunction act,
                                    string compression, ${FPT} stdDev,
                                    bool bias, ${FPT} dropoutProbability)
-    c_DeepNetwork& convolutionalLayer(int featureMaps, int kernelRows,
+    c_Net& convolutionalLayer(int featureMaps, int kernelRows,
                                       int kernelCols, c_ActivationFunction act,
                                       ${FPT} stdDev, bool bias)
-    c_DeepNetwork& subsamplingLayer(int kernelRows, int kernelCols,
+    c_Net& subsamplingLayer(int kernelRows, int kernelCols,
                                     c_ActivationFunction act, ${FPT} stdDev,
                                     bool bias)
-    c_DeepNetwork& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
-    c_DeepNetwork& outputLayer(int units, c_ActivationFunction act, ${FPT} stdDev)
-    c_DeepNetwork& compressedOutputLayer(int units, int params,
+    c_Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
+    c_Net& outputLayer(int units, c_ActivationFunction act, ${FPT} stdDev)
+    c_Net& compressedOutputLayer(int units, int params,
                                          c_ActivationFunction act,
                                          string& compression, ${FPT} stdDev)
     c_Learner& trainingSet(c_${MT}& trainingInput, c_${MT}& trainingOutput)
     c_${VT} train(c_Training algorithm, c_ErrorFunction errorFunction,
                      c_StoppingCriteria stop, bool reinitialize, bool dropout)
     c_${VT} predict "operator()"(c_${VT} x)
-  c_DeepNetwork *new_DeepNetwork "new OpenANN::DeepNetwork" ()
-  void del_DeepNetwork "delete" (c_DeepNetwork *ptr)
+  c_Net *new_Net "new OpenANN::Net" ()
+  void del_Net "delete" (c_Net *ptr)
 
-cdef class DeepNetwork:
-  cdef c_DeepNetwork *thisptr
+cdef class Net:
+  cdef c_Net *thisptr
   cdef c_${MT} *inptr
   cdef c_${MT} *outptr
   cdef c_StoppingCriteria *stop
@@ -110,7 +110,7 @@ cdef class DeepNetwork:
   cdef c_${VT} *yptr
 
   def __cinit__(self):
-    self.thisptr = new_DeepNetwork()
+    self.thisptr = new_Net()
     self.stop = new_StoppingCriteria()
     self.inptr = NULL
     self.outptr = NULL
@@ -118,7 +118,7 @@ cdef class DeepNetwork:
     self.yptr = NULL
 
   def __dealloc__(self):
-    del_DeepNetwork(self.thisptr)
+    del_Net(self.thisptr)
     del_StoppingCriteria(self.stop)
     if self.inptr != NULL:
       del_${MT}(self.inptr)

@@ -6,7 +6,7 @@
 #include <layers/MaxPooling.h>
 #include <layers/SigmaPi.h>
 #include <optimization/Optimizable.h>
-#include <DeepNetwork.h>
+#include <Net.h>
 #include <io/DirectStorageDataSet.h>
 
 using namespace OpenANN;
@@ -420,7 +420,7 @@ void LayerTestCase::multilayerNetwork()
   Mt Y = Mt::Random(3, samples);
   DirectStorageDataSet ds(X, Y);
 
-  DeepNetwork net;
+  Net net;
   net.inputLayer(1, 6, 6);
   net.convolutionalLayer(10, 3, 3, TANH, 0.5);
   net.subsamplingLayer(2, 2, TANH, 0.5);

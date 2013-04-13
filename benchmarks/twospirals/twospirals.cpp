@@ -1,7 +1,7 @@
 #include <CreateTwoSpiralsDataSet.h>
 #include <io/DirectStorageDataSet.h>
 #include <OpenANN>
-#include <DeepNetwork.h>
+#include <Net.h>
 #include <Test/Stopwatch.h>
 #include <cstdlib>
 #include <vector>
@@ -91,7 +91,7 @@ struct Result
 /**
  * Set up the desired MLP architecture.
  */
-void setup(OpenANN::DeepNetwork& net, int architecture)
+void setup(OpenANN::Net& net, int architecture)
 {
   OpenANN::Logger setupLogger(OpenANN::Logger::CONSOLE);
   setupLogger << "Architecture: ";
@@ -162,7 +162,7 @@ void setup(OpenANN::DeepNetwork& net, int architecture)
 /**
  * Evaluate the learned model.
  */
-Result evaluate(OpenANN::DeepNetwork& net, const Mt& testInput,
+Result evaluate(OpenANN::Net& net, const Mt& testInput,
 		const Mt& testOutput, EvaluatableDataset& ds)
 {
   Result result;
@@ -257,7 +257,7 @@ int main(int argc, char** argv)
   {
     long unsigned time = 0;
     std::vector<Result> results;
-    OpenANN::DeepNetwork net;
+    OpenANN::Net net;
     setup(net, architecture);
     for(int run = 0; run < runs; run++)
     {

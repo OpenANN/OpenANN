@@ -87,14 +87,14 @@ int main()
   Eigen::MatrixXf t(1, 1);
   t.fill(5.0f);
 
-  DeepNetwork net;
+  Net net;
   net.inputLayer(1)
      .fullyConnectedLayer(3, TANH)
      .fullyConnectedLayer(3, TANH)
      .outputLayer(1, MLP::ID)
      .trainingSet(x, t);
 
-  net.train(DeepNetwork::BATCH_LMA, DeepNetwork::SSE, stop);
+  net.train(Net::BATCH_LMA, Net::SSE, stop);
   Eigen::VectorXf y = net(x);
 
   return 0;

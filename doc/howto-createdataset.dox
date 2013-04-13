@@ -26,7 +26,7 @@ int main()
   Eigen::MatrixXf T = Eigen::MatrixXf::Random(F, N);
   // We could e. g. get the input vector x_n with X.col(n-1).
   // Now we can train the neural network:
-  DeepNetwork net;
+  Net net;
   ... // initialize net
   mlp.trainingSet(X, T);
   StoppingCriteria stop;
@@ -83,7 +83,7 @@ int main()
 {
   MyDataSet dataSet = ...; // create a data set
   // Now we can train the neural network:
-  DeepNetwork net;
+  Net net;
   ... // initialize net
   net.trainingSet(dataSet);
   StoppingCriteria stop;

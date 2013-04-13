@@ -1,4 +1,4 @@
-#include <DeepNetwork.h>
+#include <Net.h>
 #include <optimization/MBSGD.h>
 #include <io/DirectStorageDataSet.h>
 #include <OpenANNException.h>
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 
   CIFARLoader loader(directory);
 
-  OpenANN::DeepNetwork net;                                                   // Nodes per layer:
+  OpenANN::Net net;                                                   // Nodes per layer:
   net.inputLayer(loader.C, loader.X, loader.Y, true, 0.2);                    //   3 x 32 x 32
   if(bigNet)
   {
