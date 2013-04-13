@@ -150,8 +150,6 @@ void DeepNetwork::initializeNetwork()
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
-  for(int p = 0; p < P; p++)
-    parameterVector(p) = *parameters[p];
   initialized = true;
 }
 
