@@ -69,8 +69,9 @@ bool MBSGD::step()
   if(iteration < 0)
     initialize();
 
+  rng.generateIndices<std::vector<int> >(N, randomIndices, true);
   for(int n = 0; n < N; n++)
-    batchAssignment[rng.generateIndex(batches)].push_back(n);
+    batchAssignment[n % batches].push_back(randomIndices[n]);
   for(int b = 0; b < batches; b++)
   {
     gradient.fill(0.0);
@@ -78,7 +79,7 @@ bool MBSGD::step()
         it != batchAssignment[b].end(); it++)
       gradient += opt->gradient(*it);
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (fpt) batchSize;
+    gradient /= (fpt) batchAssignment[b].size();
     batchAssignment[b].clear();
 
     if(useGain)
@@ -154,6 +155,8 @@ void MBSGD::initialize()
   parameters = opt->currentParameters();
   momentum.resize(P);
   momentum.fill(0.0);
+  randomIndices.reserve(N);
+  rng.generateIndices<std::vector<int> >(N, randomIndices);
   batchAssignment.resize(batches);
   iteration = 0;
 }

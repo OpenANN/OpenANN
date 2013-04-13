@@ -140,6 +140,7 @@ class MBSGD : public Optimizer
   RandomNumberGenerator rng;
   int P, N, batches;
   Vt gradient, gains, parameters, momentum;
+  std::vector<int> randomIndices;
   std::vector<std::list<int> > batchAssignment;
 public:
   /**

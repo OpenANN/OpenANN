@@ -7,4 +7,5 @@ class RandomTestCase : public TestCase
   void generateIndex();
   void generate();
   void sampleNormalDistribution();
+  void generateIndices();
 };
