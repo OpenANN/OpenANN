@@ -5,7 +5,15 @@
 namespace OpenANN
 {
 
+const char* LevelToString[] = {
+    "DISABLED",
+    "ERROR",
+    "INFO",
+    "DEBUG"
+};
+
 bool Logger::deactivate = false;
+
 
 Logger::Logger(Target target, std::string name)
   : target(target), name(name)
@@ -30,21 +38,25 @@ Logger::Logger(Target target, std::string name)
   }
 }
 
+
 Logger::~Logger()
 {
   if(file.is_open())
     file.close();
 }
 
+
 bool Logger::isActive()
 {
   return target != NONE;
 }
 
+
 FloatingPointFormatter::FloatingPointFormatter(fpt value, int precision)
   : value(value), precision(precision)
 {
 }
+
 
 Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
 {
@@ -62,5 +74,57 @@ Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
   }
   return logger;
 }
+
+
+Log::Log()
+{
+}
+
+
+Log::~Log()
+{
+     Stream() << message.str() << std::endl; 
+}
+
+
+ std::ostream& Log::get(LogLevel level)
+{
+    OPENANN_CHECK(level != kDisabled);
+
+    time_t now;
+    time(&now);
+    struct tm* current = localtime(&now);
+    char current_time[32];
+
+    this->level = level;
+    
+    strftime(current_time, sizeof(current_time), "%F %X", current);
+
+    message << std::setw(6) << LevelToString[level] << "  " << current_time << "  ";
+
+    return message;
+}
+
+
+std::ostream& Log::Stream()
+{
+    static std::ostream& gStream = std::cout;
+    return gStream;
+}
+
+
+Log::LogLevel& Log::Level()
+{
+    static Log::LogLevel gLevel = kDebug;
+    return gLevel;
+}
+
+std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t)
+{
+      os << std::fixed << std::setprecision(t.precision) << t.value << std::resetiosflags(std::ios_base::fixed);
+      return os;
+}
+
+
 
 }
