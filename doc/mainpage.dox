@@ -9,7 +9,6 @@ namespace OpenANN
   - \ref License
   - \ref Features
   - \ref Howtos
-  - \ref Requirements
 
 This is the API documentation of OpenANN.
 
@@ -42,48 +41,11 @@ COPYING.LESSER.
 
 \section Howtos
 
+  - \ref Install
   - \ref GettingStarted
   - \ref HowtoLearn
   - \ref CreateDataSet
   - \ref Contributing
-
-\section Requirements
-
-Supported operating systems and compilers
-  - Linux
-  - GCC
-
-Compilation
-  - <a href="http://www.cmake.org" target=_blank>CMake</a>
-  - pkg-config
-  - <a href="http://eigen.tuxfamily.org" target=_blank>Eigen</a>
-  - <a href="http://www.alglib.net" target=_blank>ALGLIB</a>
-
-\code
-mkdir build
-cd build
-cmake -D CMAKE_BUILD_TYPE:String=Release ..
-sudo make install
-sudo ldconfig
-\endcode
-
-Documentation
-  - <a href="http://www.stack.nl/~dimitri/doxygen/" target=_blank>doxygen</a>
-  - <a href="http://www.graphviz.org" target=_blank>Graphviz</a>
-
-Examples
-  - OpenGL
-  - GLUT
-  - libxmu
-  - Qt4
-
-Python bindings
-  - Python
-  - NumPy
-  - Cython
-
-Benchmarks
-  - ruby
 
 */
 
