@@ -7,11 +7,9 @@ namespace OpenANN
 
 \b Table \b of \b contents
   - \ref License
-  - \ref Requirements
   - \ref Features
-  - \ref SimpleExample
-  - \ref MoreExamples
   - \ref Howtos
+  - \ref Requirements
 
 This is the API documentation of OpenANN.
 
@@ -24,6 +22,30 @@ the tricks that are required to implement neural networks.
 
 The license is LGPL 3. You can find the license text in the files COPYING and
 COPYING.LESSER.
+
+\section Features List of Features
+
+  - artificial neural networks
+    - multilayer neural network
+    - convolutional neural network (CNN) with convolutional layers,
+      subsampling layers and max-pooling layers
+    - random projections for data and network compression and extreme learning
+      machines
+  - optimization algorithms
+    - mini-batch stochastic gradient descent (MBSGD) for large networks
+    - Levenberg-Marquardt algorithm (LMA) for small networks
+    - (increasing population size) covariance matrix adaption evolution
+      strategies (IPOPCMAES) for reinforcement learning
+  - supported languages
+    - C++
+    - Python bindings
+
+\section Howtos
+
+  - \ref GettingStarted
+  - \ref HowtoLearn
+  - \ref CreateDataSet
+  - \ref Contributing
 
 \section Requirements
 
@@ -60,114 +82,8 @@ Python bindings
   - NumPy
   - Cython
 
-sudo apt-get install ruby rubygems; sudo gem install rice
-
-\section Features List of Features
-
-  - artificial neural networks
-    - multilayer neural network
-    - convolutional neural network (CNN) with convolutional layers,
-      subsampling layers and max-pooling layers
-    - random projections for data and network compression and extreme learning
-      machines
-  - optimization algorithms
-    - mini-batch stochastic gradient descent (MBSGD) for large networks
-    - Levenberg-Marquardt algorithm (LMA) for small networks
-    - (increasing population size) covariance matrix adaption evolution
-      strategies (IPOPCMAES) for reinforcement learning
-  - supported languages
-    - C++
-    - Python bindings
-
-\section Howtos
-
-  - \ref HowtoLearn
-  - \ref CreateDataSet
-  - \ref Contributing
-
-\section SimpleExample A Simple Example
-
-C++
-\code
-#include <OpenANN/OpenANN>
-#include <Eigen/Dense>
-#include <iostream>
-
-using namespace OpenANN;
-
-int main()
-{
-  Eigen::MatrixXf x(1, 1);
-  x.fill(2.0f);
-  Eigen::MatrixXf t(1, 1);
-  t.fill(5.0f);
-
-  Net net;
-  net.inputLayer(1)
-     .fullyConnectedLayer(3, TANH)
-     .fullyConnectedLayer(3, TANH)
-     .outputLayer(1, LINEAR)
-     .trainingSet(x, t);
-
-  StoppingCriteria stop;
-  stop.maximalIterations = 10;
-  std::cout << "Error on training set before training: " << net.error()
-      << std::endl;
-  net.train(BATCH_LMA, SSE, stop);
-  Eigen::VectorXf y = net(x);
-  std::cout << "Error on training set after training: " << net.error()
-      << std::endl;
-
-  return 0;
-}
-\endcode
-
-Compile it with pkg-config and g++ (and really make sure that pkg-config is
-installed otherwise you might got misleading errors):
-
-\code
-g++ main.cpp -o openann `pkg-config --cflags --libs openann`
-\endcode
-
-Note: Depending on whether you have a CUDA environment set up or not the
-floating point type is chosen. With a CUDA environment it is set to float and
-without it is set to double. That means all matrices and scalars must have the
-correct type!
-
-Python
-\code
-from openann import *
-import numpy
-
-if __name__ == "__main__":
-  # Create noisy sine
-  # Each column of these matrices contains an instance
-  inputs = numpy.atleast_2d(numpy.linspace(0, 2*numpy.pi, 500))
-  outputs = numpy.sin(numpy.random.normal(inputs, numpy.ones(500)*0.1))
-
-  # Setup network
-  net = Net()
-  net.input_layer(1, True, 0.05)
-  net.fully_connected_layer(200, "rectifier", True)
-  net.output_layer(1, "linear")
-  net.training_set(inputs, outputs)
-  stop_dict = {"maximalIterations" : 10,
-               "minimalValueDifferences" : 1e-8}
-  net.train("lma", "sse", stop_dict)
-\endcode
-
-\section MoreExamples More Examples
-
-Classification
-
-  - \ref TwoSpirals
-
-Reinforcement Learning
-
-  - \ref PB
-
-We also have some \ref Benchmarks that show how you can use ANNs and compare
-different architectures.
+Benchmarks
+  - ruby
 
 */
 
