@@ -1,9 +1,9 @@
 #pragma once
 
-#include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/Learner.h>
-#include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/layers/Layer.h>
+#include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 

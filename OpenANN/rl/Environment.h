@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ActionSpace.h"
-#include "StateSpace.h"
+#include <OpenANN/rl/ActionSpace.h>
+#include <OpenANN/rl/StateSpace.h>
 #include <Eigen/Dense>
 
 namespace OpenANN

@@ -12,7 +12,7 @@ namespace OpenANN {
 MBSGD::MBSGD(fpt learningRate, fpt momentum, int batchSize, fpt gamma,
              fpt learningRateDecay, fpt minimalLearningRate, fpt momentumGain,
              fpt maximalMomentum, fpt minGain, fpt maxGain)
-  : debugLogger(Logger::CONSOLE),
+  : debugLogger(Logger::NONE),
     alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
