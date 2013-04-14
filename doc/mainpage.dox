@@ -79,6 +79,12 @@ sudo apt-get install ruby rubygems; sudo gem install rice
     - C++
     - Python bindings
 
+\section Howtos
+
+  - \ref HowtoLearn
+  - \ref CreateDataSet
+  - \ref Contributing
+
 \section SimpleExample A Simple Example
 
 C++
@@ -162,11 +168,6 @@ Reinforcement Learning
 
 We also have some \ref Benchmarks that show how you can use ANNs and compare
 different architectures.
-
-\section Howtos
-
-  - \ref CreateDataSet
-  - \ref Contributing
 
 */
 
