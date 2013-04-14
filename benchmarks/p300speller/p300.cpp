@@ -140,7 +140,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     }
 
     Stopwatch sw;
-    net.train(OpenANN::BATCH_LMA, OpenANN::SSE, stop);
+    train(net, "LMA", OpenANN::SSE, stop);
     result.duration += sw.stop(Stopwatch::SECONDS);
     result.iterations += trainingSet.iteration;
     result.correct5 += testSet.evaluate(net, 5);

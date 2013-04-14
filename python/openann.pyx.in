@@ -67,12 +67,6 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     MSE
     CE
 
-  cdef enum c_Training "OpenANN::Training":
-    NOT_INITIALIZED
-    BATCH_CMAES
-    BATCH_LMA
-    MINIBATCH_SGD
-
   ctypedef struct c_Net "OpenANN::Net":
     c_Net& inputLayer(int dim1, int dim2, int dim3, bool bias,
                       ${FPT} dropoutProbability)
@@ -100,11 +94,13 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
                                  string& compression, ${FPT} stdDev)
     c_Learner& trainingSet(c_${MT}& trainingInput, c_${MT}& trainingOutput)
     ${FPT} error()
-    c_${VT} train(c_Training algorithm, c_ErrorFunction errorFunction,
-                     c_StoppingCriteria stop, bool reinitialize, bool dropout)
     c_${VT} predict "operator()"(c_${VT} x)
   c_Net *new_Net "new OpenANN::Net" ()
   void del_Net "delete" (c_Net *ptr)
+
+cdef extern from "OpenANN/Convenience.h" namespace "OpenANN":
+  void train(c_Net& net, string algorithm, c_ErrorFunction errorFunction,
+             c_StoppingCriteria stop, bool reinitialize, bool dropout)
 
 cdef class Net:
   cdef c_Net *thisptr
@@ -151,11 +147,6 @@ cdef class Net:
     return {"sse" : SSE,
             "mse" : MSE,
             "ce" : CE}[err]
-
-  def __get_training(self, training):
-    return {"lma" : BATCH_LMA,
-            "cmaes" : BATCH_CMAES,
-            "mbsgd" : MINIBATCH_SGD}[training]
 
   def input_layer(self, shape, bias=True, dropout_probability=0.0):
     dims = self.__get_dims(shape, 3)
@@ -267,9 +258,9 @@ cdef class Net:
 
   def train(self, algorithm, err, stop, reinitialize=True, dropout=False):
     self.__stop_from_dict(stop)
-    self.thisptr.train(self.__get_training(algorithm),
-                       self.__get_error_function(err), deref(self.stop),
-                       reinitialize, dropout)
+    cdef char* alg = algorithm
+    train(deref(self.thisptr), string(alg), self.__get_error_function(err),
+          deref(self.stop), reinitialize, dropout)
 
   def predict(self, X):
     if len(X.shape) == 2:

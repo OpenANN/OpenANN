@@ -55,7 +55,9 @@ if __name__ == "__main__":
   # Train the parameters of the network, i. e. minimize Sum of Squared Errors,
   # available error functions are:
   # sse, mse, ce
-  net.train("lma", "sse", stop_dict)
+  # Available optimization algorithms are
+  # LMA, MBSGD, CMAES
+  net.train("LMA", "sse", stop_dict)
 
   # Plot actual data and prediction
   pylab.title("SSE = %.2f" % net.error())

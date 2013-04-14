@@ -17,14 +17,6 @@ enum ErrorFunction
   CE   //!< Cross entropy and softmax (multiple classes)
 };
 
-enum Training
-{
-  NOT_INITIALIZED,
-  BATCH_CMAES,  //!< Covariance Matrix Adaption Evolution Strategies (IPOPCMAES)
-  BATCH_LMA,    //!< Levenberg-Marquardt Algorithm (LMA)
-  MINIBATCH_SGD //!< Mini-Batch Stochastic Gradient Descent (MBSGD)
-};
-
 /**
  * @class Net
  *
@@ -142,9 +134,9 @@ public:
    * @return this for chaining
    */
   Net& compressedLayer(int units, int params, ActivationFunction act,
-                               const std::string& compression,
-                               fpt stdDev = (fpt) 0.05, bool bias = true,
-                               fpt dropoutProbability = 0.0);
+                       const std::string& compression,
+                       fpt stdDev = (fpt) 0.05, bool bias = true,
+                       fpt dropoutProbability = 0.0);
   /**
    * Add a fully connected hidden layer with fixed weights.
    * @param units number of nodes (neurons)
@@ -153,8 +145,8 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& extremeLayer(int units, ActivationFunction act,
-                            fpt stdDev = (fpt) 5.0, bool bias = true);
+  Net& extremeLayer(int units, ActivationFunction act, fpt stdDev = (fpt) 5.0,
+                    bool bias = true);
   /**
    * Add a convolutional layer.
    * @param featureMaps number of feature maps
@@ -165,9 +157,9 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& convolutionalLayer(int featureMaps, int kernelRows,
-                                  int kernelCols, ActivationFunction act,
-                                  fpt stdDev = (fpt) 0.05, bool bias = true);
+  Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
+                          ActivationFunction act, fpt stdDev = (fpt) 0.05,
+                          bool bias = true);
   /**
    * Add a subsampling layer.
    * @param kernelRows number of kernel rows
@@ -178,8 +170,8 @@ public:
    * @return this for chaining
    */
   Net& subsamplingLayer(int kernelRows, int kernelCols,
-                                ActivationFunction act,
-                                fpt stdDev = (fpt) 0.05, bool bias = true);
+                        ActivationFunction act, fpt stdDev = (fpt) 0.05,
+                        bool bias = true);
   /**
    * Add a max-pooling layer.
    * @param kernelRows number of kernel rows
@@ -237,12 +229,11 @@ public:
   Layer& getLayer(unsigned int l);
   OutputInfo getOutputInfo(unsigned int l);
   Net& setErrorFunction(ErrorFunction errorFunction);
+  Net& useDropout(bool activate = true);
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual Net& testSet(Mt& testInput, Mt& testOutput);
   virtual Net& testSet(DataSet& testDataSet);
-  Vt train(Training algorithm, ErrorFunction errorFunction, StoppingCriteria stop,
-           bool reinitialize = true, bool dropout = false);
 
   virtual void finishedIteration();
   virtual Vt operator()(const Vt& x);

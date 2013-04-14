@@ -142,6 +142,11 @@ void Net::initializeNetwork()
   initialized = true;
 }
 
+Net& Net::useDropout(bool activate)
+{
+  dropout = activate;
+}
+
 Learner& Net::trainingSet(Mt& trainingInput, Mt& trainingOutput)
 {
   dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
@@ -179,34 +184,6 @@ Net& Net::testSet(DataSet& testSet)
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
 {
   this->errorFunction = errorFunction;
-}
-
-Vt Net::train(Training algorithm, ErrorFunction errorFunction,
-                      StoppingCriteria stop, bool reinitialize, bool dropout)
-{
-  if(reinitialize)
-    initialize();
-  Optimizer* opt;
-  switch(algorithm)
-  {
-    case MINIBATCH_SGD:
-      opt = new MBSGD;
-      break;
-    case BATCH_LMA:
-      opt = new LMA;
-      break;
-    case BATCH_CMAES:
-    default:
-      opt = new IPOPCMAES;
-      break;
-  }
-  this->dropout = dropout;
-  opt->setOptimizable(*this);
-  opt->setStopCriteria(stop);
-  opt->optimize();
-  Vt result = opt->result();
-  delete opt;
-  return result;
 }
 
 void Net::finishedIteration()
