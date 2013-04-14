@@ -15,7 +15,8 @@ This is the API documentation of OpenANN.
 OpenANN is an open source library for artificial neural networks. It is open
 for users that want to apply ANN to their problems, developers and researchers
 that want to implement new technologies and students that want to understand
-the tricks that are required to implement neural networks.
+the tricks that are required to implement neural networks. It follows a
+minimal dependency policy, i.e. we rely on only a few libraries and tools.
 
 \section License
 
