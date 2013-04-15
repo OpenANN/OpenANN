@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <iomanip>
 
@@ -17,8 +18,55 @@
 
 #endif // NDEBUG
 
+
+#ifndef OPENNANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
+#endif // OPENANN_LOGLEVEL
+
+#define OPENANN_LOG(level) \
+    if(level > OPENANN_LOGLEVEL) ; \
+    else if(level > OpenANN::Log::getLevel()) ; \
+    else OpenANN::Log().get(level)
+
+#define OPENANN_DEBUG OPENANN_LOG(OpenANN::Log::DEBUG)
+#define OPENANN_INFO OPENANN_LOG(OpenANN::Log::INFO)
+#define OPENANN_ERROR OPENANN_LOG(OpenANN::Log::ERROR)
+
 namespace OpenANN
 {
+
+struct FloatingPointFormatter
+{
+  fpt value;
+  int precision;
+  FloatingPointFormatter(fpt value, int precision);
+};
+
+std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t);
+
+class Log 
+{
+public:
+  enum LogLevel {
+      DISABLED = 0,
+      ERROR,
+      INFO, 
+      DEBUG
+  };
+
+  Log();
+  virtual ~Log();
+
+  std::ostream& get(LogLevel level);
+
+  static std::ostream& getStream();
+  static LogLevel& getLevel();
+
+private:
+  std::ostringstream message;
+  LogLevel level;
+};
+
 
 class Logger
 {
@@ -28,19 +76,13 @@ public:
   {
     NONE, CONSOLE, FILE, APPEND_FILE
   } target;
+
   std::string name;
   std::ofstream file;
 
   Logger(Target target, std::string name = "Logger");
   ~Logger();
   bool isActive();
-};
-
-struct FloatingPointFormatter
-{
-  fpt value;
-  int precision;
-  FloatingPointFormatter(fpt value, int precision);
 };
 
 Logger& operator<<(Logger& logger, const FloatingPointFormatter& t);
