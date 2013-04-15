@@ -72,7 +72,7 @@ int main(int argc, char** argv)
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
   OpenANN::StoppingInterrupt interrupt;
-  while(optimizer.step() && interrupt.isSignaled());
+  while(optimizer.step() && !interrupt.isSignaled());
 
   OPENANN_INFO << "Error = " << net.error();
   OPENANN_INFO << "Wrote data to dataset-*.log.";
