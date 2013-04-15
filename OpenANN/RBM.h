@@ -1,8 +1,8 @@
 #pragma once
 
-#include <optimization/Optimizable.h>
-#include <Learner.h>
-#include <optimization/StoppingCriteria.h>
+#include <OpenANN/Learner.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include <Eigen/Dense>
 
 namespace OpenANN {

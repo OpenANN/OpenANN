@@ -1,7 +1,7 @@
-#include <RBM.h>
-#include <Random.h>
-#include <ActivationFunctions.h>
-#include <EigenWrapper.h>
+#include <OpenANN/RBM.h>
+#include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/util/Random.h>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN {
 

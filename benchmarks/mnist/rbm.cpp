@@ -1,8 +1,8 @@
-#include <RBM.h>
-#include <io/Logger.h>
-#include <io/DirectStorageDataSet.h>
-#include <optimization/MBSGD.h>
-#include <optimization/StoppingCriteria.h>
+#include <OpenANN/RBM.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include "IDXLoader.h"
 #include <QGLWidget>
 #include <QKeyEvent>
