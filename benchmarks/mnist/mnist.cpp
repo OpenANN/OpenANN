@@ -1,5 +1,6 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include "IDXLoader.h"
 #include <OpenANN/io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
@@ -62,13 +63,16 @@ int main(int argc, char** argv)
   net.initialize();
   OPENANN_INFO << "Created MLP." << std::endl << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension();
+  OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
+      " iteration is finished.";
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
   OpenANN::MBSGD optimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
-  while(optimizer.step());
+  OpenANN::StoppingInterrupt interrupt;
+  while(optimizer.step() && !interrupt.isSignaled());
 
   OPENANN_INFO << "Error = " << net.error();
   OPENANN_INFO << "Wrote data to dataset-*.log.";
