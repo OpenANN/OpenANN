@@ -1,5 +1,5 @@
-#include <layers/Extreme.h>
-#include <Random.h>
+#include <OpenANN/layers/Extreme.h>
+#include <OpenANN/util/Random.h>
 
 namespace OpenANN {
 

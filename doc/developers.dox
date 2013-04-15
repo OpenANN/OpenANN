@@ -1,0 +1,99 @@
+namespace OpenANN {
+
+/**
+
+\page Contributing
+
+\b Table \b of \b contents
+  - \ref ContributingCode
+  - \ref Directories
+  - \ref ImprovingQuality
+  - \ref FAQ
+  - \ref TodoList
+
+\section ContributingCode Contributing code
+
+We use the version control system <a href="http://git-scm.com/" target=_blank>
+git</a> and the repository is available on github:
+
+  <a href="https://github.com/AlexanderFabisch/OpenANN" target=_blank>
+  https://github.com/AlexanderFabisch/OpenANN</a>
+
+Contributing code to OpenANN usually works as follows:
+
+- Fork the repository (you need a github account).
+- Clone the repository:
+\code
+git clone git@github.com:<YourAccount>/OpenANN.git
+\endcode
+- Create a new branch to add new features / fixes / documentation etc.:
+\code
+git checkout -b <BranchName>
+\endcode
+- Work on the new branch, commit and finally push your changes to your fork:
+\code
+git push origin <BranchName>
+\endcode
+- Open a pull request to the main repository. A core developer will merge your
+request.
+
+\section Directories
+
+- OpenANN - Header files that are exposed to the user
+- benchmarks - Standard ANN benchmarks
+- cmake - CMake macros
+- doc - Additional doxygen documentation files
+- examples - OpenANN showcase
+- lib - External libraries
+- python - Python language bindings
+- src - Implementation files for libopenann
+- test - Contains the OpenANN test suite
+
+\section ImprovingQuality Improving the code quality
+
+There is always a lot of work that can be done to improve the quality of code,
+e.g.:
+
+- Writing unit tests: check out the test directory to see how it works
+- Writing documentation: more API documentation, guides, how-tos, ...
+- Checking for memory leaks, access of unallocated memory, etc. with
+<a href="http://valgrind.org/" target=_blank>Valgrind</a>
+- Adding more checks and asserts (note that these checks must not affect the
+performance of the code)
+- Profiling and optimizing code for performance
+
+Those tasks are great entry points to contribute to the library and we are
+glad to receive any improvements.
+
+\section FAQ
+
+- How can I minimize the time that is required to switch between different
+build types (Debug and Release)?
+
+Both build types can be maintained simultanously:
+\code
+mkdir build/Debug
+mkdir build/Release
+cd build/Debug
+cmake -D CMAKE_BUILD_TYPE:String=Debug ../..
+make
+cd ../Release
+cmake -D CMAKE_BUILD_TYPE:String=Release ../..
+make
+\endcode
+
+\section TodoList Todo list
+
+  @todo layer: Radial basis functions layer (RBF)
+  @todo layer: Support vector machines (SVM, maybe include libsvm?)
+  @todo Unsupervised methods (RBM, DBN, SOM, autoencoders, ...)
+  @todo example: NORB data set
+  @todo example: Caltech-101/256 data set
+  @todo example: ImageNet
+  @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
+  @todo port: Mac and Windows
+  @todo port: test other compilers
+
+*/
+
+}

@@ -1,21 +1,21 @@
-#include <DeepNetwork.h>
-#include <layers/Input.h>
-#include <layers/AlphaBetaFilter.h>
-#include <layers/FullyConnected.h>
-#include <layers/Compressed.h>
-#include <layers/Extreme.h>
-#include <layers/Convolutional.h>
-#include <layers/Subsampling.h>
-#include <layers/MaxPooling.h>
-#include <layers/LocalResponseNormalization.h>
-#include <io/DirectStorageDataSet.h>
-#include <optimization/IPOPCMAES.h>
-#include <optimization/LMA.h>
-#include <optimization/MBSGD.h>
+#include <OpenANN/Net.h>
+#include <OpenANN/layers/Input.h>
+#include <OpenANN/layers/AlphaBetaFilter.h>
+#include <OpenANN/layers/FullyConnected.h>
+#include <OpenANN/layers/Compressed.h>
+#include <OpenANN/layers/Extreme.h>
+#include <OpenANN/layers/Convolutional.h>
+#include <OpenANN/layers/Subsampling.h>
+#include <OpenANN/layers/MaxPooling.h>
+#include <OpenANN/layers/LocalResponseNormalization.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/optimization/IPOPCMAES.h>
+#include <OpenANN/optimization/LMA.h>
+#include <OpenANN/optimization/MBSGD.h>
 
 namespace OpenANN {
 
-DeepNetwork::DeepNetwork()
+Net::Net()
   : dataSet(0), testDataSet(0), deleteDataSet(false), deleteTestSet(false),
     errorFunction(SSE), dropout(false), initialized(false), N(0), L(0)
 {
@@ -23,7 +23,7 @@ DeepNetwork::DeepNetwork()
   infos.reserve(3);
 }
 
-DeepNetwork::~DeepNetwork()
+Net::~Net()
 {
   if(deleteDataSet)
     delete dataSet;
@@ -34,72 +34,65 @@ DeepNetwork::~DeepNetwork()
   layers.clear();
 }
 
-DeepNetwork& DeepNetwork::inputLayer(int dim1, int dim2, int dim3, bool bias,
-                                     fpt dropoutProbability)
+Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias,
+                     fpt dropoutProbability)
 {
   return addLayer(new Input(dim1, dim2, dim3, bias, dropoutProbability));
 }
 
-DeepNetwork& DeepNetwork::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias)
+Net& Net::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias)
 {
   return addLayer(new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev));
 }
 
-DeepNetwork& DeepNetwork::fullyConnectedLayer(int units, ActivationFunction act,
-                                              fpt stdDev, bool bias,
-                                              fpt dropoutProbability,
-                                              fpt maxSquaredWeightNorm)
+Net& Net::fullyConnectedLayer(int units, ActivationFunction act, fpt stdDev,
+                              bool bias, fpt dropoutProbability,
+                              fpt maxSquaredWeightNorm)
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                     dropoutProbability, maxSquaredWeightNorm));
 }
 
-DeepNetwork& DeepNetwork::compressedLayer(int units, int params,
-                                          ActivationFunction act,
-                                          const std::string& compression,
-                                          fpt stdDev, bool bias,
-                                          fpt dropoutProbability)
+Net& Net::compressedLayer(int units, int params, ActivationFunction act,
+                          const std::string& compression, fpt stdDev,
+                          bool bias, fpt dropoutProbability)
 {
   return addLayer(new Compressed(infos.back(), units, params, bias, act,
                                 compression, stdDev, dropoutProbability));
 }
 
-DeepNetwork& DeepNetwork::extremeLayer(int units, ActivationFunction act,
-                                       fpt stdDev, bool bias)
+Net& Net::extremeLayer(int units, ActivationFunction act, fpt stdDev,
+                       bool bias)
 {
   return addLayer(new Extreme(infos.back(), units, bias, act, stdDev));
 }
 
-DeepNetwork& DeepNetwork::convolutionalLayer(int featureMaps, int kernelRows,
-                                             int kernelCols,
-                                             ActivationFunction act,
-                                             fpt stdDev, bool bias)
+Net& Net::convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
+                             ActivationFunction act, fpt stdDev, bool bias)
 {
   return addLayer(new Convolutional(infos.back(), featureMaps, kernelRows,
                                    kernelCols, bias, act, stdDev));
 }
 
-DeepNetwork& DeepNetwork::subsamplingLayer(int kernelRows, int kernelCols,
-                                           ActivationFunction act, fpt stdDev,
-                                           bool bias)
+Net& Net::subsamplingLayer(int kernelRows, int kernelCols,
+                           ActivationFunction act, fpt stdDev, bool bias)
 {
   return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
 }
 
-DeepNetwork& DeepNetwork::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
+Net& Net::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
 {
   return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols, bias));
 }
 
-DeepNetwork& DeepNetwork::localReponseNormalizationLayer(fpt k, int n,
-                                                         fpt alpha, fpt beta,
-                                                         bool bias)
+Net& Net::localReponseNormalizationLayer(fpt k, int n, fpt alpha, fpt beta,
+                                         bool bias)
 {
   return addLayer(new LocalResponseNormalization(infos.back(), bias, k, n,
                                                  alpha, beta));
 }
 
-DeepNetwork& DeepNetwork::addLayer(Layer* layer)
+Net& Net::addLayer(Layer* layer)
 {
     OPENANN_CHECK(layer != 0);
 
@@ -110,38 +103,35 @@ DeepNetwork& DeepNetwork::addLayer(Layer* layer)
     return *this;
 }
 
-DeepNetwork& DeepNetwork::outputLayer(int units, ActivationFunction act,
-                                      fpt stdDev)
+Net& Net::outputLayer(int units, ActivationFunction act, fpt stdDev)
 {
   return fullyConnectedLayer(units, act, stdDev, false);
 }
 
-DeepNetwork& DeepNetwork::compressedOutputLayer(int units, int params,
-                                                ActivationFunction act,
-                                                const std::string& compression,
-                                                fpt stdDev)
+Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
+                                const std::string& compression, fpt stdDev)
 {
   return compressedLayer(units, params, act, compression, stdDev, false);
 }
 
-unsigned int DeepNetwork::numberOflayers()
+unsigned int Net::numberOflayers()
 {
   return L;
 }
 
-Layer& DeepNetwork::getLayer(unsigned int l)
+Layer& Net::getLayer(unsigned int l)
 {
   OPENANN_CHECK(l >= 0 && l < L);
   return *layers[l];
 }
 
-OutputInfo DeepNetwork::getOutputInfo(unsigned int l)
+OutputInfo Net::getOutputInfo(unsigned int l)
 {
   OPENANN_CHECK(l >= 0 && l < L);
   return infos[l];
 }
 
-void DeepNetwork::initializeNetwork()
+void Net::initializeNetwork()
 {
   P = parameters.size();
   tempInput.resize(infos[0].outputs() - infos[0].bias);
@@ -149,12 +139,10 @@ void DeepNetwork::initializeNetwork()
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
-  for(int p = 0; p < P; p++)
-    parameterVector(p) = *parameters[p];
   initialized = true;
 }
 
-Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
+Learner& Net::trainingSet(Mt& trainingInput, Mt& trainingOutput)
 {
   dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
   deleteDataSet = true;
@@ -162,7 +150,7 @@ Learner& DeepNetwork::trainingSet(Mt& trainingInput, Mt& trainingOutput)
   return *this;
 }
 
-Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
+Learner& Net::trainingSet(DataSet& trainingSet)
 {
   if(deleteDataSet)
     delete dataSet;
@@ -172,7 +160,7 @@ Learner& DeepNetwork::trainingSet(DataSet& trainingSet)
   return *this;
 }
 
-DeepNetwork& DeepNetwork::testSet(Mt& testInput, Mt& testOutput)
+Net& Net::testSet(Mt& testInput, Mt& testOutput)
 {
   if(deleteTestSet)
     delete testDataSet;
@@ -181,19 +169,19 @@ DeepNetwork& DeepNetwork::testSet(Mt& testInput, Mt& testOutput)
   return *this;
 }
 
-DeepNetwork& DeepNetwork::testSet(DataSet& testSet)
+Net& Net::testSet(DataSet& testSet)
 {
   testDataSet = &testSet;
   deleteTestSet = false;
   return *this;
 }
 
-DeepNetwork& DeepNetwork::setErrorFunction(ErrorFunction errorFunction)
+Net& Net::setErrorFunction(ErrorFunction errorFunction)
 {
   this->errorFunction = errorFunction;
 }
 
-Vt DeepNetwork::train(Training algorithm, ErrorFunction errorFunction,
+Vt Net::train(Training algorithm, ErrorFunction errorFunction,
                       StoppingCriteria stop, bool reinitialize, bool dropout)
 {
   if(reinitialize)
@@ -223,7 +211,7 @@ Vt DeepNetwork::train(Training algorithm, ErrorFunction errorFunction,
   return result;
 }
 
-void DeepNetwork::finishedIteration()
+void Net::finishedIteration()
 {
   bool dropout = this->dropout;
   this->dropout = false;
@@ -234,7 +222,7 @@ void DeepNetwork::finishedIteration()
   this->dropout = dropout;
 }
 
-Vt DeepNetwork::operator()(const Vt& x)
+Vt Net::operator()(const Vt& x)
 {
   tempInput = x;
   Vt* y = &tempInput;
@@ -247,22 +235,22 @@ Vt DeepNetwork::operator()(const Vt& x)
   return tempOutput;
 }
 
-unsigned int DeepNetwork::dimension()
+unsigned int Net::dimension()
 {
   return P;
 }
 
-unsigned int DeepNetwork::examples()
+unsigned int Net::examples()
 {
   return N;
 }
 
-Vt DeepNetwork::currentParameters()
+Vt Net::currentParameters()
 {
   return parameterVector;
 }
 
-void DeepNetwork::setParameters(const Vt& parameters)
+void Net::setParameters(const Vt& parameters)
 {
   parameterVector = parameters;
   for(int p = 0; p < P; p++)
@@ -272,12 +260,12 @@ void DeepNetwork::setParameters(const Vt& parameters)
     (**layer).updatedParameters();
 }
 
-bool DeepNetwork::providesInitialization()
+bool Net::providesInitialization()
 {
   return true;
 }
 
-void DeepNetwork::initialize()
+void Net::initialize()
 {
     if(!initialized)
         initializeNetwork();
@@ -289,7 +277,7 @@ void DeepNetwork::initialize()
     parameterVector(p) = *parameters[p];
 }
 
-fpt DeepNetwork::error(unsigned int i)
+fpt Net::error(unsigned int i)
 {
   fpt e = 0.0;
   if(errorFunction == CE)
@@ -299,7 +287,7 @@ fpt DeepNetwork::error(unsigned int i)
     {
       fpt out = tempOutput(f);
       if(out < 1e-45)
-	out = 1e-45;
+        out = 1e-45;
       e -= dataSet->getTarget(i)(f) * std::log(out);
     }
   }
@@ -312,7 +300,7 @@ fpt DeepNetwork::error(unsigned int i)
   return e / 2.0;
 }
 
-fpt DeepNetwork::error()
+fpt Net::error()
 {
   fpt e = 0.0;
   for(int n = 0; n < N; n++)
@@ -328,12 +316,45 @@ fpt DeepNetwork::error()
   }
 }
 
-bool DeepNetwork::providesGradient()
+fpt Net::errorFromDataSet(DataSet& dataset)
+{
+    fpt e = 0.0;
+    for(int n = 0; n < dataset.samples(); ++n) {
+        fpt e_n  = 0.0;
+
+        tempOutput = (*this)(dataset.getInstance(n));
+
+        if(errorFunction == CE) 
+        {
+            for(int f = 0; f < tempOutput.rows(); ++f)
+                e_n -= dataset.getTarget(n)(f) * std::log(tempOutput(f));
+        }
+        else 
+        {
+            tempError = tempOutput - dataset.getTarget(n);
+            e_n += tempError.dot(tempError);
+        }
+
+        e += (e_n / 2);
+    }
+
+    switch(errorFunction) 
+    {
+        case SSE:
+            return e;
+        case MSE:
+            return e / (fpt) N;
+        default:
+            return e;
+    }
+}
+
+bool Net::providesGradient()
 {
   return true;
 }
 
-Vt DeepNetwork::gradient(unsigned int i)
+Vt Net::gradient(unsigned int i)
 {
   tempOutput = (*this)(dataSet->getInstance(i));
   tempError = tempOutput - dataSet->getTarget(i);
@@ -346,7 +367,7 @@ Vt DeepNetwork::gradient(unsigned int i)
   return tempGradient;
 }
 
-Vt DeepNetwork::gradient()
+Vt Net::gradient()
 {
   tempGradient.fill(0.0);
   for(int n = 0; n < N; n++)
@@ -370,7 +391,7 @@ Vt DeepNetwork::gradient()
   return tempGradient;
 }
 
-void DeepNetwork::VJ(Vt& values, Mt& jacobian)
+void Net::VJ(Vt& values, Mt& jacobian)
 {
   for(unsigned n = 0; n < N; n++)
   {
@@ -385,12 +406,12 @@ void DeepNetwork::VJ(Vt& values, Mt& jacobian)
   }
 }
 
-bool DeepNetwork::providesHessian()
+bool Net::providesHessian()
 {
   return false;
 }
 
-Mt DeepNetwork::hessian()
+Mt Net::hessian()
 {
   return Mt::Identity(dimension(), dimension());
 }

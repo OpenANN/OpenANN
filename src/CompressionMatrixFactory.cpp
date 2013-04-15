@@ -1,7 +1,7 @@
-#include <CompressionMatrixFactory.h>
-#include <AssertionMacros.h>
-#include <Random.h>
-#include <OpenANNException.h>
+#include <OpenANN/CompressionMatrixFactory.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/Random.h>
+#include <OpenANN/util/OpenANNException.h>
 
 namespace OpenANN
 {

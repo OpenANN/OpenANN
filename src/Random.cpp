@@ -1,4 +1,4 @@
-#include <Random.h>
+#include <OpenANN/util/Random.h>
 #include <ctime>
 
 namespace OpenANN
@@ -12,6 +12,11 @@ RandomNumberGenerator::RandomNumberGenerator()
     srand(std::time(0));
     seedInitialized = true;
   }
+}
+
+void RandomNumberGenerator::seed(unsigned int seed)
+{
+  srand(seed);
 }
 
 int RandomNumberGenerator::generateInt(int min, int range) const

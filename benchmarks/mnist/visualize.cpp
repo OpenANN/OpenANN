@@ -1,7 +1,7 @@
-#include <DeepNetwork.h>
+#include <OpenANN/OpenANN>
 #include "IDXLoader.h"
-#include <io/DirectStorageDataSet.h>
-#include <io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/io/Logger.h>
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QApplication>
@@ -12,14 +12,14 @@
 
 class MNISTVisualization : public QGLWidget
 {
-  OpenANN::DeepNetwork& net;
+  OpenANN::Net& net;
   OpenANN::DataSet& dataSet;
   int rows, cols;
   int width, height;
   int instance;
   OpenANN::Logger debugLogger;
 public:
-  MNISTVisualization(OpenANN::DeepNetwork& net, OpenANN::DataSet& dataSet,
+  MNISTVisualization(OpenANN::Net& net, OpenANN::DataSet& dataSet,
                      int rows, int cols,
                      QWidget* parent = 0, const QGLWidget* shareWidget = 0,
                      Qt::WindowFlags f = 0)
@@ -181,7 +181,7 @@ int main(int argc, char** argv)
 
   IDXLoader loader(28, 28, 60000, 10000, directory);
 
-  OpenANN::DeepNetwork net;                                       // Nodes per layer:
+  OpenANN::Net net;                                       // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28
      .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  10 x 24 x 24
      .maxPoolingLayer(2, 2)                                       //  10 x 12 x 12
@@ -194,6 +194,7 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
+  net.initialize();
 
   // Load parameters
   std::ifstream file("weights.log");

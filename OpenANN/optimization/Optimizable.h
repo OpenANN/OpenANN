@@ -9,6 +9,8 @@
 namespace OpenANN {
 
 /**
+ * @class Optimizable
+ *
  * Represents an optimizable object. E. g. objective function, neural network,
  * etc.
  */
@@ -38,6 +40,7 @@ public:
    */
   virtual void setParameters(const Vt& parameters) = 0;
   /**
+   * Compute error on training set.
    * @return current error on training set or objective function value
    */
   virtual fpt error() = 0;

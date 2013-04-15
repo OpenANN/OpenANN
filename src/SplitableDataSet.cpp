@@ -1,6 +1,6 @@
-#include <io/SplitableDataSet.h>
-#include <AssertionMacros.h>
-#include <Learner.h>
+#include <OpenANN/io/SplitableDataSet.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/Learner.h>
 #include <algorithm>
 #include <ctime>
 #include <cmath>
@@ -171,11 +171,12 @@ SplitableDataSet* SplitableDataSet::merge(const std::vector<SplitableDataSet*>& 
     SplitableDataSet* parent = const_cast<SplitableDataSet*>(groups.front()->parent);
     SplitableDataSet* merged_set = new SplitableDataSet(parent->inputs(), parent->outputs(), parent);
 
+
     for(int i = 0; i < groups.size(); ++i) {
         std::vector<instance_pair>::const_iterator beg = groups[i]->data.begin();
         std::vector<instance_pair>::const_iterator end = groups[i]->data.end();
 
-        std::copy(beg, end, merged_set->data.end());
+        std::copy(beg, end, std::back_inserter(merged_set->data));
     }
 
     parent->responsible_groups.push_back(merged_set);

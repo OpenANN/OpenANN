@@ -1,9 +1,8 @@
 #pragma once
 
-#include <OpenANN>
-#include <DeepNetwork.h>
-#include <io/Logger.h>
-#include <io/DirectStorageDataSet.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
 #include <QGLWidget>
 #include <QKeyEvent>
@@ -39,7 +38,7 @@ class TwoSpiralsVisualization : public QGLWidget
   TwoSpiralsDataSet trainingSet;
   TwoSpiralsDataSet testSet;
   bool showTraining, showTest, showPrediction, showSmooth;
-  DeepNetwork* net;
+  Net* net;
   StoppingCriteria stop;
   Logger eventLogger;
 

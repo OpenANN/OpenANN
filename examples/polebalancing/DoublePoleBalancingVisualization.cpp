@@ -6,10 +6,10 @@
 #include "DoublePoleBalancing.h"
 #include "SinglePoleBalancing.h"
 #include "NeuroEvolutionAgent.h"
-#include <rl/RandomAgent.h>
-#include <io/Logger.h>
-#include <EigenWrapper.h>
-#include <AssertionMacros.h>
+#include <OpenANN/rl/RandomAgent.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <Test/Stopwatch.h>
 #include <cmath>
 #include <map>

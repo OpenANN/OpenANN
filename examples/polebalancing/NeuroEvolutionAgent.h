@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rl/Agent.h>
-#include <DeepNetwork.h>
-#include <optimization/IPOPCMAES.h>
+#include <OpenANN/rl/Agent.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/IPOPCMAES.h>
 #include "DoubleExponentialSmoothing.h"
 #include <vector>
 #include <list>
@@ -32,7 +32,7 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
 
   Environment* environment;
   int inputSize;
-  DeepNetwork policy;
+  Net policy;
   IPOPCMAES opt;
   Vt lastState;
   bool firstStep;

@@ -1,10 +1,11 @@
 #ifdef USE_GPL_LICENSE
 
-#include <optimization/LMA.h>
-#include <optimization/Optimizable.h>
-#include <AssertionMacros.h>
-#include <Random.h>
+#include <OpenANN/optimization/LMA.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/Random.h>
 #include <limits>
+#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -20,9 +21,6 @@ LMA::~LMA()
 void LMA::setOptimizable(Optimizable& opt)
 {
   this->opt = &opt;
-  initialize();
-  allocate();
-  initALGLIB();
 }
 
 void LMA::setStopCriteria(const StoppingCriteria& stop)
@@ -45,6 +43,9 @@ void LMA::optimize()
 
 bool LMA::step()
 {
+  if(iteration < 0)
+      initialize();
+
   try
   {
     while(alglib_impl::minlmiteration(state.c_ptr(), &_alglib_env_state))
@@ -122,7 +123,6 @@ std::string LMA::name()
 
 void LMA::initialize()
 {
-  n = opt->dimension();
   if(opt->providesInitialization())
     opt->initialize();
   else
@@ -133,6 +133,11 @@ void LMA::initialize()
       x(i) = rng.sampleNormalDistribution<fpt>();
     opt->setParameters(x);
   }
+
+  n = opt->dimension();
+
+  allocate();
+  initALGLIB();
 }
 
 void LMA::allocate()

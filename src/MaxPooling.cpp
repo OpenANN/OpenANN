@@ -1,5 +1,5 @@
-#include <layers/MaxPooling.h>
-#include <AssertionMacros.h>
+#include <OpenANN/layers/MaxPooling.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <limits>
 #include <algorithm>
 

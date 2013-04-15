@@ -1,4 +1,4 @@
-#include <optimization/StoppingCriteria.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include <limits>
 
 namespace OpenANN {

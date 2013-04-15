@@ -1,6 +1,6 @@
 #include "PreprocessingTestCase.h"
-#include <Preprocessing.h>
-#include <OpenANNException.h>
+#include <OpenANN/Preprocessing.h>
+#include <OpenANN/util/OpenANNException.h>
 
 void PreprocessingTestCase::run()
 {

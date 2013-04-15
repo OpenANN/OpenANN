@@ -3,12 +3,11 @@
 
 #ifdef USE_GPL_LICENSE
 
-#include <optimization/Optimizer.h>
-#include <optimization/StoppingCriteria.h>
-#include <io/Logger.h>
+#include <OpenANN/optimization/Optimizer.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/io/Logger.h>
 #include <Eigen/Dense>
 #include <optimization.h>
-#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -39,6 +38,7 @@ namespace OpenANN {
  * [1] Kenneth Levenberg:
  * A Method for the Solution of Certain Problems in Least Squares,
  * Quarterly of Applied Mathematics 2, pp. 164-168, 1944.
+ *
  * [2] Donald Marquardt:
  * An Algorithm for Least-Squares Estimation of Nonlinear Parameters,
  * Journal of the Society for Industrial and Applied Mathematics 11 (2),

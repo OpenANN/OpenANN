@@ -6,9 +6,10 @@
 #ifndef OPENANN_RANDOM_H
 #define OPENANN_RANDOM_H
 
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
 #include <cstdlib>
+#include <algorithm>
 
 namespace OpenANN
 {
@@ -24,6 +25,15 @@ public:
    * Initialize the seed.
    */
   RandomNumberGenerator();
+  /**
+   * Set the seed to ensure repeatability.
+   *
+   * Note that the seed is set globally, i.e. it might also be overwritten by
+   * another part of you program.
+   *
+   * @param seed initial parameter for random number generator
+   */
+  void seed(unsigned int seed);
   /**
    * Draw an integer from a uniform distribution.
    * @param min minimal value
@@ -73,7 +83,31 @@ double rn = mu + sigma*rng.sampleNormalDistribution<double>();
   template<class T>
   T sampleNormalDistribution() const
   {
-    return std::sqrt(T(-2) * std::log(generate(T(), T(1)))) * std::cos(T(2) * T(M_PI) * generate(T(), T(1)));
+    return std::sqrt(T(-2) * std::log(generate(T(), T(1)))) *
+        std::cos(T(2) * T(M_PI) * generate(T(), T(1)));
+  }
+
+  /**
+   * Generate a random sequence of indices.
+   * @tparam container type of result (must support push_back())
+   * @param n number of indices
+   * @param result result container, must be empty if initialized = false
+   * @param initialized does the container already contain indices?
+   */
+  template<class C>
+  void generateIndices(int n, C& result, bool initialized = false)
+  {
+    if(!initialized)
+    {
+      OPENANN_CHECK_EQUALS(result.size(), 0);
+      for(int i = 0; i < n; i++)
+        result.push_back(i);
+    }
+    else
+    {
+      OPENANN_CHECK_EQUALS(result.size(), n);
+    }
+    std::random_shuffle(result.begin(), result.end());
   }
 };
 

@@ -1,8 +1,7 @@
 #include "BCIDataSet.h"
-#include <OpenANN>
-#include <DeepNetwork.h>
-#include <CompressionMatrixFactory.h>
-#include <io/Logger.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/CompressionMatrixFactory.h>
+#include <OpenANN/io/Logger.h>
 #include <Test/Stopwatch.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
@@ -114,7 +113,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     int runs, OpenANN::StoppingCriteria stop, int csDimension, bool filter,
     int subsamplingFactor = 1)
 {
-  OpenANN::DeepNetwork net;
+  OpenANN::Net net;
   net.inputLayer(csDimension > 0 ? csDimension : trainingSet.inputs())
     .outputLayer(trainingSet.outputs(), OpenANN::TANH)
     .testSet(testSet)

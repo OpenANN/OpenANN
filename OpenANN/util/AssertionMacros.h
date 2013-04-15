@@ -2,10 +2,10 @@
 
 #ifndef NDEBUG
 
+#include <OpenANN/io/Logger.h>
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <io/Logger.h>
 
 namespace OpenANN
 {

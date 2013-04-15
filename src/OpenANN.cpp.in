@@ -1,4 +1,4 @@
-#include <OpenANN>
+#include <OpenANN/OpenANN>
 #include <iostream>
 
 namespace OpenANN

@@ -1,10 +1,10 @@
 #ifndef BCIDATASET_H
 #define BCIDATASET_H
 
-#include <Compressor.h>
-#include <io/DataSet.h>
-#include <io/Logger.h>
-#include <Learner.h>
+#include <OpenANN/Compressor.h>
+#include <OpenANN/io/DataSet.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/Learner.h>
 #include <string>
 #include <vector>
 #include <map>

@@ -10,6 +10,7 @@ Classification
   - \ref MNISTBenchmark
   - \ref P300SpellerBenchmark
   - \ref TwoSpiralsBenchmark
+  - \ref CIFAR10Benchmark
 
 Reinforcement Learning
 

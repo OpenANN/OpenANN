@@ -1,13 +1,13 @@
 #include "LayerTestCase.h"
-#include <layers/FullyConnected.h>
-#include <layers/Compressed.h>
-#include <layers/Convolutional.h>
-#include <layers/Subsampling.h>
-#include <layers/MaxPooling.h>
-#include <layers/SigmaPi.h>
-#include <optimization/Optimizable.h>
-#include <DeepNetwork.h>
-#include <io/DirectStorageDataSet.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/layers/FullyConnected.h>
+#include <OpenANN/layers/Compressed.h>
+#include <OpenANN/layers/Convolutional.h>
+#include <OpenANN/layers/Subsampling.h>
+#include <OpenANN/layers/MaxPooling.h>
+#include <OpenANN/layers/SigmaPi.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 
 using namespace OpenANN;
 
@@ -420,7 +420,7 @@ void LayerTestCase::multilayerNetwork()
   Mt Y = Mt::Random(3, samples);
   DirectStorageDataSet ds(X, Y);
 
-  DeepNetwork net;
+  Net net;
   net.inputLayer(1, 6, 6);
   net.convolutionalLayer(4, 3, 3, TANH, 0.5);
   net.localReponseNormalizationLayer(2.0, 3, 0.01, 0.75);
@@ -429,6 +429,8 @@ void LayerTestCase::multilayerNetwork()
   net.extremeLayer(10, TANH, 0.05);
   net.outputLayer(3, LINEAR, 0.5);
   net.trainingSet(ds);
+  net.initialize();
+
   net.initialize();
 
   Vt g = net.gradient();

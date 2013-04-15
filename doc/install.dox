@@ -1,0 +1,68 @@
+namespace OpenANN {
+
+/**
+
+\page Install
+
+\section Requirements
+
+Supported operating systems and compilers
+
+- Linux / GCC
+
+The following programs and libraries are required to use OpenANN:
+
+<table>
+<tr>
+<th>Compilation</th>
+<th>Documentation</th>
+<th>Examples</th>
+<th>Python bindings</th>
+<th>Benchmarks</th>
+</tr>
+<tr>
+<td valign="top">
+- <a href="http://www.cmake.org" target=_blank>CMake</a>
+- pkg-config
+- <a href="http://eigen.tuxfamily.org" target=_blank>Eigen 3</a>
+- shell
+- wget
+- unzip
+- make
+</td>
+<td valign="top">
+- <a href="http://www.stack.nl/~dimitri/doxygen/" target=_blank>doxygen</a>
+- <a href="http://www.graphviz.org" target=_blank>Graphviz</a>
+</td>
+<td valign="top">
+- OpenGL
+- GLUT
+- libxmu
+- Qt4
+</td>
+<td valign="top">
+- Python
+- NumPy
+- Cython
+</td>
+<td valign="top">
+- ruby
+</td>
+</tr>
+</table>
+
+\section Installation
+
+Go to the OpenANN directory and execute
+
+\code
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE:String=Release ..
+sudo make install
+sudo ldconfig
+\endcode
+
+*/
+
+}

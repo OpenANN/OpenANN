@@ -1,5 +1,5 @@
 #include "TwoSpiralsVisualization.h"
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <GL/glu.h>
 #include <QApplication>
 
@@ -11,7 +11,7 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     : width(500), height(500),
       trainingSet(trainingInput, trainingOutput), testSet(testInput, testOutput),
       showTraining(true), showTest(true), showPrediction(true), showSmooth(true),
-      net(new DeepNetwork), eventLogger(Logger::CONSOLE)
+      net(new Net), eventLogger(Logger::CONSOLE)
 {
   std::memset(classes, 0, sizeof(fpt)*100*100);
   trainingSet.setVisualization(this);
@@ -20,11 +20,12 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
   // initialize MLP
   net->inputLayer(trainingInput.rows())
     // use this as only hidden layer to try extreme learning machine
-    //.extremeLayer(1500, RECTIFIER)
+    //.extremeLayer(1500, RECTIFIER, 1.0)
     .fullyConnectedLayer(20, TANH)
     .fullyConnectedLayer(20, TANH)
     .outputLayer(trainingOutput.rows(), TANH)
     .trainingSet(trainingSet);
+  net->initialize();
 
   // set stop criteria
   stop.maximalIterations = 10000;

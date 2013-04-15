@@ -1,6 +1,6 @@
 #include "TwoSpiralsVisualization.h"
 #include <QApplication>
-#include <OpenANN>
+#include <OpenANN/OpenANN>
 #include "CreateTwoSpiralsDataSet.h"
 #ifdef PARALLEL_CORES
 #include <omp.h>

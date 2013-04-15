@@ -1,5 +1,5 @@
 #include "RandomTestCase.h"
-#include <Random.h>
+#include <OpenANN/util/Random.h>
 #include <algorithm>
 #include <cmath>
 #include <numeric>
@@ -7,10 +7,24 @@
 
 void RandomTestCase::run()
 {
+  RUN(RandomTestCase, seed);
   RUN(RandomTestCase, generateInt);
   RUN(RandomTestCase, generateIndex);
   RUN(RandomTestCase, generate);
   RUN(RandomTestCase, sampleNormalDistribution);
+  RUN(RandomTestCase, generateIndices);
+}
+
+void RandomTestCase::seed()
+{
+  OpenANN::RandomNumberGenerator rng;
+  rng.seed(4);
+  int i = rng.generateInt(0, 100);
+  int j = rng.generateInt(0, 100);
+  rng.seed(4);
+  int k = rng.generateInt(0, 100);
+  ASSERT_EQUALS(i, k);
+  ASSERT_NOT_EQUALS(i, j);
 }
 
 void RandomTestCase::generateInt()
@@ -73,4 +87,18 @@ void RandomTestCase::sampleNormalDistribution()
     variance += std::pow(random[i] - mean, 2.0);
   variance /= (double) N;
   ASSERT_WITHIN(variance, 0.8, 1.2);
+}
+
+void RandomTestCase::generateIndices()
+{
+  OpenANN::RandomNumberGenerator rng;
+  const int N = 1342;
+  std::vector<int> indices;
+  rng.generateIndices<std::vector<int> >(N, indices);
+  ASSERT_EQUALS(indices.size(), N);
+  std::vector<bool> found(N, false);
+  for(int n = 0; n < N; n++)
+    found[indices[n]] = true;
+  for(int n = 0; n < N; n++)
+    ASSERT(found[n]);
 }

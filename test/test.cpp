@@ -5,8 +5,9 @@
 #endif
 #include <iostream>
 #include <cstdlib>
-#include <io/Logger.h>
-#include <OpenANN>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/util/Random.h>
 #include "ActivationFunctionsTestCase.h"
 #include "CMAESTestCase.h"
 #include "CompressionMatrixFactoryTestCase.h"
@@ -31,6 +32,8 @@ int main(int argc, char** argv)
   }
 
   OpenANN::Logger::deactivate = true;
+  OpenANN::RandomNumberGenerator rng;
+  rng.seed(4);
 
   TestSuite ts("OpenANN");
   ts.addTestCase(new ActivationFunctionsTestCase);

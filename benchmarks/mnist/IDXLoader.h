@@ -1,9 +1,9 @@
 #pragma once
 
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Dense>
 #include <fstream>
-#include <io/Logger.h>
+#include <OpenANN/io/Logger.h>
 #include <stdint.h>
 #include <endian.h>
 #include "Distorter.h"

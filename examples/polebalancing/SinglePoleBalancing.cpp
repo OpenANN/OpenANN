@@ -1,5 +1,5 @@
 #include "SinglePoleBalancing.h"
-#include <AssertionMacros.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
 
 SinglePoleBalancing::SinglePoleBalancing(bool fullyObservable)

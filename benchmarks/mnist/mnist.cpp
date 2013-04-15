@@ -1,7 +1,7 @@
-#include <DeepNetwork.h>
-#include <optimization/MBSGD.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/MBSGD.h>
 #include "IDXLoader.h"
-#include <io/DirectStorageDataSet.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
-  OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
+  OpenANN::Log::getLevel() = OpenANN::Log::INFO;
 
   std::string directory = "mnist/";
   if(argc > 1)
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
   IDXLoader loader(28, 28, 60000, 10000, directory);
 
-  OpenANN::DeepNetwork net;                                       // Nodes per layer:
+  OpenANN::Net net;                                               // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28
      .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  10 x 24 x 24
      .maxPoolingLayer(2, 2)                                       //  10 x 12 x 12
@@ -60,18 +60,18 @@ int main(int argc, char** argv)
   net.testSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   net.initialize();
-  interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
-      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
+  OPENANN_INFO << "Created MLP." << std::endl << "D = " << loader.D << ", F = "
+      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension();
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
-  OpenANN::MBSGD optimizer(0.01, 1.0, 0.01, 0.6, 0.0, 0.9, 10, 0.01, 100.0);
+  OpenANN::MBSGD optimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
   while(optimizer.step());
 
-  interfaceLogger << "Error = " << net.error() << "\n\n";
-  interfaceLogger << "Wrote data to dataset-*.log.\n";
+  OPENANN_INFO << "Error = " << net.error();
+  OPENANN_INFO << "Wrote data to dataset-*.log.";
 
   OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
   resultLogger << optimizer.result();

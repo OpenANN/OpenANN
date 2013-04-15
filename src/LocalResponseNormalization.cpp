@@ -1,5 +1,5 @@
-#include <layers/LocalResponseNormalization.h>
-#include <Random.h>
+#include <OpenANN/layers/LocalResponseNormalization.h>
+#include <OpenANN/util/Random.h>
 
 namespace OpenANN {
 

@@ -1,5 +1,5 @@
-#include <layers/Input.h>
-#include <Random.h>
+#include <OpenANN/layers/Input.h>
+#include <OpenANN/util/Random.h>
 
 namespace OpenANN {
 

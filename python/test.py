@@ -24,7 +24,7 @@ if __name__ == "__main__":
   outputs = numpy.sin(numpy.random.normal(inputs, numpy.ones(n)*noise_std_dev))
 
   # Setup network
-  net = DeepNetwork()
+  net = Net()
   # Your input data can have up to 3 dimensions, e. g. an image could have
   # color channels x rows x columns: (3, 16, 16). Convolutional layers or
   # pooling layers require 3 dimensions!
@@ -40,8 +40,10 @@ if __name__ == "__main__":
   #net.convolutional_layer(5, 3, 3, "tanh")
   #net.subsampling_layer(2, 2, "rectifier")
   #net.maxpooling_layer(2, 2)
+  #net.local_response_normalization_layer(1, 5, 1e-4, 0.75, True)
   #net.fully_connected_layer(10, "rectifier", True)
   #net.compressed_layer(10, 5, "tanh", "sparse")
+  #net.extreme_layer(h, "rectifier", True)
 
   net.training_set(inputs, outputs)
   # Define stopping criteria, e. g.
@@ -49,15 +51,15 @@ if __name__ == "__main__":
   # minimalValue, minimalValueDifferences, minimalSearchSpaceStep
   # Note that not all optimzers use all stopping criteria!
   stop_dict = {"maximalIterations" : 10,
-              "minimalValueDifferences" : 1e-8}
+               "minimalValueDifferences" : 1e-8}
   # Train the parameters of the network, i. e. minimize Sum of Squared Errors,
   # available error functions are:
   # sse, mse, ce
   net.train("lma", "sse", stop_dict)
 
   # Plot actual data and prediction
+  pylab.title("SSE = %.2f" % net.error())
   pylab.plot(inputs[0], outputs[0], ".", label="Data Set")
   pylab.plot(inputs[0], net.predict(inputs)[0], label="Prediction")
   pylab.legend()
   pylab.show()
-

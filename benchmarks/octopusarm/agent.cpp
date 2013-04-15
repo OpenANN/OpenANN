@@ -1,10 +1,10 @@
 #include "agent.h"
-#include <DeepNetwork.h>
-#include <optimization/IPOPCMAES.h>
-#include <AssertionMacros.h>
-#include <EigenWrapper.h>
-#include <io/Logger.h>
-#include <Random.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/IPOPCMAES.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/io/Logger.h>
+#include <OpenANN/util/Random.h>
 #include <ctime>
 #include <fstream>
 #include <stdlib.h>
@@ -67,7 +67,7 @@ ruby evaluate
 
 int num_states = 0, num_actions = 0;
 IPOPCMAES opt;
-DeepNetwork net;
+Net net;
 double episodeReturn;
 Logger logger(Logger::CONSOLE);
 int hiddenUnits;

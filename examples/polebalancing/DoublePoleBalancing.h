@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rl/Environment.h>
+#include <OpenANN/rl/Environment.h>
 #include <Eigen/Dense>
 
 /**

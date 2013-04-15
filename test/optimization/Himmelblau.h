@@ -1,5 +1,5 @@
-#include <optimization/Optimizable.h>
-#include <AssertionMacros.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/util/AssertionMacros.h>
 
 class Himmelblau : public OpenANN::Optimizable
 {

@@ -1,7 +1,7 @@
-#include <DeepNetwork.h>
-#include <optimization/MBSGD.h>
-#include <io/DirectStorageDataSet.h>
-#include <OpenANNException.h>
+#include <OpenANN/OpenANN>
+#include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/util/OpenANNException.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 
   CIFARLoader loader(directory);
 
-  OpenANN::DeepNetwork net;                                                   // Nodes per layer:
+  OpenANN::Net net;                                                   // Nodes per layer:
   net.inputLayer(loader.C, loader.X, loader.Y, true, 0.2);                    //   3 x 32 x 32
   if(bigNet)
   {
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
-  OpenANN::MBSGD optimizer(0.01, 1.0, 0.01, 0.6, 0.0, 0.9, 10, 0.01, 100.0, 0.0);
+  OpenANN::MBSGD optimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   net.initialize();
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);

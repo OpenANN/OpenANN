@@ -1,23 +1,40 @@
-#include <optimization/MBSGD.h>
-#include <optimization/Optimizable.h>
-#include <optimization/StoppingCriteria.h>
-#include <AssertionMacros.h>
-#include <EigenWrapper.h>
+#include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
+#include <OpenANN/util/EigenWrapper.h>
 #include <Test/Stopwatch.h>
 #include <numeric>
 
 namespace OpenANN {
 
-MBSGD::MBSGD(fpt learningRate, fpt learningRateDecay, fpt minimalLearningRate,
-             fpt momentum, fpt momentumGain, fpt maximalMomentum,
-             int batchSize, fpt minGain, fpt maxGain, fpt gamma)
-  : debugLogger(Logger::CONSOLE),
+MBSGD::MBSGD(fpt learningRate, fpt momentum, int batchSize, fpt gamma,
+             fpt learningRateDecay, fpt minimalLearningRate, fpt momentumGain,
+             fpt maximalMomentum, fpt minGain, fpt maxGain)
+  : debugLogger(Logger::NONE),
     alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
     maxGain(maxGain), useGain(minGain != (fpt) 1.0 || maxGain != (fpt) 1.0),
     gamma(gamma), iteration(-1)
 {
+  if(learningRate <= 0.0 || learningRate > 1.0)
+    throw OpenANNException("Invalid learning rate, should be within (0, 1]");
+  if(momentum < 0.0 || momentum >= 1.0)
+    throw OpenANNException("Invalid momentum, should be within [0, 1)");
+  if(batchSize < 1)
+    throw OpenANNException("Invalid batch size, should be greater than 0");
+  if(gamma < 0.0 || gamma > 1.0)
+    throw OpenANNException("Invalid gamma, should be within [0, 1]");
+  if(learningRateDecay <= 0.0 || learningRateDecay > 1.0)
+    throw OpenANNException("Invalid learning rate decay, should be within (0, 1]");
+  if(minimalLearningRate < 0.0 || minimalLearningRate > 1.0)
+    throw OpenANNException("Invalid minimum learning rate, should be within [0, 1]");
+  if(momentumGain < 0.0 || momentumGain >= 1.0)
+    throw OpenANNException("Invalid momentum gain, should be within [0, 1)");
+  if(maximalMomentum < 0.0 || maximalMomentum > 1.0)
+    throw OpenANNException("Invalid maximal momentum, should be within [0, 1]");
 }
 
 MBSGD::~MBSGD()
@@ -52,8 +69,9 @@ bool MBSGD::step()
   if(iteration < 0)
     initialize();
 
+  rng.generateIndices<std::vector<int> >(N, randomIndices, true);
   for(int n = 0; n < N; n++)
-    batchAssignment[rng.generateIndex(batches)].push_back(n);
+    batchAssignment[n % batches].push_back(randomIndices[n]);
   for(int b = 0; b < batches; b++)
   {
     gradient.fill(0.0);
@@ -61,7 +79,7 @@ bool MBSGD::step()
         it != batchAssignment[b].end(); it++)
       gradient += opt->gradient(*it);
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (fpt) batchSize;
+    gradient /= (fpt) batchAssignment[b].size();
     batchAssignment[b].clear();
 
     if(useGain)
@@ -137,6 +155,8 @@ void MBSGD::initialize()
   parameters = opt->currentParameters();
   momentum.resize(P);
   momentum.fill(0.0);
+  randomIndices.reserve(N);
+  rng.generateIndices<std::vector<int> >(N, randomIndices);
   batchAssignment.resize(batches);
   iteration = 0;
 }
