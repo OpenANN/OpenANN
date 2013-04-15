@@ -91,7 +91,7 @@ Log::~Log()
 
  std::ostream& Log::get(LogLevel level)
 {
-  OPENANN_CHECK(level != kDisabled);
+  OPENANN_CHECK(level != DISABLED);
 
   time_t now;
   std::time(&now);
