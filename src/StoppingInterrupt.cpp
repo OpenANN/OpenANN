@@ -1,5 +1,6 @@
 #include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
+
 #include <csignal>
 
 namespace OpenANN {
@@ -21,13 +22,12 @@ StoppingInterrupt::StoppingInterrupt()
 
 StoppingInterrupt::~StoppingInterrupt()
 {
-  --observers;
+    --observers;
 
-  if(observers == 0)
-  {
-    std::signal(SIGINT, SIG_DFL);
-    stoppingInterruptSignal = false;
-  }
+    if(observers == 0) {
+        std::signal(SIGINT, SIG_DFL);
+        stoppingInterruptSignal = false;
+    }
 }
 
 
