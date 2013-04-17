@@ -196,23 +196,21 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 1, 1, directory);
+  IDXLoader loader(28, 28, 60000, 1000, directory);
   OpenANN::DirectStorageDataSet trainSet(loader.trainingInput, loader.trainingOutput);
-  OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput);
+  //OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput);
 
-  OpenANN::RBM rbm(784, 100, 1, 0.01);
+  OpenANN::RBM rbm(784, 200, 1, 0.01);
   rbm.trainingSet(trainSet);
   rbm.initialize();
-  rbm.train();
-  /*OpenANN::MBSGD optimizer(0.001, 1.0, 0.0001, 0.0, 0.0, 0.0, 1, 1.0, 1.0, 0.0);
+  OpenANN::MBSGD optimizer(0.001, 0.5, 25);
   optimizer.setOptimizable(rbm);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 10;
+  stop.maximalIterations = 1;
   optimizer.setStopCriteria(stop);
-  optimizer.optimize();*/
-  //logger << rbm.currentParameters().transpose() << "\n";
+  optimizer.optimize();
 
-  RBMVisualization visual(rbm, testSet, 5, 800, 600);
+  RBMVisualization visual(rbm, trainSet, 5, 800, 600);
   visual.show();
   visual.resize(800, 600);
 

@@ -3,6 +3,7 @@
 #include <OpenANN/Learner.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/util/Random.h>
 #include <Eigen/Dense>
 
 namespace OpenANN {
@@ -10,6 +11,7 @@ namespace OpenANN {
 class RBM : public Optimizable, public Learner
 {
 public:
+  RandomNumberGenerator rng;
   int D, H;
   int cdN;
   fpt stdDev;
@@ -35,7 +37,6 @@ public:
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
 
-  void train(fpt alpha = 0.01, int epochs = 10);
   Vt reconstructProb(int n);
   Vt reconstruct(int n);
 private:

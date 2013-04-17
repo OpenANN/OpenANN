@@ -1,7 +1,7 @@
 #include <OpenANN/RBM.h>
 #include <OpenANN/ActivationFunctions.h>
-#include <OpenANN/util/Random.h>
 #include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/io/Logger.h>
 
 namespace OpenANN {
 
@@ -25,7 +25,6 @@ bool RBM::providesInitialization()
 
 void RBM::initialize()
 {
-  RandomNumberGenerator rng;
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
       W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
@@ -125,23 +124,6 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
   trainSet = &trainingSet;
 }
 
-void RBM::train(fpt alpha, int epochs)
-{
-  RandomNumberGenerator rng;
-  for(int e = 0; e < epochs; e++)
-  {
-    for(int n = 0; n < trainSet->samples(); n++)
-    {
-      int idx = n;
-      reality(idx);
-      daydream();
-      W += alpha * (posGradW - negGradW);
-      bh += alpha * (posGradBh - negGradBh);
-      bv += alpha * (posGradBv - negGradBv);
-    }
-  }
-}
-
 Vt RBM::reconstructProb(int n)
 {
   v = trainSet->getInstance(n);
@@ -186,18 +168,16 @@ void RBM::sampleHgivenV()
 {
   ph = W * v + bh;
   activationFunction(LOGISTIC, ph, ph);
-  RandomNumberGenerator rng;
   for(int j = 0; j < H; j++)
-    h(j) = (fpt) (ph(j) <= rng.generate<fpt>(0.0, 1.0));
+    h(j) = (fpt) (ph(j) > rng.generate<fpt>(0.0, 1.0));
 }
 
 void RBM::sampleVgivenH()
 {
   pv = W.transpose() * h + bv;
   activationFunction(LOGISTIC, pv, pv);
-  RandomNumberGenerator rng;
   for(int i = 0; i < D; i++)
-    v(i) = (fpt) (pv(i) <= rng.generate<fpt>(0.0, 1.0));
+    v(i) = (fpt) (pv(i) > rng.generate<fpt>(0.0, 1.0));
 }
 
 }
