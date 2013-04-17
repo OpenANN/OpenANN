@@ -20,17 +20,17 @@
 
 
 #ifndef OPENNANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::kDebug 
+  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
 #endif // OPENANN_LOGLEVEL
 
 #define OPENANN_LOG(level) \
     if(level > OPENANN_LOGLEVEL) ; \
-    else if(level > OpenANN::Log::Level()) ; \
+    else if(level > OpenANN::Log::getLevel()) ; \
     else OpenANN::Log().get(level)
 
-#define OPENANN_DEBUG OPENANN_LOG(OpenANN::Log::kDebug)
-#define OPENANN_INFO OPENANN_LOG(OpenANN::Log::kInfo)
-#define OPENANN_ERROR OPENANN_LOG(OpenANN::Log::kError)
+#define OPENANN_DEBUG OPENANN_LOG(OpenANN::Log::DEBUG)
+#define OPENANN_INFO OPENANN_LOG(OpenANN::Log::INFO)
+#define OPENANN_ERROR OPENANN_LOG(OpenANN::Log::ERROR)
 
 namespace OpenANN
 {
@@ -47,26 +47,25 @@ std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t);
 class Log 
 {
 public:
-    enum LogLevel {
-        kDisabled = 0,
-        kError,
-        kInfo, 
-        kDebug
-    };
+  enum LogLevel {
+      DISABLED = 0,
+      ERROR,
+      INFO, 
+      DEBUG
+  };
 
-    Log();
-    virtual ~Log();
+  Log();
+  virtual ~Log();
 
-    std::ostream& get(LogLevel level);
+  std::ostream& get(LogLevel level);
 
-    static std::ostream& Stream();
-    static LogLevel& Level();
+  static std::ostream& getStream();
+  static LogLevel& getLevel();
 
 private:
-    std::ostringstream message;
-    LogLevel level;
+  std::ostringstream message;
+  LogLevel level;
 };
-
 
 
 class Logger

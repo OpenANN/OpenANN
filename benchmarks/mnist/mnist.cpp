@@ -1,5 +1,6 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include "IDXLoader.h"
 #include <OpenANN/io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
-  OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
+  OpenANN::Log::getLevel() = OpenANN::Log::INFO;
 
   std::string directory = "mnist/";
   if(argc > 1)
@@ -60,18 +61,21 @@ int main(int argc, char** argv)
   net.testSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   net.initialize();
-  interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
-      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
+  OPENANN_INFO << "Created MLP." << std::endl << "D = " << loader.D << ", F = "
+      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension();
+  OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
+      " iteration is finished.";
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
   OpenANN::MBSGD optimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
-  while(optimizer.step());
+  OpenANN::StoppingInterrupt interrupt;
+  while(optimizer.step() && !interrupt.isSignaled());
 
-  interfaceLogger << "Error = " << net.error() << "\n\n";
-  interfaceLogger << "Wrote data to dataset-*.log.\n";
+  OPENANN_INFO << "Error = " << net.error();
+  OPENANN_INFO << "Wrote data to dataset-*.log.";
 
   OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
   resultLogger << optimizer.result();

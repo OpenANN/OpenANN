@@ -6,10 +6,10 @@ namespace OpenANN
 {
 
 const char* LevelToString[] = {
-    "DISABLED",
-    "ERROR",
-    "INFO",
-    "DEBUG"
+  "DISABLED",
+  "ERROR",
+  "INFO",
+  "DEBUG"
 };
 
 bool Logger::deactivate = false;
@@ -28,7 +28,8 @@ Logger::Logger(Target target, std::string name)
     struct tm* timeinfo;
     std::time(&rawtime);
     timeinfo = std::localtime(&rawtime);
-    file.open((name + "-" + std::string(std::asctime(timeinfo)).substr(0, 24) + ".log").c_str());
+    file.open((name + "-" + std::string(std::asctime(timeinfo)).substr(0, 24) +
+        ".log").c_str());
     OPENANN_CHECK(file.is_open());
   }
   else if(target == APPEND_FILE)
@@ -63,7 +64,8 @@ Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
   switch(logger.target)
   {
     case Logger::CONSOLE:
-      std::cout << std::fixed << std::setprecision(t.precision) << t.value << std::resetiosflags(std::ios_base::fixed) << std::flush;
+      std::cout << std::fixed << std::setprecision(t.precision) << t.value
+          << std::resetiosflags(std::ios_base::fixed) << std::flush;
       break;
     case Logger::APPEND_FILE:
     case Logger::FILE:
@@ -83,48 +85,48 @@ Log::Log()
 
 Log::~Log()
 {
-     Stream() << message.str() << std::endl; 
+  getStream() << message.str() << std::endl; 
 }
 
 
  std::ostream& Log::get(LogLevel level)
 {
-    OPENANN_CHECK(level != kDisabled);
+  OPENANN_CHECK(level != DISABLED);
 
-    time_t now;
-    time(&now);
-    struct tm* current = localtime(&now);
-    char current_time[32];
+  time_t now;
+  std::time(&now);
+  struct tm* current = std::localtime(&now);
+  char current_time[32];
 
-    this->level = level;
-    
-    strftime(current_time, sizeof(current_time), "%F %X", current);
+  this->level = level;
 
-    message << std::setw(6) << LevelToString[level] << "  " << current_time << "  ";
+  std::strftime(current_time, sizeof(current_time), "%F %X", current);
 
-    return message;
+  message << std::setw(6) << LevelToString[level] << "  " << current_time << "  ";
+
+  return message;
 }
 
 
-std::ostream& Log::Stream()
+std::ostream& Log::getStream()
 {
-    static std::ostream& gStream = std::cout;
-    return gStream;
+  static std::ostream& gStream = std::cout;
+  return gStream;
 }
 
 
-Log::LogLevel& Log::Level()
+Log::LogLevel& Log::getLevel()
 {
-    static Log::LogLevel gLevel = kDebug;
-    return gLevel;
+  static Log::LogLevel gLevel = DEBUG;
+  return gLevel;
 }
 
 std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t)
 {
-      os << std::fixed << std::setprecision(t.precision) << t.value << std::resetiosflags(std::ios_base::fixed);
-      return os;
+    os << std::fixed << std::setprecision(t.precision) << t.value
+        << std::resetiosflags(std::ios_base::fixed);
+    return os;
 }
-
 
 
 }

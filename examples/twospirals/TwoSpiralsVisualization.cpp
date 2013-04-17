@@ -20,11 +20,12 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
   // initialize MLP
   net->inputLayer(trainingInput.rows())
     // use this as only hidden layer to try extreme learning machine
-    //.extremeLayer(1500, RECTIFIER)
+    //.extremeLayer(1500, RECTIFIER, 1.0)
     .fullyConnectedLayer(20, TANH)
     .fullyConnectedLayer(20, TANH)
     .outputLayer(trainingOutput.rows(), TANH)
     .trainingSet(trainingSet);
+  net->initialize();
 
   // set stop criteria
   stop.maximalIterations = 10000;

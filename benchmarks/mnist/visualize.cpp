@@ -194,6 +194,7 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
+  net.initialize();
 
   // Load parameters
   std::ifstream file("weights.log");
