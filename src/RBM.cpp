@@ -16,6 +16,9 @@ RBM::RBM(int D, int H, int cdN, fpt stdDev)
 
 Vt RBM::operator()(const Vt& x)
 {
+  v = x;
+  sampleHgivenV();
+  return ph;
 }
 
 bool RBM::providesInitialization()

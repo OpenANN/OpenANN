@@ -22,9 +22,6 @@ class RBMVisualization : public QGLWidget
   int instance;
   int offset;
   int fantasy;
-  OpenANN::Logger debugLogger;
-  OpenANN::MBSGD optimizer;
-  OpenANN::StoppingCriteria stop;
 public:
   RBMVisualization(OpenANN::RBM& rbm, OpenANN::DataSet& dataSet,
                    int visualizedNeurons, int rows, int cols,
@@ -32,12 +29,8 @@ public:
                    Qt::WindowFlags f = 0)
       : rbm(rbm), dataSet(dataSet), visualizedNeurons(visualizedNeurons),
         rows(rows), cols(cols), width(800), height(600), instance(0),
-        offset(0), fantasy(0), debugLogger(OpenANN::Logger::CONSOLE),
-        optimizer(0.001, 0.5, 25)
+        offset(0), fantasy(0)
   {
-    optimizer.setOptimizable(rbm);
-    stop.maximalIterations = 100;
-    optimizer.setStopCriteria(stop);
   }
 
   virtual void initializeGL()
@@ -207,20 +200,10 @@ public:
         fantasy++;
         update();
         break;
-      case Qt::Key_A:
-        debugLogger << "Optimize... ";
-        iteration();
-        debugLogger << "Finished.\n";
-        update();
       default:
         QGLWidget::keyPressEvent(keyEvent);
         break;
     }
-  }
-
-  void iteration()
-  {
-    optimizer.step();
   }
 };
 
@@ -230,6 +213,7 @@ int main(int argc, char** argv)
   omp_set_num_threads(PARALLEL_CORES);
 #endif
   OpenANN::Logger logger(OpenANN::Logger::CONSOLE);
+  OpenANN::Logger parameterLogger(OpenANN::Logger::APPEND_FILE, "rbm-weights");
 
   QApplication app(argc, argv);
 
@@ -241,9 +225,21 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet trainSet(loader.trainingInput, loader.trainingOutput);
   //OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput);
 
-  OpenANN::RBM rbm(784, 50, 1, 0.01);
+  OpenANN::RBM rbm(784, 500, 1, 0.01);
   rbm.trainingSet(trainSet);
   rbm.initialize();
+
+  OpenANN::MBSGD optimizer(0.001, 0.5, 25, 0.1);
+  OpenANN::StoppingCriteria stop;
+  stop.maximalIterations = 50;
+  optimizer.setOptimizable(rbm);
+  optimizer.setStopCriteria(stop);
+  int it = 0;
+  while(optimizer.step())
+  {
+    OPENANN_INFO << "Iteration #" << ++it << " finished.";
+  }
+  parameterLogger << rbm.currentParameters();
 
   RBMVisualization visual(rbm, trainSet, 5, 800, 600);
   visual.show();
