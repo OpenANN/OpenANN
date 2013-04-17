@@ -37,8 +37,8 @@ public:
   virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
 
-  Vt reconstructProb(int n);
-  Vt reconstruct(int n);
+  Vt reconstructProb(int n, int steps);
+  Vt reconstruct(int n, int steps);
 private:
   void reality(int n);
   void daydream();

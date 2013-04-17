@@ -124,19 +124,25 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
   trainSet = &trainingSet;
 }
 
-Vt RBM::reconstructProb(int n)
+Vt RBM::reconstructProb(int n, int steps)
 {
   v = trainSet->getInstance(n);
-  sampleHgivenV();
-  sampleVgivenH();
+  for(int i = 0; i < steps; i++)
+  {
+    sampleHgivenV();
+    sampleVgivenH();
+  }
   return pv;
 }
 
-Vt RBM::reconstruct(int n)
+Vt RBM::reconstruct(int n, int steps)
 {
   v = trainSet->getInstance(n);
-  sampleHgivenV();
-  sampleVgivenH();
+  for(int i = 0; i < steps; i++)
+  {
+    sampleHgivenV();
+    sampleVgivenH();
+  }
   return v;
 }
 

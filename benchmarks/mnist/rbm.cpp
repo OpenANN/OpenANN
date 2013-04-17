@@ -20,7 +20,11 @@ class RBMVisualization : public QGLWidget
   int rows, cols;
   int width, height;
   int instance;
+  int offset;
+  int fantasy;
   OpenANN::Logger debugLogger;
+  OpenANN::MBSGD optimizer;
+  OpenANN::StoppingCriteria stop;
 public:
   RBMVisualization(OpenANN::RBM& rbm, OpenANN::DataSet& dataSet,
                    int visualizedNeurons, int rows, int cols,
@@ -28,8 +32,12 @@ public:
                    Qt::WindowFlags f = 0)
       : rbm(rbm), dataSet(dataSet), visualizedNeurons(visualizedNeurons),
         rows(rows), cols(cols), width(800), height(600), instance(0),
-        debugLogger(OpenANN::Logger::CONSOLE)
+        offset(0), fantasy(0), debugLogger(OpenANN::Logger::CONSOLE),
+        optimizer(0.001, 0.5, 25)
   {
+    optimizer.setOptimizable(rbm);
+    stop.maximalIterations = 100;
+    optimizer.setStopCriteria(stop);
   }
 
   virtual void initializeGL()
@@ -95,7 +103,7 @@ public:
     }
     glEnd();
 
-    Vt r = rbm.reconstruct(instance);
+    Vt r = rbm.reconstruct(instance, 1);
     glBegin(GL_QUADS);
     for(int xIdx = 0; xIdx < 28; xIdx++)
     {
@@ -113,23 +121,26 @@ public:
     }
     glEnd();
 
-    Vt rp = rbm.reconstructProb(instance);
-    glBegin(GL_QUADS);
-    for(int xIdx = 0; xIdx < 28; xIdx++)
+    for(int i = 0; i < 3; i++)
     {
-      for(int yIdx = 0; yIdx < 28; yIdx++)
+      Vt rp = rbm.reconstructProb(instance, 1+i+fantasy);
+      glBegin(GL_QUADS);
+      for(int xIdx = 0; xIdx < 28; xIdx++)
       {
-        float c = rp(yIdx*28+xIdx);
-        float x = 60.0f + xIdx*scale;
-        float y = 28.0f*scale - yIdx*scale;
-        glColor3f(c, c, c);
-        glVertex2f(x, y);
-        glVertex2f(x+scale, y);
-        glVertex2f(x+scale, y+scale);
-        glVertex2f(x, y+scale);
+        for(int yIdx = 0; yIdx < 28; yIdx++)
+        {
+          float c = rp(yIdx*28+xIdx);
+          float x = (i+2)*30.0f + xIdx*scale;
+          float y = 28.0f*scale - yIdx*scale;
+          glColor3f(c, c, c);
+          glVertex2f(x, y);
+          glVertex2f(x+scale, y);
+          glVertex2f(x+scale, y+scale);
+          glVertex2f(x, y+scale);
+        }
       }
+      glEnd();
     }
-    glEnd();
 
     for(int i = 0; i < visualizedNeurons; i++)
     {
@@ -141,7 +152,7 @@ public:
       {
         for(int yIdx = 0; yIdx < 28; yIdx++)
         {
-          float c = (rbm.W(i, yIdx*28+xIdx) - mi) / range;
+          float c = (rbm.W(i+offset, yIdx*28+xIdx) - mi) / range;
           float x = i*30.0f*scale + xIdx*scale;
           float y = 30.0f + (28.0f-yIdx)*scale;
           glColor3f(c, c, c);
@@ -176,10 +187,40 @@ public:
           instance = 0;
         update();
         break;
+      case Qt::Key_Left:
+        offset--;
+        if(offset < 0)
+          offset = 0;
+        update();
+        break;
+      case Qt::Key_Right:
+        offset++; // TODO we could reach to max. hidden unit
+        update();
+        break;
+      case Qt::Key_Minus:
+        fantasy--;
+        if(fantasy < 0)
+          fantasy = 0;
+        update();
+        break;
+      case Qt::Key_Plus:
+        fantasy++;
+        update();
+        break;
+      case Qt::Key_A:
+        debugLogger << "Optimize... ";
+        iteration();
+        debugLogger << "Finished.\n";
+        update();
       default:
         QGLWidget::keyPressEvent(keyEvent);
         break;
     }
+  }
+
+  void iteration()
+  {
+    optimizer.step();
   }
 };
 
@@ -200,15 +241,9 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet trainSet(loader.trainingInput, loader.trainingOutput);
   //OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput);
 
-  OpenANN::RBM rbm(784, 200, 1, 0.01);
+  OpenANN::RBM rbm(784, 50, 1, 0.01);
   rbm.trainingSet(trainSet);
   rbm.initialize();
-  OpenANN::MBSGD optimizer(0.001, 0.5, 25);
-  optimizer.setOptimizable(rbm);
-  OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 1;
-  optimizer.setStopCriteria(stop);
-  optimizer.optimize();
 
   RBMVisualization visual(rbm, trainSet, 5, 800, 600);
   visual.show();
