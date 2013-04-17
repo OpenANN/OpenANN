@@ -8,6 +8,7 @@ namespace OpenANN
 \b Table \b of \b contents
   - \ref License
   - \ref Features
+  - \ref OtherLibs
   - \ref Howtos
 
 This is the API documentation of OpenANN.
@@ -25,20 +26,44 @@ COPYING.LESSER.
 
 \section Features List of Features
 
-  - artificial neural networks
-    - multilayer neural network
-    - convolutional neural network (CNN) with convolutional layers,
-      subsampling layers and max-pooling layers
-    - random projections for data and network compression and extreme learning
-      machines
-  - optimization algorithms
-    - mini-batch stochastic gradient descent (MBSGD) for large networks
-    - Levenberg-Marquardt algorithm (LMA) for small networks
-    - (increasing population size) covariance matrix adaption evolution
-      strategies (IPOPCMAES) for reinforcement learning
-  - supported languages
-    - C++
-    - Python bindings
+- artificial neural networks
+  - multilayer neural network
+  - convolutional neural network (CNN) with convolutional layers,
+    subsampling layers and max-pooling layers
+  - random projections for data and network compression and extreme learning
+    machines
+- optimization algorithms
+  - mini-batch stochastic gradient descent (MBSGD) for large networks
+  - Levenberg-Marquardt algorithm (LMA) for small networks
+  - (increasing population size) covariance matrix adaption evolution
+    strategies (IPOPCMAES) for reinforcement learning
+- supported languages
+  - C++
+  - Python bindings
+
+\section OtherLibs How does OpenANN relate to other neural network libraries?
+
+- <a href="http://leenissen.dk/fann/wp/" target=_blank>FANN</a>: A well-known
+  and widly used library for feedforward neural networks written in C with
+  bindings for many other languages (Python, Ruby, ...). FANN has limited
+  functionality but is easy to use and robust. It usually used for small
+  datasets and applications.
+- <a href="https://github.com/lisa-lab/pylearn2/tree/master/pylearn2"
+  target=_blank> pylearn2</a>: State of the art implementations of many deep
+  learning algorithms that are build upon Theano in Python.
+- <a href="http://pybrain.org/" target=_blank>PyBrain</a>:
+  A huge python library that contains many types of neural networks for
+  supervised, unsupervised and reinforcement learning, e.g. recurrent neural
+  networks (long short-term memory, reservoir), restricted boltzman machines,
+  self-organizing maps, ...
+- <a href="http://code.google.com/p/cuda-convnet/" target=_blank>cuda-convnet</a>:
+  State of the art CUDA library for large CNNs. It is really fast, has python
+  bindings and has been used to achieve state of the art results on the
+  ImageNet dataset. Many types of layers and activations functions are
+  implemented and new types can be added easily. However, using it and can be
+  very difficult.
+- <a href="http://eblearn.cs.nyu.edu:21991/doku.php" target=_blank>EBLearn</a>
+- <a href="http://www.torch.ch/" target=_blank>Torch7</a>
 
 \section Howtos
 
