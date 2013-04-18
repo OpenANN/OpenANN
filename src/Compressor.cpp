@@ -35,7 +35,7 @@ void Compressor::reset()
 #endif
 }
 
-void Compressor::init(const Mt& cm)
+void Compressor::init(const Eigen::MatrixXd& cm)
 {
   reset();
   this->cm.resize(cm.rows(), cm.cols());
@@ -53,12 +53,12 @@ void Compressor::init(const Mt& cm)
 #endif
 }
 
-Vt Compressor::compress(const Vt& instance)
+Eigen::VectorXd Compressor::compress(const Eigen::VectorXd& instance)
 {
 #ifdef CUDA_AVAILABLE
   if(instance.rows() > maxInputDimensionWithoutCuda)
   {
-    Vt result(cm.rows());
+    Eigen::VectorXd result(cm.rows());
     if(!CUBLASContext::instance.setMatrix(instance.data(), inputOnDevice, instance.rows(), 1))
       abort();
     if(!CUBLASContext::instance.multiplyMatrixVector(cmOnDevice, inputOnDevice, outputOnDevice, cm.rows(), cm.cols()))

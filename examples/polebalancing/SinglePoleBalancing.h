@@ -42,8 +42,8 @@ class SinglePoleBalancing : public OpenANN::Environment
   //! Maximal applicable force.
   double maxForce;
 
-  fpt massLength1;
-  fpt massLength2;
+  double massLength1;
+  double massLength2;
 
   Environment::Action actionSpaceLo;
   Environment::Action actionSpaceHi;
@@ -63,13 +63,13 @@ public:
   virtual int actionSpaceElements() const;
   virtual const Action& actionSpaceLowerBound() const;
   virtual const Action& actionSpaceUpperBound() const;
-  virtual fpt deltaT() const;
+  virtual double deltaT() const;
   virtual const Action& getAction() const;
   virtual const ActionSpace::A& getDiscreteActionSpace() const;
   virtual const StateSpace::S& getDiscreteStateSpace() const;
   virtual const State& getState() const;
   virtual void restart();
-  virtual fpt reward() const;
+  virtual double reward() const;
   virtual bool stateSpaceContinuous() const;
   virtual int stateSpaceDimension() const;
   virtual int stateSpaceElements() const;
@@ -81,6 +81,6 @@ public:
   virtual bool terminalState() const;
 private:
   void normalizeState();
-  State derivative(const State& state, fpt force);
-  State rk4(const State& state, fpt force, const State& derivative);
+  State derivative(const State& state, double force);
+  State rk4(const State& state, double force, const State& derivative);
 };

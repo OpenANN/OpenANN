@@ -8,26 +8,26 @@ namespace OpenANN {
 class AlphaBetaFilter : public Layer
 {
   int I, J;
-  fpt deltaT;
+  double deltaT;
   bool bias;
-  fpt stdDev;
-  Vt gamma;
-  Vt gammad;
-  Vt alpha;
-  Vt beta;
+  double stdDev;
+  Eigen::VectorXd gamma;
+  Eigen::VectorXd gammad;
+  Eigen::VectorXd alpha;
+  Eigen::VectorXd beta;
   bool first;
-  Vt* x;
-  Vt y;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd y;
 
 public:
-  AlphaBetaFilter(OutputInfo info, fpt deltaT, bool bias, fpt stdDev);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers);
+  AlphaBetaFilter(OutputInfo info, double deltaT, bool bias, double stdDev);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters();
   virtual void reset();
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

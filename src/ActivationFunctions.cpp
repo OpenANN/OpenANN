@@ -5,7 +5,7 @@
 namespace OpenANN
 {
 
-void activationFunction(ActivationFunction act, const Vt& a, Vt& z)
+void activationFunction(ActivationFunction act, const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   switch(act)
   {
@@ -28,7 +28,7 @@ void activationFunction(ActivationFunction act, const Vt& a, Vt& z)
   }
 }
 
-void activationFunctionDerivative(ActivationFunction act, const Vt& z, Vt& gd)
+void activationFunctionDerivative(ActivationFunction act, const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 {
   switch(act)
   {
@@ -51,16 +51,16 @@ void activationFunctionDerivative(ActivationFunction act, const Vt& z, Vt& gd)
   }
 }
 
-void softmax(Vt& y)
+void softmax(Eigen::VectorXd& y)
 {
   const int F = y.rows();
-  const fpt max = y.maxCoeff();
+  const double max = y.maxCoeff();
   for(int f = 0; f < F; f++)
     y(f) = std::exp(y(f) - max);
   y /= y.sum();
 }
 
-void logistic(const Vt& a, Vt& z)
+void logistic(const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   for(int j = 0; j < a.rows(); j++)
   {
@@ -73,54 +73,54 @@ void logistic(const Vt& a, Vt& z)
   }
 }
 
-void logisticDerivative(const Vt& z, Vt& gd)
+void logisticDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
     gd(j) = z(j)*(1.0 - z(j));
 }
 
-void normaltanh(const Vt& a, Vt& z)
+void normaltanh(const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   for(int j = 0; j < a.rows(); j++)
     z(j) = std::tanh(a(j));
 }
 
-void normaltanhDerivative(const Vt& z, Vt& gd)
+void normaltanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
     gd(j) = 1.0 - z(j)*z(j);
 }
 
-void scaledtanh(const Vt& a, Vt& z)
+void scaledtanh(const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   for(int j = 0; j < a.rows(); j++)
     z(j) = 1.7159*std::tanh(0.66666667*a(j));
 }
 
-void scaledtanhDerivative(const Vt& z, Vt& gd)
+void scaledtanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
     gd(j) = 0.66666667/1.7159*(1.7159+z(j))*(1.7159-z(j));
 }
 
-void rectifier(const Vt& a, Vt& z)
+void rectifier(const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   for(int j = 0; j < a.rows(); j++)
-    z(j) = std::max<fpt>((fpt) 0.0, a(j));
+    z(j) = std::max<double>((double) 0.0, a(j));
 }
 
-void rectifierDerivative(const Vt& z, Vt& gd)
+void rectifierDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
-    gd(j) = z(j) == (fpt) 0.0 ? (fpt) 0.0 : (fpt) 1.0;
+    gd(j) = z(j) == (double) 0.0 ? (double) 0.0 : (double) 1.0;
 }
 
-void linear(const Vt& a, Vt& z)
+void linear(const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   z.middleRows(0, a.rows()) = a;
 }
 
-void linearDerivative(Vt& gd)
+void linearDerivative(Eigen::VectorXd& gd)
 {
   gd.fill(1.0);
 }

@@ -3,18 +3,18 @@
 
 namespace OpenANN {
 
-Input::Input(int dim1, int dim2, int dim3, bool bias, fpt dropoutProbability)
+Input::Input(int dim1, int dim2, int dim3, bool bias, double dropoutProbability)
   : J(dim1*dim2*dim3), dim1(dim1), dim2(dim2), dim3(dim3), bias(bias),
     dropoutProbability(dropoutProbability), y(J+bias)
 {
 }
 
-OutputInfo Input::initialize(std::vector<fpt*>& parameterPointers,
-                             std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo Input::initialize(std::vector<double*>& parameterPointers,
+                             std::vector<double*>& parameterDerivativePointers)
 {
   // Bias component will not change after initialization
   if(bias)
-    y(J) = fpt(1.0);
+    y(J) = double(1.0);
   OutputInfo info;
   info.bias = bias;
   info.dimensions.push_back(dim1);
@@ -28,7 +28,7 @@ void Input::initializeParameters()
   // Do nothing.
 }
 
-void Input::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void Input::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   // Copy entries and add bias
   for(int i = 0; i < J; i++)
@@ -37,8 +37,8 @@ void Input::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   {
     RandomNumberGenerator rng;
     for(int j = 0; j < J; j++)
-      if(rng.generate<fpt>(0.0, 1.0) < dropoutProbability)
-        this->y(j) = (fpt) 0;
+      if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
+        this->y(j) = (double) 0;
   }
   else if(dropoutProbability > 0.0)
   {
@@ -52,12 +52,12 @@ void Input::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void Input::backpropagate(Vt* ein, Vt*& eout)
+void Input::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Do nothing.
 }
 
-Vt& Input::getOutput()
+Eigen::VectorXd& Input::getOutput()
 {
   return y;
 }

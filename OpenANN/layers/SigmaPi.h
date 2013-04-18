@@ -38,17 +38,17 @@ class SigmaPi : public Layer
     OutputInfo info;
     bool bias;
     ActivationFunction act;
-    fpt stdDev;
+    double stdDev;
 
-    Vt* x;
-    Vt a;
-    Vt y;
-    Vt yd;
-    Vt deltas;
-    Vt e;
+    Eigen::VectorXd* x;
+    Eigen::VectorXd a;
+    Eigen::VectorXd y;
+    Eigen::VectorXd yd;
+    Eigen::VectorXd deltas;
+    Eigen::VectorXd e;
  
-    std::vector<fpt> w;
-    std::vector<fpt> wd;
+    std::vector<double> w;
+    std::vector<double> wd;
     std::vector<HigherOrderNeuron> nodes;
     
  public:
@@ -59,13 +59,13 @@ class SigmaPi : public Layer
    * @param act specifies using activation function for all higher-order nodes
    * @param stdDev defines the standard deviation for the random weight initialization
    */
-  SigmaPi(OutputInfo info, bool bias, ActivationFunction act, fpt stdDev);
+  SigmaPi(OutputInfo info, bool bias, ActivationFunction act, double stdDev);
 
   /**
-   * See OpenANN::Layer::initialize(std::vector<fpt*>& pParameter, std::vector<fpt*>& pDerivative)
+   * See OpenANN::Layer::initialize(std::vector<double*>& pParameter, std::vector<double*>& pDerivative)
    */
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-          std::vector<fpt*>& parameterDerivativePointers);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+          std::vector<double*>& parameterDerivativePointers);
 
   /**
    * A helper class for specifying weight constrains in a higher-order neural network
@@ -80,17 +80,17 @@ class SigmaPi : public Layer
       /**
        * function call operator for corresponding second-order nodes
        */
-      virtual fpt operator() (int p1, int p2) const;
+      virtual double operator() (int p1, int p2) const;
 
       /**
        * function call operator for corresponding third-order nodes
        */
-      virtual fpt operator() (int p1, int p2, int p3) const;
+      virtual double operator() (int p1, int p2, int p3) const;
 
       /**
        * function call operator for corresponding fourth-order nodes
        */
-      virtual fpt operator() (int p1, int p2, int p3, int p4) const;
+      virtual double operator() (int p1, int p2, int p3, int p4) const;
 
       /** 
        * @internal 
@@ -158,19 +158,19 @@ class SigmaPi : public Layer
   virtual void updatedParameters();
 
   /**
-   * See OpenANN::Layer::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+   * See OpenANN::Layer::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
    */
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout = false);
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout = false);
 
   /**
-   * See OpenANN::Layer::backpropagate(Vt* error_in, Vt*& error_out)
+   * See OpenANN::Layer::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_out)
    */
-  virtual void backpropagate(Vt* ein, Vt*& eout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
 
   /**
    * See OpenANN::Layer::getOutput()
    */
-  virtual Vt& getOutput();
+  virtual Eigen::VectorXd& getOutput();
 };
 
 

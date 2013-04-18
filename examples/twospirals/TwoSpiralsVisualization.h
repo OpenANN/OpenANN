@@ -14,18 +14,18 @@ class TwoSpiralsVisualization;
 
 class TwoSpiralsDataSet : public DataSet
 {
-  Mt in, out;
+  Eigen::MatrixXd in, out;
   DirectStorageDataSet dataSet;
   TwoSpiralsVisualization* visualization;
 public:
-  TwoSpiralsDataSet(const Mt& inputs, const Mt& outputs);
+  TwoSpiralsDataSet(const Eigen::MatrixXd& inputs, const Eigen::MatrixXd& outputs);
   void setVisualization(TwoSpiralsVisualization* visualization);
   virtual ~TwoSpiralsDataSet() {}
   virtual int samples() { return dataSet.samples(); }
   virtual int inputs() { return dataSet.inputs(); }
   virtual int outputs() { return dataSet.outputs(); }
-  virtual Vt& getInstance(int i) { return dataSet.getInstance(i); }
-  virtual Vt& getTarget(int i) { return dataSet.getTarget(i); }
+  virtual Eigen::VectorXd& getInstance(int i) { return dataSet.getInstance(i); }
+  virtual Eigen::VectorXd& getTarget(int i) { return dataSet.getTarget(i); }
   virtual void finishIteration(Learner& learner);
 };
 
@@ -34,7 +34,7 @@ class TwoSpiralsVisualization : public QGLWidget
   Q_OBJECT
   int width, height;
   QMutex classesMutex;
-  fpt classes[100][100];
+  double classes[100][100];
   TwoSpiralsDataSet trainingSet;
   TwoSpiralsDataSet testSet;
   bool showTraining, showTest, showPrediction, showSmooth;
@@ -43,10 +43,10 @@ class TwoSpiralsVisualization : public QGLWidget
   Logger eventLogger;
 
 public:
-  TwoSpiralsVisualization(const Mt& trainingInput, const Mt& trainingOutput,
-      const Mt& testInput, const Mt& testOutput);
+  TwoSpiralsVisualization(const Eigen::MatrixXd& trainingInput, const Eigen::MatrixXd& trainingOutput,
+      const Eigen::MatrixXd& testInput, const Eigen::MatrixXd& testOutput);
   virtual ~TwoSpiralsVisualization();
-  void predictClass(int x, int y, fpt predictedClass);
+  void predictClass(int x, int y, double predictedClass);
 
 protected:
   virtual void initializeGL();

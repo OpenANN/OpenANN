@@ -6,7 +6,7 @@ namespace OpenANN {
 
 Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
-                       fpt stdDev, fpt dropoutProbability)
+                       double stdDev, double dropoutProbability)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
     dropoutProbability(dropoutProbability), W(J, I), Wd(J, I), phi(M, I),
     alpha(J, M), alphad(J, M), x(0), a(J), y(J+bias), yd(J), deltas(J), e(I)
@@ -25,8 +25,8 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
   cmf.createCompressionMatrix(phi);
 }
 
-OutputInfo Compressed::initialize(std::vector<fpt*>& parameterPointers,
-                                      std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo Compressed::initialize(std::vector<double*>& parameterPointers,
+                                      std::vector<double*>& parameterDerivativePointers)
 {
   parameterPointers.reserve(parameterPointers.size() + J*M);
   parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*M);
@@ -41,7 +41,7 @@ OutputInfo Compressed::initialize(std::vector<fpt*>& parameterPointers,
 
   // Bias component will not change after initialization
   if(bias)
-    y(J) = fpt(1.0);
+    y(J) = double(1.0);
 
   initializeParameters();
 
@@ -56,7 +56,7 @@ void Compressed::initializeParameters()
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
     for(int m = 0; m < M; m++)
-      alpha(j, m) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      alpha(j, m) = rng.sampleNormalDistribution<double>() * stdDev;
   updatedParameters();
 }
 
@@ -65,7 +65,7 @@ void Compressed::updatedParameters()
   W = alpha * phi;
 }
 
-void Compressed::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void Compressed::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
   // Activate neurons
@@ -76,8 +76,8 @@ void Compressed::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   {
     RandomNumberGenerator rng;
     for(int j = 0; j < J; j++)
-      if(rng.generate<fpt>(0.0, 1.0) < dropoutProbability)
-        this->y(j) = (fpt) 0;
+      if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
+        this->y(j) = (double) 0;
   }
   else if(dropoutProbability > 0.0)
   {
@@ -91,7 +91,7 @@ void Compressed::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void Compressed::backpropagate(Vt* ein, Vt*& eout)
+void Compressed::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
@@ -105,7 +105,7 @@ void Compressed::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& Compressed::getOutput()
+Eigen::VectorXd& Compressed::getOutput()
 {
   return y;
 }

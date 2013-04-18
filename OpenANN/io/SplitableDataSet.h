@@ -25,7 +25,7 @@ class Learner;
 
 class SplitableDataSet : public DataSet
 {
-    typedef std::pair<Vt*, Vt*> instance_pair;
+    typedef std::pair<Eigen::VectorXd*, Eigen::VectorXd*> instance_pair;
 
 public:
     /**
@@ -61,12 +61,12 @@ public:
     /** 
      * See OpenANN::DataSet::getInstance(int) 
      */
-    virtual Vt& getInstance(int i);
+    virtual Eigen::VectorXd& getInstance(int i);
 
     /** 
      * See OpenANN::DataSet::getTarget(int) 
      */
-    virtual Vt& getTarget(int i);
+    virtual Eigen::VectorXd& getTarget(int i);
 
     /** 
      * See OpenANN::DataSet::finishIteration(Learner&)
@@ -80,7 +80,7 @@ public:
      * @param instance pointer to the feature vector
      * @param target pointer to the target vector
      */
-    virtual void add(Vt* instance, Vt* target);
+    virtual void add(Eigen::VectorXd* instance, Eigen::VectorXd* target);
  
     /**
      * Adds feature- and target instance to this dataset.
@@ -100,7 +100,7 @@ public:
      * @param instance pointer to the feature vector
      * @param klass label for the target class (0 <= klass <= max_classes)
      */
-    virtual void add(Vt* instance, int klass);
+    virtual void add(Eigen::VectorXd* instance, int klass);
 
     /**
      * Shuffles the order of instances within this dataset

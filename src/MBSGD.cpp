@@ -9,14 +9,14 @@
 
 namespace OpenANN {
 
-MBSGD::MBSGD(fpt learningRate, fpt momentum, int batchSize, fpt gamma,
-             fpt learningRateDecay, fpt minimalLearningRate, fpt momentumGain,
-             fpt maximalMomentum, fpt minGain, fpt maxGain)
+MBSGD::MBSGD(double learningRate, double momentum, int batchSize, double gamma,
+             double learningRateDecay, double minimalLearningRate, double momentumGain,
+             double maximalMomentum, double minGain, double maxGain)
   : debugLogger(Logger::NONE),
     alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
-    maxGain(maxGain), useGain(minGain != (fpt) 1.0 || maxGain != (fpt) 1.0),
+    maxGain(maxGain), useGain(minGain != (double) 1.0 || maxGain != (double) 1.0),
     gamma(gamma), iteration(-1)
 {
   if(learningRate <= 0.0 || learningRate > 1.0)
@@ -79,18 +79,18 @@ bool MBSGD::step()
         it != batchAssignment[b].end(); it++)
       gradient += opt->gradient(*it);
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (fpt) batchAssignment[b].size();
+    gradient /= (double) batchAssignment[b].size();
     batchAssignment[b].clear();
 
     if(useGain)
     {
       for(int p = 0; p < P; p++)
       {
-        if(momentum(p)*gradient(p) >= (fpt) 0.0)
+        if(momentum(p)*gradient(p) >= (double) 0.0)
           gains(p) += 0.05;
         else
           gains(p) *= 0.95;
-        gains(p) = std::min<fpt>(maxGain, std::max<fpt>(minGain, gains(p)));
+        gains(p) = std::min<double>(maxGain, std::max<double>(minGain, gains(p)));
         gradient(p) *= gains(p);
       }
     }
@@ -130,7 +130,7 @@ bool MBSGD::step()
   return run;
 }
 
-Vt MBSGD::result()
+Eigen::VectorXd MBSGD::result()
 {
   return parameters;
 }

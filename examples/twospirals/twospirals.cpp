@@ -62,7 +62,7 @@ int main(int argc, char** argv)
   OpenANNLibraryInfo::print();
   QApplication app(argc, argv);
 
-  Mt Xtr, Ytr, Xte, Yte;
+  Eigen::MatrixXd Xtr, Ytr, Xte, Yte;
   createTwoSpiralsDataSet(2, 1.0, Xtr, Ytr, Xte, Yte);
   TwoSpiralsVisualization visual(Xtr, Ytr, Xte, Yte);
   visual.show();

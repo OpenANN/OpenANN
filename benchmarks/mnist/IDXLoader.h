@@ -18,7 +18,7 @@ public:
   int testN;
   int D;
   int F;
-  Mt trainingInput, trainingOutput, testInput, testOutput;
+  Eigen::MatrixXd trainingInput, trainingOutput, testInput, testOutput;
   OpenANN::Logger debugLogger;
 
   IDXLoader(int padToX = 29, int padToY = 29, int loadTraininN = -1,
@@ -37,8 +37,8 @@ public:
   void load(bool train, int maxN)
   {
     int& N = train ? trainingN : testN;
-    Mt& input = train ? trainingInput : testInput;
-    Mt& output = train ? trainingOutput : testOutput;
+    Eigen::MatrixXd& input = train ? trainingInput : testInput;
+    Eigen::MatrixXd& output = train ? trainingOutput : testOutput;
     unsigned char tmp = 0;
 
     std::string fileName = train ?
@@ -137,14 +137,14 @@ public:
     debugLogger << "Start creating " << (multiplier-1) << " distortions.\n";
     int originalN = trainingN;
     trainingN *= multiplier;
-    Mt originalInput = trainingInput;
+    Eigen::MatrixXd originalInput = trainingInput;
     trainingInput.resize(D, trainingN);
     trainingInput.block(0, 0, D, originalN) = originalInput;
-    Mt originalOutput = trainingOutput;
+    Eigen::MatrixXd originalOutput = trainingOutput;
     trainingOutput.resize(F, trainingN);
     trainingOutput.block(0, 0, F, originalN) = originalOutput;
 
-    Vt instance(D);
+    Eigen::VectorXd instance(D);
     for(int distortion = 1; distortion < multiplier; distortion++)
     {
       Distorter distorter;

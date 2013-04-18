@@ -14,18 +14,18 @@ CUBLASContext::~CUBLASContext()
   handleCUBLASError(cublasDestroy(handle));
 }
 
-bool CUBLASContext::allocateMatrix(float** device, int rows, int cols)
+bool CUBLASContext::allocateMatrix(double** device, int rows, int cols)
 {
-  const int size = rows*cols * sizeof(float);
+  const int size = rows*cols * sizeof(double);
   return handleCUDAError(cudaMalloc((void**)device, size));
 }
 
-bool CUBLASContext::freeMatrix(float* device)
+bool CUBLASContext::freeMatrix(double* device)
 {
   return handleCUDAError(cudaFree(device));
 }
 
-bool CUBLASContext::setMatrix(const float* host, float* device, int rows, int cols)
+bool CUBLASContext::setMatrix(const double* host, double* device, int rows, int cols)
 {
   if(cols == 1)
   {
@@ -37,7 +37,7 @@ bool CUBLASContext::setMatrix(const float* host, float* device, int rows, int co
   }
 }
 
-bool CUBLASContext::getMatrix(float* host, const float* device, int rows, int cols)
+bool CUBLASContext::getMatrix(double* host, const double* device, int rows, int cols)
 {
   if(cols == 1)
   {
@@ -49,8 +49,8 @@ bool CUBLASContext::getMatrix(float* host, const float* device, int rows, int co
   }
 }
 
-bool CUBLASContext::multiplyMatrixVector(float* matrix, float* vector, float* result, int rows, int cols)
+bool CUBLASContext::multiplyMatrixVector(double* matrix, double* vector, double* result, int rows, int cols)
 {
-  float alpha = 1.0, beta = 0.0;
-  return handleCUBLASError(cublasSgemv(handle, CUBLAS_OP_N, rows, cols, &alpha, matrix, rows, vector, 1, &beta, result, 1));
+  double alpha = 1.0, beta = 0.0;
+  return handleCUBLASError(cublasDgemv(handle, CUBLAS_OP_N, rows, cols, &alpha, matrix, rows, vector, 1, &beta, result, 1));
 }

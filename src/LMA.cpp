@@ -51,7 +51,7 @@ bool LMA::step()
       if(state.needfi)
       {
         for(unsigned i = 0; i < n; i++)
-          parameters(i) = (fpt) state.x[i];
+          parameters(i) = (double) state.x[i];
         opt->setParameters(parameters);
         for(unsigned i = 0; i < opt->examples(); i++)
           state.fi[i] = (double) opt->error(i);
@@ -66,7 +66,7 @@ bool LMA::step()
       if(state.needfij)
       {
         for(unsigned i = 0; i < n; i++)
-          parameters(i) = (fpt) state.x[i];
+          parameters(i) = (double) state.x[i];
         opt->setParameters(parameters);
         opt->VJ(errorValues, jacobian);
         for(unsigned ex = 0; ex < opt->examples(); ex++)
@@ -105,7 +105,7 @@ bool LMA::step()
   return false;
 }
 
-Vt LMA::result()
+Eigen::VectorXd LMA::result()
 {
   OPENANN_CHECK(opt);
   opt->setParameters(optimum);
@@ -126,9 +126,9 @@ void LMA::initialize()
   else
   {
     RandomNumberGenerator rng;
-    Vt x(n);
+    Eigen::VectorXd x(n);
     for(unsigned i = 0; i < n; i++)
-      x(i) = rng.sampleNormalDistribution<fpt>();
+      x(i) = rng.sampleNormalDistribution<double>();
     opt->setParameters(x);
   }
 
@@ -146,7 +146,7 @@ void LMA::allocate()
   jacobian.resize(opt->examples(), n);
 
   double* xArray = new double[n];
-  Vt x = opt->currentParameters();
+  Eigen::VectorXd x = opt->currentParameters();
   for(unsigned i = 0; i < n; i++)
     xArray[i] = x(i);
   xIn.setcontent(n, xArray);
@@ -159,10 +159,10 @@ void LMA::initALGLIB()
   alglib::minlmcreatevj(opt->examples(), xIn, state);
 
   // Set convergence criteria
-  fpt minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
+  double minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
       StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
       stop.minimalSearchSpaceStep : 0.0;
-  fpt minimalValueDifferences = stop.minimalValueDifferences !=
+  double minimalValueDifferences = stop.minimalValueDifferences !=
       StoppingCriteria::defaultValue.minimalValueDifferences ?
       stop.minimalValueDifferences : 0.0;
   int maximalIterations = stop.maximalIterations !=

@@ -19,10 +19,8 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
     opt = new MBSGD;
   else if(algorithm == "CMAES")
     opt = new IPOPCMAES;
-#ifdef USE_GPL_LICENSE
   else if(algorithm == "LMA")
     opt = new LMA;
-#endif
   else
     throw OpenANNException("Unknown optimizer: " + algorithm);
 

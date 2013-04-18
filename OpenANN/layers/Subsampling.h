@@ -28,30 +28,30 @@ class Subsampling : public Layer
   int I, fm, inRows, inCols, kernelRows, kernelCols;
   bool bias, weightForBias;
   ActivationFunction act;
-  fpt stdDev;
-  Vt* x;
+  double stdDev;
+  Eigen::VectorXd* x;
   //! feature maps X output rows X output cols
-  std::vector<Mt> W;
-  std::vector<Mt> Wd;
+  std::vector<Eigen::MatrixXd> W;
+  std::vector<Eigen::MatrixXd> Wd;
   //! feature maps X output rows X output cols
-  std::vector<Mt> Wb;
-  std::vector<Mt> Wbd;
-  Vt a;
-  Vt y;
-  Vt yd;
-  Vt deltas;
-  Vt e;
+  std::vector<Eigen::MatrixXd> Wb;
+  std::vector<Eigen::MatrixXd> Wbd;
+  Eigen::VectorXd a;
+  Eigen::VectorXd y;
+  Eigen::VectorXd yd;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
   Subsampling(OutputInfo info, int kernelRows, int kernelCols, bool bias,
-              ActivationFunction act, fpt stdDev);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers);
+              ActivationFunction act, double stdDev);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

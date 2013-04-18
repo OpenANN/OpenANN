@@ -6,7 +6,7 @@ namespace OpenANN {
 
 Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                              int kernelCols, bool bias, ActivationFunction act,
-                             fpt stdDev)
+                             double stdDev)
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
@@ -14,8 +14,8 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
 {
 }
 
-OutputInfo Convolutional::initialize(std::vector<fpt*>& parameterPointers,
-                                     std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
+                                     std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
   info.bias = bias;
@@ -29,8 +29,8 @@ OutputInfo Convolutional::initialize(std::vector<fpt*>& parameterPointers,
   maxRow = inRows-kernelRows+1;
   maxCol = inCols-kernelCols+1;
 
-  W.resize(fmout, std::vector<Mt>(fmin, Mt(kernelRows, kernelCols)));
-  Wd.resize(fmout, std::vector<Mt>(fmin, Mt(kernelRows, kernelCols)));
+  W.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
+  Wd.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
   int numParams = fmout*kernelRows*kernelCols;
   if(weightForBias)
   {
@@ -81,14 +81,14 @@ void Convolutional::initializeParameters()
     {
       for(int kr = 0; kr < kernelRows; kr++)
         for(int kc = 0; kc < kernelCols; kc++)
-          W[fmo][fmi](kr, kc) = rng.sampleNormalDistribution<fpt>() * stdDev;
+          W[fmo][fmi](kr, kc) = rng.sampleNormalDistribution<double>() * stdDev;
       if(weightForBias)
-        Wb(fmo, fmi) = rng.sampleNormalDistribution<fpt>() * stdDev;
+        Wb(fmo, fmi) = rng.sampleNormalDistribution<double>() * stdDev;
     }
   }
 }
 
-void Convolutional::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
 
@@ -129,7 +129,7 @@ void Convolutional::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void Convolutional::backpropagate(Vt* ein, Vt*& eout)
+void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
@@ -171,7 +171,7 @@ void Convolutional::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& Convolutional::getOutput()
+Eigen::VectorXd& Convolutional::getOutput()
 {
   return y;
 }

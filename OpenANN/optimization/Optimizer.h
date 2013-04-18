@@ -40,7 +40,7 @@ public:
    * Determine the best result.
    * @return the best parameter the algorithm found
    */
-  virtual Vt result() = 0;
+  virtual Eigen::VectorXd result() = 0;
   /**
    * Get the name of the optimization algorithm.
    * @return name of the optimization algorithm

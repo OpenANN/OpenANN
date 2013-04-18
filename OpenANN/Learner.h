@@ -17,7 +17,7 @@ public:
    * @param trainingOutput output vectors, each instance should be in a new
    *                       column
    */
-  virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput) = 0;
+  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput) = 0;
   /**
    * Set the current training set.
    * @param trainingSet custom training set
@@ -27,7 +27,7 @@ public:
    * Make a prediction.
    * @param x Input vector.
    */
-  virtual Vt operator()(const Vt& x) = 0;
+  virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) = 0;
 };
 
 }

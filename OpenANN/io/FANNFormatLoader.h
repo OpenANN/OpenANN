@@ -20,7 +20,7 @@ public:
   int testN;
   int D;
   int F;
-  Mt trainingInput, trainingOutput, testInput, testOutput;
+  Eigen::MatrixXd trainingInput, trainingOutput, testInput, testOutput;
 
   std::fstream trainingData;
   std::fstream testData;

@@ -6,21 +6,21 @@
 class DoubleExponentialSmoothing
 {
   //! Data smoothing factor.
-  fpt alpha;
+  double alpha;
   //! Trend smoothing factor.
-  fpt beta;
+  double beta;
   //! Current position.
-  fpt xc;
+  double xc;
   //! Next position.
-  fpt xn;
+  double xn;
   //! Current position estimation.
-  fpt sc;
+  double sc;
   //! Next position estimation.
-  fpt sn;
+  double sn;
   //! Current velocity estimation.
-  fpt bc;
+  double bc;
   //! Next velocity estimation.
-  fpt bn;
+  double bn;
   //! Current time step.
   int t;
 
@@ -38,7 +38,7 @@ public:
     t = 0;
   }
 
-  Vt operator()(fpt in)
+  Eigen::VectorXd operator()(double in)
   {
     xc = xn;
     xn = in;
@@ -60,7 +60,7 @@ public:
       bn = beta * (sn - sc) + (1.0-beta) * bc;
     }
     t++;
-    Vt out(2);
+    Eigen::VectorXd out(2);
     out << sn + bn, bn; // Forcast
     return out;
   }

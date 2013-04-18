@@ -16,29 +16,11 @@ cdef extern from "OpenANN/optimization/StoppingCriteria.h" namespace "OpenANN":
     int maximalFunctionEvaluations
     int maximalIterations
     int maximalRestarts
-    ${FPT} minimalValue
-    ${FPT} minimalValueDifferences
-    ${FPT} minimalSearchSpaceStep
+    double minimalValue
+    double minimalValueDifferences
+    double minimalSearchSpaceStep
   c_StoppingCriteria *new_StoppingCriteria "new OpenANN::StoppingCriteria" ()
   void del_StoppingCriteria "delete" (c_StoppingCriteria *ptr)
-
-cdef extern from "Eigen/Dense" namespace "Eigen":
-  ctypedef struct c_VectorXf "Eigen::VectorXf":
-    float* data()
-    int rows()
-    float& get "operator()"(int rows)
-  c_VectorXf *new_VectorXf "new Eigen::VectorXf" (c_VectorXf& vec)
-  c_VectorXf *new_VectorXf "new Eigen::VectorXf" (int rows, int cols)
-  void del_VectorXf "delete" (c_VectorXf *ptr)
-
-  ctypedef struct c_MatrixXf "Eigen::MatrixXf":
-    float& coeff(int row, int col)
-    float* data()
-    int rows()
-    int cols()
-    float& get "operator()"(int rows, int cols)
-  c_MatrixXf *new_MatrixXf "new Eigen::MatrixXf" (int rows, int cols)
-  void del_MatrixXf "delete" (c_MatrixXf *ptr)
 
   ctypedef struct c_VectorXd "Eigen::VectorXd":
     double* data()
@@ -69,32 +51,32 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
 
   ctypedef struct c_Net "OpenANN::Net":
     c_Net& inputLayer(int dim1, int dim2, int dim3, bool bias,
-                      ${FPT} dropoutProbability)
-    c_Net& alphaBetaFilterLayer(${FPT} deltaT, ${FPT} stdDev, bool bias)
+                      double dropoutProbability)
+    c_Net& alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
     c_Net& fullyConnectedLayer(int units, c_ActivationFunction act,
-                               ${FPT} stdDev, bool bias,
-                               ${FPT} dropoutProbability)
+                               double stdDev, bool bias,
+                               double dropoutProbability)
     c_Net& compressedLayer(int units, int params, c_ActivationFunction act,
-                           string compression, ${FPT} stdDev, bool bias,
-                           ${FPT} dropoutProbability)
-    c_Net& extremeLayer(int units, c_ActivationFunction act, ${FPT} stdDev,
+                           string compression, double stdDev, bool bias,
+                           double dropoutProbability)
+    c_Net& extremeLayer(int units, c_ActivationFunction act, double stdDev,
                         bool bias)
     c_Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
-                              c_ActivationFunction act, ${FPT} stdDev,
+                              c_ActivationFunction act, double stdDev,
                               bool bias)
     c_Net& subsamplingLayer(int kernelRows, int kernelCols,
-                            c_ActivationFunction act, ${FPT} stdDev,
+                            c_ActivationFunction act, double stdDev,
                             bool bias)
     c_Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
-    c_Net& localReponseNormalizationLayer(${FPT} k, int n, ${FPT} alpha,
-                                          ${FPT} beta, bool bias)
-    c_Net& outputLayer(int units, c_ActivationFunction act, ${FPT} stdDev)
+    c_Net& localReponseNormalizationLayer(double k, int n, double alpha,
+                                          double beta, bool bias)
+    c_Net& outputLayer(int units, c_ActivationFunction act, double stdDev)
     c_Net& compressedOutputLayer(int units, int params,
                                  c_ActivationFunction act,
-                                 string& compression, ${FPT} stdDev)
-    c_Learner& trainingSet(c_${MT}& trainingInput, c_${MT}& trainingOutput)
-    ${FPT} error()
-    c_${VT} predict "operator()"(c_${VT} x)
+                                 string& compression, double stdDev)
+    c_Learner& trainingSet(c_MatrixXd& trainingInput, c_MatrixXd& trainingOutput)
+    double error()
+    c_VectorXd predict "operator()"(c_VectorXd x)
   c_Net *new_Net "new OpenANN::Net" ()
   void del_Net "delete" (c_Net *ptr)
 
@@ -104,11 +86,11 @@ cdef extern from "OpenANN/Convenience.h" namespace "OpenANN":
 
 cdef class Net:
   cdef c_Net *thisptr
-  cdef c_${MT} *inptr
-  cdef c_${MT} *outptr
+  cdef c_MatrixXd *inptr
+  cdef c_MatrixXd *outptr
   cdef c_StoppingCriteria *stop
-  cdef c_${VT} *xptr
-  cdef c_${VT} *yptr
+  cdef c_VectorXd *xptr
+  cdef c_VectorXd *yptr
 
   def __cinit__(self):
     self.thisptr = new_Net()
@@ -122,13 +104,13 @@ cdef class Net:
     del_Net(self.thisptr)
     del_StoppingCriteria(self.stop)
     if self.inptr != NULL:
-      del_${MT}(self.inptr)
+      del_MatrixXd(self.inptr)
     if self.outptr != NULL:
-      del_${MT}(self.outptr)
+      del_MatrixXd(self.outptr)
     if self.xptr != NULL:
-      del_${VT}(self.xptr)
+      del_VectorXd(self.xptr)
     if self.yptr != NULL:
-      del_${VT}(self.yptr)
+      del_VectorXd(self.yptr)
 
   def __get_dims(self, shape, max_dim):
     shape_array = numpy.asarray(shape).flatten()
@@ -210,11 +192,11 @@ cdef class Net:
   def training_set(self, inputs, outputs):
     assert inputs.shape[1] == outputs.shape[1]
     if self.inptr != NULL:
-      del_${MT}(self.inptr)
-    self.inptr = new_${MT}(inputs.shape[0], inputs.shape[1])
+      del_MatrixXd(self.inptr)
+    self.inptr = new_MatrixXd(inputs.shape[0], inputs.shape[1])
     if self.outptr != NULL:
-      del_${MT}(self.outptr)
-    self.outptr = new_${MT}(outputs.shape[0], outputs.shape[1])
+      del_MatrixXd(self.outptr)
+    self.outptr = new_MatrixXd(outputs.shape[0], outputs.shape[1])
     self.__numpy_to_eigen_train(inputs, outputs)
     self.thisptr.trainingSet(deref(self.inptr), deref(self.outptr))
     return self
@@ -274,14 +256,14 @@ cdef class Net:
   def __predict(self, x):
     self.__numpy_to_eigen_input(x)
     if self.yptr != NULL:
-      del_${VT}(self.yptr)
-    self.yptr = new_${VT}(self.thisptr.predict(deref(self.xptr)))
+      del_VectorXd(self.yptr)
+    self.yptr = new_VectorXd(self.thisptr.predict(deref(self.xptr)))
     return self.__eigen_to_numpy_output()
 
   def __numpy_to_eigen_input(self, x):
     if self.xptr != NULL:
-      del_${VT}(self.xptr)
-    self.xptr = new_${VT}(x.shape[0], 1)
+      del_VectorXd(self.xptr)
+    self.xptr = new_VectorXd(x.shape[0], 1)
     rows = x.shape[0]
     for r in range(rows):
       self.xptr.data()[r] = x[r]

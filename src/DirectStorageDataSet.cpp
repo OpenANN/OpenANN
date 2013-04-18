@@ -5,7 +5,7 @@
 
 namespace OpenANN {
 
-DirectStorageDataSet::DirectStorageDataSet(Mt& in, Mt& out, LogInfo logInfo,
+DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd& in, Eigen::MatrixXd& out, LogInfo logInfo,
                                            Logger::Target target)
   : in(&in), out(&out), N(in.cols()), D(in.rows()), F(out.rows()),
     temporaryInput(in.rows()), temporaryOutput(out.rows()), logInfo(logInfo),
@@ -25,14 +25,14 @@ DirectStorageDataSet::DirectStorageDataSet(Mt& in, Mt& out, LogInfo logInfo,
   sw.start();
 }
 
-Vt& DirectStorageDataSet::getInstance(int i)
+Eigen::VectorXd& DirectStorageDataSet::getInstance(int i)
 {
   OPENANN_CHECK_WITHIN(i, 0, in->cols()-1);
   temporaryInput = in->col(i);
   return temporaryInput;
 }
 
-Vt& DirectStorageDataSet::getTarget(int i)
+Eigen::VectorXd& DirectStorageDataSet::getTarget(int i)
 {
   OPENANN_CHECK_WITHIN(i, 0, out->cols()-1);
   temporaryOutput = out->col(i);
@@ -44,15 +44,15 @@ void DirectStorageDataSet::finishIteration(Learner& learner)
   if(logInfo == MULTICLASS)
   {
     logger << ++iteration << " ";
-    fpt e = 0.0;
+    double e = 0.0;
     int correct = 0;
     int wrong = 0;
     for(int n = 0; n < N; n++)
     {
       temporaryInput = in->col(n);
       temporaryOutput = out->col(n);
-      Vt y = learner(temporaryInput);
-      Vt diff = y - temporaryOutput;
+      Eigen::VectorXd y = learner(temporaryInput);
+      Eigen::VectorXd diff = y - temporaryOutput;
       e += diff.dot(diff);
       int j1 = 0;
       y.maxCoeff(&j1);

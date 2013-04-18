@@ -14,11 +14,11 @@ struct DistanceConstraint : public SigmaPi::Constraint
         : width(width), height(height)
     {}
 
-    virtual fpt operator() (int p1, int p2) const {
-        fpt x1 = p1 % width;
-        fpt y1 = p1 / width;
-        fpt x2 = p2 % width;
-        fpt y2 = p2 / width;
+    virtual double operator() (int p1, int p2) const {
+        double x1 = p1 % width;
+        double y1 = p1 / width;
+        double x2 = p2 % width;
+        double y2 = p2 / width;
 
         OPENANN_CHECK(y1 < height);
         OPENANN_CHECK(y2 < height);
@@ -41,11 +41,11 @@ struct SlopeConstraint : public SigmaPi::Constraint
         : width(width), height(height)
     {}
 
-    virtual fpt operator() (int p1, int p2) const {
-        fpt x1 = p1 % width;
-        fpt y1 = p1 / width;
-        fpt x2 = p2 % width;
-        fpt y2 = p2 / width;
+    virtual double operator() (int p1, int p2) const {
+        double x1 = p1 % width;
+        double y1 = p1 / width;
+        double x2 = p2 % width;
+        double y2 = p2 / width;
 
         OPENANN_CHECK(y1 < height);
         OPENANN_CHECK(y2 < height);

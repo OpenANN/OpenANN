@@ -4,19 +4,19 @@
 
 namespace OpenANN {
 
-fpt SigmaPi::Constraint::operator() (int p1, int p2) const 
+double SigmaPi::Constraint::operator() (int p1, int p2) const 
 {
     throw OpenANNException("Constrain operator (p1, p2) must be implemented");
     return 0.0;
 }
 
-fpt SigmaPi::Constraint::operator() (int p1, int p2, int p3) const 
+double SigmaPi::Constraint::operator() (int p1, int p2, int p3) const 
 {
     throw OpenANNException("Constrain operator (p1, p2, p3) must be implemented");
     return 0.0;
 }
 
-fpt SigmaPi::Constraint::operator() (int p1, int p2, int p3, int p4) const 
+double SigmaPi::Constraint::operator() (int p1, int p2, int p3, int p4) const 
 {
     throw OpenANNException("Constrain operator (p1, p2, p3, p4) must be implemented");
     return 0.0;
@@ -37,7 +37,7 @@ struct NoConstraint : public OpenANN::SigmaPi::Constraint
 
 
 
-SigmaPi::SigmaPi(OutputInfo info, bool bias, ActivationFunction act, fpt stdDev)
+SigmaPi::SigmaPi(OutputInfo info, bool bias, ActivationFunction act, double stdDev)
     : info(info), bias(bias), act(act), stdDev(stdDev), x(0), e(info.outputs())
 {
 }
@@ -48,7 +48,7 @@ void SigmaPi::initializeParameters()
     RandomNumberGenerator rng;
     for(int i = 0; i < nodes.size(); ++i)
         for(int j = 0; j < nodes[i].size(); ++j) 
-            w[nodes[i][j].weight] = rng.sampleNormalDistribution<fpt>() * stdDev;
+            w[nodes[i][j].weight] = rng.sampleNormalDistribution<double>() * stdDev;
 }
 
 
@@ -56,7 +56,7 @@ void SigmaPi::updatedParameters()
 {
 }
 
-void SigmaPi::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
     int J = nodes.size();
     this->x = x;
@@ -90,7 +90,7 @@ void SigmaPi::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 }
 
 
-void SigmaPi::backpropagate(Vt* error_in, Vt*& error_out)
+void SigmaPi::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_out)
 {
     e.fill(0.0);
 
@@ -123,12 +123,12 @@ void SigmaPi::backpropagate(Vt* error_in, Vt*& error_out)
 }
 
 
-Vt& SigmaPi::getOutput()
+Eigen::VectorXd& SigmaPi::getOutput()
 {
     return y;
 }
 
-OutputInfo SigmaPi::initialize(std::vector<fpt*>& parameterPointers, std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo SigmaPi::initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers)
 {
     int J = nodes.size();
 

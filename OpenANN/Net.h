@@ -61,8 +61,8 @@ class Net : public Optimizable, public Learner
 {
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
-  std::vector<fpt*> parameters;
-  std::vector<fpt*> derivatives;
+  std::vector<double*> parameters;
+  std::vector<double*> derivatives;
   DataSet* dataSet;
   DataSet* testDataSet;
   bool deleteDataSet, deleteTestSet;
@@ -71,8 +71,8 @@ class Net : public Optimizable, public Learner
 
   bool initialized;
   int P, N, L;
-  Vt parameterVector;
-  Vt tempInput, tempOutput, tempError, tempGradient;
+  Eigen::VectorXd parameterVector;
+  Eigen::VectorXd tempInput, tempOutput, tempError, tempGradient;
 
   void initializeNetwork();
 
@@ -92,7 +92,7 @@ public:
    * @return this for chaining
    */
   Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true,
-                  fpt dropoutProbability = 0.0);
+                  double dropoutProbability = 0.0);
   /**
    * Add a alpha-beta filter layer.
    * @param deltaT temporal difference between two steps
@@ -100,7 +100,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& alphaBetaFilterLayer(fpt deltaT, fpt stdDev = (fpt) 0.05,
+  Net& alphaBetaFilterLayer(double deltaT, double stdDev = (double) 0.05,
                             bool bias = true);
   /**
    * Add a fully connected hidden layer.
@@ -116,9 +116,9 @@ public:
    * @return this for chaining
    */
   Net& fullyConnectedLayer(int units, ActivationFunction act,
-                                   fpt stdDev = (fpt) 0.05, bool bias = true,
-                                   fpt dropoutProbability = 0.0,
-                                   fpt maxSquaredWeightNorm = 0.0);
+                                   double stdDev = (double) 0.05, bool bias = true,
+                                   double dropoutProbability = 0.0,
+                                   double maxSquaredWeightNorm = 0.0);
   /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -135,8 +135,8 @@ public:
    */
   Net& compressedLayer(int units, int params, ActivationFunction act,
                        const std::string& compression,
-                       fpt stdDev = (fpt) 0.05, bool bias = true,
-                       fpt dropoutProbability = 0.0);
+                       double stdDev = (double) 0.05, bool bias = true,
+                       double dropoutProbability = 0.0);
   /**
    * Add a fully connected hidden layer with fixed weights.
    * @param units number of nodes (neurons)
@@ -145,7 +145,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& extremeLayer(int units, ActivationFunction act, fpt stdDev = (fpt) 5.0,
+  Net& extremeLayer(int units, ActivationFunction act, double stdDev = (double) 5.0,
                     bool bias = true);
   /**
    * Add a convolutional layer.
@@ -158,7 +158,7 @@ public:
    * @return this for chaining
    */
   Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
-                          ActivationFunction act, fpt stdDev = (fpt) 0.05,
+                          ActivationFunction act, double stdDev = (double) 0.05,
                           bool bias = true);
   /**
    * Add a subsampling layer.
@@ -170,7 +170,7 @@ public:
    * @return this for chaining
    */
   Net& subsamplingLayer(int kernelRows, int kernelCols,
-                        ActivationFunction act, fpt stdDev = (fpt) 0.05,
+                        ActivationFunction act, double stdDev = (double) 0.05,
                         bool bias = true);
   /**
    * Add a max-pooling layer.
@@ -192,7 +192,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& localReponseNormalizationLayer(fpt k, int n, fpt alpha, fpt beta,
+  Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta,
                                       bool bias = true);
   /**
    * Add a fully connected output layer. This will initialize the network.
@@ -201,7 +201,7 @@ public:
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @return this for chaining
    */
-  Net& outputLayer(int units, ActivationFunction act, fpt stdDev = (fpt) 0.05);
+  Net& outputLayer(int units, ActivationFunction act, double stdDev = (double) 0.05);
   /**
    * Add a compressed output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -215,7 +215,7 @@ public:
    */
   Net& compressedOutputLayer(int units, int params, ActivationFunction act,
                              const std::string& compression,
-                             fpt stdDev = (fpt) 0.05);
+                             double stdDev = (double) 0.05);
   /** 
    * Add a new layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
@@ -230,28 +230,28 @@ public:
   OutputInfo getOutputInfo(unsigned int l);
   Net& setErrorFunction(ErrorFunction errorFunction);
   Net& useDropout(bool activate = true);
-  virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
+  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
-  virtual Net& testSet(Mt& testInput, Mt& testOutput);
+  virtual Net& testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput);
   virtual Net& testSet(DataSet& testDataSet);
 
   virtual void finishedIteration();
-  virtual Vt operator()(const Vt& x);
+  virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual unsigned int dimension();
   virtual unsigned int examples();
-  virtual Vt currentParameters();
-  virtual void setParameters(const Vt& parameters);
+  virtual Eigen::VectorXd currentParameters();
+  virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesInitialization();
   virtual void initialize();
-  virtual fpt error(unsigned int i);
-  virtual fpt error();
-  virtual fpt errorFromDataSet(DataSet& dataset);
+  virtual double error(unsigned int i);
+  virtual double error();
+  virtual double errorFromDataSet(DataSet& dataset);
   virtual bool providesGradient();
-  virtual Vt gradient(unsigned int i);
-  virtual Vt gradient();
-  virtual void VJ(Vt& values, Mt& jacobian);
+  virtual Eigen::VectorXd gradient(unsigned int i);
+  virtual Eigen::VectorXd gradient();
+  virtual void VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian);
   virtual bool providesHessian();
-  virtual Mt hessian();
+  virtual Eigen::MatrixXd hessian();
 };
 
 }

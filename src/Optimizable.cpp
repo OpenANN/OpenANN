@@ -3,7 +3,7 @@
 
 namespace OpenANN {
 
-void Optimizable::VJ(Vt& values, Mt& jacobian)
+void Optimizable::VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian)
 {
   OPENANN_CHECK_EQUALS(values.rows(), (int) examples());
   OPENANN_CHECK_EQUALS(jacobian.rows(), (int) examples());
@@ -15,22 +15,22 @@ void Optimizable::VJ(Vt& values, Mt& jacobian)
   }
 }
 
-Vt Optimizable::singleGradientFD(int n, const fpt eps)
+Eigen::VectorXd Optimizable::singleGradientFD(int n, const double eps)
 {
-  Vt gradient(dimension(), 1);
+  Eigen::VectorXd gradient(dimension(), 1);
   gradient.fill(0.0);
-  Vt params = currentParameters();
-  Vt modifiedParams = params;
+  Eigen::VectorXd params = currentParameters();
+  Eigen::VectorXd modifiedParams = params;
   for(unsigned i = 0; i < dimension(); i++)
   {
     modifiedParams(i, 0) += eps;
     setParameters(modifiedParams);
-    fpt errorPlusEps = error(n);
+    double errorPlusEps = error(n);
     modifiedParams = params;
 
     modifiedParams(i, 0) -= eps;
     setParameters(modifiedParams);
-    fpt errorMinusEps = error(n);
+    double errorMinusEps = error(n);
     modifiedParams = params;
 
     gradient(i, 0) = (errorPlusEps - errorMinusEps) / (2.0 * eps);
@@ -39,22 +39,22 @@ Vt Optimizable::singleGradientFD(int n, const fpt eps)
   return gradient;
 }
 
-Vt Optimizable::gradientFD(const fpt eps)
+Eigen::VectorXd Optimizable::gradientFD(const double eps)
 {
-  Vt gradient(dimension(), 1);
+  Eigen::VectorXd gradient(dimension(), 1);
   gradient.fill(0.0);
-  Vt params = currentParameters();
-  Vt modifiedParams = params;
+  Eigen::VectorXd params = currentParameters();
+  Eigen::VectorXd modifiedParams = params;
   for(unsigned i = 0; i < dimension(); i++)
   {
     modifiedParams(i, 0) += eps;
     setParameters(modifiedParams);
-    fpt errorPlusEps = error();
+    double errorPlusEps = error();
     modifiedParams = params;
 
     modifiedParams(i, 0) -= eps;
     setParameters(modifiedParams);
-    fpt errorMinusEps = error();
+    double errorMinusEps = error();
     modifiedParams = params;
 
     gradient(i, 0) = (errorPlusEps - errorMinusEps) / (2.0 * eps);
@@ -63,12 +63,12 @@ Vt Optimizable::gradientFD(const fpt eps)
   return gradient;
 }
 
-Mt Optimizable::hessianFD(const fpt eps)
+Eigen::MatrixXd Optimizable::hessianFD(const double eps)
 {
-  Mt hessian(dimension(), dimension());
+  Eigen::MatrixXd hessian(dimension(), dimension());
   hessian.fill(0.0);
-  Vt params = currentParameters();
-  Vt modifiedParams = params;
+  Eigen::VectorXd params = currentParameters();
+  Eigen::VectorXd modifiedParams = params;
   for(unsigned i = 0; i < dimension(); i++)
   {
     for(unsigned j = 0; j <= i; j++)
@@ -76,25 +76,25 @@ Mt Optimizable::hessianFD(const fpt eps)
       modifiedParams(i, 0) += eps;
       modifiedParams(j, 0) += eps;
       setParameters(modifiedParams);
-      fpt plusplus = error();
+      double plusplus = error();
       modifiedParams = params;
 
       modifiedParams(i, 0) += eps;
       modifiedParams(j, 0) -= eps;
       setParameters(modifiedParams);
-      fpt plusminus = error();
+      double plusminus = error();
       modifiedParams = params;
 
       modifiedParams(i, 0) -= eps;
       modifiedParams(j, 0) += eps;
       setParameters(modifiedParams);
-      fpt minusplus = error();
+      double minusplus = error();
       modifiedParams = params;
 
       modifiedParams(i, 0) -= eps;
       modifiedParams(j, 0) -= eps;
       setParameters(modifiedParams);
-      fpt minusminus = error();
+      double minusminus = error();
       modifiedParams = params;
 
       hessian(i, j) = (plusplus - plusminus - minusplus + minusminus) / (4.0 * eps*eps);
