@@ -48,12 +48,14 @@ COPYING.LESSER.
 <th></th>
 <th>Website</th>
 <th>Languages</th>
+<th>License</th>
 <th>Focus</th>
 </tr>
 <tr>
 <th>OpenANN</th>
 <td><a href="https://github.com/AlexanderFabisch/OpenANN" target=_blank>Link</a></td>
 <td>C++, Python</td>
+<td>GPL</td>
 <td>
 An easy to use, extend and understand C++ library for artificial neural
 networks with Python bindings.
@@ -63,18 +65,20 @@ networks with Python bindings.
 <th>FANN</th>
 <td><a href="http://leenissen.dk/fann/" target=_blank>Link</a></td>
 <td>C, C++, Python, Ruby, C#, Java, Perl, Delphi, ... (almost everything)</td>
+<td>LGPL</td>
 <td>
 A well-known and widly used library for feedforward neural networks written in
-C with bindings for many other languages (Python, Ruby, ...). FANN has limited
-functionality but is easy to use and robust. It usually used for small
-datasets and applications.
+C with bindings for almost any languages. FANN has limited functionality but
+is easy to use and robust. It usually used for small datasets and
+applications.
 </td>
 </tr>
 <tr>
 <th>pylearn2</th>
-<td><a href="https://github.com/lisa-lab/pylearn2/tree/master/pylearn2"
+<td><a href="https://github.com/lisa-lab/pylearn2"
 target=_blank>Link</a></td>
 <td>Python</td>
+<td>BSD</td>
 <td>
 State of the art implementations of many deep learning algorithms that are
 build upon Theano in Python.
@@ -84,6 +88,7 @@ build upon Theano in Python.
 <th>PyBrain</th>
 <td><a href="http://pybrain.org/" target=_blank>Link</a></td>
 <td>Python</td>
+<td>BSD</td>
 <td>
 A huge python library that contains many types of neural networks for
 supervised, unsupervised and reinforcement learning, e.g. recurrent neural
@@ -95,6 +100,7 @@ self-organizing maps, ...
 <th>cuda-convnet</th>
 <td><a href="http://code.google.com/p/cuda-convnet/" target=_blank>Link</a></td>
 <td>C++/CUDA, Python</td>
+<td>BSD</td>
 <td>
 State of the art CUDA library for large CNNs. It is really fast, has
 python bindings and has been used to achieve state of the art results on the
@@ -107,6 +113,7 @@ very difficult.
 <th>EBLearn</th>
 <td><a href="http://eblearn.cs.nyu.edu:21991/doku.php" target=_blank>Link</a></td>
 <td>C++</td>
+<td>BSD</td>
 <td>
 A state of the art library for energy based models and e.g.
 convolutional neural networks with a large infrastructure. It allows to use
@@ -117,6 +124,7 @@ CUDA code.
 <th>Torch7</th>
 <td><a href="http://www.torch.ch/" target=_blank>Link</a></td>
 <td>C++, Lua</td>
+<td>BSD</td>
 <td>
 Yet another state of the art library for neural networks that builds upon a
 very efficient tensor library that supports speed-up with SSE, OpenMP and
