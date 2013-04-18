@@ -192,11 +192,9 @@ Vt Net::train(Training algorithm, ErrorFunction errorFunction,
     case MINIBATCH_SGD:
       opt = new MBSGD;
       break;
-#ifdef USE_GPL_LICENSE
     case BATCH_LMA:
       opt = new LMA;
       break;
-#endif
     case BATCH_CMAES:
     default:
       opt = new IPOPCMAES;

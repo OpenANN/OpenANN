@@ -1,8 +1,6 @@
 #ifndef OPENANN_LMA_H
 #define OPENANN_LMA_H
 
-#ifdef USE_GPL_LICENSE
-
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/io/Logger.h>
@@ -74,9 +72,5 @@ private:
 };
 
 }
-
-#else // USE_GPL_LICENSE
-#warning LMA is only available under GPL license
-#endif // USE_GPL_LICENSE
 
 #endif // OPENANN_LMA_H
