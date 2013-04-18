@@ -43,27 +43,87 @@ COPYING.LESSER.
 
 \section OtherLibs How does OpenANN relate to other neural network libraries?
 
-- <a href="http://leenissen.dk/fann/wp/" target=_blank>FANN</a>: A well-known
-  and widly used library for feedforward neural networks written in C with
-  bindings for many other languages (Python, Ruby, ...). FANN has limited
-  functionality but is easy to use and robust. It usually used for small
-  datasets and applications.
-- <a href="https://github.com/lisa-lab/pylearn2/tree/master/pylearn2"
-  target=_blank> pylearn2</a>: State of the art implementations of many deep
-  learning algorithms that are build upon Theano in Python.
-- <a href="http://pybrain.org/" target=_blank>PyBrain</a>:
-  A huge python library that contains many types of neural networks for
-  supervised, unsupervised and reinforcement learning, e.g. recurrent neural
-  networks (long short-term memory, reservoir), restricted boltzman machines,
-  self-organizing maps, ...
-- <a href="http://code.google.com/p/cuda-convnet/" target=_blank>cuda-convnet</a>:
-  State of the art CUDA library for large CNNs. It is really fast, has python
-  bindings and has been used to achieve state of the art results on the
-  ImageNet dataset. Many types of layers and activations functions are
-  implemented and new types can be added easily. However, using it and can be
-  very difficult.
-- <a href="http://eblearn.cs.nyu.edu:21991/doku.php" target=_blank>EBLearn</a>
-- <a href="http://www.torch.ch/" target=_blank>Torch7</a>
+<table>
+<tr>
+<th></th>
+<th>Website</th>
+<th>Languages</th>
+<th>Focus</th>
+</tr>
+<tr>
+<th>OpenANN</th>
+<td><a href="https://github.com/AlexanderFabisch/OpenANN" target=_blank>Link</a></td>
+<td>C++, Python</td>
+<td>
+An easy to use, extend and understand C++ library for artificial neural
+networks with Python bindings.
+</td>
+</tr>
+<tr>
+<th>FANN</th>
+<td><a href="http://leenissen.dk/fann/" target=_blank>Link</a></td>
+<td>C, C++, Python, Ruby, C#, Java, Perl, Delphi, ... (almost everything)</td>
+<td>
+A well-known and widly used library for feedforward neural networks written in
+C with bindings for many other languages (Python, Ruby, ...). FANN has limited
+functionality but is easy to use and robust. It usually used for small
+datasets and applications.
+</td>
+</tr>
+<tr>
+<th>pylearn2</th>
+<td><a href="https://github.com/lisa-lab/pylearn2/tree/master/pylearn2"
+target=_blank>Link</a></td>
+<td>Python</td>
+<td>
+State of the art implementations of many deep learning algorithms that are
+build upon Theano in Python.
+</td>
+</tr>
+<tr>
+<th>PyBrain</th>
+<td><a href="http://pybrain.org/" target=_blank>Link</a></td>
+<td>Python</td>
+<td>
+A huge python library that contains many types of neural networks for
+supervised, unsupervised and reinforcement learning, e.g. recurrent neural
+networks (long short-term memory, reservoir), restricted boltzman machines,
+self-organizing maps, ...
+</td>
+</tr>
+<tr>
+<th>cuda-convnet</th>
+<td><a href="http://code.google.com/p/cuda-convnet/" target=_blank>Link</a></td>
+<td>C++/CUDA, Python</td>
+<td>
+State of the art CUDA library for large CNNs. It is really fast, has
+python bindings and has been used to achieve state of the art results on the
+ImageNet dataset. Many types of layers and activations functions are
+implemented and new types can be added easily. However, using it and can be
+very difficult.
+</td>
+</tr>
+<tr>
+<th>EBLearn</th>
+<td><a href="http://eblearn.cs.nyu.edu:21991/doku.php" target=_blank>Link</a></td>
+<td>C++</td>
+<td>
+A state of the art library for energy based models and e.g.
+convolutional neural networks with a large infrastructure. It allows to use
+CUDA code.
+</td>
+</tr>
+<tr>
+<th>Torch7</th>
+<td><a href="http://www.torch.ch/" target=_blank>Link</a></td>
+<td>C++, Lua</td>
+<td>
+Yet another state of the art library for neural networks that builds upon a
+very efficient tensor library that supports speed-up with SSE, OpenMP and
+CUDA. It has a Lua interface.
+</td>
+</tr>
+</table>
 
 \section Howtos
 
