@@ -1,5 +1,3 @@
-#ifdef USE_GPL_LICENSE
-
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/util/AssertionMacros.h>
@@ -227,5 +225,3 @@ void LMA::cleanUp()
 }
 
 }
-
-#endif // USE_GPL_LICENSE
