@@ -89,7 +89,7 @@ Log::~Log()
 }
 
 
- std::ostream& Log::get(LogLevel level)
+std::ostream& Log::get(LogLevel level, const char* name_space)
 {
   OPENANN_CHECK(level != DISABLED);
 
@@ -102,7 +102,11 @@ Log::~Log()
 
   std::strftime(current_time, sizeof(current_time), "%F %X", current);
 
-  message << std::setw(6) << LevelToString[level] << "  " << current_time << "  ";
+  message << std::setw(6) << LevelToString[level] << "  " 
+          << current_time << "  ";
+
+  if(name_space != NULL) 
+    message << name_space << ": ";
 
   return message;
 }
