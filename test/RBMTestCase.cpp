@@ -13,7 +13,7 @@ void RBMTestCase::run()
 
 void RBMTestCase::learnSimpleExample()
 {
-  Mt X(6, 6);
+  Eigen::MatrixXd X(6, 6);
   X.col(0) << 1, 1, 1, 0, 0, 0;
   X.col(1) << 1, 0, 1, 0, 0, 0;
   X.col(2) << 1, 1, 1, 0, 0, 0;

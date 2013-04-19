@@ -72,7 +72,7 @@ public:
     int zoom = -200;
     glTranslatef(xOffset, yOffset, zoom);
 
-    Vt x = dataSet.getInstance(instance);
+    Eigen::VectorXd x = dataSet.getInstance(instance);
 
     glColor3f(0.0f, 0.0f, 0.0f);
     glLineWidth(5.0);
@@ -96,7 +96,7 @@ public:
     }
     glEnd();
 
-    Vt r = rbm.reconstruct(instance, 1);
+    Eigen::VectorXd r = rbm.reconstruct(instance, 1);
     glBegin(GL_QUADS);
     for(int xIdx = 0; xIdx < 28; xIdx++)
     {
@@ -116,7 +116,7 @@ public:
 
     for(int i = 0; i < 3; i++)
     {
-      Vt rp = rbm.reconstructProb(instance, 1+i+fantasy);
+      Eigen::VectorXd rp = rbm.reconstructProb(instance, 1+i+fantasy);
       glBegin(GL_QUADS);
       for(int xIdx = 0; xIdx < 28; xIdx++)
       {
@@ -138,9 +138,9 @@ public:
     for(int i = 0; i < visualizedNeurons; i++)
     {
       glBegin(GL_QUADS);
-      fpt mi = rbm.W.row(i).minCoeff();
-      fpt ma = rbm.W.row(i).maxCoeff();
-      fpt range = ma-mi;
+      double mi = rbm.W.row(i).minCoeff();
+      double ma = rbm.W.row(i).maxCoeff();
+      double range = ma-mi;
       for(int xIdx = 0; xIdx < 28; xIdx++)
       {
         for(int yIdx = 0; yIdx < 28; yIdx++)

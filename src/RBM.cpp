@@ -5,7 +5,7 @@
 
 namespace OpenANN {
 
-RBM::RBM(int D, int H, int cdN, fpt stdDev)
+RBM::RBM(int D, int H, int cdN, double stdDev)
   : D(D), H(H), cdN(cdN), stdDev(stdDev),
     W(H, D), posGradW(H, D), negGradW(H, D),
     bv(D), posGradBv(D), negGradBv(D),
@@ -14,7 +14,7 @@ RBM::RBM(int D, int H, int cdN, fpt stdDev)
 {
 }
 
-Vt RBM::operator()(const Vt& x)
+Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
 {
   v = x;
   sampleHgivenV();
@@ -30,11 +30,11 @@ void RBM::initialize()
 {
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
-      W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
   for(int i = 0; i < D; i++)
-    bv(i) = rng.sampleNormalDistribution<fpt>() * stdDev;
+    bv(i) = rng.sampleNormalDistribution<double>() * stdDev;
   for(int j = 0; j < H; j++)
-    bh(j) = rng.sampleNormalDistribution<fpt>() * stdDev;
+    bh(j) = rng.sampleNormalDistribution<double>() * stdDev;
 }
 
 unsigned int RBM::examples()
@@ -47,7 +47,7 @@ unsigned int RBM::dimension()
   return D*H + D + H;
 }
 
-void RBM::setParameters(const Vt& parameters)
+void RBM::setParameters(const Eigen::VectorXd& parameters)
 {
   int idx = 0;
   for(int j = 0; j < H; j++)
@@ -60,9 +60,9 @@ void RBM::setParameters(const Vt& parameters)
   OPENANN_CHECK_MATRIX_BROKEN(parameters);
 }
 
-Vt RBM::currentParameters()
+Eigen::VectorXd RBM::currentParameters()
 {
-  Vt parameters(dimension());
+  Eigen::VectorXd parameters(dimension());
   int idx = 0;
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
@@ -75,7 +75,7 @@ Vt RBM::currentParameters()
   return parameters;
 }
 
-fpt RBM::error()
+double RBM::error()
 {
   return 0.0; // TODO reconstruction error?
 }
@@ -85,17 +85,17 @@ bool RBM::providesGradient()
   return true;
 }
 
-Vt RBM::gradient()
+Eigen::VectorXd RBM::gradient()
 {
   // TODO CD-n
 }
 
-Vt RBM::gradient(unsigned int i)
+Eigen::VectorXd RBM::gradient(unsigned int i)
 {
   reality(i);
   daydream();
 
-  Vt gradient(dimension());
+  Eigen::VectorXd gradient(dimension());
   int idx = 0;
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
@@ -112,12 +112,13 @@ bool RBM::providesHessian()
   return false;
 }
 
-Mt RBM::hessian()
+Eigen::MatrixXd RBM::hessian()
 {
   // TODO return dummy
 }
 
-Learner& RBM::trainingSet(Mt& trainingInput, Mt& trainingOutput)
+Learner& RBM::trainingSet(Eigen::MatrixXd& trainingInput,
+                          Eigen::MatrixXd& trainingOutput)
 {
   // TODO
 }
@@ -127,7 +128,7 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
   trainSet = &trainingSet;
 }
 
-Vt RBM::reconstructProb(int n, int steps)
+Eigen::VectorXd RBM::reconstructProb(int n, int steps)
 {
   v = trainSet->getInstance(n);
   for(int i = 0; i < steps; i++)
@@ -138,7 +139,7 @@ Vt RBM::reconstructProb(int n, int steps)
   return pv;
 }
 
-Vt RBM::reconstruct(int n, int steps)
+Eigen::VectorXd RBM::reconstruct(int n, int steps)
 {
   v = trainSet->getInstance(n);
   for(int i = 0; i < steps; i++)
@@ -178,7 +179,7 @@ void RBM::sampleHgivenV()
   ph = W * v + bh;
   activationFunction(LOGISTIC, ph, ph);
   for(int j = 0; j < H; j++)
-    h(j) = (fpt) (ph(j) > rng.generate<fpt>(0.0, 1.0));
+    h(j) = (double) (ph(j) > rng.generate<double>(0.0, 1.0));
 }
 
 void RBM::sampleVgivenH()
@@ -186,7 +187,7 @@ void RBM::sampleVgivenH()
   pv = W.transpose() * h + bv;
   activationFunction(LOGISTIC, pv, pv);
   for(int i = 0; i < D; i++)
-    v(i) = (fpt) (pv(i) > rng.generate<fpt>(0.0, 1.0));
+    v(i) = (double) (pv(i) > rng.generate<double>(0.0, 1.0));
 }
 
 }
