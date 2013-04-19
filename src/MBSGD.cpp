@@ -156,6 +156,7 @@ void MBSGD::initialize()
   momentum.resize(P);
   momentum.fill(0.0);
   randomIndices.reserve(N);
+  randomIndices.clear();
   rng.generateIndices<std::vector<int> >(N, randomIndices);
   batchAssignment.resize(batches);
   iteration = 0;
