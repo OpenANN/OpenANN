@@ -27,14 +27,36 @@ void RBMTestCase::learnSimpleExample()
   rbm.initialize();
   MBSGD opt(0.1, 0.0, 2);
   StoppingCriteria stop;
-  stop.maximalIterations = 500;
+  stop.maximalIterations = 2000;
   opt.setOptimizable(rbm);
   opt.setStopCriteria(stop);
   opt.optimize();
 
-  for(int i = 0; i < 6; i++)
+  for(int i = 0; i < 3; i++)
   {
-    OPENANN_DEBUG << rbm.reconstructProb(i, 1).transpose();
-    OPENANN_DEBUG << rbm(X.col(i)).transpose();
+    Eigen::VectorXd v = rbm.reconstructProb(i, 1);
+    ASSERT(v(0) > 0.5);
+    ASSERT(v(1) > 0.5);
+    ASSERT(v(2) > 0.5);
+    ASSERT(v(3) < 0.5);
+    ASSERT(v(4) < 0.5);
+    ASSERT(v(5) < 0.5);
+    Eigen::VectorXd h = rbm(X.col(i));
+    ASSERT(h(0) > 0.5);
+    ASSERT(h(1) < 0.5);
+  }
+
+  for(int i = 3; i < 6; i++)
+  {
+    Eigen::VectorXd v = rbm.reconstructProb(i, 1);
+    ASSERT(v(0) < 0.5);
+    ASSERT(v(1) < 0.5);
+    ASSERT(v(2) > 0.5);
+    ASSERT(v(3) > 0.5);
+    ASSERT(v(4) > 0.5);
+    ASSERT(v(5) < 0.5);
+    Eigen::VectorXd h = rbm(X.col(i));
+    ASSERT(h(0) < 0.5);
+    ASSERT(h(1) > 0.5);
   }
 }
