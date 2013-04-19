@@ -70,7 +70,7 @@ class EvaluatableDataset : public OpenANN::DirectStorageDataSet
 {
 public:
   int iterations;
-  EvaluatableDataset(Mt& in, Mt& out)
+  EvaluatableDataset(Eigen::MatrixXd& in, Eigen::MatrixXd& out)
     : DirectStorageDataSet(in, out), iterations(0)
   {}
   virtual void finishIteration(OpenANN::Learner& learner) { iterations++; }
@@ -79,7 +79,7 @@ public:
 struct Result
 {
   int fp, tp, fn, tn, correct, wrong, iterations;
-  fpt accuracy;
+  double accuracy;
 
   Result()
     : fp(0), tp(0), fn(0), tn(0), correct(0), wrong(0), iterations(0),
@@ -161,14 +161,14 @@ void setup(OpenANN::Net& net, int architecture)
 /**
  * Evaluate the learned model.
  */
-Result evaluate(OpenANN::Net& net, const Mt& testInput, const Mt& testOutput,
+Result evaluate(OpenANN::Net& net, const Eigen::MatrixXd& testInput, const Eigen::MatrixXd& testOutput,
                 EvaluatableDataset& ds)
 {
   Result result;
   for(int n = 0; n < testInput.cols(); n++)
   {
-    fpt y = net(testInput.col(n)).eval()(0);
-    fpt t = testOutput(0, n);
+    double y = net(testInput.col(n)).eval()(0);
+    double t = testOutput(0, n);
     if(y > 0.0 && t > 0.0)
       result.tp++;
     else if(y > 0.0 && t < 0.0)
@@ -180,7 +180,7 @@ Result evaluate(OpenANN::Net& net, const Mt& testInput, const Mt& testOutput,
   }
   result.correct = result.tn + result.tp;
   result.wrong = result.fn + result.fp;
-  result.accuracy = (fpt) result.correct / (fpt) testInput.cols();
+  result.accuracy = (double) result.correct / (double) testInput.cols();
   result.iterations = ds.iterations;
   return result;
 }
@@ -193,24 +193,24 @@ void logResults(std::vector<Result>& results, unsigned long time)
   typedef OpenANN::FloatingPointFormatter fmt;
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   resultLogger << "\t\tCorrect\t\tAccuracy\tTime/ms\t\tIterations\n";
-  Vt correct(results.size());
-  Vt accuracy(results.size());
-  Vt iterations(results.size());
+  Eigen::VectorXd correct(results.size());
+  Eigen::VectorXd accuracy(results.size());
+  Eigen::VectorXd iterations(results.size());
   for(unsigned i = 0; i < results.size(); i++)
   {
-    correct(i) = (fpt) results[i].correct;
+    correct(i) = (double) results[i].correct;
     accuracy(i) = results[i].accuracy;
     iterations(i) = results[i].iterations;
   }
-  fpt correctMean = correct.mean();
-  fpt accuracyMean = accuracy.mean();
-  fpt iterationsMean = iterations.mean();
-  fpt correctMin = correct.minCoeff();
-  fpt accuracyMin = accuracy.minCoeff();
-  fpt iterationsMin = iterations.minCoeff();
-  fpt correctMax = correct.maxCoeff();
-  fpt accuracyMax = accuracy.maxCoeff();
-  fpt iterationsMax = iterations.maxCoeff();
+  double correctMean = correct.mean();
+  double accuracyMean = accuracy.mean();
+  double iterationsMean = iterations.mean();
+  double correctMin = correct.minCoeff();
+  double accuracyMin = accuracy.minCoeff();
+  double iterationsMin = iterations.minCoeff();
+  double correctMax = correct.maxCoeff();
+  double accuracyMax = accuracy.maxCoeff();
+  double iterationsMax = iterations.maxCoeff();
   for(unsigned i = 0; i < results.size(); i++)
   {
     correct(i) -= correctMean;
@@ -220,13 +220,13 @@ void logResults(std::vector<Result>& results, unsigned long time)
   correct = correct.cwiseAbs();
   accuracy = accuracy.cwiseAbs();
   iterations = iterations.cwiseAbs();
-  fpt correctStdDev = std::sqrt(correct.mean());
-  fpt accuracyStdDev = std::sqrt(accuracy.mean());
-  fpt iterationsStdDev = std::sqrt(iterations.mean());
+  double correctStdDev = std::sqrt(correct.mean());
+  double accuracyStdDev = std::sqrt(accuracy.mean());
+  double iterationsStdDev = std::sqrt(iterations.mean());
   resultLogger << "Mean+-StdDev\t";
   resultLogger << fmt(correctMean, 3) << "+-" << fmt(correctStdDev, 3) << "\t"
       << fmt(accuracyMean, 3) << "+-" << fmt(accuracyStdDev, 3) << "\t"
-      << (int) ((fpt)time/(fpt)results.size()) << "\t\t"
+      << (int) ((double)time/(double)results.size()) << "\t\t"
       << iterationsMean << "+-" << fmt(iterationsStdDev, 3) << "\n";
   resultLogger << "[min,max]\t";
   resultLogger << "[" << correctMin << "," << correctMax << "]\t"
@@ -249,7 +249,7 @@ int main(int argc, char** argv)
   stop.maximalIterations = 10000;
   Stopwatch sw;
 
-  Mt Xtr, Ytr, Xte, Yte;
+  Eigen::MatrixXd Xtr, Ytr, Xte, Yte;
   createTwoSpiralsDataSet(2, 1.0, Xtr, Ytr, Xte, Yte);
 
   for(int architecture = 0; architecture < architectures; architecture++)

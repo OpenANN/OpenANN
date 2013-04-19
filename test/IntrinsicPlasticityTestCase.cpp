@@ -14,41 +14,41 @@ void IntrinsicPlasticityTestCase::learn()
 
   OpenANN::RandomNumberGenerator rng;
   int samples = 10000;
-  Mt X(2, samples);
-  Mt Y(2, samples);
+  Eigen::MatrixXd X(2, samples);
+  Eigen::MatrixXd Y(2, samples);
   for(int i = 0; i < samples; i++)
   {
     for(int j = 0; j < 2; j++)
     {
-      X(j, i) = rng.sampleNormalDistribution<fpt>();
-      Y(j, i) = rng.sampleNormalDistribution<fpt>();
+      X(j, i) = rng.sampleNormalDistribution<double>();
+      Y(j, i) = rng.sampleNormalDistribution<double>();
     }
   }
   ip.trainingSet(X, Y);
 
   ip.initialize();
-  Vt p = ip.currentParameters();
-  ASSERT_EQUALS_DELTA((fpt) p(0), (fpt) 1.0, (fpt) 1e-3);
-  ASSERT_EQUALS_DELTA((fpt) p(1), (fpt) 1.0, (fpt) 1e-3);
-  ASSERT_NOT_EQUALS((fpt) p(2), (fpt) 0.0);
-  ASSERT_NOT_EQUALS((fpt) p(3), (fpt) 0.0);
+  Eigen::VectorXd p = ip.currentParameters();
+  ASSERT_EQUALS_DELTA(p(0), 1.0, 1e-3);
+  ASSERT_EQUALS_DELTA(p(1), 1.0, 1e-3);
+  ASSERT_NOT_EQUALS(p(2), 0.0);
+  ASSERT_NOT_EQUALS(p(3), 0.0);
   p(2) = 1e-3;
   p(3) = 1e-3;
   ip.setParameters(p);
   p = ip.currentParameters();
-  ASSERT_EQUALS_DELTA((fpt) p(0), (fpt) 1.0, (fpt) 1e-3);
-  ASSERT_EQUALS_DELTA((fpt) p(1), (fpt) 1.0, (fpt) 1e-3);
-  ASSERT_NOT_EQUALS((fpt) p(2), (fpt) 0.0);
-  ASSERT_NOT_EQUALS((fpt) p(3), (fpt) 0.0);
+  ASSERT_EQUALS_DELTA(p(0), 1.0, 1e-3);
+  ASSERT_EQUALS_DELTA(p(1), 1.0, 1e-3);
+  ASSERT_NOT_EQUALS(p(2), 0.0);
+  ASSERT_NOT_EQUALS(p(3), 0.0);
 
-  Vt y(2);
+  Eigen::VectorXd y(2);
   y.fill(0.0);
   for(int i = 0; i < samples; i++)
     y += ip(X.col(i));
-  Vt mean = y / (fpt) samples;
-  ASSERT_EQUALS_DELTA((fpt) mean(0), (fpt) 0.5, (fpt) 1e-2);
-  ASSERT_EQUALS_DELTA((fpt) mean(1), (fpt) 0.5, (fpt) 1e-2);
-  const fpt e = ip.error();
+  Eigen::VectorXd mean = y / (double) samples;
+  ASSERT_EQUALS_DELTA(mean(0), 0.5, 1e-2);
+  ASSERT_EQUALS_DELTA(mean(1), 0.5, 1e-2);
+  const double e = ip.error();
 
   OpenANN::MBSGD sgd(5e-5, 0.9, 1);
   OpenANN::StoppingCriteria stop;
@@ -60,8 +60,8 @@ void IntrinsicPlasticityTestCase::learn()
   y.fill(0.0);
   for(int i = 0; i < samples; i++)
     y += ip(X.col(i));
-  mean = y / (fpt) samples;
-  ASSERT_EQUALS_DELTA((fpt) mean(0), (fpt) 0.2, (fpt) 1e-2);
-  ASSERT_EQUALS_DELTA((fpt) mean(1), (fpt) 0.2, (fpt) 1e-2);
+  mean = y / (double) samples;
+  ASSERT_EQUALS_DELTA(mean(0), 0.2, 1e-2);
+  ASSERT_EQUALS_DELTA(mean(1), 0.2, 1e-2);
   ASSERT(e > ip.error());
 }

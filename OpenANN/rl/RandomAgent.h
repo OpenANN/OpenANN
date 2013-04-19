@@ -8,9 +8,9 @@ namespace OpenANN
 class RandomAgent : public Agent
 {
   Environment* environment;
-  fpt accumulatedReward;
+  double accumulatedReward;
 public:
-  fpt lastReturn;
+  double lastReturn;
   RandomAgent();
   virtual void abandoneIn(Environment& environment);
   virtual void chooseAction();

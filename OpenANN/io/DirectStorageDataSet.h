@@ -26,13 +26,13 @@ public:
   };
 
 private:
-  Mt* in;
-  Mt* out;
+  Eigen::MatrixXd* in;
+  Eigen::MatrixXd* out;
   const int N;
   const int D;
   const int F;
-  Vt temporaryInput;
-  Vt temporaryOutput;
+  Eigen::VectorXd temporaryInput;
+  Eigen::VectorXd temporaryOutput;
   LogInfo logInfo;
   Logger logger;
   int iteration;
@@ -46,14 +46,14 @@ public:
    * @param logInfo activate evaluation of the model during optimization
    * @param target target of evaluation logger
    */
-  DirectStorageDataSet(Mt& in, Mt& out, LogInfo logInfo = NONE,
-                       Logger::Target target = Logger::CONSOLE);
+  DirectStorageDataSet(Eigen::MatrixXd& in, Eigen::MatrixXd& out,
+                       LogInfo logInfo = NONE, Logger::Target target = Logger::CONSOLE);
   virtual ~DirectStorageDataSet() {}
   virtual int samples() { return N; }
   virtual int inputs() { return D; }
   virtual int outputs() { return F; }
-  virtual Vt& getInstance(int i);
-  virtual Vt& getTarget(int i);
+  virtual Eigen::VectorXd& getInstance(int i);
+  virtual Eigen::VectorXd& getTarget(int i);
   virtual void finishIteration(Learner& learner);
 };
 

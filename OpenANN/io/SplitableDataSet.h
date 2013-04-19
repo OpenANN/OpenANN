@@ -25,136 +25,136 @@ class Learner;
 
 class SplitableDataSet : public DataSet
 {
-    typedef std::pair<Vt*, Vt*> instance_pair;
+  typedef std::pair<Eigen::VectorXd*, Eigen::VectorXd*> instance_pair;
 
 public:
-    /**
-     * Create an instance for a splitable dataset 
-     * @param inputs size of input instances (feature vector)
-     * @param outputs size of output instances (class vector)
-     * @param parent used by split and merge methods for defining the cleaning
-     *               responsibility of instances
-     */
-    SplitableDataSet(int inputs, int outputs, const SplitableDataSet* parent = 0);
+  /**
+   * Create an instance for a splitable dataset 
+   * @param inputs size of input instances (feature vector)
+   * @param outputs size of output instances (class vector)
+   * @param parent used by split and merge methods for defining the cleaning
+   *               responsibility of instances
+   */
+  SplitableDataSet(int inputs, int outputs, const SplitableDataSet* parent = 0);
 
-    /**
-     * deletes all created subpartitions from this dataset
-     * deletes all instances if this represents root dataset
-     */
-    virtual ~SplitableDataSet();
+  /**
+    * deletes all created subpartitions from this dataset
+    * deletes all instances if this represents root dataset
+    */
+  virtual ~SplitableDataSet();
+
+  /** 
+    * See OpenANN::DataSet::samples() 
+    */
+  virtual int samples();
+
+  /** 
+    * See OpenANN::DataSet::inputs() 
+    */
+  virtual int inputs();
 
     /** 
-     * See OpenANN::DataSet::samples() 
-     */
-    virtual int samples();
+    * See OpenANN::DataSet::outputs() 
+    */
+  virtual int outputs();
 
-    /** 
-     * See OpenANN::DataSet::inputs() 
-     */
-    virtual int inputs();
+  /** 
+    * See OpenANN::DataSet::getInstance(int) 
+    */
+  virtual Eigen::VectorXd& getInstance(int i);
 
-     /** 
-     * See OpenANN::DataSet::outputs() 
-     */
-    virtual int outputs();
+  /** 
+    * See OpenANN::DataSet::getTarget(int) 
+    */
+  virtual Eigen::VectorXd& getTarget(int i);
+
+  /** 
+    * See OpenANN::DataSet::finishIteration(Learner&)
+    */
+  virtual void finishIteration(Learner& learner);
   
-    /** 
-     * See OpenANN::DataSet::getInstance(int) 
-     */
-    virtual Vt& getInstance(int i);
+  /**
+    * Adds feature- and target instance to this dataset.
+    * Never free/delete the instances (its managed by this class itself)
+    *
+    * @param instance pointer to the feature vector
+    * @param target pointer to the target vector
+    */
+  virtual void add(Eigen::VectorXd* instance, Eigen::VectorXd* target);
 
-    /** 
-     * See OpenANN::DataSet::getTarget(int) 
-     */
-    virtual Vt& getTarget(int i);
+  /**
+    * Adds feature- and target instance to this dataset.
+    * Never free/delete the instances (its managed by this class itself)
+    *
+    * @param pair the complete instance pair consisting feature- and target
+    *             pointer
+    */
+  virtual void add(const instance_pair& pair);
 
-    /** 
-     * See OpenANN::DataSet::finishIteration(Learner&)
-     */
-    virtual void finishIteration(Learner& learner);
-   
-    /**
-     * Adds feature- and target instance to this dataset.
-     * Never free/delete the instances (its managed by this class itself)
-     *
-     * @param instance pointer to the feature vector
-     * @param target pointer to the target vector
-     */
-    virtual void add(Vt* instance, Vt* target);
- 
-    /**
-     * Adds feature- and target instance to this dataset.
-     * Never free/delete the instances (its managed by this class itself)
-     *
-     * @param pair the complete instance pair consisting feature- and target
-     *             pointer
-     */
-    virtual void add(const instance_pair& pair);
+  /**
+    * Generates a target vector and add it to this dataset with the
+    * corresponding features.
+    *
+    * Never free/delete the instances (its managed by this class itself).
+    *
+    * @param instance pointer to the feature vector
+    * @param klass label for the target class (0 <= klass <= max_classes)
+    */
+  virtual void add(Eigen::VectorXd* instance, int klass);
 
-    /**
-     * Generates a target vector and add it to this dataset with the
-     * corresponding features.
-     *
-     * Never free/delete the instances (its managed by this class itself).
-     *
-     * @param instance pointer to the feature vector
-     * @param klass label for the target class (0 <= klass <= max_classes)
-     */
-    virtual void add(Vt* instance, int klass);
+  /**
+    * Shuffles the order of instances within this dataset
+    *
+    * @param iteration number of shuffle calls
+    * @return the current shuffled dataset
+    */
+  virtual SplitableDataSet* shuffle(int iteration = 1);
 
-    /**
-     * Shuffles the order of instances within this dataset
-     *
-     * @param iteration number of shuffle calls
-     * @return the current shuffled dataset
-     */
-    virtual SplitableDataSet* shuffle(int iteration = 1);
+  /**
+    * Split the current dataset into a specific number of sub datasets (groups)
+    * Never free/delete the pointers from the groups
+    *
+    * @param groups std::vector reference that will be filled with new datasets
+    * @param number_of_groups number of groups generated by this call
+    */
+  virtual void split(std::vector<SplitableDataSet*>& groups, int number_of_groups);
 
-    /**
-     * Split the current dataset into a specific number of sub datasets (groups)
-     * Never free/delete the pointers from the groups
-     *
-     * @param groups std::vector reference that will be filled with new datasets
-     * @param number_of_groups number of groups generated by this call
-     */
-    virtual void split(std::vector<SplitableDataSet*>& groups, int number_of_groups);
+  /**
+    * Split the current dataset into two sub datasets (groups) depending on a
+    * ratio.
+    *
+    * Never free/delete the pointers from the groups.
+    *
+    * @param groups std::vector reference that will be filled with the two
+    *               generated datasets
+    * @param ratio sets the ratio of samples between the two sets.
+    *   - first_set.size() == ratio * samples()
+    *   - second_set.size() == (1.0 - ratio) * samples()
+    */
+  virtual void split(std::vector<SplitableDataSet*>& groups, double ratio = 0.5);
 
-    /**
-     * Split the current dataset into two sub datasets (groups) depending on a
-     * ratio.
-     *
-     * Never free/delete the pointers from the groups.
-     *
-     * @param groups std::vector reference that will be filled with the two
-     *               generated datasets
-     * @param ratio sets the ratio of samples between the two sets.
-     *   - first_set.size() == ratio * samples()
-     *   - second_set.size() == (1.0 - ratio) * samples()
-     */
-    virtual void split(std::vector<SplitableDataSet*>& groups, double ratio = 0.5);
-
-    /**
-     * Generate a new dataset from a group of partitions
-     * Never free/delete the pointer from the generated dataset
-     *
-     * @param groups vector of given datasets that should be merged into a
-     *               single dataset.
-     */
-    static SplitableDataSet* merge(const std::vector<SplitableDataSet*>& groups);
-        
+  /**
+    * Generate a new dataset from a group of partitions
+    * Never free/delete the pointer from the generated dataset
+    *
+    * @param groups vector of given datasets that should be merged into a
+    *               single dataset.
+    */
+  static SplitableDataSet* merge(const std::vector<SplitableDataSet*>& groups);
+      
 private:
-    // vector dimensions 
-    int dim_input;
-    int dim_output;
+  // vector dimensions 
+  int dim_input;
+  int dim_output;
 
-    // data for all instances (features, target)
-    std::vector<instance_pair> data;
-    
-    // for automatic memory management of instances
-    const SplitableDataSet* parent;
+  // data for all instances (features, target)
+  std::vector<instance_pair> data;
+  
+  // for automatic memory management of instances
+  const SplitableDataSet* parent;
 
-    // for automatic memory management of splitted dataset groups
-    std::vector<SplitableDataSet*> responsible_groups;
+  // for automatic memory management of splitted dataset groups
+  std::vector<SplitableDataSet*> responsible_groups;
 };
 
 } // namespace OpenANN

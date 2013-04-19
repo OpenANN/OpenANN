@@ -67,9 +67,9 @@ public:
     int zoom = -200;
     glTranslatef(xOffset,yOffset,zoom);
 
-    Vt x = dataSet.getInstance(instance);
-    Vt y = net(x);
-    Vt yt = dataSet.getTarget(instance);
+    Eigen::VectorXd x = dataSet.getInstance(instance);
+    Eigen::VectorXd y = net(x);
+    Eigen::VectorXd yt = dataSet.getTarget(instance);
 
     int prediction = 0;
     y.maxCoeff(&prediction);
@@ -86,9 +86,9 @@ public:
     {
       float translateX = 0;
       OpenANN::Layer& layer = net.getLayer(l);
-      Vt layerOutput = layer.getOutput();
-      fpt mi = layerOutput.minCoeff();
-      fpt ma = layerOutput.maxCoeff();
+      Eigen::VectorXd layerOutput = layer.getOutput();
+      double mi = layerOutput.minCoeff();
+      double ma = layerOutput.maxCoeff();
       OpenANN::OutputInfo info = net.getOutputInfo(l);
       float featureMaps = 1, cols = 1, rows = 1;
       if(info.dimensions.size() == 3)
@@ -198,7 +198,7 @@ int main(int argc, char** argv)
 
   // Load parameters
   std::ifstream file("weights.log");
-  Vt weights = net.currentParameters();
+  Eigen::VectorXd weights = net.currentParameters();
   for(int i = 0; i < net.dimension(); i++)
     file >> weights(i);
   net.setParameters(weights);

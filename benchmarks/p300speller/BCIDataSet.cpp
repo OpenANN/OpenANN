@@ -13,7 +13,7 @@ bool BCIDataSet::BCIDataCache::hasInstance(int epoch, int offset)
   return cache.find(std::make_pair(epoch, offset)) != cache.end();
 }
 
-Vt& BCIDataSet::BCIDataCache::getInstance(int epoch, int offset)
+Eigen::VectorXd& BCIDataSet::BCIDataCache::getInstance(int epoch, int offset)
 {
   return cache[std::make_pair(epoch, offset)];
 }
@@ -23,7 +23,7 @@ bool BCIDataSet::BCIDataCache::hasSpace()
   return size >= (cache.size()+1)*D*sizeof(double);
 }
 
-void BCIDataSet::BCIDataCache::cacheInstance(int epoch, int offset, const Vt& instance)
+void BCIDataSet::BCIDataCache::cacheInstance(int epoch, int offset, const Eigen::VectorXd& instance)
 {
   cache[std::make_pair(epoch, offset)] = instance;
 }
@@ -77,7 +77,7 @@ void BCIDataSet::determineDimension()
   stimulusCode.resize(maxT, epochs);
   stimulusType.resize(maxT, epochs);
   targetChar.resize(epochs);
-  signal.resize(epochs, Mt(channels, maxT));
+  signal.resize(epochs, Eigen::MatrixXd(channels, maxT));
   tempInstance.resize(channels*sampling);
 }
 
@@ -178,7 +178,7 @@ void BCIDataSet::setupInterface()
   std::vector<int> lastFlashing(readEpochs, 0);
   instanceStart.resize(readEpochs);
   instanceLabel.resize(readEpochs);
-  Vt label(1);
+  Eigen::VectorXd label(1);
   for(int t = 0; t < maxT; t++)
   {
     for(int e = 0; e < readEpochs; e++)
@@ -217,7 +217,7 @@ void BCIDataSet::decimate(int factor)
   clear();
 }
 
-void BCIDataSet::compress(const Mt& compressionMatrix)
+void BCIDataSet::compress(const Eigen::MatrixXd& compressionMatrix)
 {
   compressor.init(compressionMatrix);
   D = compressionMatrix.rows();
@@ -236,7 +236,7 @@ void BCIDataSet::reset()
   D = sampling * channels;
 }
 
-Vt& BCIDataSet::getInstance(int i)
+Eigen::VectorXd& BCIDataSet::getInstance(int i)
 {
   int epoch = 0, t0 = 0;
   getOffsets(i, epoch, t0);
@@ -259,14 +259,14 @@ void BCIDataSet::buildInstance(int epoch, int t0)
   }
   else
   {
-    Mt original = extractInstance(epoch, t0);
+    Eigen::MatrixXd original = extractInstance(epoch, t0);
     if(decimated)
     {
       Decimator decimator(downSamplingFactor);
-      Mt decimatedSignal = decimator.decimate(original);
+      Eigen::MatrixXd decimatedSignal = decimator.decimate(original);
       if(comp)
       {
-        Vt uncompressed = toVector(decimatedSignal);
+        Eigen::VectorXd uncompressed = toVector(decimatedSignal);
         tempInstance = compressor.compress(uncompressed);
       }
       else
@@ -276,7 +276,7 @@ void BCIDataSet::buildInstance(int epoch, int t0)
     {
       if(comp)
       {
-        Vt uncompressed = toVector(original);
+        Eigen::VectorXd uncompressed = toVector(original);
         tempInstance = compressor.compress(uncompressed);
       }
       else
@@ -287,25 +287,25 @@ void BCIDataSet::buildInstance(int epoch, int t0)
   }
 }
 
-Mt BCIDataSet::extractInstance(int epoch, int t0)
+Eigen::MatrixXd BCIDataSet::extractInstance(int epoch, int t0)
 {
-  Mt instance(channels, sampling);
+  Eigen::MatrixXd instance(channels, sampling);
   for(int c = 0; c < channels; c++)
     for(int t = 0; t < sampling; t++)
       instance(c, t) = signal[epoch](c, t0+t);
   return instance;
 }
 
-Vt BCIDataSet::toVector(const Mt& matrix)
+Eigen::VectorXd BCIDataSet::toVector(const Eigen::MatrixXd& matrix)
 {
-  Vt vector(matrix.rows()*matrix.cols());
+  Eigen::VectorXd vector(matrix.rows()*matrix.cols());
   for(int r = 0; r < matrix.rows(); r++)
     for(int c = 0; c < matrix.cols(); c++)
       vector(r*matrix.cols()+c) = matrix(r, c);
   return vector;
 }
 
-Vt& BCIDataSet::getTarget(int i)
+Eigen::VectorXd& BCIDataSet::getTarget(int i)
 {
   int epoch = i / instanceLabel[0].size();
   int number = i % instanceLabel[0].size();
@@ -334,7 +334,7 @@ int BCIDataSet::evaluate(OpenANN::Learner& learner, int trials)
     "YZ1234",
     "56789_"
   };
-  Vt y(1);
+  Eigen::VectorXd y(1);
   int correct = 0;
   std::vector<char> predictions(readEpochs, 0);
 

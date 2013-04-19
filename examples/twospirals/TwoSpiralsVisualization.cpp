@@ -4,16 +4,16 @@
 #include <QApplication>
 
 TwoSpiralsVisualization::TwoSpiralsVisualization(
-    const Mt& trainingInput,
-    const Mt& trainingOutput,
-    const Mt& testInput,
-    const Mt& testOutput)
+    const Eigen::MatrixXd& trainingInput,
+    const Eigen::MatrixXd& trainingOutput,
+    const Eigen::MatrixXd& testInput,
+    const Eigen::MatrixXd& testOutput)
     : width(500), height(500),
       trainingSet(trainingInput, trainingOutput), testSet(testInput, testOutput),
       showTraining(true), showTest(true), showPrediction(true), showSmooth(true),
       net(new Net), eventLogger(Logger::CONSOLE)
 {
-  std::memset(classes, 0, sizeof(fpt)*100*100);
+  std::memset(classes, 0, sizeof(double)*100*100);
   trainingSet.setVisualization(this);
   QObject::connect(this, SIGNAL(updatedData()), this, SLOT(repaint()));
 
@@ -38,7 +38,7 @@ TwoSpiralsVisualization::~TwoSpiralsVisualization()
   delete net;
 }
 
-void TwoSpiralsVisualization::predictClass(int x, int y, fpt predictedClass)
+void TwoSpiralsVisualization::predictClass(int x, int y, double predictedClass)
 {
   classesMutex.lock();
   classes[x][y] = predictedClass;
@@ -100,9 +100,9 @@ void TwoSpiralsVisualization::paintPrediction()
     {
       classesMutex.lock();
       float c;
-      Vt v(2);
-      v(0) = (fpt) x / 100.0f;
-      v(1) = (fpt) y / 100.0f;
+      Eigen::VectorXd v(2);
+      v(0) = (double) x / 100.0f;
+      v(1) = (double) y / 100.0f;
       if(showSmooth)
         c = classes[x][y]/2.0f + 0.5f;
       else
@@ -177,7 +177,7 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
   }
 }
 
-TwoSpiralsDataSet::TwoSpiralsDataSet(const Mt& inputs, const Mt& outputs)
+TwoSpiralsDataSet::TwoSpiralsDataSet(const Eigen::MatrixXd& inputs, const Eigen::MatrixXd& outputs)
   : in(inputs), out(outputs), dataSet(this->in, this->out), visualization(0)
 {
 }
@@ -195,9 +195,9 @@ void TwoSpiralsDataSet::finishIteration(Learner& learner)
     {
       for(int y = 0; y < 100; y++)
       {
-        Vt in(2);
-        in << (fpt)x/fpt(100), (fpt)y/fpt(100);
-        Vt out = learner(in);
+        Eigen::VectorXd in(2);
+        in << (double)x/double(100), (double)y/double(100);
+        Eigen::VectorXd out = learner(in);
         visualization->predictClass(x, y, out(0, 0));
       }
     }

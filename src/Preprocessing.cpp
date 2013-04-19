@@ -3,20 +3,20 @@
 
 namespace OpenANN {
 
-void scaleData(Mt& data, fpt min, fpt max)
+void scaleData(Eigen::MatrixXd& data, double min, double max)
 {
   if(min >= max)
     throw OpenANNException("Scaling failed: max has to be greater than min!");
-  const fpt minData = data.minCoeff();
-  const fpt maxData = data.maxCoeff();
-  const fpt dataRange = maxData - minData;
-  const fpt range = max - min;
+  const double minData = data.minCoeff();
+  const double maxData = data.maxCoeff();
+  const double dataRange = maxData - minData;
+  const double range = max - min;
   for(int i = 0; i < data.rows(); i++)
     for(int j = 0; j < data.cols(); j++)
       data(i, j) = (data(i, j)-minData) / dataRange * range + min;
 }
 
-void filter(const Mt& x, Mt& y, const Mt& b, const Mt& a)
+void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd& b, const Eigen::MatrixXd& a)
 {
   y.fill(0.0);
 
@@ -48,7 +48,7 @@ void filter(const Mt& x, Mt& y, const Mt& b, const Mt& a)
   }
 }
 
-void downsample(const Mt& y, Mt& d, int downSamplingFactor)
+void downsample(const Eigen::MatrixXd& y, Eigen::MatrixXd& d, int downSamplingFactor)
 {
   for(int c = 0; c < y.rows(); c++)
     for(int target = 0, source = 0; target < d.cols();

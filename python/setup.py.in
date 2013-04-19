@@ -20,8 +20,7 @@ if __name__ == "__main__":
                 include_dirs=["${PROJECT_SOURCE_DIR}",
                               "${PROJECT_SOURCE_DIR}/test/lib/CPP-Test",
                               "${EIGEN3_INCLUDE_DIRS}"],
-                define_macros=[("fpt", "${FPT}"), ("Vt", "Eigen::${VT}"),
-                               ("Mt", "Eigen::${MT}"), ("NDEBUG",)],
+                define_macros=[("NDEBUG",)],
                 extra_compile_args=["-g0", "-s", "-O3", "-msse", "-msse2",
                                     "-msse3", "-mssse3", "-msse4.1",
                                     "-msse4.2", "-fopenmp"], # TODO configure

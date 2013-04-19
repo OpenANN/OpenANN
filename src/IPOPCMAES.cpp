@@ -10,7 +10,7 @@ IPOPCMAES::IPOPCMAES()
       maxFunEvalsActive(false),
       opt(0),
       cmaes(0),
-      parameters(new Parameters<fpt>),
+      parameters(new Parameters<double>),
       currentIndividual(0),
       initialX(0),
       initialStdDev(0),
@@ -20,7 +20,7 @@ IPOPCMAES::IPOPCMAES()
       evaluations(0),
       evaluationsAfterRestart(0),
       stopped(false),
-      optimumValue(std::numeric_limits<fpt>::max()),
+      optimumValue(std::numeric_limits<double>::max()),
       sigma0(10.0)
 {
 }
@@ -65,7 +65,7 @@ void IPOPCMAES::setStopCriteria(const StoppingCriteria& stop)
   }
   if(stop.maximalIterations != StoppingCriteria::defaultValue.maximalIterations)
   {
-    parameters->stopMaxIter = (fpt) stop.maximalIterations;
+    parameters->stopMaxIter = (double) stop.maximalIterations;
   }
   if(stop.minimalValue != StoppingCriteria::defaultValue.minimalValue)
   {
@@ -96,38 +96,38 @@ bool IPOPCMAES::restart()
     evaluations = (int) cmaes->countevals;
     delete cmaes;
   }
-  cmaes = new CMAES<fpt>;
+  cmaes = new CMAES<double>;
 
   OPENANN_CHECK_WITHIN(restarts, 0, stop.maximalRestarts);
   if(initialX)
     delete[] initialX;
-  initialX = new fpt[N];
+  initialX = new double[N];
   if(initialStdDev)
     delete[] initialStdDev;
-  initialStdDev = new fpt[N];
+  initialStdDev = new double[N];
 
   parameters->updateCmode.maxtime = 1.0;
   if(restarts > 0)
-    parameters->lambda = (int) ((fpt) parameters->lambda * 2.);
+    parameters->lambda = (int) ((double) parameters->lambda * 2.);
 
   if(opt->providesInitialization())
   {
     opt->initialize();
-    Vt initial = opt->currentParameters();
+    Eigen::VectorXd initial = opt->currentParameters();
     for(unsigned i = 0; i < N; i++)
       initialX[i] = initial(i);
   }
   else
   {
     for(unsigned i = 0; i < N; i++)
-      initialX[i] = (fpt) i / (fpt) N - (fpt) (N/2);
+      initialX[i] = (double) i / (double) N - (double) (N/2);
   }
   for(unsigned i = 0; i < N; i++)
     initialStdDev[i] = sigma0;
     
   parameters->init(N, initialX, initialStdDev);
   fitnessValues = cmaes->init(*parameters);
-  cmaes->countevals = (fpt) evaluations;
+  cmaes->countevals = (double) evaluations;
   evaluationsAfterRestart = 0;
 
   return true;
@@ -141,20 +141,20 @@ void IPOPCMAES::optimize()
   {
     while(!terminated())
     {
-      for(int i = 0; i < cmaes->get(CMAES<fpt>::PopSize); ++i)
+      for(int i = 0; i < cmaes->get(CMAES<double>::PopSize); ++i)
       {
-        Vt individual = getNext();
+        Eigen::VectorXd individual = getNext();
         opt->setParameters(individual);
-        fpt error = opt->error();
+        double error = opt->error();
         setError(error);
       }
     }
 
-    if(cmaes->get(CMAES<fpt>::FBestEver) < optimumValue)
+    if(cmaes->get(CMAES<double>::FBestEver) < optimumValue)
     {
       // TODO actually XMean should be the best estimator
       optimum.resize(opt->dimension(), 1);
-      fpt const* ip = cmaes->getPtr(CMAES<fpt>::XBestEver);
+      double const* ip = cmaes->getPtr(CMAES<double>::XBestEver);
       for(unsigned i = 0; i < opt->dimension(); i++)
       {
         optimum(i) = ip[i];
@@ -163,23 +163,23 @@ void IPOPCMAES::optimize()
       optimumValue = opt->error();
     }
 
-    if(cmaes->get(CMAES<fpt>::FBestEver) < stop.minimalValue)
+    if(cmaes->get(CMAES<double>::FBestEver) < stop.minimalValue)
       break;
   }
 }
 
-Vt IPOPCMAES::getNext()
+Eigen::VectorXd IPOPCMAES::getNext()
 {
   OPENANN_CHECK(cmaes);
   OPENANN_CHECK(opt);
-  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<fpt>::Lambda)-1);
+  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<double>::Lambda)-1);
 
   if(currentIndividual == 0)
   {
     population = cmaes->samplePopulation();
   }
 
-  Vt individual(opt->dimension());
+  Eigen::VectorXd individual(opt->dimension());
   for(unsigned i = 0; i < opt->dimension(); i++)
   {
     individual(i) = population[currentIndividual][i];
@@ -187,11 +187,11 @@ Vt IPOPCMAES::getNext()
   return individual;
 }
 
-void IPOPCMAES::setError(fpt fitness)
+void IPOPCMAES::setError(double fitness)
 {
   OPENANN_CHECK(cmaes);
   OPENANN_CHECK(opt);
-  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<fpt>::Lambda)-1);
+  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<double>::Lambda)-1);
 
   if(logger.isActive())
   {
@@ -205,7 +205,7 @@ void IPOPCMAES::setError(fpt fitness)
   fitnessValues[currentIndividual++] = fitness;
   evaluationsAfterRestart++;
 
-  if(currentIndividual == cmaes->get(CMAES<fpt>::Lambda))
+  if(currentIndividual == cmaes->get(CMAES<double>::Lambda))
   {
     cmaes->updateDistribution(fitnessValues);
     currentIndividual = 0;
@@ -223,7 +223,7 @@ bool IPOPCMAES::terminated()
       || (maxFunEvalsActive && evaluationsAfterRestart >= stop.maximalFunctionEvaluations));
 }
 
-Vt IPOPCMAES::result()
+Eigen::VectorXd IPOPCMAES::result()
 {
   OPENANN_CHECK(cmaes);
   OPENANN_CHECK(opt);
@@ -237,7 +237,7 @@ std::string IPOPCMAES::name()
   return "Increasing Population Covariance Matrix Adaption Evolution Strategies";
 }
 
-void IPOPCMAES::setSigma0(fpt sigma0)
+void IPOPCMAES::setSigma0(double sigma0)
 {
   this->sigma0 = sigma0;
 }

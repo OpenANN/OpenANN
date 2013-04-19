@@ -11,8 +11,8 @@ if(PYTHONINTERP_FOUND)
   endif()
 
   file(COPY test.py DESTINATION .)
+  file(COPY openann.pyx DESTINATION .)
   configure_file(setup.py.in setup.py)
-  configure_file(openann.pyx.in openann.pyx)
 
   add_custom_command(
     OUTPUT python_extension_command

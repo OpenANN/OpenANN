@@ -37,9 +37,9 @@ namespace OpenANN
 
 struct FloatingPointFormatter
 {
-  fpt value;
+  double value;
   int precision;
-  FloatingPointFormatter(fpt value, int precision);
+  FloatingPointFormatter(double value, int precision);
 };
 
 std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t);

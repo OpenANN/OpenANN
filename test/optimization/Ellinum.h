@@ -5,7 +5,7 @@
 template<int N>
 class Ellinum : public OpenANN::Optimizable
 {
-  Vt x;
+  Eigen::VectorXd x;
 public:
   Ellinum()
       : x(N, 1)
@@ -27,20 +27,20 @@ public:
     return N;
   }
 
-  virtual Vt currentParameters()
+  virtual Eigen::VectorXd currentParameters()
   {
     return x;
   }
 
-  virtual void setParameters(const Vt& parameters)
+  virtual void setParameters(const Eigen::VectorXd& parameters)
   {
     x = parameters;
   }
 
-  virtual fpt error()
+  virtual double error()
   {
-    fpt sum(0);
-    static fpt maxVerhaeltnis = 0.0;
+    double sum(0);
+    static double maxVerhaeltnis = 0.0;
     if(maxVerhaeltnis == 0.0)
     {
       for (maxVerhaeltnis = 1.0; 
@@ -54,7 +54,7 @@ public:
     if (N < 3)
       return x(0,0) * x(0,0);
     for(int i = 1; i < N; ++i)
-      sum += exp(log(maxVerhaeltnis) * 2. * (fpt)(i-1)/(N-2)) * x(i, 0)*x(i, 0);
+      sum += exp(log(maxVerhaeltnis) * 2. * (double)(i-1)/(N-2)) * x(i, 0)*x(i, 0);
     return sum;
   }
 
@@ -63,10 +63,10 @@ public:
     return false;
   }
 
-  virtual Vt gradient()
+  virtual Eigen::VectorXd gradient()
   {
     OPENANN_CHECK(false && "Ellinum does not provide a gradient.");
-    return Vt();
+    return Eigen::VectorXd();
   }
 
   virtual bool providesHessian()
@@ -74,9 +74,9 @@ public:
     return false;
   }
 
-  virtual Mt hessian()
+  virtual Eigen::MatrixXd hessian()
   {
     OPENANN_CHECK(false && "Ellinum does not provide an hessian.");
-    return Mt();
+    return Eigen::MatrixXd();
   }
 };

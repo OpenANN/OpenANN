@@ -77,17 +77,17 @@ void NeuroEvolutionAgent::chooseAction()
 
   if(environment->terminalState())
   {
-    fpt fitness = 0.0;
+    double fitness = 0.0;
     if(!gruauFitness)
       fitness = -environment->stepsInEpisode();
     else
     { // Gruau's fitness measurement
-      const fpt f1 = environment->stepsInEpisode() / 1000.0;
-      fpt f2;
+      const double f1 = environment->stepsInEpisode() / 1000.0;
+      double f2;
       if(environment->stepsInEpisode() >= 100)
       {
-        fpt denom = 0.0;
-        for(std::list<Vt>::iterator it = inputBuffer.begin(); it != inputBuffer.end(); it++)
+        double denom = 0.0;
+        for(std::list<Eigen::VectorXd>::iterator it = inputBuffer.begin(); it != inputBuffer.end(); it++)
         {
           denom += std::fabs((*it)(0)); // position on the track
           for(int i = 1; i < inputSize; i+=2)
@@ -114,7 +114,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
   Environment::State state = environment->getState();
 
   // calculating network input
-  Vt input(inputSize);
+  Eigen::VectorXd input(inputSize);
   if(fullyObservable || alphaBetaFilter)
     input = state;
   else
@@ -124,7 +124,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
       int in_idx = 0;
       for(int i = 0; i < state.rows(); i++)
       {
-        Vt estimation = des[i](state(i));
+        Eigen::VectorXd estimation = des[i](state(i));
         input(in_idx++) = estimation(0);
         input(in_idx++) = estimation(1);
       }
@@ -156,7 +156,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
   environment->stateTransition(action);
 }
 
-Vt NeuroEvolutionAgent::currentParameters()
+Eigen::VectorXd NeuroEvolutionAgent::currentParameters()
 {
   return policy.currentParameters();
 }
@@ -166,22 +166,22 @@ unsigned int NeuroEvolutionAgent::dimension()
   return policy.dimension();
 }
 
-fpt NeuroEvolutionAgent::error()
+double NeuroEvolutionAgent::error()
 {
   OPENANN_CHECK(false);
   return 0.0;
 }
 
-Vt NeuroEvolutionAgent::gradient()
+Eigen::VectorXd NeuroEvolutionAgent::gradient()
 {
   OPENANN_CHECK(false);
-  return Vt();
+  return Eigen::VectorXd();
 }
 
-Mt NeuroEvolutionAgent::hessian()
+Eigen::MatrixXd NeuroEvolutionAgent::hessian()
 {
   OPENANN_CHECK(false);
-  return Mt();
+  return Eigen::MatrixXd();
 }
 
 void NeuroEvolutionAgent::initialize()
@@ -204,12 +204,12 @@ bool NeuroEvolutionAgent::providesInitialization()
   return true;
 }
 
-void NeuroEvolutionAgent::setParameters(const Vt& parameters)
+void NeuroEvolutionAgent::setParameters(const Eigen::VectorXd& parameters)
 {
   policy.setParameters(parameters);
 }
 
-void NeuroEvolutionAgent::setSigma0(fpt sigma0)
+void NeuroEvolutionAgent::setSigma0(double sigma0)
 {
   opt.setSigma0(sigma0);
 }

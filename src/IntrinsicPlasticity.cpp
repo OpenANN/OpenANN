@@ -6,7 +6,7 @@
 namespace OpenANN
 {
 
-IntrinsicPlasticity::IntrinsicPlasticity(int nodes, fpt mu, fpt stdDev)
+IntrinsicPlasticity::IntrinsicPlasticity(int nodes, double mu, double stdDev)
     : nodes(nodes), mu(mu), stdDev(stdDev), s(nodes), b(nodes),
       parameters(2*nodes), g(2*nodes), dataSet(0), deleteDataSet(false),
       y(nodes)
@@ -39,31 +39,31 @@ void IntrinsicPlasticity::initialize()
   s.fill(1.0);
   RandomNumberGenerator rng;
   for(int i = 0; i < nodes; i++)
-    b(i) = rng.sampleNormalDistribution<fpt>() * stdDev;
+    b(i) = rng.sampleNormalDistribution<double>() * stdDev;
 }
 
-fpt IntrinsicPlasticity::error()
+double IntrinsicPlasticity::error()
 {
-  fpt e = 0.0;
-  const fpt N = dataSet->samples();
+  double e = 0.0;
+  const double N = dataSet->samples();
   for(int n = 0; n < N; n++)
     e += error(n);
   return e;
 }
 
-fpt IntrinsicPlasticity::error(unsigned int n)
+double IntrinsicPlasticity::error(unsigned int n)
 {
-  fpt e = 0.0;
+  double e = 0.0;
   (*this)(dataSet->getInstance(n));
   for(int i = 0; i < nodes; i++)
   {
-    const fpt ei = y(i) - mu;
+    const double ei = y(i) - mu;
     e += ei*ei;
   }
   return e;
 }
 
-Vt IntrinsicPlasticity::currentParameters()
+Eigen::VectorXd IntrinsicPlasticity::currentParameters()
 {
   int i = 0;
   for(; i < nodes; i++)
@@ -73,7 +73,7 @@ Vt IntrinsicPlasticity::currentParameters()
   return parameters;
 }
 
-void IntrinsicPlasticity::setParameters(const Vt& parameters)
+void IntrinsicPlasticity::setParameters(const Eigen::VectorXd& parameters)
 {
   int i = 0;
   for(; i < nodes; i++)
@@ -87,7 +87,7 @@ bool IntrinsicPlasticity::providesGradient()
   return true;
 }
 
-Vt IntrinsicPlasticity::gradient()
+Eigen::VectorXd IntrinsicPlasticity::gradient()
 {
   g.fill(0.0);
   for(int n = 0; n < dataSet->samples(); n++)
@@ -95,17 +95,17 @@ Vt IntrinsicPlasticity::gradient()
   return g;
 }
 
-Vt IntrinsicPlasticity::gradient(unsigned int n)
+Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
 {
-  Vt a = dataSet->getInstance(n);
+  Eigen::VectorXd a = dataSet->getInstance(n);
   OPENANN_CHECK_MATRIX_BROKEN(a);
-  Vt y = (*this)(a);
+  Eigen::VectorXd y = (*this)(a);
   OPENANN_CHECK_MATRIX_BROKEN(y);
 
-  Vt g(2*nodes);
+  Eigen::VectorXd g(2*nodes);
   int i = 0;
-  const fpt tmp = 2.0 + 1.0/mu;
-  OPENANN_CHECK_NOT_EQUALS(s(i), (fpt) 0.0);
+  const double tmp = 2.0 + 1.0/mu;
+  OPENANN_CHECK_NOT_EQUALS(s(i), (double) 0.0);
   for(; i < nodes; i++)
     g(i) = 1.0/s(i) + a(i) - tmp*a(i)*y(i) + a(i)*y(i)*y(i)/mu;
   for(int j = 0; j < nodes; j++, i++)
@@ -118,12 +118,12 @@ bool IntrinsicPlasticity::providesHessian()
   return false;
 }
 
-Mt IntrinsicPlasticity::hessian()
+Eigen::MatrixXd IntrinsicPlasticity::hessian()
 {
-  return Mt::Identity(2*nodes, 2*nodes);
+  return Eigen::MatrixXd::Identity(2*nodes, 2*nodes);
 }
 
-Learner& IntrinsicPlasticity::trainingSet(Mt& trainingInput, Mt& trainingOutput)
+Learner& IntrinsicPlasticity::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
   if(deleteDataSet)
     delete dataSet;
@@ -139,11 +139,11 @@ Learner& IntrinsicPlasticity::trainingSet(DataSet& trainingSet)
   deleteDataSet = false;
 }
 
-Vt IntrinsicPlasticity::operator()(const Vt& a)
+Eigen::VectorXd IntrinsicPlasticity::operator()(const Eigen::VectorXd& a)
 {
   for(int i = 0; i < nodes; i++)
   {
-    const fpt input = s(i) * a(i) + b(i);
+    const double input = s(i) * a(i) + b(i);
     if(input > 45.0)
       y(i) = 1.0;
     else if(input < -45.0)

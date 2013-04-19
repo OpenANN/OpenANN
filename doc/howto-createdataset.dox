@@ -64,11 +64,11 @@ public:
   {
     // return output space dimension
   }
-  virtual Vt& getInstance(int i)
+  virtual Eigen::VectorXd& getInstance(int i)
   {
     // return the i-th instance (x_i)
   }
-  virtual Vt& getTarget(int i);
+  virtual Eigen::VectorXd& getTarget(int i);
   {
     // return the desired output for the i-th instance (y_i)
   }

@@ -13,30 +13,30 @@ class Distorter
 {
 public:
   // elastic distortion
-  fpt sigma;
+  double sigma;
   //! elastic scaling
-  fpt alpha;
+  double alpha;
   //! maximal absolute rotation
-  fpt beta;
+  double beta;
   //! maximal horizontal scaling (percent)
-  fpt gammaX;
+  double gammaX;
   //! maximal vertical scaling (percent)
-  fpt gammaY;
+  double gammaY;
 
   //! has to be odd
   int gaussianKernelSize;
-  Mt gaussianKernel;
-  Mt distortionH, distortionV;
+  Eigen::MatrixXd gaussianKernel;
+  Eigen::MatrixXd distortionH, distortionV;
 
-  Distorter(fpt sigma = 5.0, fpt alpha = 0.5, fpt beta = 15.0, fpt gammaX = 15.0, fpt gammaY = 15.0)
+  Distorter(double sigma = 5.0, double alpha = 0.5, double beta = 15.0, double gammaX = 15.0, double gammaY = 15.0)
     : sigma(sigma), alpha(alpha), beta(beta), gammaX(gammaX), gammaY(gammaY), gaussianKernelSize(21), gaussianKernel(gaussianKernelSize, gaussianKernelSize)
   {
-    fpt twoSigmaSquared = sigma*sigma/2.0;
-    fpt twoPiSigma = sqrt(2.0*M_PI)/sigma;
+    double twoSigmaSquared = sigma*sigma/2.0;
+    double twoPiSigma = sqrt(2.0*M_PI)/sigma;
     int center = gaussianKernelSize/2;
     for(int row = 0; row < gaussianKernelSize; row++)
       for(int col = 0; col < gaussianKernelSize; col++)
-        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared*(std::pow((fpt) (row-center), 2.0) + std::pow((fpt) (col-center), 2.0)));
+        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared*(std::pow((double) (row-center), 2.0) + std::pow((double) (col-center), 2.0)));
     OPENANN_CHECK_MATRIX_BROKEN(gaussianKernel);
   }
 
@@ -44,13 +44,13 @@ public:
   {
     // uniform random matrices
     OpenANN::RandomNumberGenerator rng;
-    Mt uniformH(rows, cols), uniformV(rows, cols);
+    Eigen::MatrixXd uniformH(rows, cols), uniformV(rows, cols);
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)
       {
-        uniformH(r, c) = rng.generate<fpt>(-1.0, 2.0);
-        uniformV(r, c) = rng.generate<fpt>(-1.0, 2.0);
+        uniformH(r, c) = rng.generate<double>(-1.0, 2.0);
+        uniformV(r, c) = rng.generate<double>(-1.0, 2.0);
       }
     }
 
@@ -63,7 +63,7 @@ public:
     {
       for(int c = 0; c < cols; c++)
       {
-        fpt convolvedH = 0.0, convolvedV = 0.0;
+        double convolvedH = 0.0, convolvedV = 0.0;
         for(int kr = 0; kr < gaussianKernelSize; kr++)
         {
           for(int kc = 0; kc < gaussianKernelSize; kc++)
@@ -84,25 +84,25 @@ public:
     OPENANN_CHECK_MATRIX_BROKEN(distortionV);
 
     // image scaling
-    fpt horizontalScaling = rng.generate<fpt>(-1.0, 2.0) * gammaX / 100.0;
-    fpt verticalScaling = rng.generate<fpt>(-1.0, 2.0) * gammaY / 100.0;
+    double horizontalScaling = rng.generate<double>(-1.0, 2.0) * gammaX / 100.0;
+    double verticalScaling = rng.generate<double>(-1.0, 2.0) * gammaY / 100.0;
     int imageCenter = rows/2;
     OPENANN_CHECK_EQUALS(cols, rows); // could be generalized but YAGNI
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)
       {
-        distortionH(r, c) += horizontalScaling * (fpt) (c-imageCenter);
-        distortionV(r, c) -= verticalScaling * (fpt) (imageCenter-r); // negative because of top-down bitmap
+        distortionH(r, c) += horizontalScaling * (double) (c-imageCenter);
+        distortionV(r, c) -= verticalScaling * (double) (imageCenter-r); // negative because of top-down bitmap
       }
     }
     OPENANN_CHECK_MATRIX_BROKEN(distortionH);
     OPENANN_CHECK_MATRIX_BROKEN(distortionV);
 
     // rotation
-    fpt angle = beta * rng.generate<fpt>(-1.0, 2.0) * M_PI / 180.0;
-    fpt cosAngle = cos(angle);
-    fpt sinAngle = sin(angle);
+    double angle = beta * rng.generate<double>(-1.0, 2.0) * M_PI / 180.0;
+    double cosAngle = cos(angle);
+    double sinAngle = sin(angle);
 
     for(int r = 0; r < rows; r++)
     {
@@ -116,22 +116,22 @@ public:
     OPENANN_CHECK_MATRIX_BROKEN(distortionV);
   }
 
-  void applyDistortion(Vt& instance)
+  void applyDistortion(Eigen::VectorXd& instance)
   {
-    Vt input = instance;
+    Eigen::VectorXd input = instance;
     int rows = distortionH.rows(), cols = distortionH.cols();
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)
       {
-        fpt sourceRow = (fpt) r - distortionV(r, c);
-        fpt sourceCol = (fpt) c - distortionH(r, c);
-        fpt rowFraction = sourceRow - ceil(sourceRow);
-        fpt colFraction = sourceCol - ceil(sourceCol);
-        fpt w1 = (1.0 - rowFraction) * (1.0 - colFraction);
-        fpt w2 = (1.0 - rowFraction) * colFraction;
-        fpt w3 = rowFraction * (1.0 - colFraction);
-        fpt w4 = rowFraction * colFraction;
+        double sourceRow = (double) r - distortionV(r, c);
+        double sourceCol = (double) c - distortionH(r, c);
+        double rowFraction = sourceRow - ceil(sourceRow);
+        double colFraction = sourceCol - ceil(sourceCol);
+        double w1 = (1.0 - rowFraction) * (1.0 - colFraction);
+        double w2 = (1.0 - rowFraction) * colFraction;
+        double w3 = rowFraction * (1.0 - colFraction);
+        double w4 = rowFraction * colFraction;
 
         if(!(sourceRow+1 >= rows || sourceRow < 0 || sourceCol+1 > cols || sourceCol < 0))
         {
