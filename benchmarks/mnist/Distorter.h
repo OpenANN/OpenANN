@@ -12,7 +12,7 @@
 class Distorter
 {
 public:
-  // elastic distortion
+  //! elastic distortion
   double sigma;
   //! elastic scaling
   double alpha;
@@ -28,15 +28,20 @@ public:
   Eigen::MatrixXd gaussianKernel;
   Eigen::MatrixXd distortionH, distortionV;
 
-  Distorter(double sigma = 5.0, double alpha = 0.5, double beta = 15.0, double gammaX = 15.0, double gammaY = 15.0)
-    : sigma(sigma), alpha(alpha), beta(beta), gammaX(gammaX), gammaY(gammaY), gaussianKernelSize(21), gaussianKernel(gaussianKernelSize, gaussianKernelSize)
+  Distorter(double sigma = 5.0, double alpha = 0.5, double beta = 15.0,
+            double gammaX = 15.0, double gammaY = 15.0)
+    : sigma(sigma), alpha(alpha), beta(beta), gammaX(gammaX), gammaY(gammaY),
+      gaussianKernelSize(21), gaussianKernel(gaussianKernelSize,
+                                             gaussianKernelSize)
   {
     double twoSigmaSquared = sigma*sigma/2.0;
     double twoPiSigma = sqrt(2.0*M_PI)/sigma;
     int center = gaussianKernelSize/2;
     for(int row = 0; row < gaussianKernelSize; row++)
       for(int col = 0; col < gaussianKernelSize; col++)
-        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared*(std::pow((double) (row-center), 2.0) + std::pow((double) (col-center), 2.0)));
+        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared *
+            (std::pow((double) (row-center), 2.0) +
+            std::pow((double) (col-center), 2.0)));
     OPENANN_CHECK_MATRIX_BROKEN(gaussianKernel);
   }
 
@@ -114,6 +119,17 @@ public:
     }
     OPENANN_CHECK_MATRIX_BROKEN(distortionH);
     OPENANN_CHECK_MATRIX_BROKEN(distortionV);
+  }
+
+
+  void applyDistortions(Eigen::MatrixXd& instances)
+  {
+    for(int n = 0; n < instances.cols(); n++)
+    {
+      Eigen::VectorXd instance = instances.col(n); // TODO do not copy
+      applyDistortion(instance);
+      instances.col(n) = instance;
+    }
   }
 
   void applyDistortion(Eigen::VectorXd& instance)

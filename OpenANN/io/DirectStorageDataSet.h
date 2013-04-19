@@ -25,7 +25,7 @@ public:
     MULTICLASS
   };
 
-private:
+protected:
   Eigen::MatrixXd* in;
   Eigen::MatrixXd* out;
   const int N;

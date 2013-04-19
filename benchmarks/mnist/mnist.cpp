@@ -2,6 +2,7 @@
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/optimization/StoppingInterrupt.h>
 #include "IDXLoader.h"
+#include "EnhancedDataSet.h"
 #include <OpenANN/io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
@@ -37,13 +38,16 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
-  OpenANN::Log::getLevel() = OpenANN::Log::INFO;
+  OpenANN::Log::getLevel() = OpenANN::Log::DEBUG;
 
   std::string directory = "mnist/";
   if(argc > 1)
     directory = std::string(argv[1]);
 
   IDXLoader loader(28, 28, 60000, 10000, directory);
+  Distorter distorter;
+  EnhancedDataSet trainingSet(loader.trainingInput, loader.trainingOutput, 2,
+                              distorter);
 
   OpenANN::Net net;                                               // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28
@@ -54,7 +58,7 @@ int main(int argc, char** argv)
      .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)          // 120
      .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)           //  84
      .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
-     .trainingSet(loader.trainingInput, loader.trainingOutput);
+     .trainingSet(trainingSet);
   OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
