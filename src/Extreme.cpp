@@ -4,18 +4,18 @@
 namespace OpenANN {
 
 Extreme::Extreme(OutputInfo info, int J, bool bias, ActivationFunction act,
-                 fpt stdDev)
+                 double stdDev)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
     W(J, I), x(0), a(J), y(J+bias), yd(J), deltas(J), e(I)
 {
 }
 
-OutputInfo Extreme::initialize(std::vector<fpt*>& parameterPointers,
-                                      std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo Extreme::initialize(std::vector<double*>& parameterPointers,
+                                      std::vector<double*>& parameterDerivativePointers)
 {
   // Bias component will not change after initialization
   if(bias)
-    y(J) = fpt(1.0);
+    y(J) = double(1.0);
 
   initializeParameters();
 
@@ -30,10 +30,10 @@ void Extreme::initializeParameters()
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
     for(int i = 0; i < I; i++)
-      W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
 }
 
-void Extreme::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void Extreme::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
   // Activate neurons
@@ -43,7 +43,7 @@ void Extreme::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void Extreme::backpropagate(Vt* ein, Vt*& eout)
+void Extreme::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
@@ -54,7 +54,7 @@ void Extreme::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& Extreme::getOutput()
+Eigen::VectorXd& Extreme::getOutput()
 {
   return y;
 }

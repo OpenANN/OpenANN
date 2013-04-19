@@ -34,10 +34,10 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
   int inputSize;
   Net policy;
   IPOPCMAES opt;
-  Vt lastState;
+  Eigen::VectorXd lastState;
   bool firstStep;
   std::vector<DoubleExponentialSmoothing> des;
-  std::list<Vt> inputBuffer;
+  std::list<Eigen::VectorXd> inputBuffer;
 public:
   NeuroEvolutionAgent(int h, bool b, const std::string a,
                       bool compress = false, int m = 0,
@@ -49,15 +49,15 @@ public:
   virtual void chooseAction();
   virtual void chooseOptimalAction();
 
-  virtual Vt currentParameters();
+  virtual Eigen::VectorXd currentParameters();
   virtual unsigned int dimension();
-  virtual fpt error();
-  virtual Vt gradient();
-  virtual Mt hessian();
+  virtual double error();
+  virtual Eigen::VectorXd gradient();
+  virtual Eigen::MatrixXd hessian();
   virtual void initialize();
   virtual bool providesGradient();
   virtual bool providesHessian();
   virtual bool providesInitialization();
-  virtual void setParameters(const Vt& parameters);
-  void setSigma0(fpt sigma0);
+  virtual void setParameters(const Eigen::VectorXd& parameters);
+  void setSigma0(double sigma0);
 };

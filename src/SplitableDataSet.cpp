@@ -58,14 +58,14 @@ int SplitableDataSet::outputs()
 }
 
 
-Vt& SplitableDataSet::getInstance(int i)
+Eigen::VectorXd& SplitableDataSet::getInstance(int i)
 {
     OPENANN_CHECK_WITHIN(i, 0, samples() - 1);
     return *(data.at(i).first);
 }
 
 
-Vt& SplitableDataSet::getTarget(int i)
+Eigen::VectorXd& SplitableDataSet::getTarget(int i)
 {
     OPENANN_CHECK_WITHIN(i, 0, samples() - 1);
     return *(data.at(i).second);
@@ -77,25 +77,25 @@ void SplitableDataSet::finishIteration(Learner& learner)
 }
 
 
-void SplitableDataSet::add(Vt* instance, Vt* target)
+void SplitableDataSet::add(Eigen::VectorXd* instance, Eigen::VectorXd* target)
 {
     OPENANN_CHECK(parent == 0);
 
-    data.push_back(std::pair<Vt*, Vt*>(instance, target));
+    data.push_back(std::pair<Eigen::VectorXd*, Eigen::VectorXd*>(instance, target));
 }
 
 
-void SplitableDataSet::add(Vt* instance, int klass)
+void SplitableDataSet::add(Eigen::VectorXd* instance, int klass)
 {
     OPENANN_CHECK(parent == 0);
 
-    Vt* target = new Vt(dim_output);
+    Eigen::VectorXd* target = new Eigen::VectorXd(dim_output);
     target->setZero();
 
     if(klass > 0)
         (*target)(klass - 1) = 1.0;
 
-    data.push_back(std::pair<Vt*, Vt*>(instance, target));
+    data.push_back(std::pair<Eigen::VectorXd*, Eigen::VectorXd*>(instance, target));
 }
 
 

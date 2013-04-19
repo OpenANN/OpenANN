@@ -10,7 +10,7 @@ namespace OpenANN {
  * @param min minimum value of the output
  * @param max maximum value of the output
  */
-void scaleData(Mt& data, fpt min = (fpt) -1, fpt max = (fpt) 1);
+void scaleData(Eigen::MatrixXd& data, double min = -1.0, double max = 1.0);
 
 /**
  * Apply a (numerically stable) filter (FIR or IIR) on the input signal.
@@ -19,7 +19,7 @@ void scaleData(Mt& data, fpt min = (fpt) -1, fpt max = (fpt) 1);
  * @param b feedforward filter coefficients
  * @param a feedback filter coefficients
  */
-void filter(const Mt& x, Mt& y, const Mt& b, const Mt& a);
+void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd& b, const Eigen::MatrixXd& a);
 
 /**
  * Downsample an input signal.
@@ -27,6 +27,6 @@ void filter(const Mt& x, Mt& y, const Mt& b, const Mt& a);
  * @param d downsampled signal
  * @param downSamplingFactor downsampling factor
  */
-void downsample(const Mt& y, Mt& d, int downSamplingFactor);
+void downsample(const Eigen::MatrixXd& y, Eigen::MatrixXd& d, int downSamplingFactor);
 
 }

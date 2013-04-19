@@ -15,9 +15,9 @@ using namespace OpenANN;
 
 int main()
 {
-  Eigen::MatrixXf x(1, 1);
+  Eigen::MatrixXd x(1, 1);
   x.fill(2.0f);
-  Eigen::MatrixXf t(1, 1);
+  Eigen::MatrixXd t(1, 1);
   t.fill(5.0f);
 
   Net net;
@@ -32,7 +32,7 @@ int main()
   std::cout << "Error on training set before training: " << net.error()
       << std::endl;
   net.train(BATCH_LMA, SSE, stop);
-  Eigen::VectorXf y = net(x);
+  Eigen::VectorXd y = net(x);
   std::cout << "Error on training set after training: " << net.error()
       << std::endl;
 
@@ -46,11 +46,6 @@ installed otherwise you might got misleading errors):
 \code
 g++ main.cpp -o openann `pkg-config --cflags --libs openann`
 \endcode
-
-Note: Depending on whether you have a CUDA environment set up or not the
-floating point type is chosen. With a CUDA environment it is set to float and
-without it is set to double. That means all matrices and scalars must have the
-correct type!
 
 \section Python A simple example in Python
 

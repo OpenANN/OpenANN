@@ -40,13 +40,13 @@ public:
    * @param i number of instance
    * @return input
    */
-  virtual Vt& getInstance(int i) = 0;
+  virtual Eigen::VectorXd& getInstance(int i) = 0;
   /**
    * Get the output of the ith instance.
    * @param i number of instance
    * @return output
    */
-  virtual Vt& getTarget(int i) = 0;
+  virtual Eigen::VectorXd& getTarget(int i) = 0;
   /**
    * This function is called after an iteration of the optimization algorithm.
    * It could log results, modify or extend the data set or whatever.

@@ -4,7 +4,7 @@
 template<int N>
 class Rosenbrock : public OpenANN::Optimizable
 {
-  Vt x;
+  Eigen::VectorXd x;
 public:
   Rosenbrock()
       : x(N, 1)
@@ -28,21 +28,21 @@ public:
     return N;
   }
 
-  virtual Vt currentParameters()
+  virtual Eigen::VectorXd currentParameters()
   {
     return x;
   }
 
-  virtual void setParameters(const Vt& parameters)
+  virtual void setParameters(const Eigen::VectorXd& parameters)
   {
     x = parameters;
   }
 
-  fpt SQR(fpt t) { return t*t; }
+  double SQR(double t) { return t*t; }
 
-  virtual fpt error()
+  virtual double error()
   {
-    fpt res(0);
+    double res(0);
     for(int i = 0; i < N-1; i++)
     {
       res += SQR(1.0-x(i)) + 100.0*SQR(x(i+1)-SQR(x(i)));
@@ -55,10 +55,10 @@ public:
     return false;
   }
 
-  virtual Vt gradient()
+  virtual Eigen::VectorXd gradient()
   {
     OPENANN_CHECK(false && "Rosenbrock does not provide a gradient.");
-    return Vt();
+    return Eigen::VectorXd();
   }
 
   virtual bool providesHessian()
@@ -66,9 +66,9 @@ public:
     return false;
   }
 
-  virtual Mt hessian()
+  virtual Eigen::MatrixXd hessian()
   {
     OPENANN_CHECK(false && "Rosenbrock does not provide an hessian.");
-    return Mt();
+    return Eigen::MatrixXd();
   }
 };

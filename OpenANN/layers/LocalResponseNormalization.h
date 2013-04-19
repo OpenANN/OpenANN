@@ -41,26 +41,26 @@ class LocalResponseNormalization : public Layer
   int I, fm, rows, cols;
   int fmSize;
   bool bias;
-  fpt k;
+  double k;
   int n;
-  fpt alpha;
-  fpt beta;
-  Vt* x;
-  Vt denoms;
-  Vt y;
-  Vt etmp;
-  Vt e;
+  double alpha;
+  double beta;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd denoms;
+  Eigen::VectorXd y;
+  Eigen::VectorXd etmp;
+  Eigen::VectorXd e;
 
 public:
-  LocalResponseNormalization(OutputInfo info, bool bias, fpt k, int n,
-                             fpt alpha, fpt beta);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-                                std::vector<fpt*>& parameterDerivativePointers);
+  LocalResponseNormalization(OutputInfo info, bool bias, double k, int n,
+                             double alpha, double beta);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

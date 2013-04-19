@@ -49,13 +49,13 @@ void FANNFormatLoader::allocateMemory()
 void FANNFormatLoader::load(bool train)
 {
   int& N = train ? trainingN : testN;
-  Mt& input = train ? trainingInput : testInput;
-  Mt& output = train ? trainingOutput : testOutput;
+  Eigen::MatrixXd& input = train ? trainingInput : testInput;
+  Eigen::MatrixXd& output = train ? trainingOutput : testOutput;
   std::fstream& stream = train ? trainingData : testData;
   for(int n = 0; n < N; n++)
   {
     int idx = 0;
-    fpt del = 0.0;
+    double del = 0.0;
     for(int d = 0; d < D; d++)
       stream >> input(idx++, n);
     for(int f = 0; f < F; f++)

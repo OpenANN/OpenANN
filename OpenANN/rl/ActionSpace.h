@@ -9,7 +9,7 @@ namespace OpenANN
 class ActionSpace
 {
 public:
-  typedef Vt Action;
+  typedef Eigen::VectorXd Action;
   typedef std::vector<Action> A;
   virtual ~ActionSpace() {}
   virtual int actionSpaceDimension() const = 0;

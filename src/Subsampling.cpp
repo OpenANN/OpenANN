@@ -5,7 +5,7 @@
 namespace OpenANN {
 
 Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
-                         bool bias, ActivationFunction act, fpt stdDev)
+                         bool bias, ActivationFunction act, double stdDev)
   : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
@@ -13,8 +13,8 @@ Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
 {
 }
 
-OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
-                                   std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
+                                   std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
   info.bias = bias;
@@ -28,13 +28,13 @@ OutputInfo Subsampling::initialize(std::vector<fpt*>& parameterPointers,
   maxRow = inRows-kernelRows+1;
   maxCol = inCols-kernelCols+1;
 
-  W.resize(fm, Mt(outRows, outCols));
-  Wd.resize(fm, Mt(outRows, outCols));
+  W.resize(fm, Eigen::MatrixXd(outRows, outCols));
+  Wd.resize(fm, Eigen::MatrixXd(outRows, outCols));
   int numParams = fm * outRows * outCols;
   if(weightForBias)
   {
-    Wb.resize(fm, Mt(outRows, outCols));
-    Wbd.resize(fm, Mt(outRows, outCols));
+    Wb.resize(fm, Eigen::MatrixXd(outRows, outCols));
+    Wbd.resize(fm, Eigen::MatrixXd(outRows, outCols));
     numParams += fm * outRows * outCols;
   }
   parameterPointers.reserve(parameterPointers.size() + numParams);
@@ -77,15 +77,15 @@ void Subsampling::initializeParameters()
     {
       for(int c = 0; c < outCols; c++)
       {
-        W[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
+        W[fmo](r, c) = rng.sampleNormalDistribution<double>() * stdDev;
         if(weightForBias)
-          Wb[fmo](r, c) = rng.sampleNormalDistribution<fpt>() * stdDev;
+          Wb[fmo](r, c) = rng.sampleNormalDistribution<double>() * stdDev;
       }
     }
   }
 }
 
-void Subsampling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
 
@@ -119,7 +119,7 @@ void Subsampling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void Subsampling::backpropagate(Vt* ein, Vt*& eout)
+void Subsampling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
@@ -157,7 +157,7 @@ void Subsampling::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& Subsampling::getOutput()
+Eigen::VectorXd& Subsampling::getOutput()
 {
   return y;
 }

@@ -136,7 +136,7 @@ struct Results
   int runs;
   int failures;
   int median, min, max;
-  fpt mean, stdDev, time;
+  double mean, stdDev, time;
   Results()
     : runs(0), failures(0), median(0), min(0), max(0), mean(0), stdDev(0), time(0)
   {
@@ -171,7 +171,7 @@ Result benchmarkSingleRun(OpenANN::Environment& environment, OpenANN::Agent& age
 
 Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
     bool alphaBetaFilter, bool doubleExponentialSmoothing, int parameters,
-    int runs, fpt sigma0)
+    int runs, double sigma0)
 {
   OpenANN::Environment* env;
   if(doublePole)
@@ -181,7 +181,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
 
   Results results;
   results.runs = runs;
-  std::vector<fpt> episodes;
+  std::vector<double> episodes;
 
   OpenANN::Logger progressLogger(Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
@@ -199,8 +199,8 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
     results.mean += result.episodes;
   }
   progressLogger << "\n";
-  results.mean /= (fpt) runs;
-  results.time /= (fpt) runs;
+  results.mean /= (double) runs;
+  results.time /= (double) runs;
   results.min = (int) *std::min_element(episodes.begin(), episodes.end());
   results.max = (int) *std::max_element(episodes.begin(), episodes.end());
   std::sort(episodes.begin(), episodes.end());
@@ -210,7 +210,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
     episodes[run] -= results.mean;
     episodes[run] *= episodes[run];
   }
-  results.stdDev = std::sqrt(std::accumulate(episodes.begin(), episodes.end(), (fpt) 0) / (fpt) runs);
+  results.stdDev = std::sqrt(std::accumulate(episodes.begin(), episodes.end(), 0.0) / (double) runs);
 
   delete env;
   return results;

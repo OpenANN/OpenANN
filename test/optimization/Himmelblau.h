@@ -3,7 +3,7 @@
 
 class Himmelblau : public OpenANN::Optimizable
 {
-  Vt x;
+  Eigen::VectorXd x;
 public:
   Himmelblau()
       : x(2, 1)
@@ -25,18 +25,18 @@ public:
     return 2;
   }
 
-  virtual Vt currentParameters()
+  virtual Eigen::VectorXd currentParameters()
   {
     return x;
   }
 
-  virtual void setParameters(const Vt& parameters)
+  virtual void setParameters(const Eigen::VectorXd& parameters)
   {
     x(0, 0) = parameters(0, 0);
     x(1, 0) = parameters(1, 0);
   }
 
-  virtual fpt error()
+  virtual double error()
   {
     return pow(x(0,0)*x(0,0)+x(1,0)-11., 2) + pow(x(0,0)+x(1,0)*x(1,0) - 7., 2);
   }
@@ -46,10 +46,10 @@ public:
     return false;
   }
 
-  virtual Vt gradient()
+  virtual Eigen::VectorXd gradient()
   {
     OPENANN_CHECK(false && "Himmelblau does not provide a gradient.");
-    return Vt();
+    return Eigen::VectorXd();
   }
 
   virtual bool providesHessian()
@@ -57,9 +57,9 @@ public:
     return false;
   }
 
-  virtual Mt hessian()
+  virtual Eigen::MatrixXd hessian()
   {
     OPENANN_CHECK(false && "Himmelblau does not provide an hessian.");
-    return Mt();
+    return Eigen::MatrixXd();
   }
 };

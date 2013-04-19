@@ -3,14 +3,14 @@
 
 namespace OpenANN {
 
-AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, fpt deltaT, bool bias, fpt stdDev)
+AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, double deltaT, bool bias, double stdDev)
   : I(info.outputs()), J(2*I), deltaT(deltaT), bias(bias), stdDev(stdDev), gamma(I),
     gammad(I), alpha(I), beta(I), first(true), x(0), y(J+bias)
 {
 }
 
-OutputInfo AlphaBetaFilter::initialize(std::vector<fpt*>& parameterPointers,
-                                       std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo AlphaBetaFilter::initialize(std::vector<double*>& parameterPointers,
+                                       std::vector<double*>& parameterDerivativePointers)
 {
   parameterPointers.reserve(parameterPointers.size() + I);
   parameterDerivativePointers.reserve(parameterDerivativePointers.size() + I);
@@ -22,7 +22,7 @@ OutputInfo AlphaBetaFilter::initialize(std::vector<fpt*>& parameterPointers,
 
   // Bias component will not change after initialization
   if(bias)
-    y(J) = fpt(1.0);
+    y(J) = double(1.0);
 
   initializeParameters();
 
@@ -37,8 +37,8 @@ void AlphaBetaFilter::initializeParameters()
   RandomNumberGenerator rng;
   for(int i = 0; i < I; i++)
   {
-    gamma(i) = rng.sampleNormalDistribution<fpt>() * stdDev;
-    gammad(i) = (fpt) 0;
+    gamma(i) = rng.sampleNormalDistribution<double>() * stdDev;
+    gammad(i) = 0.0;
   }
 }
 
@@ -47,9 +47,9 @@ void AlphaBetaFilter::updatedParameters()
   for(int i = 0; i < I; i++)
   {
     gamma(i) = fabs(gamma(i));
-    const fpt r = (4.0 + gamma(i) - sqrt(8.0 * gamma(i) + gamma(i) * gamma(i))) / 4.0;
+    const double r = (4.0 + gamma(i) - sqrt(8.0 * gamma(i) + gamma(i) * gamma(i))) / 4.0;
     alpha(i) = 1.0 - r*r;
-    const fpt rr = 1.0 - r;
+    const double rr = 1.0 - r;
     beta(i) = 2.0 * rr * rr;
   }
   reset();
@@ -61,7 +61,7 @@ void AlphaBetaFilter::reset()
   y.fill(0.0);
 }
 
-void AlphaBetaFilter::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void AlphaBetaFilter::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
 
@@ -74,7 +74,7 @@ void AlphaBetaFilter::forwardPropagate(Vt* x, Vt*& y, bool dropout)
 
   for(int i = 0, j = 0; i < I; i++, j+=2)
   {
-    const fpt diff = (*x)(i) - this->y(j);
+    const double diff = (*x)(i) - this->y(j);
     this->y(j+1) += beta(i) / deltaT * diff;
     this->y(j) += alpha(i) * diff + deltaT * this->y(j+1);
   }
@@ -82,12 +82,12 @@ void AlphaBetaFilter::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void AlphaBetaFilter::backpropagate(Vt* ein, Vt*& eout)
+void AlphaBetaFilter::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Do nothing.
 }
 
-Vt& AlphaBetaFilter::getOutput()
+Eigen::VectorXd& AlphaBetaFilter::getOutput()
 {
   return y;
 }

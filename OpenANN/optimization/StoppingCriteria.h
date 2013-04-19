@@ -31,15 +31,15 @@ public:
   /**
    * Minimal objective function value.
    */
-  fpt minimalValue;
+  double minimalValue;
   /**
    * Minimal objective function difference between iterations.
    */
-  fpt minimalValueDifferences;
+  double minimalValueDifferences;
   /**
    * Minimal step size in the search step (e. g. gradient norm).
    */
-  fpt minimalSearchSpaceStep;
+  double minimalSearchSpaceStep;
 
   /**
    * Create default stop criteria.

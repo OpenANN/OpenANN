@@ -4,7 +4,7 @@
 namespace OpenANN {
 
 LocalResponseNormalization::LocalResponseNormalization(
-        OutputInfo info, bool bias, fpt k, int n, fpt alpha, fpt beta)
+        OutputInfo info, bool bias, double k, int n, double alpha, double beta)
   : I(info.outputs()-bias), fm(info.dimensions[0]), rows(info.dimensions[1]),
     cols(info.dimensions[2]), bias(bias), x(0), denoms(I), y(I+bias), etmp(I),
     e(I), k(k), n(n), alpha(alpha), beta(beta)
@@ -12,12 +12,12 @@ LocalResponseNormalization::LocalResponseNormalization(
 }
 
 OutputInfo LocalResponseNormalization::initialize(
-    std::vector<fpt*>& parameterPointers,
-    std::vector<fpt*>& parameterDerivativePointers)
+    std::vector<double*>& parameterPointers,
+    std::vector<double*>& parameterDerivativePointers)
 {
   // Bias component will not change after initialization
   if(bias)
-    y(I) = fpt(1.0);
+    y(I) = double(1.0);
 
   fmSize = rows*cols;
 
@@ -29,7 +29,7 @@ OutputInfo LocalResponseNormalization::initialize(
   return info;
 }
 
-void LocalResponseNormalization::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void LocalResponseNormalization::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
   for(int fmOut=0, outputIdx=0; fmOut < fm; fmOut++)
@@ -38,12 +38,12 @@ void LocalResponseNormalization::forwardPropagate(Vt* x, Vt*& y, bool dropout)
     {
       for(int c = 0; c < cols; c++, outputIdx++)
       {
-        fpt denom = 0.0;
+        double denom = 0.0;
         const int fmInMin = std::max(0, fmOut-n/2);
         const int fmInMax = std::min(fm-1, fmOut+n/2);
         for(int fmIn=fmInMin; fmIn < fmInMax; fmIn++)
         {
-          register fpt a = (*x)(fmIn*fmSize+r*cols+c);
+          register double a = (*x)(fmIn*fmSize+r*cols+c);
           denom += a*a;
         }
         denom = k + alpha*denom;
@@ -55,7 +55,7 @@ void LocalResponseNormalization::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &this->y;
 }
 
-void LocalResponseNormalization::backpropagate(Vt* ein, Vt*& eout)
+void LocalResponseNormalization::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   for(int i = 0; i < I; i++)
     etmp(i) = (*ein)(i) * y(i) / denoms(i);
@@ -67,7 +67,7 @@ void LocalResponseNormalization::backpropagate(Vt* ein, Vt*& eout)
     {
       for(int c = 0; c < cols; c++, outputIdx++)
       {
-        fpt nom = 0.0;
+        double nom = 0.0;
         const int fmInMin = std::max(0, fmOut-n/2);
         const int fmInMax = std::min(fm-1, fmOut+n/2);
         for(int fmIn=fmInMin; fmIn < fmInMax; fmIn++)
@@ -81,7 +81,7 @@ void LocalResponseNormalization::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& LocalResponseNormalization::getOutput()
+Eigen::VectorXd& LocalResponseNormalization::getOutput()
 {
   return y;
 }
