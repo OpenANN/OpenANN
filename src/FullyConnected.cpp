@@ -73,7 +73,7 @@ void FullyConnected::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, b
     RandomNumberGenerator rng;
     for(int j = 0; j < J; j++)
       if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
-        this->y(j) = (double) 0;
+        this->y(j) = 0.0;
   }
   else if(dropoutProbability > 0.0)
   {

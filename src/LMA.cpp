@@ -51,10 +51,10 @@ bool LMA::step()
       if(state.needfi)
       {
         for(unsigned i = 0; i < n; i++)
-          parameters(i) = (double) state.x[i];
+          parameters(i) = state.x[i];
         opt->setParameters(parameters);
         for(unsigned i = 0; i < opt->examples(); i++)
-          state.fi[i] = (double) opt->error(i);
+          state.fi[i] = opt->error(i);
         if(iteration != state.c_ptr()->repiterationscount)
         {
           iteration = state.c_ptr()->repiterationscount;
@@ -66,16 +66,16 @@ bool LMA::step()
       if(state.needfij)
       {
         for(unsigned i = 0; i < n; i++)
-          parameters(i) = (double) state.x[i];
+          parameters(i) = state.x[i];
         opt->setParameters(parameters);
         opt->VJ(errorValues, jacobian);
         for(unsigned ex = 0; ex < opt->examples(); ex++)
         {
-          state.fi[ex] = (double) errorValues(ex);
+          state.fi[ex] = errorValues(ex);
           OPENANN_CHECK_EQUALS(state.j.rows(), jacobian.rows());
           OPENANN_CHECK_EQUALS(state.j.cols(), jacobian.cols());
           for(unsigned d = 0; d < opt->dimension(); d++)
-            state.j[ex][d] = (double) jacobian(ex, d);
+            state.j[ex][d] = jacobian(ex, d);
         }
         if(iteration != state.c_ptr()->repiterationscount)
         {

@@ -106,13 +106,13 @@ void scaledtanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 void rectifier(const Eigen::VectorXd& a, Eigen::VectorXd& z)
 {
   for(int j = 0; j < a.rows(); j++)
-    z(j) = std::max<double>((double) 0.0, a(j));
+    z(j) = std::max<double>(0.0, a(j));
 }
 
 void rectifierDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
 {
   for(int j = 0; j < gd.rows(); j++)
-    gd(j) = z(j) == (double) 0.0 ? (double) 0.0 : (double) 1.0;
+    gd(j) = z(j) == 0.0 ? 0.0 : 1.0;
 }
 
 void linear(const Eigen::VectorXd& a, Eigen::VectorXd& z)

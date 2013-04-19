@@ -46,10 +46,12 @@ class Subsampling : public Layer
 public:
   Subsampling(OutputInfo info, int kernelRows, int kernelCols, bool bias,
               ActivationFunction act, double stdDev);
-  virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y,
+                                bool dropout);
   virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
   virtual Eigen::VectorXd& getOutput();
 };

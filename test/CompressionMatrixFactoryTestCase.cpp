@@ -24,9 +24,9 @@ void CompressionMatrixFactoryTestCase::compress()
   {
     for(int i = 0; i < cmf.paramDim; i++)
     {
-      ASSERT_EQUALS_DELTA(expectedOrthogonalFunctionsMatrix(m, i), compressionMatrix(m, i), (double) 1e-10);
+      ASSERT_EQUALS_DELTA(expectedOrthogonalFunctionsMatrix(m, i), compressionMatrix(m, i), 1e-10);
     }
   }
 
-  ASSERT(fabs(compressionMatrix.determinant()) > (double) 0.1);
+  ASSERT(fabs(compressionMatrix.determinant()) > 0.1);
 }

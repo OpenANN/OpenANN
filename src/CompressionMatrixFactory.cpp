@@ -54,13 +54,13 @@ void CompressionMatrixFactory::fillCompressionMatrix(Eigen::MatrixXd& cm)
           break;
         case SPARSE_RANDOM:
         {
-          double r = rng.generate<double>((double) 0, (double) 1);
-          if(r < (double) (1.0/6.0))
-            cm(m, i) = (double) 1 / std::sqrt((double) paramDim);
-          else if(r < (double) (5.0/6.0))
-            cm(m, i) = (double) 0;
+          double r = rng.generate<double>(0.0, 1.0);
+          if(r < 1.0/6.0)
+            cm(m, i) = 1.0 / std::sqrt((double) paramDim);
+          else if(r < 5.0/6.0)
+            cm(m, i) = 0.0;
           else
-            cm(m, i) = (double) -1 / std::sqrt((double) paramDim);
+            cm(m, i) = -1.0 / std::sqrt((double) paramDim);
           break;
         }
         case AVERAGE:

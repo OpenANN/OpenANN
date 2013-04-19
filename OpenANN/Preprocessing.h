@@ -10,7 +10,7 @@ namespace OpenANN {
  * @param min minimum value of the output
  * @param max maximum value of the output
  */
-void scaleData(Eigen::MatrixXd& data, double min = (double) -1, double max = (double) 1);
+void scaleData(Eigen::MatrixXd& data, double min = -1.0, double max = 1.0);
 
 /**
  * Apply a (numerically stable) filter (FIR or IIR) on the input signal.

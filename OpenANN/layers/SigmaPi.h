@@ -23,33 +23,32 @@ namespace OpenANN {
  * Learning, invariance, and generalization in high-order neural networks
  * Appl. Opt, Vol. 26, pp. 4972-4978, 1987
  */
-
 class SigmaPi : public Layer 
 {
- protected:
-    struct HigherOrderUnit 
-    {
-        std::vector<int> position;
-        size_t weight;
-    };
+protected:
+  struct HigherOrderUnit 
+  {
+    std::vector<int> position;
+    size_t weight;
+  };
 
-    typedef std::vector<HigherOrderUnit> HigherOrderNeuron;
+  typedef std::vector<HigherOrderUnit> HigherOrderNeuron;
 
-    OutputInfo info;
-    bool bias;
-    ActivationFunction act;
-    double stdDev;
+  OutputInfo info;
+  bool bias;
+  ActivationFunction act;
+  double stdDev;
 
-    Eigen::VectorXd* x;
-    Eigen::VectorXd a;
-    Eigen::VectorXd y;
-    Eigen::VectorXd yd;
-    Eigen::VectorXd deltas;
-    Eigen::VectorXd e;
- 
-    std::vector<double> w;
-    std::vector<double> wd;
-    std::vector<HigherOrderNeuron> nodes;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd a;
+  Eigen::VectorXd y;
+  Eigen::VectorXd yd;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
+
+  std::vector<double> w;
+  std::vector<double> wd;
+  std::vector<HigherOrderNeuron> nodes;
     
  public:
   /**
@@ -76,27 +75,28 @@ class SigmaPi : public Layer
    * NEVER overwrite the isDefault method.
    * (This is only important for unconstrained higher-order nodes)
    */
-  struct Constraint {
-      /**
-       * function call operator for corresponding second-order nodes
-       */
-      virtual double operator() (int p1, int p2) const;
+  struct Constraint
+  {
+    /**
+      * function call operator for corresponding second-order nodes
+      */
+    virtual double operator() (int p1, int p2) const;
 
-      /**
-       * function call operator for corresponding third-order nodes
-       */
-      virtual double operator() (int p1, int p2, int p3) const;
+    /**
+      * function call operator for corresponding third-order nodes
+      */
+    virtual double operator() (int p1, int p2, int p3) const;
 
-      /**
-       * function call operator for corresponding fourth-order nodes
-       */
-      virtual double operator() (int p1, int p2, int p3, int p4) const;
+    /**
+      * function call operator for corresponding fourth-order nodes
+      */
+    virtual double operator() (int p1, int p2, int p3, int p4) const;
 
-      /** 
-       * @internal 
-       * NEVER overwrite this method. 
-       */
-      virtual bool isDefault() const;
+    /** 
+      * @internal 
+      * NEVER overwrite this method. 
+      */
+    virtual bool isDefault() const;
   };
 
   /**

@@ -210,7 +210,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
     episodes[run] -= results.mean;
     episodes[run] *= episodes[run];
   }
-  results.stdDev = std::sqrt(std::accumulate(episodes.begin(), episodes.end(), (double) 0) / (double) runs);
+  results.stdDev = std::sqrt(std::accumulate(episodes.begin(), episodes.end(), 0.0) / (double) runs);
 
   delete env;
   return results;

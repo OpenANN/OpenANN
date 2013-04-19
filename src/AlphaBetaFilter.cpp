@@ -38,7 +38,7 @@ void AlphaBetaFilter::initializeParameters()
   for(int i = 0; i < I; i++)
   {
     gamma(i) = rng.sampleNormalDistribution<double>() * stdDev;
-    gammad(i) = (double) 0;
+    gammad(i) = 0.0;
   }
 }
 

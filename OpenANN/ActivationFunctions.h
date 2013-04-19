@@ -56,8 +56,11 @@ enum ActivationFunction
   LINEAR
 };
 
-void activationFunction(ActivationFunction act, const Eigen::VectorXd& a, Eigen::VectorXd& z);
-void activationFunctionDerivative(ActivationFunction act, const Eigen::VectorXd& z, Eigen::VectorXd& gd);
+void activationFunction(ActivationFunction act, const Eigen::VectorXd& a,
+                        Eigen::VectorXd& z);
+void activationFunctionDerivative(ActivationFunction act,
+                                  const Eigen::VectorXd& z,
+                                  Eigen::VectorXd& gd);
 
 void softmax(Eigen::VectorXd& y);
 void logistic(const Eigen::VectorXd& a, Eigen::VectorXd& z);

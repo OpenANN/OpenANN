@@ -16,7 +16,7 @@ MBSGD::MBSGD(double learningRate, double momentum, int batchSize, double gamma,
     alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
-    maxGain(maxGain), useGain(minGain != (double) 1.0 || maxGain != (double) 1.0),
+    maxGain(maxGain), useGain(minGain != 1.0 || maxGain != 1.0),
     gamma(gamma), iteration(-1)
 {
   if(learningRate <= 0.0 || learningRate > 1.0)
@@ -86,7 +86,7 @@ bool MBSGD::step()
     {
       for(int p = 0; p < P; p++)
       {
-        if(momentum(p)*gradient(p) >= (double) 0.0)
+        if(momentum(p)*gradient(p) >= 0.0)
           gains(p) += 0.05;
         else
           gains(p) *= 0.95;

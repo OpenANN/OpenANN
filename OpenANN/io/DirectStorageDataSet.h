@@ -46,8 +46,8 @@ public:
    * @param logInfo activate evaluation of the model during optimization
    * @param target target of evaluation logger
    */
-  DirectStorageDataSet(Eigen::MatrixXd& in, Eigen::MatrixXd& out, LogInfo logInfo = NONE,
-                       Logger::Target target = Logger::CONSOLE);
+  DirectStorageDataSet(Eigen::MatrixXd& in, Eigen::MatrixXd& out,
+                       LogInfo logInfo = NONE, Logger::Target target = Logger::CONSOLE);
   virtual ~DirectStorageDataSet() {}
   virtual int samples() { return N; }
   virtual int inputs() { return D; }

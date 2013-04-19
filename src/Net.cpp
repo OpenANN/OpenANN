@@ -371,7 +371,7 @@ void Net::VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian)
   for(unsigned n = 0; n < N; n++)
   {
     tempError = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
-    values(n) = tempError.dot(tempError) / (double) 2.0;
+    values(n) = tempError.dot(tempError) / 2.0;
     Eigen::VectorXd* e = &tempError;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)

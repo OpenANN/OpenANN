@@ -100,7 +100,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& alphaBetaFilterLayer(double deltaT, double stdDev = (double) 0.05,
+  Net& alphaBetaFilterLayer(double deltaT, double stdDev = 0.05,
                             bool bias = true);
   /**
    * Add a fully connected hidden layer.
@@ -116,9 +116,9 @@ public:
    * @return this for chaining
    */
   Net& fullyConnectedLayer(int units, ActivationFunction act,
-                                   double stdDev = (double) 0.05, bool bias = true,
-                                   double dropoutProbability = 0.0,
-                                   double maxSquaredWeightNorm = 0.0);
+                           double stdDev = 0.05, bool bias = true,
+                           double dropoutProbability = 0.0,
+                           double maxSquaredWeightNorm = 0.0);
   /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -134,9 +134,8 @@ public:
    * @return this for chaining
    */
   Net& compressedLayer(int units, int params, ActivationFunction act,
-                       const std::string& compression,
-                       double stdDev = (double) 0.05, bool bias = true,
-                       double dropoutProbability = 0.0);
+                       const std::string& compression, double stdDev = 0.05,
+                       bool bias = true, double dropoutProbability = 0.0);
   /**
    * Add a fully connected hidden layer with fixed weights.
    * @param units number of nodes (neurons)
@@ -145,7 +144,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& extremeLayer(int units, ActivationFunction act, double stdDev = (double) 5.0,
+  Net& extremeLayer(int units, ActivationFunction act, double stdDev = 5.0,
                     bool bias = true);
   /**
    * Add a convolutional layer.
@@ -158,7 +157,7 @@ public:
    * @return this for chaining
    */
   Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
-                          ActivationFunction act, double stdDev = (double) 0.05,
+                          ActivationFunction act, double stdDev = 0.05,
                           bool bias = true);
   /**
    * Add a subsampling layer.
@@ -170,7 +169,7 @@ public:
    * @return this for chaining
    */
   Net& subsamplingLayer(int kernelRows, int kernelCols,
-                        ActivationFunction act, double stdDev = (double) 0.05,
+                        ActivationFunction act, double stdDev = 0.05,
                         bool bias = true);
   /**
    * Add a max-pooling layer.
@@ -201,7 +200,7 @@ public:
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @return this for chaining
    */
-  Net& outputLayer(int units, ActivationFunction act, double stdDev = (double) 0.05);
+  Net& outputLayer(int units, ActivationFunction act, double stdDev = 0.05);
   /**
    * Add a compressed output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -215,7 +214,7 @@ public:
    */
   Net& compressedOutputLayer(int units, int params, ActivationFunction act,
                              const std::string& compression,
-                             double stdDev = (double) 0.05);
+                             double stdDev = 0.05);
   /** 
    * Add a new layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
@@ -230,9 +229,11 @@ public:
   OutputInfo getOutputInfo(unsigned int l);
   Net& setErrorFunction(ErrorFunction errorFunction);
   Net& useDropout(bool activate = true);
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput);
+  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
+                               Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
-  virtual Net& testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput);
+  virtual Net& testSet(Eigen::MatrixXd& testInput,
+                       Eigen::MatrixXd& testOutput);
   virtual Net& testSet(DataSet& testDataSet);
 
   virtual void finishedIteration();

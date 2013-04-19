@@ -77,7 +77,7 @@ public:
             for(int y = 0; y < Y; y++, idx++)
             {
               // Scale data to [-1, 1]
-              inputs(idx, instance) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / (double) 128.0 - 1.0;
+              inputs(idx, instance) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / 128.0 - 1.0;
               debugLogger << inputs(idx, instance) << " ";
             }
             debugLogger << "\n";
