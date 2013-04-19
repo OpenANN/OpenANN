@@ -12,8 +12,8 @@ MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols, bool bia
 {
 }
 
-OutputInfo MaxPooling::initialize(std::vector<fpt*>& parameterPointers,
-                                   std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
+                                   std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
   info.bias = bias;
@@ -39,7 +39,7 @@ void MaxPooling::initializeParameters()
 {
 }
 
-void MaxPooling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
 
@@ -56,7 +56,7 @@ void MaxPooling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
       int rowBase = fmo*fmInSize + ri*inCols;
       for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
       {
-        fpt m = -std::numeric_limits<fpt>::max();
+        double m = -std::numeric_limits<double>::max();
         for(int kr = 0; kr < kernelRows; kr++)
         {
           inputIdx = rowBase + ci;
@@ -71,7 +71,7 @@ void MaxPooling::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void MaxPooling::backpropagate(Vt* ein, Vt*& eout)
+void MaxPooling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   for(int j = 0; j < deltas.rows(); j++)
     deltas(j) = (*ein)(j);
@@ -86,7 +86,7 @@ void MaxPooling::backpropagate(Vt* ein, Vt*& eout)
       int rowBase = fmo*fmInSize + ri*inCols;
       for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
       {
-        fpt m = -std::numeric_limits<fpt>::max();
+        double m = -std::numeric_limits<double>::max();
         int idx = -1;
         for(int kr = 0; kr < kernelRows; kr++)
         {
@@ -106,7 +106,7 @@ void MaxPooling::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& MaxPooling::getOutput()
+Eigen::VectorXd& MaxPooling::getOutput()
 {
   return y;
 }

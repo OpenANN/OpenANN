@@ -28,31 +28,31 @@ class Compressed : public Layer
   int I, J, M;
   bool bias;
   ActivationFunction act;
-  fpt stdDev;
-  fpt dropoutProbability;
-  Mt W;
-  Mt Wd;
-  Mt phi;
-  Mt alpha;
-  Mt alphad;
-  Vt* x;
-  Vt a;
-  Vt y;
-  Vt yd;
-  Vt deltas;
-  Vt e;
+  double stdDev;
+  double dropoutProbability;
+  Eigen::MatrixXd W;
+  Eigen::MatrixXd Wd;
+  Eigen::MatrixXd phi;
+  Eigen::MatrixXd alpha;
+  Eigen::MatrixXd alphad;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd a;
+  Eigen::VectorXd y;
+  Eigen::VectorXd yd;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
 
 public:
   Compressed(OutputInfo info, int J, int M, bool bias, ActivationFunction act,
-             const std::string& compression, fpt stdDev,
-             fpt dropoutProbability);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-                                std::vector<fpt*>& parameterDerivativePointers);
+             const std::string& compression, double stdDev,
+             double dropoutProbability);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters();
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

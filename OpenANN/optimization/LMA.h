@@ -47,11 +47,11 @@ class LMA : public Optimizer
   Logger debugLogger;
   StoppingCriteria stop;
   Optimizable* opt; // do not delete
-  Vt optimum;
+  Eigen::VectorXd optimum;
   int iteration, n;
   alglib_impl::ae_state _alglib_env_state;
-  Vt parameters, errorValues;
-  Mt jacobian;
+  Eigen::VectorXd parameters, errorValues;
+  Eigen::MatrixXd jacobian;
   alglib::real_1d_array xIn;
   alglib::minlmstate state;
   alglib::minlmreport report;
@@ -62,7 +62,7 @@ public:
   virtual void setStopCriteria(const StoppingCriteria& stop);
   virtual void optimize();
   virtual bool step();
-  virtual Vt result();
+  virtual Eigen::VectorXd result();
   virtual std::string name();
 private:
   void initialize();

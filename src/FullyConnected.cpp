@@ -4,9 +4,9 @@
 namespace OpenANN {
 
 FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
-                               ActivationFunction act, fpt stdDev,
-                               fpt dropoutProbability,
-                               fpt maxSquaredWeightNorm)
+                               ActivationFunction act, double stdDev,
+                               double dropoutProbability,
+                               double maxSquaredWeightNorm)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
     dropoutProbability(dropoutProbability),
     maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I), Wd(J, I), x(0), a(J),
@@ -14,8 +14,8 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
 {
 }
 
-OutputInfo FullyConnected::initialize(std::vector<fpt*>& parameterPointers,
-                                      std::vector<fpt*>& parameterDerivativePointers)
+OutputInfo FullyConnected::initialize(std::vector<double*>& parameterPointers,
+                                      std::vector<double*>& parameterDerivativePointers)
 {
   parameterPointers.reserve(parameterPointers.size() + J*I);
   parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*I);
@@ -30,7 +30,7 @@ OutputInfo FullyConnected::initialize(std::vector<fpt*>& parameterPointers,
 
   // Bias component will not change after initialization
   if(bias)
-    y(J) = fpt(1.0);
+    y(J) = double(1.0);
 
   initializeParameters();
 
@@ -45,7 +45,7 @@ void FullyConnected::initializeParameters()
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
     for(int i = 0; i < I; i++)
-      W(j, i) = rng.sampleNormalDistribution<fpt>() * stdDev;
+      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
 }
 
 void FullyConnected::updatedParameters()
@@ -54,14 +54,14 @@ void FullyConnected::updatedParameters()
   {
     for(int j = 0; j < J; j++)
     {
-      const fpt squaredNorm = W.row(j).squaredNorm();
+      const double squaredNorm = W.row(j).squaredNorm();
       if(squaredNorm > maxSquaredWeightNorm)
         W.row(j) *= sqrt(maxSquaredWeightNorm / squaredNorm);
     }
   }
 }
 
-void FullyConnected::forwardPropagate(Vt* x, Vt*& y, bool dropout)
+void FullyConnected::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
   this->x = x;
   // Activate neurons
@@ -72,8 +72,8 @@ void FullyConnected::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   {
     RandomNumberGenerator rng;
     for(int j = 0; j < J; j++)
-      if(rng.generate<fpt>(0.0, 1.0) < dropoutProbability)
-        this->y(j) = (fpt) 0;
+      if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
+        this->y(j) = 0.0;
   }
   else if(dropoutProbability > 0.0)
   {
@@ -87,7 +87,7 @@ void FullyConnected::forwardPropagate(Vt* x, Vt*& y, bool dropout)
   y = &(this->y);
 }
 
-void FullyConnected::backpropagate(Vt* ein, Vt*& eout)
+void FullyConnected::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
@@ -100,7 +100,7 @@ void FullyConnected::backpropagate(Vt* ein, Vt*& eout)
   eout = &e;
 }
 
-Vt& FullyConnected::getOutput()
+Eigen::VectorXd& FullyConnected::getOutput()
 {
   return y;
 }

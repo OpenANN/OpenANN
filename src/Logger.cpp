@@ -53,7 +53,7 @@ bool Logger::isActive()
 }
 
 
-FloatingPointFormatter::FloatingPointFormatter(fpt value, int precision)
+FloatingPointFormatter::FloatingPointFormatter(double value, int precision)
   : value(value), precision(precision)
 {
 }

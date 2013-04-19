@@ -44,23 +44,23 @@ class IPOPCMAES : public Optimizer
   StoppingCriteria stop;
   bool maxFunEvalsActive;
   Optimizable* opt; // do not delete
-  CMAES<fpt>* cmaes;
-  Parameters<fpt>* parameters;
+  CMAES<double>* cmaes;
+  Parameters<double>* parameters;
 
   int currentIndividual;
-  fpt* initialX;
-  fpt* initialStdDev;
-  fpt* const* population;
-  fpt* fitnessValues;
+  double* initialX;
+  double* initialStdDev;
+  double* const* population;
+  double* fitnessValues;
   int restarts;
   int evaluations;
   int evaluationsAfterRestart;
   bool stopped;
 
-  Vt optimum;
-  fpt optimumValue;
+  Eigen::VectorXd optimum;
+  double optimumValue;
 
-  fpt sigma0;
+  double sigma0;
 
 public:
   /**
@@ -81,24 +81,24 @@ public:
    * Get next parameter vector.
    * @return parameter vector
    */
-  Vt getNext();
+  Eigen::VectorXd getNext();
   /**
    * Set fitness of last individual.
    * @param fitness fitness
    */
-  void setError(fpt fitness);
+  void setError(double fitness);
   /**
    * Did the optimizer finish?
    * @return terminated
    */
   bool terminated();
-  virtual Vt result();
+  virtual Eigen::VectorXd result();
   virtual std::string name();
   /**
    * Set the initial step size.
    * @param sigma0 initial step size
    */
-  void setSigma0(fpt sigma0);
+  void setSigma0(double sigma0);
 };
 
 }

@@ -73,7 +73,7 @@ Logger logger(Logger::CONSOLE);
 int hiddenUnits;
 int parameters;
 double bestReturn;
-Vt bestParameters;
+Eigen::VectorXd bestParameters;
 
 int agent_init(int num_state_variables, int num_action_variables, int argc, const char *agent_param[])
 {
@@ -120,15 +120,15 @@ const char* agent_get_name()
   return stream.str().c_str();
 }
 
-Vt convert(double state[])
+Eigen::VectorXd convert(double state[])
 {
-  Vt s(num_states);
+  Eigen::VectorXd s(num_states);
   for(int i = 0; i < num_states; i++)
     s(i) = state[i];
   return s;
 }
 
-void convert(const Vt& action, double* out)
+void convert(const Eigen::VectorXd& action, double* out)
 {
   for(int i = 0; i < num_actions; i++)
     out[i] = action(i);
@@ -136,10 +136,10 @@ void convert(const Vt& action, double* out)
 
 int chooseAction(double state_data[], double out_action[])
 {
-  Vt state = convert(state_data);
+  Eigen::VectorXd state = convert(state_data);
   OPENANN_CHECK_MATRIX_BROKEN(state);
-  Vt y = net(state);
-  Vt action(num_actions);
+  Eigen::VectorXd y = net(state);
+  Eigen::VectorXd action(num_actions);
 
   action = y;
   if(isMatrixBroken(action))

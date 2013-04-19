@@ -9,7 +9,7 @@ namespace OpenANN
 class StateSpace
 {
 public:
-  typedef Vt State;
+  typedef Eigen::VectorXd State;
   typedef std::vector<State> S;
   virtual ~StateSpace() {}
   virtual int stateSpaceDimension() const = 0;

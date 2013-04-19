@@ -33,17 +33,17 @@ public:
   /**
    * @return current parameters
    */
-  virtual Vt currentParameters() = 0;
+  virtual Eigen::VectorXd currentParameters() = 0;
   /**
    * Set new parameters.
    * @param parameters new parameters
    */
-  virtual void setParameters(const Vt& parameters) = 0;
+  virtual void setParameters(const Eigen::VectorXd& parameters) = 0;
   /**
    * Compute error on training set.
    * @return current error on training set or objective function value
    */
-  virtual fpt error() = 0;
+  virtual double error() = 0;
   /**
    * @return does the optimizable provide a gradient?
    */
@@ -51,7 +51,7 @@ public:
   /**
    * @return gradient of the objective function with respect to parameters
    */
-  virtual Vt gradient() = 0;
+  virtual Eigen::VectorXd gradient() = 0;
   /**
    * @return does the optimizable provide a hessian?
    */
@@ -59,7 +59,7 @@ public:
   /**
    * @return hessian of the objective function with respect to parameters
    */
-  virtual Mt hessian() = 0;
+  virtual Eigen::MatrixXd hessian() = 0;
   /**
    * @return number of training examples
    */
@@ -67,21 +67,21 @@ public:
   /**
    * @return error of the i-th training example
    */
-  virtual fpt error(unsigned i) { return error(); }
+  virtual double error(unsigned i) { return error(); }
   /**
    * @return gradient of the i-th training example
    */
-  virtual Vt gradient(unsigned i) { return gradient(); }
+  virtual Eigen::VectorXd gradient(unsigned i) { return gradient(); }
   /**
    * @return hessian of the i-th training example
    */
-  virtual Vt hessian(unsigned i) { return hessian(); }
+  virtual Eigen::VectorXd hessian(unsigned i) { return hessian(); }
   /**
    * Calculates the function values and gradients of all training examples.
    * @param values function values
    * @param jacobian contains one gradient per row
    */
-  virtual void VJ(Vt& values, Mt& jacobian);
+  virtual void VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian);
   /**
    * This callback is called after each optimization algorithm iteration.
    */
@@ -90,17 +90,17 @@ public:
    * Use finite differences to approximate the gradient.
    * @return approximated gradient of the n-th training example
    */
-  virtual Vt singleGradientFD(int n, const fpt eps = (fpt) 1e-2);
+  virtual Eigen::VectorXd singleGradientFD(int n, const double eps = 1e-2);
   /**
    * Use finite differences to approximate the gradient.
    * @return approximated gradient of the training set
    */
-  virtual Vt gradientFD(const fpt eps = (fpt) 1e-2);
+  virtual Eigen::VectorXd gradientFD(const double eps = 1e-2);
   /**
    * Use finite differences to approximate the hessian.
    * @return approximated hessian of the training set
    */
-  virtual Mt hessianFD(const fpt eps = (fpt) 1e-2);
+  virtual Eigen::MatrixXd hessianFD(const double eps = 1e-2);
 };
 
 }

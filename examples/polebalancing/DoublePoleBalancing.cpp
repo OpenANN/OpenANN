@@ -77,7 +77,7 @@ const OpenANN::Environment::Action& DoublePoleBalancing::actionSpaceUpperBound()
   return actionSpaceHi;
 }
 
-fpt DoublePoleBalancing::deltaT() const
+double DoublePoleBalancing::deltaT() const
 {
   return tau;
 }
@@ -113,7 +113,7 @@ void DoublePoleBalancing::restart()
   normalizeState();
 }
 
-fpt DoublePoleBalancing::reward() const
+double DoublePoleBalancing::reward() const
 {
   return 1.0;
 }
@@ -180,30 +180,30 @@ bool DoublePoleBalancing::terminalState() const
       || std::fabs(state(4)) > maxPoleAngularPosition2;
 }
 
-OpenANN::Environment::State DoublePoleBalancing::derivative(const State& s, fpt force)
+OpenANN::Environment::State DoublePoleBalancing::derivative(const State& s, double force)
 {
-  fpt costheta1 = std::cos(s(2));
-  fpt sintheta1 = std::sin(s(2));
-  fpt gsintheta1 = gravity * sintheta1;
-  fpt costheta2 = std::cos(s(4));
-  fpt sintheta2 = std::sin(s(4));
-  fpt gsintheta2 = gravity * sintheta2;
+  double costheta1 = std::cos(s(2));
+  double sintheta1 = std::sin(s(2));
+  double gsintheta1 = gravity * sintheta1;
+  double costheta2 = std::cos(s(4));
+  double sintheta2 = std::sin(s(4));
+  double gsintheta2 = gravity * sintheta2;
 
-  fpt temp1 = mup * s(3) / massLength1;
-  fpt temp2 = mup * s(5) / massLength2;
+  double temp1 = mup * s(3) / massLength1;
+  double temp2 = mup * s(5) / massLength2;
 
-  fpt fi1 = massLength1 * std::pow(s(3), 2.0) * sintheta1
+  double fi1 = massLength1 * std::pow(s(3), 2.0) * sintheta1
       + 0.75 * pole1Mass * costheta1 * (temp1+gsintheta1);
-  fpt fi2 = massLength2 * std::pow(s(5), 2.0) * sintheta2
+  double fi2 = massLength2 * std::pow(s(5), 2.0) * sintheta2
       + 0.75 * pole2Mass * costheta2 * (temp2+gsintheta2);
 
-  fpt mi1 = pole1Mass * (1.0 - 0.75 * costheta1 * gsintheta1);
-  fpt mi2 = pole2Mass * (1.0 - 0.75 * costheta2 * gsintheta2);
+  double mi1 = pole1Mass * (1.0 - 0.75 * costheta1 * gsintheta1);
+  double mi2 = pole2Mass * (1.0 - 0.75 * costheta2 * gsintheta2);
 
-  fpt cartVelocityDot = (force - muc * (s(1) == 0.0 ? 0.0 : s(1) / std::fabs(s(1))) + fi1 + fi2)
+  double cartVelocityDot = (force - muc * (s(1) == 0.0 ? 0.0 : s(1) / std::fabs(s(1))) + fi1 + fi2)
       / (mi1 + mi2 + cartMass);
-  fpt poleAngularVelocity1Dot = -0.75 * (cartVelocityDot * costheta1 + gsintheta1 + temp1) / pole1Length;
-  fpt poleAngularVelocity2Dot = -0.75 * (cartVelocityDot * costheta2 + gsintheta2 + temp2) / pole2Length;
+  double poleAngularVelocity1Dot = -0.75 * (cartVelocityDot * costheta1 + gsintheta1 + temp1) / pole1Length;
+  double poleAngularVelocity2Dot = -0.75 * (cartVelocityDot * costheta2 + gsintheta2 + temp2) / pole2Length;
 
   State derivative(6);
   derivative(0) = s(1);
@@ -215,7 +215,7 @@ OpenANN::Environment::State DoublePoleBalancing::derivative(const State& s, fpt 
   return derivative;
 }
 
-OpenANN::Environment::State DoublePoleBalancing::rk4(const State& s, fpt force, const State& der)
+OpenANN::Environment::State DoublePoleBalancing::rk4(const State& s, double force, const State& der)
 {
   const double TIME_DELTA = 0.01;
   State result(6);

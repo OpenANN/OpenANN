@@ -6,14 +6,10 @@ An open source library for artificial neural networks.
 License
 -------
 
-The license is LGPL 3. You can find the license text in the files `COPYING` and
-`COPYING.LESSER`. Note that you can activate the CMake option
-`USE_GPL_LIBRARIES` in order to use the library ALGLIB which is necessary to use
-the optimization algorithms conjugate gradient and Levenberg-Marquardt. In this
-case the compiled shared library libopenann is under GPL license.
+The license is GPL 3. You can find the license text in the files `COPYING`.
 
-Requirements
-------------
+Minimum Requirements
+--------------------
 
 * CMake 2.8 or higher
 * C++ compiler, e. g. g++
@@ -29,18 +25,10 @@ Linux
     cd path/to/OpenANN/dir
     mkdir build
     cd build
-    cmake -D CMAKE_BUILD_TYPE:String=Release -D USE_GPL_LICENSE:Boolean=True ..
-    # USE_GPL_LICENSE is optional. Note that optimization algorithms like LMA
-    # require GPL license. Available CMAKE_BUILD_TYPEs are Debug and Release.
+    # Available CMAKE_BUILD_TYPEs are Debug and Release.
+    cmake -D CMAKE_BUILD_TYPE:String=Release ..
     sudo make install
     sudo ldconfig
-
-Guidelines for Developers
--------------------------
-
-* Here is a todo list: https://github.com/AlexanderFabisch/OpenANN/wiki/Todo
-* We have a coding style: https://github.com/AlexanderFabisch/OpenANN/wiki/Coding-Style
-* Use the namespace OpenANN.
 
 Directory Structure
 -------------------

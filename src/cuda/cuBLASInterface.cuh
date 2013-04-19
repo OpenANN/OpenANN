@@ -12,11 +12,11 @@ public:
   static CUBLASContext instance;
   cublasHandle_t handle;
 
-  bool allocateMatrix(float** device, int rows, int cols);
-  bool freeMatrix(float* device);
-  bool setMatrix(const float* host, float* device, int rows, int cols);
-  bool getMatrix(float* host, const float* device, int rows, int cols);
-  bool multiplyMatrixVector(float* matrix, float* vector, float* result, int rows, int cols);
+  bool allocateMatrix(double** device, int rows, int cols);
+  bool freeMatrix(double* device);
+  bool setMatrix(const double* host, double* device, int rows, int cols);
+  bool getMatrix(double* host, const double* device, int rows, int cols);
+  bool multiplyMatrixVector(double* matrix, double* vector, double* result, int rows, int cols);
 };
 
 #endif

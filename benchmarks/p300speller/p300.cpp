@@ -96,7 +96,7 @@ compression, 1200 parameters
 
 struct Result
 {
-  fpt duration, iterations, correct5, correct15;
+  double duration, iterations, correct5, correct15;
 
   Result() { reset(); }
 
@@ -131,7 +131,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     }
     if(csDimension > 0)
     {
-      Mt compressionMatrix;
+      Eigen::MatrixXd compressionMatrix;
       OpenANN::CompressionMatrixFactory cmf(trainingSet.inputs(), csDimension,
           OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
       cmf.createCompressionMatrix(compressionMatrix);
@@ -140,7 +140,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     }
 
     Stopwatch sw;
-    net.train(OpenANN::BATCH_LMA, OpenANN::SSE, stop);
+    train(net, "LMA", OpenANN::SSE, stop);
     result.duration += sw.stop(Stopwatch::SECONDS);
     result.iterations += trainingSet.iteration;
     result.correct5 += testSet.evaluate(net, 5);
@@ -154,10 +154,10 @@ void printResult(Result& result, int runs)
 {
   typedef OpenANN::FloatingPointFormatter fmt;
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
-  resultLogger << fmt(result.iterations / (fpt) runs, 2) << "\t"
-      << fmt(result.duration / (fpt) runs, 2) << "\t"
-      << fmt(result.correct5 / (fpt) runs, 2) << "\t\t"
-      << fmt(result.correct15 / (fpt) runs, 2) << "\n";
+  resultLogger << fmt(result.iterations / (double) runs, 2) << "\t"
+      << fmt(result.duration / (double) runs, 2) << "\t"
+      << fmt(result.correct5 / (double) runs, 2) << "\t\t"
+      << fmt(result.correct15 / (double) runs, 2) << "\n";
   result.reset();
 }
 

@@ -19,10 +19,10 @@ public:
   CompressionMatrixFactory();
   CompressionMatrixFactory(int inputDim, int paramDim,
       Transformation transformation = DCT);
-  void createCompressionMatrix(Mt& cm);
+  void createCompressionMatrix(Eigen::MatrixXd& cm);
 
 private:
-  void fillCompressionMatrix(Mt& cm);
+  void fillCompressionMatrix(Eigen::MatrixXd& cm);
 };
 
 }

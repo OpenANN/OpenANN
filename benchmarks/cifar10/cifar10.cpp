@@ -12,7 +12,7 @@ class CIFARLoader
   std::string directory;
 public:
   std::vector<std::string> trainFiles, testFiles;
-  Mt trainingInput, trainingOutput, testInput, testOutput;
+  Eigen::MatrixXd trainingInput, trainingOutput, testInput, testOutput;
   int C, X, Y, D, F, trainingN, testN, NperFile;
 
   CIFARLoader(const std::string& directory)
@@ -45,7 +45,7 @@ public:
     testOutput.resize(F, testN);
   }
 
-  void load(std::vector<std::string>& file_names, Mt& inputs, Mt& outputs)
+  void load(std::vector<std::string>& file_names, Eigen::MatrixXd& inputs, Eigen::MatrixXd& outputs)
   {
     int instance = 0;
     char values[D+1];
@@ -77,7 +77,7 @@ public:
             for(int y = 0; y < Y; y++, idx++)
             {
               // Scale data to [-1, 1]
-              inputs(idx, instance) = ((fpt) *reinterpret_cast<unsigned char*>(&values[idx+1])) / (fpt) 128.0 - 1.0;
+              inputs(idx, instance) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / 128.0 - 1.0;
               debugLogger << inputs(idx, instance) << " ";
             }
             debugLogger << "\n";

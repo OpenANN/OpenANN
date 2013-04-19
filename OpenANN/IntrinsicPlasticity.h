@@ -32,35 +32,36 @@ namespace OpenANN
 class IntrinsicPlasticity : public Optimizable, public Learner
 {
   const int nodes;
-  const fpt mu;
-  const fpt stdDev;
-  Vt s;
-  Vt b;
-  Vt parameters;
-  Vt g;
+  const double mu;
+  const double stdDev;
+  Eigen::VectorXd s;
+  Eigen::VectorXd b;
+  Eigen::VectorXd parameters;
+  Eigen::VectorXd g;
   DataSet* dataSet;
   bool deleteDataSet;
-  Vt y;
+  Eigen::VectorXd y;
 public:
-  IntrinsicPlasticity(int nodes, fpt mu, fpt stdDev = 1.0);
+  IntrinsicPlasticity(int nodes, double mu, double stdDev = 1.0);
   virtual ~IntrinsicPlasticity();
 
   virtual unsigned int examples();
   virtual unsigned int dimension();
   virtual bool providesInitialization();
   virtual void initialize();
-  virtual fpt error();
-  virtual fpt error(unsigned int n);
-  virtual Vt currentParameters();
-  virtual void setParameters(const Vt& parameters);
+  virtual double error();
+  virtual double error(unsigned int n);
+  virtual Eigen::VectorXd currentParameters();
+  virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesGradient();
-  virtual Vt gradient();
-  virtual Vt gradient(unsigned int n);
+  virtual Eigen::VectorXd gradient();
+  virtual Eigen::VectorXd gradient(unsigned int n);
   virtual bool providesHessian();
-  virtual Mt hessian();
-  virtual Learner& trainingSet(Mt& trainingInput, Mt& trainingOutput);
+  virtual Eigen::MatrixXd hessian();
+  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
+                               Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
-  virtual Vt operator()(const Vt& a);
+  virtual Eigen::VectorXd operator()(const Eigen::VectorXd& a);
 };
 
 }

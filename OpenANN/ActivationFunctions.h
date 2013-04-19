@@ -56,19 +56,22 @@ enum ActivationFunction
   LINEAR
 };
 
-void activationFunction(ActivationFunction act, const Vt& a, Vt& z);
-void activationFunctionDerivative(ActivationFunction act, const Vt& z, Vt& gd);
+void activationFunction(ActivationFunction act, const Eigen::VectorXd& a,
+                        Eigen::VectorXd& z);
+void activationFunctionDerivative(ActivationFunction act,
+                                  const Eigen::VectorXd& z,
+                                  Eigen::VectorXd& gd);
 
-void softmax(Vt& y);
-void logistic(const Vt& a, Vt& z);
-void logisticDerivative(const Vt& z, Vt& gd);
-void normaltanh(const Vt& a, Vt& z);
-void normaltanhDerivative(const Vt& z, Vt& gd);
-void scaledtanh(const Vt& a, Vt& z);
-void scaledtanhDerivative(const Vt& z, Vt& gd);
-void rectifier(const Vt& a, Vt& z);
-void rectifierDerivative(const Vt& z, Vt& gd);
-void linear(const Vt& a, Vt& z);
-void linearDerivative(Vt& gd);
+void softmax(Eigen::VectorXd& y);
+void logistic(const Eigen::VectorXd& a, Eigen::VectorXd& z);
+void logisticDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd);
+void normaltanh(const Eigen::VectorXd& a, Eigen::VectorXd& z);
+void normaltanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd);
+void scaledtanh(const Eigen::VectorXd& a, Eigen::VectorXd& z);
+void scaledtanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd);
+void rectifier(const Eigen::VectorXd& a, Eigen::VectorXd& z);
+void rectifierDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd);
+void linear(const Eigen::VectorXd& a, Eigen::VectorXd& z);
+void linearDerivative(Eigen::VectorXd& gd);
 
 }

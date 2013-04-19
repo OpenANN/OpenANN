@@ -24,21 +24,21 @@ class MaxPooling : public Layer
 {
   int I, fm, inRows, inCols, kernelRows, kernelCols;
   bool bias;
-  Vt* x;
-  Vt y;
-  Vt deltas;
-  Vt e;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd y;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
   MaxPooling(OutputInfo info, int kernelRows, int kernelCols, bool bias);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-                                std::vector<fpt*>& parameterDerivativePointers);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

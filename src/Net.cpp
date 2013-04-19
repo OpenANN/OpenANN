@@ -35,47 +35,47 @@ Net::~Net()
 }
 
 Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias,
-                     fpt dropoutProbability)
+                     double dropoutProbability)
 {
   return addLayer(new Input(dim1, dim2, dim3, bias, dropoutProbability));
 }
 
-Net& Net::alphaBetaFilterLayer(fpt deltaT, fpt stdDev, bool bias)
+Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
 {
   return addLayer(new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev));
 }
 
-Net& Net::fullyConnectedLayer(int units, ActivationFunction act, fpt stdDev,
-                              bool bias, fpt dropoutProbability,
-                              fpt maxSquaredWeightNorm)
+Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
+                              bool bias, double dropoutProbability,
+                              double maxSquaredWeightNorm)
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                     dropoutProbability, maxSquaredWeightNorm));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
-                          const std::string& compression, fpt stdDev,
-                          bool bias, fpt dropoutProbability)
+                          const std::string& compression, double stdDev,
+                          bool bias, double dropoutProbability)
 {
   return addLayer(new Compressed(infos.back(), units, params, bias, act,
                                 compression, stdDev, dropoutProbability));
 }
 
-Net& Net::extremeLayer(int units, ActivationFunction act, fpt stdDev,
+Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
                        bool bias)
 {
   return addLayer(new Extreme(infos.back(), units, bias, act, stdDev));
 }
 
 Net& Net::convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
-                             ActivationFunction act, fpt stdDev, bool bias)
+                             ActivationFunction act, double stdDev, bool bias)
 {
   return addLayer(new Convolutional(infos.back(), featureMaps, kernelRows,
                                    kernelCols, bias, act, stdDev));
 }
 
 Net& Net::subsamplingLayer(int kernelRows, int kernelCols,
-                           ActivationFunction act, fpt stdDev, bool bias)
+                           ActivationFunction act, double stdDev, bool bias)
 {
   return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
 }
@@ -85,7 +85,7 @@ Net& Net::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
   return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols, bias));
 }
 
-Net& Net::localReponseNormalizationLayer(fpt k, int n, fpt alpha, fpt beta,
+Net& Net::localReponseNormalizationLayer(double k, int n, double alpha, double beta,
                                          bool bias)
 {
   return addLayer(new LocalResponseNormalization(infos.back(), bias, k, n,
@@ -103,13 +103,13 @@ Net& Net::addLayer(Layer* layer)
     return *this;
 }
 
-Net& Net::outputLayer(int units, ActivationFunction act, fpt stdDev)
+Net& Net::outputLayer(int units, ActivationFunction act, double stdDev)
 {
   return fullyConnectedLayer(units, act, stdDev, false);
 }
 
 Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
-                                const std::string& compression, fpt stdDev)
+                                const std::string& compression, double stdDev)
 {
   return compressedLayer(units, params, act, compression, stdDev, false);
 }
@@ -142,7 +142,12 @@ void Net::initializeNetwork()
   initialized = true;
 }
 
-Learner& Net::trainingSet(Mt& trainingInput, Mt& trainingOutput)
+Net& Net::useDropout(bool activate)
+{
+  dropout = activate;
+}
+
+Learner& Net::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
   dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
   deleteDataSet = true;
@@ -160,7 +165,7 @@ Learner& Net::trainingSet(DataSet& trainingSet)
   return *this;
 }
 
-Net& Net::testSet(Mt& testInput, Mt& testOutput)
+Net& Net::testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput)
 {
   if(deleteTestSet)
     delete testDataSet;
@@ -181,34 +186,6 @@ Net& Net::setErrorFunction(ErrorFunction errorFunction)
   this->errorFunction = errorFunction;
 }
 
-Vt Net::train(Training algorithm, ErrorFunction errorFunction,
-                      StoppingCriteria stop, bool reinitialize, bool dropout)
-{
-  if(reinitialize)
-    initialize();
-  Optimizer* opt;
-  switch(algorithm)
-  {
-    case MINIBATCH_SGD:
-      opt = new MBSGD;
-      break;
-    case BATCH_LMA:
-      opt = new LMA;
-      break;
-    case BATCH_CMAES:
-    default:
-      opt = new IPOPCMAES;
-      break;
-  }
-  this->dropout = dropout;
-  opt->setOptimizable(*this);
-  opt->setStopCriteria(stop);
-  opt->optimize();
-  Vt result = opt->result();
-  delete opt;
-  return result;
-}
-
 void Net::finishedIteration()
 {
   bool dropout = this->dropout;
@@ -220,10 +197,10 @@ void Net::finishedIteration()
   this->dropout = dropout;
 }
 
-Vt Net::operator()(const Vt& x)
+Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
 {
   tempInput = x;
-  Vt* y = &tempInput;
+  Eigen::VectorXd* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
     (**layer).forwardPropagate(y, y, dropout);
@@ -243,12 +220,12 @@ unsigned int Net::examples()
   return N;
 }
 
-Vt Net::currentParameters()
+Eigen::VectorXd Net::currentParameters()
 {
   return parameterVector;
 }
 
-void Net::setParameters(const Vt& parameters)
+void Net::setParameters(const Eigen::VectorXd& parameters)
 {
   parameterVector = parameters;
   for(int p = 0; p < P; p++)
@@ -275,15 +252,15 @@ void Net::initialize()
     parameterVector(p) = *parameters[p];
 }
 
-fpt Net::error(unsigned int i)
+double Net::error(unsigned int i)
 {
-  fpt e = 0.0;
+  double e = 0.0;
   if(errorFunction == CE)
   {
     tempOutput = (*this)(dataSet->getInstance(i));
     for(int f = 0; f < tempOutput.rows(); f++)
     {
-      fpt out = tempOutput(f);
+      double out = tempOutput(f);
       if(out < 1e-45)
         out = 1e-45;
       e -= dataSet->getTarget(i)(f) * std::log(out);
@@ -298,9 +275,9 @@ fpt Net::error(unsigned int i)
   return e / 2.0;
 }
 
-fpt Net::error()
+double Net::error()
 {
-  fpt e = 0.0;
+  double e = 0.0;
   for(int n = 0; n < N; n++)
     e += error(n);
   switch(errorFunction)
@@ -308,17 +285,17 @@ fpt Net::error()
     case SSE:
       return e;
     case MSE:
-      return e / (fpt) N;
+      return e / (double) N;
     default:
       return e;
   }
 }
 
-fpt Net::errorFromDataSet(DataSet& dataset)
+double Net::errorFromDataSet(DataSet& dataset)
 {
-    fpt e = 0.0;
+    double e = 0.0;
     for(int n = 0; n < dataset.samples(); ++n) {
-        fpt e_n  = 0.0;
+        double e_n  = 0.0;
 
         tempOutput = (*this)(dataset.getInstance(n));
 
@@ -341,7 +318,7 @@ fpt Net::errorFromDataSet(DataSet& dataset)
         case SSE:
             return e;
         case MSE:
-            return e / (fpt) N;
+            return e / (double) N;
         default:
             return e;
     }
@@ -352,11 +329,11 @@ bool Net::providesGradient()
   return true;
 }
 
-Vt Net::gradient(unsigned int i)
+Eigen::VectorXd Net::gradient(unsigned int i)
 {
   tempOutput = (*this)(dataSet->getInstance(i));
   tempError = tempOutput - dataSet->getTarget(i);
-  Vt* e = &tempError;
+  Eigen::VectorXd* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
     (**layer).backpropagate(e, e);
@@ -365,14 +342,14 @@ Vt Net::gradient(unsigned int i)
   return tempGradient;
 }
 
-Vt Net::gradient()
+Eigen::VectorXd Net::gradient()
 {
   tempGradient.fill(0.0);
   for(int n = 0; n < N; n++)
   {
     tempOutput = (*this)(dataSet->getInstance(n));
     tempError = tempOutput - dataSet->getTarget(n);
-    Vt* e = &tempError;
+    Eigen::VectorXd* e = &tempError;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
       (**layer).backpropagate(e, e);
@@ -382,20 +359,20 @@ Vt Net::gradient()
   switch(errorFunction)
   {
     case MSE:
-      tempGradient /= (fpt) dimension();
+      tempGradient /= (double) dimension();
     default:
       break;
   }
   return tempGradient;
 }
 
-void Net::VJ(Vt& values, Mt& jacobian)
+void Net::VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian)
 {
   for(unsigned n = 0; n < N; n++)
   {
     tempError = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
-    values(n) = tempError.dot(tempError) / (fpt) 2.0;
-    Vt* e = &tempError;
+    values(n) = tempError.dot(tempError) / 2.0;
+    Eigen::VectorXd* e = &tempError;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
       (**layer).backpropagate(e, e);
@@ -409,9 +386,9 @@ bool Net::providesHessian()
   return false;
 }
 
-Mt Net::hessian()
+Eigen::MatrixXd Net::hessian()
 {
-  return Mt::Identity(dimension(), dimension());
+  return Eigen::MatrixXd::Identity(dimension(), dimension());
 }
 
 }

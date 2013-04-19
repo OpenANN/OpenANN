@@ -37,28 +37,28 @@ class FullyConnected : public Layer
   int I, J;
   bool bias;
   ActivationFunction act;
-  fpt stdDev;
-  fpt dropoutProbability;
-  fpt maxSquaredWeightNorm;
-  Mt W;
-  Mt Wd;
-  Vt* x;
-  Vt a;
-  Vt y;
-  Vt yd;
-  Vt deltas;
-  Vt e;
+  double stdDev;
+  double dropoutProbability;
+  double maxSquaredWeightNorm;
+  Eigen::MatrixXd W;
+  Eigen::MatrixXd Wd;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd a;
+  Eigen::VectorXd y;
+  Eigen::VectorXd yd;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
 
 public:
   FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
-                 fpt stdDev, fpt dropoutProbability, fpt maxSquaredWeightNorm);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-                                std::vector<fpt*>& parameterDerivativePointers);
+                 double stdDev, double dropoutProbability, double maxSquaredWeightNorm);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters();
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

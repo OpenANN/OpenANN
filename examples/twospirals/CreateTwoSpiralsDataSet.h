@@ -17,7 +17,7 @@
  * @param Xte test inputs
  * @param Yte test outputs
  */
-void createTwoSpiralsDataSet(int density, double maxDiameter, Mt& Xtr, Mt& Ytr, Mt& Xte, Mt& Yte)
+void createTwoSpiralsDataSet(int density, double maxDiameter, Eigen::MatrixXd& Xtr, Eigen::MatrixXd& Ytr, Eigen::MatrixXd& Xte, Eigen::MatrixXd& Yte)
 {
   // Number of interior data points per spiral to generate
   const int points = 96 * density;
@@ -32,12 +32,12 @@ void createTwoSpiralsDataSet(int density, double maxDiameter, Mt& Xtr, Mt& Ytr, 
   for(int i = 0; i <= points; i++)
   {
     // Angle is based on the iteration * PI/16, divided by point density
-    const fpt angle = i * M_PI / (16.0 * density);
+    const double angle = i * M_PI / (16.0 * density);
     // Radius is the maximum radius * the fraction of iterations left
-    const fpt radius = maxDiameter * (104 * density - i) / (104 * density);
+    const double radius = maxDiameter * (104 * density - i) / (104 * density);
     // x and y are based upon cos and sin of the current radius
-    const fpt x = radius * cos(angle);
-    const fpt y = radius * sin(angle);
+    const double x = radius * cos(angle);
+    const double y = radius * sin(angle);
 
     if(i == points)
     {
@@ -72,7 +72,7 @@ void createTwoSpiralsDataSet(int density, double maxDiameter, Mt& Xtr, Mt& Ytr, 
     }
   }
 
-  Mt shift = Mt::Ones(Xtr.rows(), Xtr.cols()) * 0.5;
+  Eigen::MatrixXd shift = Eigen::MatrixXd::Ones(Xtr.rows(), Xtr.cols()) * 0.5;
   // Scaling
   Xtr /= 2.0;
   Xtr += shift;

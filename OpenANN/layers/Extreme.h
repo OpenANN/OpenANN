@@ -27,25 +27,25 @@ class Extreme : public Layer
   int I, J;
   bool bias;
   ActivationFunction act;
-  fpt stdDev;
-  Mt W;
-  Vt* x;
-  Vt a;
-  Vt y;
-  Vt yd;
-  Vt deltas;
-  Vt e;
+  double stdDev;
+  Eigen::MatrixXd W;
+  Eigen::VectorXd* x;
+  Eigen::VectorXd a;
+  Eigen::VectorXd y;
+  Eigen::VectorXd yd;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
 
 public:
   Extreme(OutputInfo info, int J, bool bias, ActivationFunction act,
-          fpt stdDev);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-                                std::vector<fpt*>& parameterDerivativePointers);
+          double stdDev);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

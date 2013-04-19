@@ -30,32 +30,32 @@ class Convolutional : public Layer
   int I, fmin, inRows, inCols, fmout, kernelRows, kernelCols;
   bool bias, weightForBias;
   ActivationFunction act;
-  fpt stdDev;
-  Vt* x;
+  double stdDev;
+  Eigen::VectorXd* x;
   //! output feature maps X input feature maps X kernel rows X kernel cols
-  std::vector<std::vector<Mt> > W;
-  std::vector<std::vector<Mt> > Wd;
+  std::vector<std::vector<Eigen::MatrixXd> > W;
+  std::vector<std::vector<Eigen::MatrixXd> > Wd;
   //! output feature maps X input feature maps
-  Mt Wb;
-  Mt Wbd;
-  Vt a;
-  Vt y;
-  Vt yd;
-  Vt deltas;
-  Vt e;
+  Eigen::MatrixXd Wb;
+  Eigen::MatrixXd Wbd;
+  Eigen::VectorXd a;
+  Eigen::VectorXd y;
+  Eigen::VectorXd yd;
+  Eigen::VectorXd deltas;
+  Eigen::VectorXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
   Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                 int kernelCols, bool bias, ActivationFunction act,
-                fpt stdDev);
-  virtual OutputInfo initialize(std::vector<fpt*>& parameterPointers,
-                                std::vector<fpt*>& parameterDerivativePointers);
+                double stdDev);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Vt* x, Vt*& y, bool dropout);
-  virtual void backpropagate(Vt* ein, Vt*& eout);
-  virtual Vt& getOutput();
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual Eigen::VectorXd& getOutput();
 };
 
 }

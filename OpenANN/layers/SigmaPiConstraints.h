@@ -10,25 +10,26 @@ namespace OpenANN {
  */
 struct DistanceConstraint : public SigmaPi::Constraint
 {
-    DistanceConstraint(size_t width, size_t height)
-        : width(width), height(height)
-    {}
+  DistanceConstraint(size_t width, size_t height)
+      : width(width), height(height)
+  {}
 
-    virtual fpt operator() (int p1, int p2) const {
-        fpt x1 = p1 % width;
-        fpt y1 = p1 / width;
-        fpt x2 = p2 % width;
-        fpt y2 = p2 / width;
+  virtual double operator() (int p1, int p2) const
+  {
+    double x1 = p1 % width;
+    double y1 = p1 / width;
+    double x2 = p2 % width;
+    double y2 = p2 / width;
 
-        OPENANN_CHECK(y1 < height);
-        OPENANN_CHECK(y2 < height);
+    OPENANN_CHECK(y1 < height);
+    OPENANN_CHECK(y2 < height);
 
-        return std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    }
+    return std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+  }
 
 private:
-    size_t width;
-    size_t height;
+  size_t width;
+  size_t height;
 };
 
 
@@ -37,27 +38,26 @@ private:
  */
 struct SlopeConstraint : public SigmaPi::Constraint
 {
-    SlopeConstraint(size_t width, size_t height)
-        : width(width), height(height)
-    {}
+  SlopeConstraint(size_t width, size_t height)
+      : width(width), height(height)
+  {}
 
-    virtual fpt operator() (int p1, int p2) const {
-        fpt x1 = p1 % width;
-        fpt y1 = p1 / width;
-        fpt x2 = p2 % width;
-        fpt y2 = p2 / width;
+  virtual double operator() (int p1, int p2) const
+  {
+    double x1 = p1 % width;
+    double y1 = p1 / width;
+    double x2 = p2 % width;
+    double y2 = p2 / width;
 
-        OPENANN_CHECK(y1 < height);
-        OPENANN_CHECK(y2 < height);
+    OPENANN_CHECK(y1 < height);
+    OPENANN_CHECK(y2 < height);
 
-        return (x1 == x2) 
-            ? (M_PI / 2)
-            : std::atan((y2 - y1) / (x2 - x1));
-    }
+    return (x1 == x2) ? (M_PI / 2) : std::atan((y2 - y1) / (x2 - x1));
+  }
 
 private:
-    size_t width;
-    size_t height;
+  size_t width;
+  size_t height;
 };
 
 

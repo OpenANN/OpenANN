@@ -18,7 +18,7 @@ public:
     //! Size in byte.
     size_t size;
     int D;
-    std::map<std::pair<int, int>, Vt> cache;
+    std::map<std::pair<int, int>, Eigen::VectorXd> cache;
 
     /**
      * Initialize the data cache.
@@ -27,9 +27,9 @@ public:
      */
     BCIDataCache(int size, int D);
     bool hasInstance(int epoch, int offset);
-    Vt& getInstance(int epoch, int offset);
+    Eigen::VectorXd& getInstance(int epoch, int offset);
     bool hasSpace();
-    void cacheInstance(int epoch, int offset, const Vt& instance);
+    void cacheInstance(int epoch, int offset, const Eigen::VectorXd& instance);
     void clear();
   };
 
@@ -39,11 +39,11 @@ public:
     TRAINING, TEST, DEMO
   } dataType;
 
-  Mt flashing;
-  Mt stimulusCode;
-  Mt stimulusType;
+  Eigen::MatrixXd flashing;
+  Eigen::MatrixXd stimulusCode;
+  Eigen::MatrixXd stimulusType;
   std::vector<char> targetChar;
-  std::vector<Mt> signal;
+  std::vector<Eigen::MatrixXd> signal;
 
   int sampling;
   int channels;
@@ -54,11 +54,11 @@ public:
   int D;
   int F;
   std::vector<std::vector<int> > instanceStart;
-  std::vector<std::vector<Vt> > instanceLabel;
+  std::vector<std::vector<Eigen::VectorXd> > instanceLabel;
 
   OpenANN::Logger debugLogger;
 
-  Vt tempInstance;
+  Eigen::VectorXd tempInstance;
 
   int iteration;
 
@@ -83,17 +83,17 @@ public:
   void clear();
   std::string fileName(const std::string& type);
   void decimate(int factor = 1);
-  void compress(const Mt& compressionMatrix);
+  void compress(const Eigen::MatrixXd& compressionMatrix);
   void reset();
   virtual int samples() { return N; }
   virtual int inputs() { return D; }
   virtual int outputs() { return F; }
-  virtual Vt& getInstance(int i);
+  virtual Eigen::VectorXd& getInstance(int i);
   void getOffsets(int i, int& epoch, int& t0);
   void buildInstance(int epoch, int t0);
-  Mt extractInstance(int epoch, int t0);
-  Vt toVector(const Mt& matrix);
-  virtual Vt& getTarget(int i);
+  Eigen::MatrixXd extractInstance(int epoch, int t0);
+  Eigen::VectorXd toVector(const Eigen::MatrixXd& matrix);
+  virtual Eigen::VectorXd& getTarget(int i);
   char getTargetChar(int i);
   virtual void finishIteration(OpenANN::Learner& mlp);
   int evaluate(OpenANN::Learner& mlp, int trials);

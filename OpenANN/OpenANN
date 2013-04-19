@@ -19,5 +19,6 @@ public:
 }
 
 #include <OpenANN/Net.h>
+#include <OpenANN/Convenience.h>
 
 #endif // OPENANN_INCLUDED
