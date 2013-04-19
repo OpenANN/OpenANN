@@ -99,9 +99,15 @@ double rn = mu + sigma*rng.sampleNormalDistribution<double>();
   {
     if(!initialized)
     {
-      OPENANN_CHECK_EQUALS(result.size(), 0);
-      for(int i = 0; i < n; i++)
-        result.push_back(i);
+      if(result.size() > 0) {
+        OPENANN_CHECK_EQUALS(result.size(), n);
+        for(int i = 0; i < n; i++)
+          result.at(i);
+      } else {
+        OPENANN_CHECK_EQUALS(result.size(), 0);
+        for(int i = 0; i < n; i++)
+          result.push_back(i);
+      }
     }
     else
     {
