@@ -120,7 +120,7 @@ bool MBSGD::step()
   opt->finishedIteration();
 
   const bool run = (stop.maximalIterations == // Maximum iterations reached?
-      StoppingCriteria::defaultValue.maximalFunctionEvaluations ||
+      StoppingCriteria::defaultValue.maximalIterations ||
       iteration <= stop.maximalIterations) &&
       (stop.minimalSearchSpaceStep == // Gradient too small?
       StoppingCriteria::defaultValue.minimalSearchSpaceStep ||
