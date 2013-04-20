@@ -16,6 +16,7 @@
 #include "PreprocessingTestCase.h"
 #include "IntrinsicPlasticityTestCase.h"
 #include "RBMTestCase.h"
+#include "MBSGDTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -45,6 +46,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new RBMTestCase);
+  ts.addTestCase(new MBSGDTestCase);
 
   if(qt)
   {

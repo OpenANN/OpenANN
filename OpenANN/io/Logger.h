@@ -8,20 +8,23 @@
 
 #ifndef NDEBUG
 
+#ifndef OPENNANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
+#endif // OPENANN_LOGLEVEL
+
 #define OPENANN_OUTPUT(msg) std::cout << __FILE__ << "(" << __LINE__ << "): " << msg << std::endl;
 #define OPENANN_TRACE(msg) std::cerr << __FILE__ << "(" << __LINE__ << "): " << msg << std::endl;
 
 #else // NDEBUG
 
+#ifndef OPENNANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::INFO 
+#endif // OPENANN_LOGLEVEL
+
 #define OPENANN_OUTPUT(msg) std::cout << msg << std::endl;
 #define OPENANN_TRACE(msg)
 
 #endif // NDEBUG
-
-
-#ifndef OPENNANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
-#endif // OPENANN_LOGLEVEL
 
 #define OPENANN_LOG(level) \
     if(level > OPENANN_LOGLEVEL) ; \
