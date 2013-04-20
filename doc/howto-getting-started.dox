@@ -91,6 +91,7 @@ if __name__ == "__main__":
 
 Classification
 
+  - \ref XOR
   - \ref TwoSpirals
 
 Reinforcement Learning
