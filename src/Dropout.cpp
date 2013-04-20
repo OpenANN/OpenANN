@@ -5,7 +5,7 @@ namespace OpenANN {
 
 Dropout::Dropout(OutputInfo info, double dropoutProbability)
   : I(info.outputs()), bias(info.bias), dropoutProbability(dropoutProbability),
-    y(I+bias), dropoutMask(I), e(I+bias)
+    y(I), dropoutMask(I), e(I)
 {
 }
 
@@ -14,7 +14,7 @@ OutputInfo Dropout::initialize(std::vector<double*>& parameterPointers,
 {
   OutputInfo info;
   info.bias = bias;
-  info.dimensions.push_back(I);
+  info.dimensions.push_back(I-bias);
   return info;
 }
 
