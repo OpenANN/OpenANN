@@ -3,7 +3,6 @@
 #include <OpenANN/Learner.h>
 #include <OpenANN/ActivationFunctions.h>
 #include <OpenANN/layers/Layer.h>
-#include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
@@ -57,7 +56,7 @@ enum ErrorFunction
  *   positions. Usually we need this layer for partially observable markov
  *   decision processes in reinforcement learning.
  */
-class Net : public Optimizable, public Learner
+class Net : public Learner
 {
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
