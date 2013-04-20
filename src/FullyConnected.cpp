@@ -30,7 +30,7 @@ OutputInfo FullyConnected::initialize(std::vector<double*>& parameterPointers,
 
   // Bias component will not change after initialization
   if(bias)
-    y(J) = double(1.0);
+    y(J) = 1.0;
 
   initializeParameters();
 
