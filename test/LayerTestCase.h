@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Test/TestCase.h"
 
 class LayerTestCase : public TestCase
