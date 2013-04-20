@@ -12,8 +12,7 @@ namespace OpenANN {
 MBSGD::MBSGD(double learningRate, double momentum, int batchSize, double gamma,
              double learningRateDecay, double minimalLearningRate, double momentumGain,
              double maximalMomentum, double minGain, double maxGain)
-  : debugLogger(Logger::NONE),
-    alpha(learningRate), alphaDecay(learningRateDecay),
+  : alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
     maxGain(maxGain), useGain(minGain != 1.0 || maxGain != 1.0),
@@ -54,14 +53,7 @@ void MBSGD::setStopCriteria(const StoppingCriteria& stop)
 void MBSGD::optimize()
 {
   OPENANN_CHECK(opt->providesInitialization());
-  while(step())
-  {
-    if(debugLogger.isActive())
-    {
-      debugLogger << "Iteration " << iteration << " finished\n"
-          << "Error = " << opt->error() << "\n";
-    }
-  }
+  while(step());
 }
 
 bool MBSGD::step()
@@ -113,9 +105,6 @@ bool MBSGD::step()
   }
 
   iteration++;
-  
-  if(debugLogger.isActive())
-      debugLogger << "alpha = " << alpha << ", eta = " << eta << "\n";
 
   opt->finishedIteration();
 

@@ -76,7 +76,7 @@ public:
 
   virtual Eigen::MatrixXd hessian()
   {
-    OPENANN_CHECK(false && "Ellinum does not provide an hessian.");
+    OPENANN_CHECK(false && "Ellinum does not provide a hessian.");
     return Eigen::MatrixXd();
   }
 };
