@@ -205,15 +205,15 @@ cdef class Net:
     rows = num_in.shape[0]
     cols = num_in.shape[1]
     idx = 0
-    for r in range(rows):
-      for c in range(cols):
+    for c in range(cols):
+      for r in range(rows):
         self.inptr.data()[idx] = num_in[r, c]
         idx += 1
     rows = num_out.shape[0]
     cols = num_out.shape[1]
     idx = 0
-    for r in range(rows):
-      for c in range(cols):
+    for c in range(cols):
+      for r in range(rows):
         self.outptr.data()[idx] = num_out[r, c]
         idx += 1
 
