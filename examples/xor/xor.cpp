@@ -1,4 +1,5 @@
 #include <OpenANN/OpenANN>
+#include <OpenANN/optimization/MBSGD.h>
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -66,8 +67,8 @@ int main()
   // Create network
   Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(3, TANH)
-     .outputLayer(F, TANH)
+     .fullyConnectedLayer(3, LOGISTIC)
+     .outputLayer(F, LOGISTIC)
      .trainingSet(x, t);
 
   // Train network

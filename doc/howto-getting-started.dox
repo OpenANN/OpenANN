@@ -29,8 +29,8 @@ int main()
   // Create network
   Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(3, TANH)
-     .outputLayer(F, TANH)
+     .fullyConnectedLayer(3, LOGISTIC)
+     .outputLayer(F, LOGISTIC)
      .trainingSet(x, t);
 
   // Train network
@@ -73,8 +73,8 @@ if __name__ == "__main__":
   # Create network
   net = Net()
   net.input_layer(D)
-  net.fully_connected_layer(3, "tanh")
-  net.output_layer(F, "tanh")
+  net.fully_connected_layer(3, "logistic")
+  net.output_layer(F, "logistic")
   net.training_set(X, Y)
 
   # Train network
