@@ -149,6 +149,7 @@ void LayerTestCase::run()
   RUN(LayerTestCase, fullyConnectedInputGradient);
   RUN(LayerTestCase, compressed);
   RUN(LayerTestCase, compressedGradient);
+  RUN(LayerTestCase, compressedInputGradient);
   RUN(LayerTestCase, convolutional);
   RUN(LayerTestCase, convolutionalGradient);
   RUN(LayerTestCase, subsampling);
@@ -228,10 +229,11 @@ void LayerTestCase::fullyConnectedInputGradient()
   FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
   LayerOptimizable opt(layer, info);
 
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(2, 1);
+  opt.trainingSet(x, y);
   Eigen::VectorXd gradient = opt.inputGradient();
   FiniteDifferences fd;
-  Eigen::VectorXd x = Eigen::VectorXd::Random(3);
-  Eigen::VectorXd y = Eigen::VectorXd::Random(2);
   Eigen::VectorXd estimatedGradient = fd.inputGradient(x, y, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
@@ -280,6 +282,24 @@ void LayerTestCase::compressedGradient()
   Eigen::VectorXd gradient = opt.gradient();
   FiniteDifferences fd;
   Eigen::VectorXd estimatedGradient = fd.parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void LayerTestCase::compressedInputGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, 0.0);
+  LayerOptimizable opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(2, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  FiniteDifferences fd;
+  Eigen::VectorXd estimatedGradient = fd.inputGradient(x, y, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }

@@ -10,6 +10,7 @@ class LayerTestCase : public TestCase
   void fullyConnectedInputGradient();
   void compressed();
   void compressedGradient();
+  void compressedInputGradient();
   void convolutional();
   void convolutionalGradient();
   void subsampling();
