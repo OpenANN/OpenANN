@@ -14,11 +14,10 @@ class Input : public Layer
 {
   int J, dim1, dim2, dim3;
   bool bias;
-  double dropoutProbability;
   Eigen::VectorXd y;
 
 public:
-  Input(int dim1, int dim2, int dim3, bool bias, double dropoutProbability);
+  Input(int dim1, int dim2, int dim3, bool bias);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

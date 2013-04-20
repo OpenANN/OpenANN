@@ -8,6 +8,7 @@
 #include <OpenANN/layers/Subsampling.h>
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/layers/LocalResponseNormalization.h>
+#include <OpenANN/layers/Dropout.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -34,10 +35,9 @@ Net::~Net()
   layers.clear();
 }
 
-Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias,
-                     double dropoutProbability)
+Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias)
 {
-  return addLayer(new Input(dim1, dim2, dim3, bias, dropoutProbability));
+  return addLayer(new Input(dim1, dim2, dim3, bias));
 }
 
 Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
@@ -46,19 +46,18 @@ Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
 }
 
 Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
-                              bool bias, double dropoutProbability,
-                              double maxSquaredWeightNorm)
+                              bool bias, double maxSquaredWeightNorm)
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
-                                    dropoutProbability, maxSquaredWeightNorm));
+                                     maxSquaredWeightNorm));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
                           const std::string& compression, double stdDev,
-                          bool bias, double dropoutProbability)
+                          bool bias)
 {
   return addLayer(new Compressed(infos.back(), units, params, bias, act,
-                                compression, stdDev, dropoutProbability));
+                                compression, stdDev));
 }
 
 Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
@@ -90,6 +89,11 @@ Net& Net::localReponseNormalizationLayer(double k, int n, double alpha, double b
 {
   return addLayer(new LocalResponseNormalization(infos.back(), bias, k, n,
                                                  alpha, beta));
+}
+
+Net& Net::dropoutLayer(double dropoutProbability)
+{
+  return addLayer(new Dropout(infos.back(), dropoutProbability));
 }
 
 Net& Net::addLayer(Layer* layer)

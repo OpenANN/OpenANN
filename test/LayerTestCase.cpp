@@ -171,7 +171,7 @@ void LayerTestCase::fullyConnected()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
 
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
@@ -216,7 +216,7 @@ void LayerTestCase::fullyConnectedGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
@@ -230,7 +230,7 @@ void LayerTestCase::fullyConnectedInputGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
   LayerOptimizable opt(layer, info);
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);
@@ -247,7 +247,7 @@ void LayerTestCase::compressed()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 3, true, TANH, "average", 0.05, 0.0);
+  Compressed layer(info, 2, 3, true, TANH, "average", 0.05);
 
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
@@ -279,7 +279,7 @@ void LayerTestCase::compressedGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, 0.0);
+  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
@@ -293,7 +293,7 @@ void LayerTestCase::compressedInputGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, 0.0);
+  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerOptimizable opt(layer, info);
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);

@@ -5,10 +5,8 @@ namespace OpenANN {
 
 FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, double stdDev,
-                               double dropoutProbability,
                                double maxSquaredWeightNorm)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
-    dropoutProbability(dropoutProbability),
     maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I), Wd(J, I), x(0), a(J),
     y(J+bias), yd(J), deltas(J), e(I)
 {
@@ -68,22 +66,6 @@ void FullyConnected::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, b
   a = W * *x;
   // Compute output
   activationFunction(act, a, this->y);
-  if(dropout)
-  {
-    RandomNumberGenerator rng;
-    for(int j = 0; j < J; j++)
-      if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
-        this->y(j) = 0.0;
-  }
-  else if(dropoutProbability > 0.0)
-  {
-    // Hinton et al., 2012: "At test time, we use the "mean network" [...] to
-    // compensate for the fact that [all] of them are active."
-    // Scaling the outputs is equivalent to scaling the outgoing weights.
-    this->y *= (1.0 - dropoutProbability);
-    if(bias)
-      this->y(J) = 1.0;
-  }
   y = &(this->y);
 }
 
