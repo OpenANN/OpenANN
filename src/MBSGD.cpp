@@ -147,7 +147,7 @@ void MBSGD::initialize()
 
   P = opt->dimension();
   N = opt->examples();
-  batches = N / batchSize;
+  batches = std::max(N / batchSize, 1);
   gradient.resize(P);
   gradient.fill(0.0);
   gains.resize(P);
