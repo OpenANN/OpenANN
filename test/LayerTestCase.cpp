@@ -8,6 +8,7 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/SigmaPi.h>
+#include <OpenANN/layers/Dropout.h>
 #include <OpenANN/Learner.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/OpenANNException.h>
@@ -161,6 +162,7 @@ void LayerTestCase::run()
   RUN(LayerTestCase, maxPoolingGradient);
   RUN(LayerTestCase, maxPoolingInputGradient);
   RUN(LayerTestCase, localResponseNormalizationInputGradient);
+  RUN(LayerTestCase, dropout);
   RUN(LayerTestCase, sigmaPiNoConstraintGradient);
   RUN(LayerTestCase, sigmaPiWithConstraintGradient);
   RUN(LayerTestCase, multilayerNetwork);
@@ -515,6 +517,35 @@ void LayerTestCase::localResponseNormalizationInputGradient()
   Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void LayerTestCase::dropout()
+{
+  double dropoutProbability = 0.5;
+  int samples = 10000;
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(samples);
+  Dropout layer(info, 0.5);
+  std::vector<double*> parameterPointers;
+  std::vector<double*> parameterDerivativePointers;
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
+  ASSERT_EQUALS(info2.dimensions.size(), 1);
+  ASSERT_EQUALS(info2.dimensions[0], samples);
+
+  // During training (dropout = true) approximately dropoutProbability neurons
+  // should be suppressed
+  Eigen::VectorXd x(samples);
+  x.fill(1.0);
+  Eigen::VectorXd* y;
+  layer.forwardPropagate(&x, y, true);
+  double mean = y->sum() / samples;
+  ASSERT_EQUALS_DELTA(mean, 0.5, 0.01);
+  // After training, the output should be scaled down
+  layer.forwardPropagate(&x, y, false);
+  mean = y->sum() / samples;
+  ASSERT_EQUALS(mean, 0.5);
 }
 
 void LayerTestCase::sigmaPiNoConstraintGradient()
