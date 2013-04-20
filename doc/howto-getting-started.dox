@@ -15,26 +15,35 @@ using namespace OpenANN;
 
 int main()
 {
-  Eigen::MatrixXd x(1, 1);
-  x.fill(2.0f);
-  Eigen::MatrixXd t(1, 1);
-  t.fill(5.0f);
+  // Create dataset
+  const int D = 2;
+  const int F = 1;
+  const int N = 4;
+  Eigen::MatrixXd x(D, N);
+  Eigen::MatrixXd t(F, N);
+  x.col(0) << 0.0, 1.0; t.col(0) << 1.0;
+  x.col(1) << 0.0, 0.0; t.col(1) << 0.0;
+  x.col(2) << 1.0, 1.0; t.col(2) << 0.0;
+  x.col(3) << 1.0, 0.0; t.col(3) << 1.0;
 
+  // Create network
   Net net;
-  net.inputLayer(1)
+  net.inputLayer(D)
      .fullyConnectedLayer(3, TANH)
-     .fullyConnectedLayer(3, TANH)
-     .outputLayer(1, LINEAR)
+     .outputLayer(F, TANH)
      .trainingSet(x, t);
 
+  // Train network
   StoppingCriteria stop;
-  stop.maximalIterations = 10;
-  std::cout << "Error on training set before training: " << net.error()
-      << std::endl;
-  net.train(BATCH_LMA, SSE, stop);
-  Eigen::VectorXd y = net(x);
-  std::cout << "Error on training set after training: " << net.error()
-      << std::endl;
+  stop.minimalValueDifferences = 1e-10;
+  train(net, "LMA", SSE, stop);
+
+  // Use network
+  for(int n = 0; n < N; n++)
+  {
+    Eigen::VectorXd y = net(x.col(n));
+    std::cout << y << std::endl;
+  }
 
   return 0;
 }
