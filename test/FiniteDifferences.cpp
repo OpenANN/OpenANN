@@ -2,10 +2,12 @@
 
 namespace OpenANN {
 
-Eigen::VectorXd FiniteDifferences::inputGradient(const Eigen::VectorXd& x,
-                                                 const Eigen::VectorXd& y,
-                                                 Learner& learner,
-                                                 const double eps)
+namespace FiniteDifferences
+{
+
+Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
+                              const Eigen::VectorXd& y, Learner& learner,
+                              const double eps)
 {
   const int D = x.rows();
   Eigen::VectorXd gradient(D);
@@ -28,8 +30,7 @@ Eigen::VectorXd FiniteDifferences::inputGradient(const Eigen::VectorXd& x,
   return gradient;
 }
 
-Eigen::VectorXd FiniteDifferences::parameterGradient(int n, Optimizable& opt,
-                                                     const double eps)
+Eigen::VectorXd parameterGradient(int n, Optimizable& opt, const double eps)
 {
   Eigen::VectorXd gradient(opt.dimension());
   gradient.fill(0.0);
@@ -51,6 +52,8 @@ Eigen::VectorXd FiniteDifferences::parameterGradient(int n, Optimizable& opt,
   }
   opt.setParameters(params);
   return gradient;
+}
+
 }
 
 }

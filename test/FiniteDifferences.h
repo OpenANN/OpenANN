@@ -5,14 +5,13 @@
 
 namespace OpenANN {
 
-class FiniteDifferences
+namespace FiniteDifferences
 {
-public:
-  Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
-                                const Eigen::VectorXd& y, Learner& learner,
-                                const double eps = 1e-2);
-  Eigen::VectorXd parameterGradient(int n, Optimizable& opt,
-                                    const double eps = 1e-2);
-};
+Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
+                              const Eigen::VectorXd& y, Learner& learner,
+                              const double eps = 1e-2);
+Eigen::VectorXd parameterGradient(int n, Optimizable& opt,
+                                  const double eps = 1e-2);
+}
 
 }
