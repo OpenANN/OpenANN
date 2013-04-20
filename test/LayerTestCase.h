@@ -13,10 +13,14 @@ class LayerTestCase : public TestCase
   void compressedInputGradient();
   void convolutional();
   void convolutionalGradient();
+  void convolutionalInputGradient();
   void subsampling();
   void subsamplingGradient();
+  void subsamplingInputGradient();
   void maxPooling();
   void maxPoolingGradient();
+  void maxPoolingInputGradient();
+  void localResponseNormalizationInputGradient();
   void sigmaPiNoConstraintGradient();
   void sigmaPiWithConstraintGradient();
   void multilayerNetwork();
