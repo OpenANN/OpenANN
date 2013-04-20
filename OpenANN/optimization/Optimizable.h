@@ -86,21 +86,6 @@ public:
    * This callback is called after each optimization algorithm iteration.
    */
   virtual void finishedIteration() {}
-  /**
-   * Use finite differences to approximate the gradient.
-   * @return approximated gradient of the n-th training example
-   */
-  virtual Eigen::VectorXd singleGradientFD(int n, const double eps = 1e-2);
-  /**
-   * Use finite differences to approximate the gradient.
-   * @return approximated gradient of the training set
-   */
-  virtual Eigen::VectorXd gradientFD(const double eps = 1e-2);
-  /**
-   * Use finite differences to approximate the hessian.
-   * @return approximated hessian of the training set
-   */
-  virtual Eigen::MatrixXd hessianFD(const double eps = 1e-2);
 };
 
 }

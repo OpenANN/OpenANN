@@ -7,6 +7,7 @@ class LayerTestCase : public TestCase
   virtual void run();
   void fullyConnected();
   void fullyConnectedGradient();
+  void fullyConnectedInputGradient();
   void compressed();
   void compressedGradient();
   void convolutional();
@@ -15,7 +16,7 @@ class LayerTestCase : public TestCase
   void subsamplingGradient();
   void maxPooling();
   void maxPoolingGradient();
-  void multilayerNetwork();
   void sigmaPiNoConstraintGradient();
   void sigmaPiWithConstraintGradient();
+  void multilayerNetwork();
 };
