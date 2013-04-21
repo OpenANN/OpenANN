@@ -123,14 +123,6 @@ void LMA::initialize()
 {
   if(opt->providesInitialization())
     opt->initialize();
-  else
-  {
-    RandomNumberGenerator rng;
-    Eigen::VectorXd x(n);
-    for(unsigned i = 0; i < n; i++)
-      x(i) = rng.sampleNormalDistribution<double>();
-    opt->setParameters(x);
-  }
 
   n = opt->dimension();
 
@@ -145,12 +137,7 @@ void LMA::allocate()
   errorValues.resize(opt->examples());
   jacobian.resize(opt->examples(), n);
 
-  double* xArray = new double[n];
-  Eigen::VectorXd x = opt->currentParameters();
-  for(unsigned i = 0; i < n; i++)
-    xArray[i] = x(i);
-  xIn.setcontent(n, xArray);
-  delete[] xArray;
+  xIn.setcontent(n, opt->currentParameters().data());
 }
 
 void LMA::initALGLIB()

@@ -1,47 +1,47 @@
-#include "MBSGDTestCase.h"
+#include "LMATestCase.h"
 #include "optimization/Quadratic.h"
-#include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/LMA.h>
 #include <OpenANN/io/Logger.h>
 
-void MBSGDTestCase::run()
+void LMATestCase::run()
 {
-  RUN(MBSGDTestCase, quadratic);
-  RUN(MBSGDTestCase, restart);
+  RUN(LMATestCase, quadratic);
+  RUN(LMATestCase, restart);
 }
 
-void MBSGDTestCase::quadratic()
+void LMATestCase::quadratic()
 {
-  OpenANN::MBSGD mbsgd;
+  OpenANN::LMA lma;
   Quadratic<10> q;
   q.setParameters(Eigen::VectorXd::Ones(10));
   OpenANN::StoppingCriteria s;
   s.maximalIterations = 1000;
   s.minimalSearchSpaceStep = 1e-10;
-  mbsgd.setOptimizable(q);
-  mbsgd.setStopCriteria(s);
-  mbsgd.optimize();
-  Eigen::VectorXd optimum = mbsgd.result();
+  lma.setOptimizable(q);
+  lma.setStopCriteria(s);
+  lma.optimize();
+  Eigen::VectorXd optimum = lma.result();
   ASSERT(q.error() < 0.001);
 }
 
-void MBSGDTestCase::restart()
+void LMATestCase::restart()
 {
-  OpenANN::MBSGD mbsgd;
+  OpenANN::LMA lma;
   Quadratic<10> q;
   q.setParameters(Eigen::VectorXd::Ones(10));
   OpenANN::StoppingCriteria s;
   s.maximalIterations = 1000;
   s.minimalSearchSpaceStep = 1e-10;
-  mbsgd.setOptimizable(q);
-  mbsgd.setStopCriteria(s);
-  mbsgd.optimize();
-  Eigen::VectorXd optimum = mbsgd.result();
+  lma.setOptimizable(q);
+  lma.setStopCriteria(s);
+  lma.optimize();
+  Eigen::VectorXd optimum = lma.result();
   ASSERT(q.error() < 0.001);
 
   // Restart
   q.setParameters(Eigen::VectorXd::Ones(10));
   ASSERT(q.error() == 10.0);
-  mbsgd.optimize();
-  optimum = mbsgd.result();
+  lma.optimize();
+  optimum = lma.result();
   ASSERT(q.error() < 0.001);
 }
