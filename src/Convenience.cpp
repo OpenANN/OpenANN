@@ -12,6 +12,7 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
 {
   if(reinitialize)
     net.initialize();
+  net.setErrorFunction(errorFunction);
   net.useDropout(dropout);
 
   Optimizer* opt;

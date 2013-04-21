@@ -60,7 +60,6 @@ int main(int argc, char** argv)
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
   net.setErrorFunction(OpenANN::CE);
-  net.initialize();
   OPENANN_INFO << "Created MLP." << std::endl << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension();
   OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
