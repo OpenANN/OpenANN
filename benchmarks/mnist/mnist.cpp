@@ -3,7 +3,6 @@
 #include <OpenANN/optimization/StoppingInterrupt.h>
 #include "IDXLoader.h"
 #include "EnhancedDataSet.h"
-#include <OpenANN/io/DirectStorageDataSet.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -44,6 +43,7 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
+  // TODO pad images?
   IDXLoader loader(28, 28, 60000, 10000, directory);
   Distorter distorter;
   EnhancedDataSet trainingSet(loader.trainingInput, loader.trainingOutput, 2,

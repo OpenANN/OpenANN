@@ -122,11 +122,12 @@ public:
   }
 
 
-  void applyDistortions(Eigen::MatrixXd& instances)
+  void applyDistortions(Eigen::MatrixXd& instances, int rows, int cols)
   {
     for(int n = 0; n < instances.cols(); n++)
     {
       Eigen::VectorXd instance = instances.col(n); // TODO do not copy
+      createDistortionMap(rows, cols);
       applyDistortion(instance);
       instances.col(n) = instance;
     }
