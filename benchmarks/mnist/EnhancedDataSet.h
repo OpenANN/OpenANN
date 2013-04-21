@@ -30,7 +30,7 @@ public:
   virtual void finishIteration(OpenANN::Learner& learner)
   {
     DirectStorageDataSet::finishIteration(learner);
-    if(++iteration % generateAfterIteration == 0)
+    if(iteration++ % generateAfterIteration == 0)
       distort(); // Generate more data
   }
 
