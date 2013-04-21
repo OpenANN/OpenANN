@@ -109,13 +109,17 @@ Net& Net::addLayer(Layer* layer)
 
 Net& Net::outputLayer(int units, ActivationFunction act, double stdDev)
 {
-  return fullyConnectedLayer(units, act, stdDev, false);
+  fullyConnectedLayer(units, act, stdDev, false);
+  initializeNetwork();
+  return *this;
 }
 
 Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
                                 const std::string& compression, double stdDev)
 {
-  return compressedLayer(units, params, act, compression, stdDev, false);
+  compressedLayer(units, params, act, compression, stdDev, false);
+  initializeNetwork();
+  return *this;
 }
 
 unsigned int Net::numberOflayers()
@@ -246,9 +250,7 @@ bool Net::providesInitialization()
 
 void Net::initialize()
 {
-    if(!initialized)
-        initializeNetwork();
-
+  OPENANN_CHECK(initialized);
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
     (**layer).initializeParameters();

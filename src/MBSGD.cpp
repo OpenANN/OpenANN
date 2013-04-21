@@ -131,9 +131,6 @@ std::string MBSGD::name()
 
 void MBSGD::initialize()
 {
-  if(opt->providesInitialization())
-      opt->initialize();
-
   P = opt->dimension();
   N = opt->examples();
   batches = std::max(N / batchSize, 1);

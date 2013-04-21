@@ -121,9 +121,6 @@ std::string LMA::name()
 
 void LMA::initialize()
 {
-  if(opt->providesInitialization())
-    opt->initialize();
-
   n = opt->dimension();
 
   allocate();
