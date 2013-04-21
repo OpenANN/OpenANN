@@ -15,6 +15,8 @@
 #include "LayerTestCase.h"
 #include "PreprocessingTestCase.h"
 #include "IntrinsicPlasticityTestCase.h"
+#include "MBSGDTestCase.h"
+#include "LMATestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -43,6 +45,8 @@ int main(int argc, char** argv)
   ts.addTestCase(new LayerTestCase);
   ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
+  ts.addTestCase(new MBSGDTestCase);
+  ts.addTestCase(new LMATestCase);
 
   if(qt)
   {

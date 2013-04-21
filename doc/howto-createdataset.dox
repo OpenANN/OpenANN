@@ -32,7 +32,7 @@ int main()
   mlp.trainingSet(X, T);
   StoppingCriteria stop;
   ... // set stopping criteria
-  mlp.train(BATCH_LMA, SSE, stop);
+  train(net, "LMA", SSE, stop);
 }
 \endcode
 
@@ -89,7 +89,7 @@ int main()
   net.trainingSet(dataSet);
   StoppingCriteria stop;
   ... // set stopping criteria
-  mlp.train(BATCH_LMA, SSE, stop);
+  train(net, "LMA", SSE, stop);
 }
 \endcode
 */

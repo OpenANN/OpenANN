@@ -29,7 +29,7 @@ namespace OpenANN
  * Synergies between intrinsic and synaptic plasticity mechanisms,
  * Neural Computation 19, pp. 885-909, 2007.
  */
-class IntrinsicPlasticity : public Optimizable, public Learner
+class IntrinsicPlasticity : public Learner
 {
   const int nodes;
   const double mu;

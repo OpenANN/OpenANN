@@ -38,7 +38,6 @@ class FullyConnected : public Layer
   bool bias;
   ActivationFunction act;
   double stdDev;
-  double dropoutProbability;
   double maxSquaredWeightNorm;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
@@ -51,7 +50,7 @@ class FullyConnected : public Layer
 
 public:
   FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
-                 double stdDev, double dropoutProbability, double maxSquaredWeightNorm);
+                 double stdDev, double maxSquaredWeightNorm);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

@@ -50,15 +50,12 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     CE
 
   ctypedef struct c_Net "OpenANN::Net":
-    c_Net& inputLayer(int dim1, int dim2, int dim3, bool bias,
-                      double dropoutProbability)
+    c_Net& inputLayer(int dim1, int dim2, int dim3, bool bias)
     c_Net& alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
     c_Net& fullyConnectedLayer(int units, c_ActivationFunction act,
-                               double stdDev, bool bias,
-                               double dropoutProbability)
+                               double stdDev, bool bias)
     c_Net& compressedLayer(int units, int params, c_ActivationFunction act,
-                           string compression, double stdDev, bool bias,
-                           double dropoutProbability)
+                           string compression, double stdDev, bool bias)
     c_Net& extremeLayer(int units, c_ActivationFunction act, double stdDev,
                         bool bias)
     c_Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
@@ -70,6 +67,7 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     c_Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
     c_Net& localReponseNormalizationLayer(double k, int n, double alpha,
                                           double beta, bool bias)
+    c_Net& dropoutLayer(double dropoutProbability)
     c_Net& outputLayer(int units, c_ActivationFunction act, double stdDev)
     c_Net& compressedOutputLayer(int units, int params,
                                  c_ActivationFunction act,
@@ -130,25 +128,25 @@ cdef class Net:
             "mse" : MSE,
             "ce" : CE}[err]
 
-  def input_layer(self, shape, bias=True, dropout_probability=0.0):
+  def input_layer(self, shape, bias=True):
     dims = self.__get_dims(shape, 3)
-    self.thisptr.inputLayer(dims[0], dims[1], dims[2], bias, dropout_probability)
+    self.thisptr.inputLayer(dims[0], dims[1], dims[2], bias)
     return self
 
   def alpha_beta_filter_layer(self, delta_t, std_dev=0.05, bias=True):
     self.thisptr.alphaBetaFilterLayer(delta_t, std_dev, bias)
     return self
 
-  def fully_connected_layer(self, units, act, std_dev=0.05, bias=True, dropout_probability=0.0):
+  def fully_connected_layer(self, units, act, std_dev=0.05, bias=True):
     self.thisptr.fullyConnectedLayer(units, self.__get_activation_function(act),
-                                     std_dev, bias, dropout_probability)
+                                     std_dev, bias)
     return self
 
   def compressed_layer(self, units, params, act, compression, std_dev=0.05,
-                       bias=True, dropout_probability=0.0):
+                       bias=True):
     cdef char* comp = compression
     self.thisptr.compressedLayer(units, params, self.__get_activation_function(act),
-                                 string(comp), std_dev, bias, dropout_probability)
+                                 string(comp), std_dev, bias)
     return self
 
   def extreme_layer(self, units, act, std_dev=5.0, bias=True):
@@ -178,6 +176,10 @@ cdef class Net:
     self.thisptr.localReponseNormalizationLayer(k, n, alpha, beta, bias)
     return self
 
+  def dropout_layer(self, dropout_probability):
+    self.thisptr.dropoutLayer(dropout_probability)
+    return self
+
   def output_layer(self, units, act, std_dev=0.05):
     self.thisptr.outputLayer(units, self.__get_activation_function(act), std_dev)
     return self
@@ -205,15 +207,15 @@ cdef class Net:
     rows = num_in.shape[0]
     cols = num_in.shape[1]
     idx = 0
-    for r in range(rows):
-      for c in range(cols):
+    for c in range(cols):
+      for r in range(rows):
         self.inptr.data()[idx] = num_in[r, c]
         idx += 1
     rows = num_out.shape[0]
     cols = num_out.shape[1]
     idx = 0
-    for r in range(rows):
-      for c in range(cols):
+    for c in range(cols):
+      for r in range(rows):
         self.outptr.data()[idx] = num_out[r, c]
         idx += 1
 

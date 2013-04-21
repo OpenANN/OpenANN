@@ -10,10 +10,9 @@ void scaleData(Eigen::MatrixXd& data, double min, double max)
   const double minData = data.minCoeff();
   const double maxData = data.maxCoeff();
   const double dataRange = maxData - minData;
-  const double range = max - min;
-  for(int i = 0; i < data.rows(); i++)
-    for(int j = 0; j < data.cols(); j++)
-      data(i, j) = (data(i, j)-minData) / dataRange * range + min;
+  const double desiredRange = max - min;
+  const double scaling = desiredRange / dataRange;
+  data = data.array() * scaling + (min - minData * scaling);
 }
 
 void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd& b, const Eigen::MatrixXd& a)

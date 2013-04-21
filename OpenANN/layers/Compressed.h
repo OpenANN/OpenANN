@@ -29,7 +29,6 @@ class Compressed : public Layer
   bool bias;
   ActivationFunction act;
   double stdDev;
-  double dropoutProbability;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
   Eigen::MatrixXd phi;
@@ -44,8 +43,7 @@ class Compressed : public Layer
 
 public:
   Compressed(OutputInfo info, int J, int M, bool bias, ActivationFunction act,
-             const std::string& compression, double stdDev,
-             double dropoutProbability);
+             const std::string& compression, double stdDev);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

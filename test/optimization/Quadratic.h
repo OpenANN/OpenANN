@@ -2,15 +2,13 @@
 #include <OpenANN/util/AssertionMacros.h>
 
 template<int N>
-class Rosenbrock : public OpenANN::Optimizable
+class Quadratic : public OpenANN::Optimizable
 {
   Eigen::VectorXd x;
 public:
-  Rosenbrock()
+  Quadratic()
       : x(N, 1)
   {
-    for(int i = 0; i < N; i++)
-      x(i) = 0;
   }
 
   virtual bool providesInitialization()
@@ -20,7 +18,7 @@ public:
 
   virtual void initialize()
   {
-    OPENANN_CHECK(false && "Rosenbrock does not provide an initialization.");
+    OPENANN_CHECK(false && "Quadratic does not provide an initialization.");
   }
 
   virtual unsigned dimension()
@@ -38,37 +36,30 @@ public:
     x = parameters;
   }
 
-  double SQR(double t) { return t*t; }
-
   virtual double error()
   {
-    double res(0);
-    for(int i = 0; i < N-1; i++)
-    {
-      res += SQR(1.0-x(i)) + 100.0*SQR(x(i+1)-SQR(x(i)));
-    }
-    return res;
+    return x.cwiseProduct(x).sum();
   }
 
   virtual bool providesGradient()
   {
-    return false;
+    return true;
   }
 
   virtual Eigen::VectorXd gradient()
   {
-    OPENANN_CHECK(false && "Rosenbrock does not provide a gradient.");
-    return Eigen::VectorXd();
+    return 2 * x;
   }
 
   virtual bool providesHessian()
   {
-    return false;
+    return true;
   }
 
   virtual Eigen::MatrixXd hessian()
   {
-    OPENANN_CHECK(false && "Rosenbrock does not provide a hessian.");
-    return Eigen::MatrixXd();
+    Eigen::MatrixXd hessian(N, N);
+    hessian.setIdentity();
+    return hessian * 2;
   }
 };
