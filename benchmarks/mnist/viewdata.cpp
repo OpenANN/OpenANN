@@ -62,7 +62,7 @@ public:
     glLoadIdentity();
 
     int xOffset = -70;
-    int yOffset = -80;
+    int yOffset = -85;
     int zoom = -200;
     glTranslatef(xOffset,yOffset,zoom);
 
@@ -77,8 +77,8 @@ public:
       {
         Eigen::VectorXd image = dataSet.getInstance(instance+xImages*yIdx+xIdx);
 
-        float translateX = xIdx * 30.0f;
-        float translateY = yIdx * 30.0f;
+        float translateX = xIdx * (rows+1);
+        float translateY = yIdx * (cols+1);
         glBegin(GL_QUADS);
         for(int row = 0; row < rows; row++)
         {
