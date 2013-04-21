@@ -47,6 +47,7 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;                                               // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28
+     .dropoutLayer(0.2)
      .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  10 x 24 x 24
      .maxPoolingLayer(2, 2)                                       //  10 x 12 x 12
      .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)      //  16 x  8 x  8

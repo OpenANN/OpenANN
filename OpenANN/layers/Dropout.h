@@ -21,6 +21,7 @@ namespace OpenANN {
  */
 class Dropout : public Layer
 {
+  OutputInfo info;
   int I;
   bool bias;
   double dropoutProbability;
