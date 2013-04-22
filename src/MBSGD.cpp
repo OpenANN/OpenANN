@@ -58,27 +58,32 @@ void MBSGD::optimize()
 
   OpenANN::StoppingInterrupt interrupt;
 
+  std::stringstream ss;
+  ss << "initial state, training error = " << FloatingPointFormatter(opt->error(), 4);
+  
+  if(alphaDecay < 1.0)
+    ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
+
+  if(etaGain > 0.0)
+    ss << ", eta = " << FloatingPointFormatter(eta, 2);
+
+  OPENANN_DEBUG << ss.str();
+
+
   while(step() && !interrupt.isSignaled())
   {
-    std::stringstream ss;
+    ss.str("");
 
+    ss << "iteration " << iteration;
+    ss << ", training error = " << FloatingPointFormatter(opt->error(), 4);
 
-    if(debugLogger.isActive())
-    {
-      std::stringstream ss;
+    if(alphaDecay < 1.0)
+      ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
 
-      ss << "iteration " << iteration;
+    if(etaGain > 0.0)
+      ss << ", eta = " << FloatingPointFormatter(eta, 2);
 
-      ss << ", training error = " << FloatingPointFormatter(opt->error(), 4);
-
-      if(alphaDecay < 1.0)
-        ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
-
-      if(etaGain > 0.0)
-        ss << ", eta = " << FloatingPointFormatter(eta, 2);
-
-      OPENANN_DEBUG << ss.str();        
-    }
+    OPENANN_DEBUG << ss.str();        
   }
 }
 
@@ -131,9 +136,11 @@ bool MBSGD::step()
   }
 
   iteration++;
-  
+ 
+  /*
   if(debugLogger.isActive())
       debugLogger << "alpha = " << alpha << ", eta = " << eta << "\n";
+  */
 
   opt->finishedIteration();
 
