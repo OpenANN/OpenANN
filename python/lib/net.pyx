@@ -29,34 +29,24 @@ cdef class Net:
     return self
 
   def fully_connected_layer(self, units, act, std_dev=0.05, bias=True, dropout_probability=0.0):
-    self.thisptr.fullyConnectedLayer(units, self.__get_activation_function(act),
-                                     std_dev, bias, dropout_probability)
+    self.thisptr.fullyConnectedLayer(units, act, std_dev, bias, dropout_probability)
     return self
 
-  def compressed_layer(self, units, params, act, compression, std_dev=0.05,
-                       bias=True, dropout_probability=0.0):
+  def compressed_layer(self, units, params, act, compression, std_dev=0.05, bias=True, dropout_probability=0.0):
     cdef char* comp = compression
-    self.thisptr.compressedLayer(units, params, self.__get_activation_function(act),
-                                 string(comp), std_dev, bias, dropout_probability)
+    self.thisptr.compressedLayer(units, params, act, string(comp), std_dev, bias, dropout_probability)
     return self
 
   def extreme_layer(self, units, act, std_dev=5.0, bias=True):
-    self.thisptr.extremeLayer(units, self.__get_activation_function(act),
-                              std_dev, bias)
+    self.thisptr.extremeLayer(units, act, std_dev, bias)
     return self
 
-  def convolutional_layer(self, featureMaps, kernelRows, kernelCols, act,
-                          std_dev=0.05, bias=True):
-    self.thisptr.convolutionalLayer(featureMaps, kernelRows, kernelCols,
-                                    self.__get_activation_function(act),
-                                    std_dev, bias)
+  def convolutional_layer(self, featureMaps, kernelRows, kernelCols, act, std_dev=0.05, bias=True):
+    self.thisptr.convolutionalLayer(featureMaps, kernelRows, kernelCols, act, std_dev, bias)
     return self
 
-  def subsampling_layer(self, kernelRows, kernelCols, act, std_dev=0.05,
-                        bias=True):
-    self.thisptr.subsamplingLayer(kernelRows, kernelCols,
-                                  self.__get_activation_function(act),
-                                  std_dev, bias)
+  def subsampling_layer(self, kernelRows, kernelCols, act, std_dev=0.05, bias=True):
+    self.thisptr.subsamplingLayer(kernelRows, kernelCols, act, std_dev, bias)
     return self
 
   def maxpooling_layer(self, kernelRows, kernelCols, bias=True):
@@ -68,16 +58,29 @@ cdef class Net:
     return self
 
   def output_layer(self, units, act, std_dev=0.05):
-    self.thisptr.outputLayer(units, self.__get_activation_function(act), std_dev)
+    self.thisptr.outputLayer(units, act, std_dev)
     return self
 
   def compressed_output_layer(self, units, params, act, compression, std_dev=0.05):
     cdef char* comp = compression
-    self.thisptr.compressedOutputLayer(units, params,
-                                       self.__get_activation_function(act),
-                                       string(comp), std_dev)
+    self.thisptr.compressedOutputLayer(units, params, act, string(comp), std_dev)
     return self
 
+
+
+#  def __numpy_to_eigen__(self, x_numpy):
+#    cdef VectorXd* x_eigen = new VectorXd(x.size)
+#    for r in range(x.size)
+#        x_eigen.data()[r] = x_numpy[r]
+#    return x_eigen
+
+#  def __eigen_to_numpy__(self, x_eigen)
+#    cdef 
+
+
+
+
+  
 
 
      
