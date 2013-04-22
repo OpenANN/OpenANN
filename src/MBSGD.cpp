@@ -69,7 +69,6 @@ void MBSGD::optimize()
 
   OPENANN_DEBUG << ss.str();
 
-
   while(step() && !interrupt.isSignaled())
   {
     ss.str("");
