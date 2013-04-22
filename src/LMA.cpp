@@ -1,3 +1,5 @@
+#define OPENANN_LOG_NAMESPACE "LMA"
+
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingInterrupt.h>

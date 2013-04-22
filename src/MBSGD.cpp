@@ -1,3 +1,5 @@
+#define OPENANN_LOG_NAMESPACE "MBSGD"
+
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
