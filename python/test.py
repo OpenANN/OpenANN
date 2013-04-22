@@ -43,7 +43,8 @@ if __name__ == "__main__":
   #net.local_response_normalization_layer(1, 5, 1e-4, 0.75, True)
   #net.fully_connected_layer(10, "rectifier", True)
   #net.compressed_layer(10, 5, "tanh", "sparse")
-  #net.extreme_layer(h, "rectifier", True)
+  #net.extreme_layer(100, "rectifier", True)
+  #net.dropout_layer(0.5)
 
   net.training_set(inputs, outputs)
   # Define stopping criteria, e. g.

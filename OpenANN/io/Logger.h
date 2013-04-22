@@ -8,25 +8,32 @@
 
 #ifndef NDEBUG
 
+#ifndef OPENNANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
+#endif // OPENANN_LOGLEVEL
+
 #define OPENANN_OUTPUT(msg) std::cout << __FILE__ << "(" << __LINE__ << "): " << msg << std::endl;
 #define OPENANN_TRACE(msg) std::cerr << __FILE__ << "(" << __LINE__ << "): " << msg << std::endl;
 
 #else // NDEBUG
+
+#ifndef OPENNANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::INFO 
+#endif // OPENANN_LOGLEVEL
 
 #define OPENANN_OUTPUT(msg) std::cout << msg << std::endl;
 #define OPENANN_TRACE(msg)
 
 #endif // NDEBUG
 
-
-#ifndef OPENNANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
-#endif // OPENANN_LOGLEVEL
+#ifndef OPENANN_LOG_NAMESPACE
+  #define OPENANN_LOG_NAMESPACE NULL
+#endif
 
 #define OPENANN_LOG(level) \
     if(level > OPENANN_LOGLEVEL) ; \
     else if(level > OpenANN::Log::getLevel()) ; \
-    else OpenANN::Log().get(level)
+    else OpenANN::Log().get(level, OPENANN_LOG_NAMESPACE)
 
 #define OPENANN_DEBUG OPENANN_LOG(OpenANN::Log::DEBUG)
 #define OPENANN_INFO OPENANN_LOG(OpenANN::Log::INFO)
@@ -57,7 +64,7 @@ public:
   Log();
   virtual ~Log();
 
-  std::ostream& get(LogLevel level);
+  std::ostream& get(LogLevel level, const char* name_space);
 
   static std::ostream& getStream();
   static LogLevel& getLevel();

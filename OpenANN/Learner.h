@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenANN/io/DataSet.h>
+#include <OpenANN/optimization/Optimizable.h>
 
 namespace OpenANN {
 
@@ -8,7 +9,7 @@ namespace OpenANN {
  * @class Learner
  * Common base class of all learning algorithms.
  */
-class Learner
+class Learner : public Optimizable
 {
 public:
   /**

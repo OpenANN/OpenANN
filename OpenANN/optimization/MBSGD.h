@@ -2,7 +2,6 @@
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
-#include <OpenANN/io/Logger.h>
 #include <OpenANN/util/Random.h>
 #include <Eigen/Dense>
 #include <vector>
@@ -108,7 +107,6 @@ namespace OpenANN {
  */
 class MBSGD : public Optimizer
 {
-  Logger debugLogger;
   //! Stopping criteria
   StoppingCriteria stop;
   //! Optimizable problem
