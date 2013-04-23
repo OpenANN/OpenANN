@@ -8,7 +8,7 @@
 
 namespace OpenANN {
 
-int default_random(int i) 
+int s_default_random(int i) 
 {
     return std::rand() % i; 
 }
@@ -190,7 +190,7 @@ SplitableDataSet* SplitableDataSet::shuffle(int iteration)
     OPENANN_CHECK(iteration > 0);
 
     for(int i = 0; i < iteration; ++i) 
-        std::random_shuffle(data.begin(), data.end(), default_random);
+        std::random_shuffle(data.begin(), data.end(), s_default_random);
 
     return this;
 }
