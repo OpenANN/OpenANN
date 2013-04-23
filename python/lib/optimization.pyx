@@ -27,7 +27,7 @@ cdef class StochasticGradientDescent:
     del self.thisptr
     del self.stopping_criteria
 
-def optimize(self, net, inputs, outputs):
+  def optimize(self, net, inputs, outputs):
     cdef openann.MatrixXd *training_input_matrix = __matrix_numpy_to_eigen__(inputs)
     cdef openann.MatrixXd *training_output_matrix = __matrix_numpy_to_eigen__(outputs)
     (<Net>net).thisptr.trainingSet(deref(training_input_matrix), deref(training_output_matrix))
@@ -35,7 +35,6 @@ def optimize(self, net, inputs, outputs):
     self.thisptr.optimize()
     del training_input_matrix
     del training_output_matrix
-
 
 
 cdef class LMA:
