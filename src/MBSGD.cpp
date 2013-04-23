@@ -1,6 +1,9 @@
+#define OPENANN_LOG_NAMESPACE "MBSGD"
+
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/util/EigenWrapper.h>
@@ -53,7 +56,35 @@ void MBSGD::setStopCriteria(const StoppingCriteria& stop)
 void MBSGD::optimize()
 {
   OPENANN_CHECK(opt->providesInitialization());
-  while(step());
+
+  OpenANN::StoppingInterrupt interrupt;
+
+  std::stringstream ss;
+  ss << "initial state, training error = " << FloatingPointFormatter(opt->error(), 4);
+
+  if(alphaDecay < 1.0)
+    ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
+
+  if(etaGain > 0.0)
+    ss << ", eta = " << FloatingPointFormatter(eta, 2);
+
+  OPENANN_DEBUG << ss.str();
+
+  while(step() && !interrupt.isSignaled())
+  {
+    ss.str("");
+
+    ss << "iteration " << iteration;
+    ss << ", training error = " << FloatingPointFormatter(opt->error(), 4);
+
+    if(alphaDecay < 1.0)
+      ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
+
+    if(etaGain > 0.0)
+      ss << ", eta = " << FloatingPointFormatter(eta, 2);
+
+    OPENANN_DEBUG << ss.str();
+  }
 }
 
 bool MBSGD::step()
@@ -126,7 +157,16 @@ Eigen::VectorXd MBSGD::result()
 
 std::string MBSGD::name()
 {
-  return "Mini-Batch Stochastic Gradient Descent";
+  std::stringstream ss;
+
+  ss << "Mini-Batch Stochastic Gradient Descent ";
+  ss << "(learning rate = " << alpha 
+    << ", momentum = " << eta 
+    << ", batch_size " << batchSize 
+    << ", gamma = " << gamma 
+    << ")";
+
+  return ss.str();
 }
 
 void MBSGD::initialize()

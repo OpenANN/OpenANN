@@ -1,5 +1,8 @@
+#define OPENANN_LOG_NAMESPACE "LMA"
+
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
 #include <limits>
@@ -29,13 +32,16 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
-  while(step())
+  
+  OpenANN::StoppingInterrupt interrupt;
+
+  OPENANN_DEBUG << "initial state" 
+      << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
+
+  while(step() && !interrupt.isSignaled())
   {
-    if(debugLogger.isActive())
-    {
-      debugLogger << "Iteration " << iteration << " finished.\n";
-      debugLogger << "Error = " << errorValues.sum() << ".\n";
-    }
+    OPENANN_DEBUG << "iteration " << iteration 
+      << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
   }
 }
 
