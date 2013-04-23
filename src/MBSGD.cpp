@@ -7,6 +7,7 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/io/Logger.h>
 #include <Test/Stopwatch.h>
 #include <numeric>
 

@@ -32,7 +32,7 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
-  
+
   OpenANN::StoppingInterrupt interrupt;
 
   OPENANN_DEBUG << "initial state" 
