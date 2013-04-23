@@ -33,7 +33,7 @@ if(PYTHONINTERP_FOUND)
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  add_custom_target(python_extension_install DEPENDS python_extension python_extension_install_command)
+  add_custom_target(python_extension_install DEPENDS openann alglib python_extension_install_command)
   install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" --build . --target python_extension_install)")
 else()
   message(STATUS "Could not build Python extension. You must install Python, NumPy and Cython)")
