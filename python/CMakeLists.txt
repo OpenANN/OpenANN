@@ -29,7 +29,7 @@ if(PYTHONINTERP_FOUND)
   add_custom_command(
     OUTPUT python_extension_install_command
     COMMAND ${CMAKE_COMMAND} -E echo "Installing Python extension..."
-    COMMAND ${PYTHON_EXECUTABLE} setup.py install --home="${CMAKE_INSTALL_PREFIX}"
+    COMMAND ${PYTHON_EXECUTABLE} setup.py install
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
