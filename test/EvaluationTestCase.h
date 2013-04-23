@@ -8,4 +8,5 @@ class EvaluationTestCase : public TestCase
   void sse();
   void mse();
   void rmse();
+  void ce();
 };

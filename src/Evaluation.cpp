@@ -1,6 +1,8 @@
 #include <OpenANN/Evaluation.h>
 #include <cmath>
 
+#include <OpenANN/io/Logger.h>
+
 namespace OpenANN {
 
 double sse(Learner& learner, DataSet& dataSet)
@@ -24,7 +26,12 @@ double rmse(Learner& learner, DataSet& dataSet)
 
 double ce(Learner& learner, DataSet& dataSet)
 {
-  // TODO implement
+  const int N = dataSet.samples();
+  double ce = 0.0;
+  for(int n = 0; n < N; n++)
+    ce -= (dataSet.getTarget(n).array() *
+        (learner(dataSet.getInstance(n)).array().log())).sum();
+  return ce;
 }
 
 
@@ -41,7 +48,9 @@ Eigen::MatrixXd confusionMatrix(Learner& learner, DataSet& dataSet)
 
 int oneOfCDecoding(const Eigen::VectorXd& target)
 {
-  // TODO implement
+  int i;
+  target.maxCoeff(&i);
+  return i;
 }
 
 }
