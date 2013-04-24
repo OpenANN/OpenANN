@@ -1,7 +1,9 @@
 #include <OpenANN/Evaluation.h>
-#include <cmath>
-
+#include <OpenANN/Learner.h>
+#include <OpenANN/io/DataSet.h>
 #include <OpenANN/io/Logger.h>
+#include <OpenANN/optimization/Optimizer.h>
+#include <cmath>
 
 namespace OpenANN {
 
@@ -52,5 +54,12 @@ int oneOfCDecoding(const Eigen::VectorXd& target)
   target.maxCoeff(&i);
   return i;
 }
+
+
+void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
+{
+
+}
+
 
 }

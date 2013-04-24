@@ -1,4 +1,5 @@
 #include "EvaluationTestCase.h"
+#include <OpenANN/Learner.h>
 #include <OpenANN/Evaluation.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
