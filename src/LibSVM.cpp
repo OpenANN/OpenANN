@@ -9,22 +9,22 @@
 namespace OpenANN {
 namespace LibSVM {
 
-int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename)
+int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename, int cols)
 {
   std::ifstream fin(filename, std::ios_base::in);
-  int count = load(in, out, fin);
+  int count = load(in, out, fin, cols);
   fin.close();
 
   return count;
 }
 
 
-int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream)
+int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int cols)
 {
   std::vector<std::string> features;
   std::vector<int> targets;
   std::set<int> classes;
-  int maximum_features = 0;
+  int maximum_features = cols;
   int instances = 0;
 
   // preprocessing for retrieving all necessary information
