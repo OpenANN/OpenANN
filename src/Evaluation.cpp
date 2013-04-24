@@ -1,9 +1,11 @@
 #include <OpenANN/Evaluation.h>
 #include <OpenANN/Learner.h>
 #include <OpenANN/io/DataSet.h>
+#include <OpenANN/io/DataSetView.h>
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/optimization/Optimizer.h>
 #include <cmath>
+#include <vector>
 
 namespace OpenANN {
 
@@ -56,9 +58,68 @@ int oneOfCDecoding(const Eigen::VectorXd& target)
 }
 
 
+int classificationHits(Learner& learner, DataSet& dataSet)
+{
+  int hits = 0;
+
+  for(int i = 0; i < dataSet.samples(); ++i) {
+    Eigen::VectorXd& output = dataSet.getTarget(i);
+    Eigen::VectorXd& input = dataSet.getInstance(i);
+
+    int klass, result;
+
+    if(dataSet.outputs() > 2) {
+      klass = output.maxCoeff();
+      result = learner(input).maxCoeff();
+    } else {
+      klass = std::floor(output.x() + 0.5);
+      result = std::floor(learner(input).x() + 0.5);
+    }
+
+    if(klass == result)
+      hits++;
+  }
+
+  return hits;
+}
+
+
 void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
 {
+  std::vector<DataSetView> splits;
 
+  split(splits, dataSet, folds);
+
+  for(int i = 0; i < folds; ++i) {
+    // generate training set from splits (remove validation set)
+    std::vector<DataSetView> training_splits = splits;
+    training_splits.erase(training_splits.begin() + i);
+
+    // generate validation and training set
+    DataSetView& validation = splits.at(i);
+    DataSetView training(dataSet);
+    merge(training, training_splits);
+  
+    learner.trainingSet(training);
+    learner.initialize();
+
+    OPENANN_INFO << "Run " << folds << "-fold cross-validation (current fold " << (i + 1) << ")";
+
+    opt.setOptimizable(learner);
+    opt.optimize();
+
+    int training_hits = classificationHits(learner, training);
+    int validation_hits = classificationHits(learner, validation);
+
+    OPENANN_INFO 
+      << "training result = " 
+      << OpenANN::FloatingPointFormatter(100.0 * ((double) training_hits / training.samples()), 2) 
+      << "% (" << training_hits << "/" << training.samples() << "), "
+      << "test result = " 
+      << OpenANN::FloatingPointFormatter(100.0 * ((double) validation_hits / validation.samples()), 2) 
+      << "% (" << validation_hits << "/" << validation.samples() << ")  [classification]"
+      << std::endl;
+  }
 }
 
 
