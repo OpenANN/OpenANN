@@ -18,6 +18,7 @@
 #include "MBSGDTestCase.h"
 #include "LMATestCase.h"
 #include "DataSetTestCase.h"
+#include "IODataSetTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -49,6 +50,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new MBSGDTestCase);
   ts.addTestCase(new LMATestCase);
   ts.addTestCase(new DataSetTestCase);
+  ts.addTestCase(new IODataSetTestCase);
 
   if(qt)
   {
