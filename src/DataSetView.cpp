@@ -25,12 +25,6 @@ int default_random(int i)
 {
 }
 
-DataSetView::DataSetView(DataSet& dataset) : dataset(&dataset)
-{
-  for(int i = 0; i < dataset.samples(); ++i)
-    indices.push_back(i);
-}
-
 
 int DataSetView::samples() 
 {
@@ -78,34 +72,58 @@ DataSetView& DataSetView::shuffle()
 }
 
 
+
 void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_groups)
 {
   OPENANN_CHECK(number_of_groups > 1);
-
-  int samples_per_group = dataset.samples() / number_of_groups;
-
   std::vector<int> indices;
+
+  int samples_per_group = std::ceil(dataset.samples() / number_of_groups + 0.5);
 
   for(int i = 0; i < dataset.samples(); ++i)
     indices.push_back(i);
 
   std::random_shuffle(indices.begin(), indices.end(), default_random);
-  std::vector<int>::iterator it;
 
-  for(it = indices.begin(); it != indices.end(); it += samples_per_group)
-    groups.push_back(DataSetView(dataset, it, it + samples_per_group));
+  for(int i = 0; i < number_of_groups; ++i) {
+    std::vector<int>::iterator it = indices.begin() + i * samples_per_group;
+
+    if(i < number_of_groups - 1)
+      groups.push_back(DataSetView(dataset, it, it + samples_per_group));
+    else
+      groups.push_back(DataSetView(dataset, it, indices.end()));
+  }
 }
+
+
 
 void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio)
 {
+  OPENANN_CHECK_WITHIN(ratio, 0.0, 1.0);
+  std::vector<int> indices;
 
+  for(int i = 0; i < dataset.samples(); ++i)
+    indices.push_back(i);
+
+  int samples = std::ceil(ratio * dataset.samples());
+
+  std::random_shuffle(indices.begin(), indices.end(), default_random);
+
+  groups.push_back(DataSetView(dataset, indices.begin(), indices.begin() + samples));
+  groups.push_back(DataSetView(dataset, indices.begin() + samples, indices.end()));
 }
 
-DataSetView merge(std::vector<DataSetView>& groups)
-{
-  DataSetView& first = groups.front();
 
-  return first;
+
+void merge(DataSetView& merging, std::vector<DataSetView>& groups)
+{
+  OPENANN_CHECK(groups.size() > 0);
+
+  for(int i = 0; i < groups.size(); ++i) {
+    OPENANN_CHECK(merging.dataset == groups.at(i).dataset);
+
+    std::copy(groups.at(i).indices.begin(), groups.at(i).indices.end(), std::back_inserter(merging.indices));
+  }
 }
 
 
