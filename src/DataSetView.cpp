@@ -77,11 +77,14 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_gro
 {
   OPENANN_CHECK(number_of_groups > 1);
   std::vector<int> indices;
-
-  int samples_per_group = std::ceil(dataset.samples() / number_of_groups + 0.5);
+  
+  indices.reserve(dataset.samples());
+  groups.reserve(number_of_groups);
 
   for(int i = 0; i < dataset.samples(); ++i)
     indices.push_back(i);
+
+  int samples_per_group = std::ceil(dataset.samples() / number_of_groups + 0.5);
 
   if(shuffling)
     std::random_shuffle(indices.begin(), indices.end(), default_random);
@@ -102,6 +105,9 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio, boo
 {
   OPENANN_CHECK_WITHIN(ratio, 0.0, 1.0);
   std::vector<int> indices;
+
+  indices.reserve(dataset.samples());
+  groups.reserve(2);
 
   for(int i = 0; i < dataset.samples(); ++i)
     indices.push_back(i);
@@ -124,7 +130,8 @@ void merge(DataSetView& merging, std::vector<DataSetView>& groups)
   for(int i = 0; i < groups.size(); ++i) {
     OPENANN_CHECK(merging.dataset == groups.at(i).dataset);
 
-    std::copy(groups.at(i).indices.begin(), groups.at(i).indices.end(), std::back_inserter(merging.indices));
+    std::copy(groups.at(i).indices.begin(), groups.at(i).indices.end(), 
+        std::back_inserter(merging.indices));
   }
 }
 
