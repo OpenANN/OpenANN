@@ -45,13 +45,14 @@ private:
   // reference to the original dataset interface
   DataSet* dataset;
 
+  // friend declaration for direct indices access
   friend void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 };
 
 
-void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_groups);
+void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_groups, bool shuffling = true);
 
-void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio = 0.5);
+void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio = 0.5, bool shuffling = true);
 
 void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 
