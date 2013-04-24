@@ -11,11 +11,11 @@ public:
 
   virtual void run();
 
-  void DirectStorageDataSets();
-  void DataSetViews();
-  void DataSetSplitsFromGroups();
-  void DataSetSplitsFromRatio();
-  void DataSetMerge();
+  void directStorageDataSets();
+  void dataSetViews();
+  void dataSetSplitsFromGroups();
+  void dataSetSplitsFromRatio();
+  void dataSetMerge();
 
 private:
   Eigen::MatrixXd in;

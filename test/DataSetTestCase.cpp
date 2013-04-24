@@ -15,16 +15,16 @@ DataSetTestCase::DataSetTestCase()
 
 void DataSetTestCase::run()
 {
-  RUN(DataSetTestCase, DirectStorageDataSets);
-  RUN(DataSetTestCase, DataSetViews);
-  RUN(DataSetTestCase, DataSetSplitsFromGroups);
-  RUN(DataSetTestCase, DataSetSplitsFromRatio);
-  RUN(DataSetTestCase, DataSetMerge);
+  RUN(DataSetTestCase, directStorageDataSets);
+  RUN(DataSetTestCase, dataSetViews);
+  RUN(DataSetTestCase, dataSetSplitsFromGroups);
+  RUN(DataSetTestCase, dataSetSplitsFromRatio);
+  RUN(DataSetTestCase, dataSetMerge);
 }
 
 
 
-void DataSetTestCase::DirectStorageDataSets()
+void DataSetTestCase::directStorageDataSets()
 {
   DirectStorageDataSet dataset(in, out);
 
@@ -47,7 +47,7 @@ void DataSetTestCase::DirectStorageDataSets()
 
 
 
-void DataSetTestCase::DataSetViews()
+void DataSetTestCase::dataSetViews()
 {
   DirectStorageDataSet dataset(in, out);
   DataSetView view(dataset);
@@ -59,7 +59,7 @@ void DataSetTestCase::DataSetViews()
 
 
 
-void DataSetTestCase::DataSetSplitsFromGroups()
+void DataSetTestCase::dataSetSplitsFromGroups()
 {
   DirectStorageDataSet dataset(in, out);
   
@@ -96,7 +96,7 @@ void DataSetTestCase::DataSetSplitsFromGroups()
 }
 
 
-void DataSetTestCase::DataSetSplitsFromRatio()
+void DataSetTestCase::dataSetSplitsFromRatio()
 {
   DirectStorageDataSet dataset(in, out);
   
@@ -137,7 +137,7 @@ void DataSetTestCase::DataSetSplitsFromRatio()
 }
 
 
-void DataSetTestCase::DataSetMerge()
+void DataSetTestCase::dataSetMerge()
 {
   DirectStorageDataSet dataset(in, out);
   DataSetView overall(dataset);
