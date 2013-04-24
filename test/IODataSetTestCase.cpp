@@ -40,7 +40,7 @@ void IODataSetTestCase::saveLibSVM()
 {
   std::stringstream str;
 
-  Eigen::MatrixXd input = Eigen::MatrixXd::Identity(2, 2) * 2.0;
+  Eigen::MatrixXd input = Eigen::MatrixXd::Identity(2, 2) * 1.5;
 
   Eigen::MatrixXd output(2, 1);
   output << 1.0, 0.0;
@@ -48,7 +48,6 @@ void IODataSetTestCase::saveLibSVM()
   OpenANN::LibSVM::save(input, output, str);
 
   ASSERT_EQUALS(str.str(), 
-      "1 1:2.0\n"
-      "0 2:2.0\n");
+      "1 1:1.5\n0 2:1.5\n");
 }
 
