@@ -24,7 +24,7 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
   std::vector<std::string> features;
   std::vector<int> targets;
   std::set<int> classes;
-  int maximum_features = cols;
+  int minimal_features = cols;
   int instances = 0;
 
   // preprocessing for retrieving all necessary information
@@ -47,9 +47,9 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
       classes.insert(y);
       targets.push_back(y);
 
-      maximum_features = 
+      minimal_features = 
         std::max(
-            maximum_features, 
+            minimal_features, 
             std::atoi(last.substr(0, last.find_first_of(':')).c_str())
         );
 
@@ -60,12 +60,12 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
   }
 
   // prepare matrices
-  in.resize(instances, maximum_features);
+  in.resize(minimal_features, instances);
   
   if(classes.size() > 2)
-    out.resize(instances, classes.size());
+    out.resize(classes.size(), instances);
   else
-    out.resize(instances, 1);
+    out.resize(1, instances);
   
   in.setZero();
   out.setZero();
@@ -73,14 +73,14 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
   // setup output matrix from collected targets
   for(int i = 0; i < targets.size(); ++i) {
     if(classes.size() > 2) {
-      out(i, targets[i] - 1) = 1.0;
+      out(targets[i] - 1, i) = 1.0;
     } else {
-      out(i, 0) = targets.at(i);
+      out(0, i) = targets.at(i);
     }
   }
 
   // setup input matrix from collected tokens
-  for(int i = 0, row = 0; i < features.size(); ++i) {
+  for(int i = 0, column = 0; i < features.size(); ++i) {
     std::string& tok = features.at(i);
 
     if(!tok.empty()) {
@@ -93,9 +93,9 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
       if(classes.size() > 1) 
         index--;
 
-      in(row, index) = value;
+      in(index, column) = value;
     } else {
-      row++;
+      column++;
     }
   }
 
@@ -113,17 +113,17 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, const char* fil
 
 void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& stream)
 {
-  OPENANN_CHECK_EQUALS(in.rows(), out.rows());
+  OPENANN_CHECK_EQUALS(in.cols(), out.cols());
 
-  for(int i = 0; i < in.rows(); ++i) {
-    if(out.cols() > 1)
-      stream << static_cast<int>(out.row(i).maxCoeff());
+  for(int i = 0; i < in.cols(); ++i) {
+    if(out.rows() > 1)
+      stream << static_cast<int>(out.col(i).maxCoeff());
     else
-      stream << out(i, 0);
+      stream << out(0, i);
 
-    for(int j = 0; j < in.cols(); ++j) {
-      if(std::fabs(in(i,j)) > 0.0e-20)
-        stream << " " << j + 1 << ":" << in(i,j);
+    for(int j = 0; j < in.rows(); ++j) {
+      if(std::fabs(in(j, i)) > 0.0e-20)
+        stream << " " << i + 1 << ":" << in(j, i);
     }
 
     stream << std::endl;

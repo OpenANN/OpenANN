@@ -31,8 +31,8 @@ void IODataSetTestCase::loadLibSVM()
   Eigen::MatrixXd Y(3, 1);
   Y << 1.0, 0.0, 1.0;
 
-  ASSERT_EQUALS(X, input);
-  ASSERT_EQUALS(Y, output);
+  ASSERT_EQUALS(X.transpose(), input);
+  ASSERT_EQUALS(Y.transpose(), output);
 }
 
 
@@ -45,7 +45,7 @@ void IODataSetTestCase::saveLibSVM()
   Eigen::MatrixXd output(2, 1);
   output << 1.0, 0.0;
 
-  OpenANN::LibSVM::save(input, output, str);
+  OpenANN::LibSVM::save(input.transpose(), output.transpose(), str);
 
   ASSERT_EQUALS(str.str(), 
       "1 1:1.5\n0 2:1.5\n");
