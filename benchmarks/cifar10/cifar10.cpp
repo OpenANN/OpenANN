@@ -93,8 +93,16 @@ public:
 /**
  * \page CIFAR10Benchmark CIFAR-10
  *
- * <a href="http://www.cs.toronto.edu/~kriz/cifar.html" target=_blank>
- * The CIFAR-10 dataset</a>
+ * The dataset is available at:
+ * http://www.cs.toronto.edu/~kriz/cifar.html
+ *
+ * To execute the benchmark you can run the Python script:
+\code
+python [download] [run] [evaluate]
+\endcode
+ * download will download the dataset, run will start the benchmark and
+ * evaluate will plot the result. You can of course modify the script or do
+ * the each step manually.
  */
 
 int main(int argc, char** argv)
