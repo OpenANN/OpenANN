@@ -11,9 +11,10 @@ class Learner;
 class DataSetView : public DataSet 
 {
 public:
-  DataSetView(DataSet& dataset);
-
   DataSetView(const DataSetView& dataset);
+  
+  DataSetView(DataSet& dataset) : dataset(&dataset) 
+  {}
   
   template<typename InputIt>
   DataSetView(DataSet& dataset, InputIt index_begin, InputIt index_end) 
@@ -43,6 +44,8 @@ private:
 
   // reference to the original dataset interface
   DataSet* dataset;
+
+  friend void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 };
 
 
@@ -50,7 +53,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_gro
 
 void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio = 0.5);
 
-DataSetView merge(std::vector<DataSetView>& groups);
+void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 
 
 
