@@ -1,4 +1,5 @@
 #include <OpenANN/io/LibSVM.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <fstream>
 #include <string>
 #include <set>
@@ -112,6 +113,21 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, const char* fil
 
 void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& stream)
 {
+  OPENANN_CHECK_EQUALS(in.rows(), out.rows());
+
+  for(int i = 0; i < in.rows(); ++i) {
+    if(out.cols() > 1)
+      stream << static_cast<int>(out.row(i).maxCoeff());
+    else
+      stream << out(i, 0);
+
+    for(int j = 0; j < in.cols(); ++j) {
+      if(std::fabs(in(i,j)) > 0.0e-20)
+        stream << " " << j + 1 << ":" << in(i,j);
+    }
+
+    stream << std::endl;
+  }
 }
 
 
