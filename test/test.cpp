@@ -17,6 +17,7 @@
 #include "IntrinsicPlasticityTestCase.h"
 #include "MBSGDTestCase.h"
 #include "LMATestCase.h"
+#include "DataSetTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -47,6 +48,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new MBSGDTestCase);
   ts.addTestCase(new LMATestCase);
+  ts.addTestCase(new DataSetTestCase);
 
   if(qt)
   {
