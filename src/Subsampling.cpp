@@ -89,7 +89,7 @@ void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fm * inRows * inRows + weightForBias);
+  OPENANN_CHECK_EQUALS(x->rows(), fm * inRows * inCols + weightForBias);
   OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols + bias);
 
   a.fill(0.0);

@@ -56,8 +56,6 @@ void MBSGD::setStopCriteria(const StoppingCriteria& stop)
 
 void MBSGD::optimize()
 {
-  OPENANN_CHECK(opt->providesInitialization());
-
   OpenANN::StoppingInterrupt interrupt;
 
   std::stringstream ss;
