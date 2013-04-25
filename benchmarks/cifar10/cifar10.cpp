@@ -98,7 +98,7 @@ public:
  *
  * To execute the benchmark you can run the Python script:
 \code
-python [download] [run] [evaluate]
+python benchmark.py [download] [run] [evaluate]
 \endcode
  * download will download the dataset, run will start the benchmark and
  * evaluate will plot the result. You can of course modify the script or do
