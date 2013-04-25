@@ -34,7 +34,7 @@ double ce(Learner& learner, DataSet& dataSet)
   double ce = 0.0;
   for(int n = 0; n < N; n++)
     ce -= (dataSet.getTarget(n).array() *
-        (learner(dataSet.getInstance(n)).array().log())).sum();
+        (learner(dataSet.getInstance(n)).array() + 1e-10).log()).sum();
   return ce;
 }
 

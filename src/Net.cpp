@@ -264,7 +264,7 @@ double Net::error(unsigned int i)
 {
   if(errorFunction == CE)
     return -(dataSet->getTarget(i).array() *
-        ((*this)(dataSet->getInstance(i)).array().log())).sum();
+        (((*this)(dataSet->getInstance(i)).array() + 1e-10).log())).sum();
   else
     return ((*this)(dataSet->getInstance(i)) -
         dataSet->getTarget(i)).squaredNorm() / 2.0;
@@ -289,7 +289,7 @@ double Net::errorFromDataSet(DataSet& dataSet)
   {
     for(int n = 0; n < dataSet.samples(); ++n)
       e -= (dataSet.getTarget(n).array() *
-          ((*this)(dataSet.getInstance(n)).array().log())).sum();
+          (((*this)(dataSet.getInstance(n)).array() + 1e-10).log())).sum();
   }
   else
   {
