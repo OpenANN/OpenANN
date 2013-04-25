@@ -4,38 +4,6 @@
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
 
-class RandomLearner : public OpenANN::Learner
-{
-  OpenANN::RandomNumberGenerator rng;
-  int F;
-public:
-  RandomLearner(int F)
-    : F(F)
-  {
-  }
-
-  virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x)
-  {
-    Eigen::VectorXd res(F);
-    for(int f = 0; f < F; f++)
-      res(f) = rng.sampleNormalDistribution<double>()*2.0;
-    return res;
-  }
-
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput) {}
-  virtual Learner& trainingSet(OpenANN::DataSet& trainingSet) {}
-  virtual Eigen::VectorXd currentParameters() {}
-  virtual unsigned int dimension() {}
-  virtual double error() {}
-  virtual Eigen::VectorXd gradient() {}
-  virtual Eigen::MatrixXd hessian() {}
-  virtual void initialize() {}
-  virtual bool providesGradient() {}
-  virtual bool providesHessian() {}
-  virtual bool providesInitialization() {}
-  virtual void setParameters(const Eigen::VectorXd& parameters) {}
-};
-
 class ReturnInput : public OpenANN::Learner
 {
 public:
@@ -65,42 +33,54 @@ void EvaluationTestCase::run()
 
 void EvaluationTestCase::sse()
 {
+  OpenANN::RandomNumberGenerator rng;
   const int N = 1000;
-  const int D = 1;
+  const int D = 10;
   const int F = 10;
-  Eigen::MatrixXd X(D, N);
-  Eigen::MatrixXd Y(F, N);
-  Y.fill(0.0);
-  RandomLearner learner(F);
-  OpenANN::DirectStorageDataSet dataSet(X, Y);
+  Eigen::MatrixXd Y(D, N);
+  for(int n = 0; n < N; n++)
+    for(int f = 0; f < F; f++)
+      Y(f, n) = rng.sampleNormalDistribution<double>()*2.0;
+  Eigen::MatrixXd T(F, N);
+  T.fill(0.0);
+  ReturnInput learner;
+  OpenANN::DirectStorageDataSet dataSet(Y, T);
   double sse = OpenANN::sse(learner, dataSet);
   ASSERT_EQUALS_DELTA((int) sse, F*N*2*2, 1000);
 }
 
 void EvaluationTestCase::mse()
 {
+  OpenANN::RandomNumberGenerator rng;
   const int N = 1000;
-  const int D = 1;
+  const int D = 10;
   const int F = 10;
-  Eigen::MatrixXd X(D, N);
-  Eigen::MatrixXd Y(F, N);
-  Y.fill(0.0);
-  RandomLearner learner(F);
-  OpenANN::DirectStorageDataSet dataSet(X, Y);
+  Eigen::MatrixXd Y(D, N);
+  for(int n = 0; n < N; n++)
+    for(int f = 0; f < F; f++)
+      Y(f, n) = rng.sampleNormalDistribution<double>()*2.0;
+  Eigen::MatrixXd T(F, N);
+  T.fill(0.0);
+  ReturnInput learner;
+  OpenANN::DirectStorageDataSet dataSet(Y, T);
   double mse = OpenANN::mse(learner, dataSet);
   ASSERT_EQUALS_DELTA(mse, F*2.0*2.0, 1.0);
 }
 
 void EvaluationTestCase::rmse()
 {
+  OpenANN::RandomNumberGenerator rng;
   const int N = 100000;
-  const int D = 1;
+  const int D = 10;
   const int F = 10;
-  Eigen::MatrixXd X(D, N);
-  Eigen::MatrixXd Y(F, N);
-  Y.fill(0.0);
-  RandomLearner learner(F);
-  OpenANN::DirectStorageDataSet dataSet(X, Y);
+  Eigen::MatrixXd Y(D, N);
+  for(int n = 0; n < N; n++)
+    for(int f = 0; f < F; f++)
+      Y(f, n) = rng.sampleNormalDistribution<double>()*2.0;
+  Eigen::MatrixXd T(F, N);
+  T.fill(0.0);
+  ReturnInput learner;
+  OpenANN::DirectStorageDataSet dataSet(Y, T);
   double rmse = OpenANN::rmse(learner, dataSet);
   ASSERT_EQUALS_DELTA(rmse, std::sqrt(F*2.0*2.0), 0.5);
 }
