@@ -19,7 +19,6 @@ cdef openann.MatrixXd* __matrix_numpy_to_eigen__(object X_numpy):
     X_eigen.data()[r] = flatten_matrix[r]
   return X_eigen
 
-
 cdef object __matrix_eigen_to_numpy__(openann.MatrixXd* X_eigen):
   x_numpy = numpy.ndarray(shape=(X_eigen.rows(), X_eigen.cols()))
   for i in range(X_eigen.rows()):
@@ -27,4 +26,22 @@ cdef object __matrix_eigen_to_numpy__(openann.MatrixXd* X_eigen):
         x_numpy[i,j] = X_eigen.get(i, j)
   return x_numpy
 
+
+cdef class Log:
+  DISABLED = openann.DISABLED
+  ERROR = openann.ERROR
+  INFO = openann.INFO
+  DEBUG = openann.DEBUG
+
+  @classmethod
+  def debug(cls, text):
+    openann.write(openann.Log().get(Log.DEBUG), <char*?>text)
+
+  @classmethod
+  def info(cls, text):
+    openann.write(openann.Log().get(Log.INFO), <char*?>text)
+
+  @classmethod
+  def error(cls, text):
+    openann.write(openann.Log().get(Log.ERROR), <char*?>text)
 
