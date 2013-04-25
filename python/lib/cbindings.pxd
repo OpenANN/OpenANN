@@ -37,13 +37,9 @@ cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
     VectorXd& getTarget(int i)
     void finishIteration(Learner& learner)
 
-cdef extern from "OpenANN/io/DirectStorageDataSet.h":
-  cdef enum LogInfo:
-    NONE
-    MULTICLASS
-
+cdef extern from "OpenANN/io/DirectStorageDataSet.h" namespace "OpenANN":
   cdef cppclass DirectStorageDataSet(DataSet):
-    DirectStorageDataSet(MatrixXd& input, MatrixXd& output, LogInfo info, int)
+    DirectStorageDataSet(MatrixXd& input, MatrixXd& output)
 
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
   cdef enum ActivationFunction:
@@ -95,7 +91,7 @@ cdef extern from "OpenANN/optimization/Optimizer.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/optimization/MBSGD.h" namespace "OpenANN":
   cdef cppclass MBSGD(Optimizer):
-    MBSGD(double learningRate, double momentum, double batchSize,
+    MBSGD(double learningRate, double momentum, int batchSize,
        double gamma, 
        double learningRateDecay, double minimalLearningRate, 
        double momentumGain, double maximalMomentum,
@@ -126,9 +122,10 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     unsigned int numberOflayer()
     VectorXd predict "operator()" (VectorXd& x)
     Learner& trainingSet(MatrixXd& inputs, MatrixXd& outputs)
+    Learner& trainingSet(DataSet& dataset)
 
-cdef extern from "OpenANN/io/LibSVM.h" namespace "OpenANN::LibSVM":
-  int load_from_libsvm "load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
-  void save_to_libsvm "save" (MatrixXd& input, MatrixXd& output, char *filename)
+cdef extern from "OpenANN/io/LibSVM.h":
+  int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
+  void save (MatrixXd& input, MatrixXd& output, char *filename)
 
 
