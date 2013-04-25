@@ -12,7 +12,7 @@ if(PYTHONINTERP_FOUND)
 
   file(COPY test.py DESTINATION .)
   file(COPY lib/cbindings.pxd DESTINATION .)
-  file(COPY lib/log.pyx lib/openann.pyx lib/optimization.pyx lib/net.pyx lib/util.pyx DESTINATION .)
+  file(COPY lib/log.pyx lib/openann.pyx lib/optimization.pyx lib/net.pyx lib/util.pyx lib/dataset.pyx DESTINATION .)
   configure_file(setup.py.in setup.py)
 
   add_custom_command(
@@ -29,7 +29,7 @@ if(PYTHONINTERP_FOUND)
   add_custom_command(
     OUTPUT python_extension_install_command
     COMMAND ${CMAKE_COMMAND} -E echo "Installing Python extension..."
-    COMMAND ${PYTHON_EXECUTABLE} setup.py install
+    COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )

@@ -19,14 +19,45 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     double& get "operator()"(int rows, int cols)
 
+cdef extern from "<iostream>" namespace "std":
+  cdef cppclass ostream
+  ostream& write "operator<<" (ostream& os, char* str)
+
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
-  int& log_get_level "getLevel" ()
+  cdef enum LogLevel:
+    DISABLED
+    ERROR
+    INFO
+    DEBUG
+
+cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
+  cdef cppclass Log:
+    Log()
+    ostream& get(LogLevel level, char* namespace = ?)
+
 
 cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   cdef cppclass Learner
 
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass Layer
+
+cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
+  cdef cppclass DataSet:
+    int samples()
+    int inputs()
+    int outputs()
+    VectorXd& getInstance(int i)
+    VectorXd& getTarget(int i)
+    void finishIteration(Learner& learner)
+
+cdef extern from "OpenANN/io/DirectStorageDataSet.h" namespace "OpenANN":
+  cdef cppclass DirectStorageDataSet(DataSet):
+    DirectStorageDataSet(MatrixXd& input, MatrixXd& output)
+
+cdef extern from "OpenANN/io/LibSVM.h":
+  int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
+  void save (MatrixXd& input, MatrixXd& output, char *filename)
 
 
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
@@ -36,7 +67,6 @@ cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
     TANH_SCALED
     RECTIFIER
     LINEAR
-
 
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef enum ErrorFunction:
@@ -80,7 +110,7 @@ cdef extern from "OpenANN/optimization/Optimizer.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/optimization/MBSGD.h" namespace "OpenANN":
   cdef cppclass MBSGD(Optimizer):
-    MBSGD(double learningRate, double momentum, double batchSize,
+    MBSGD(double learningRate, double momentum, int batchSize,
        double gamma, 
        double learningRateDecay, double minimalLearningRate, 
        double momentumGain, double maximalMomentum,
@@ -111,4 +141,6 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     unsigned int numberOflayer()
     VectorXd predict "operator()" (VectorXd& x)
     Learner& trainingSet(MatrixXd& inputs, MatrixXd& outputs)
+    Learner& trainingSet(DataSet& dataset)
+
 
