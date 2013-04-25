@@ -5,7 +5,6 @@ cimport cbindings as openann
 
 import numpy
 
-include "log.pyx"
 include "util.pyx"
 include "dataset.pyx"
 include "net.pyx"
