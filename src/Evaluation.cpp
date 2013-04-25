@@ -90,6 +90,8 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
 
   split(splits, dataSet, folds);
 
+  OPENANN_INFO << "Run " << folds << "-fold cross-validation";
+
   for(int i = 0; i < folds; ++i) {
     // generate training set from splits (remove validation set)
     std::vector<DataSetView> training_splits = splits;
@@ -103,22 +105,20 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     learner.trainingSet(training);
     learner.initialize();
 
-    OPENANN_INFO << "Run " << folds << "-fold cross-validation (current fold " << (i + 1) << ")";
-
     opt.setOptimizable(learner);
     opt.optimize();
 
     int training_hits = classificationHits(learner, training);
     int validation_hits = classificationHits(learner, validation);
 
-    OPENANN_INFO 
+    OPENANN_INFO
+      << "Fold [" << i + 1 << "] "
       << "training result = " 
       << OpenANN::FloatingPointFormatter(100.0 * ((double) training_hits / training.samples()), 2) 
       << "% (" << training_hits << "/" << training.samples() << "), "
       << "test result = " 
       << OpenANN::FloatingPointFormatter(100.0 * ((double) validation_hits / validation.samples()), 2) 
-      << "% (" << validation_hits << "/" << validation.samples() << ")  [classification]"
-      << std::endl;
+      << "% (" << validation_hits << "/" << validation.samples() << ")  [classification]";
   }
 }
 
