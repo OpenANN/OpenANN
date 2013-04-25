@@ -19,9 +19,20 @@ cdef class StoppingCriteria:
 
 cdef class StochasticGradientDescent:
   cdef openann.MBSGD *thisptr
+  cdef object stopping_criteria
 
-  def __cinit__(self, stop={}, learning_rate=0.01, momentum=0.5, batch_size=10, gamma=0.0, 
-    learning_rate_decay=1.0, min_learning_rate=0.0, momentum_gain=.0, max_momentum=1.0, min_gain=1.0, max_gain=1.0):
+  def __cinit__(self, 
+      object stop={}, 
+      double learning_rate=0.01, 
+      double momentum=0.5, 
+      int batch_size=10, 
+      double gamma=0.0,
+      double learning_rate_decay=1.0, 
+      double min_learning_rate=0.0, 
+      double momentum_gain=0.0, 
+      double max_momentum=1.0, 
+      double min_gain=1.0, 
+      double max_gain=1.0):
 
     self.thisptr = new openann.MBSGD(learning_rate, momentum, batch_size, gamma, learning_rate_decay, min_learning_rate, momentum_gain, max_momentum, min_gain, max_gain)
     self.stopping_criteria = StoppingCriteria(stop)
@@ -33,18 +44,15 @@ cdef class StochasticGradientDescent:
   def __dealloc__(self):
     del self.thisptr
 
-  def optimize(self, net, inputs, outputs):
-    cdef openann.MatrixXd *training_input_matrix = __matrix_numpy_to_eigen__(inputs)
-    cdef openann.MatrixXd *training_output_matrix = __matrix_numpy_to_eigen__(outputs)
-    (<Net>net).thisptr.trainingSet(deref(training_input_matrix), deref(training_output_matrix))
+  def optimize(self, net, dataset):
+    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
     self.thisptr.setOptimizable(deref((<Net>net).thisptr))
     self.thisptr.optimize()
-    del training_input_matrix
-    del training_output_matrix
 
 
 cdef class LMA:
   cdef openann.LMA *thisptr
+  cdef object stopping_criteria
 
   def __cinit__(self, stop={}):
     self.thisptr = new openann.LMA()
@@ -57,14 +65,9 @@ cdef class LMA:
   def __str__(self):
     return self.thisptr.name().c_str()
 
-  def optimize(self, net, inputs, outputs):
-    cdef openann.MatrixXd *training_input_matrix = __matrix_numpy_to_eigen__(inputs)
-    cdef openann.MatrixXd *training_output_matrix = __matrix_numpy_to_eigen__(outputs)
-    (<Net>net).thisptr.trainingSet(deref(training_input_matrix), deref(training_output_matrix))
+  def optimize(self, net, dataset):
+    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
     self.thisptr.setOptimizable(deref((<Net>net).thisptr))
     self.thisptr.optimize()
-    del training_input_matrix
-    del training_output_matrix
-
 
 
