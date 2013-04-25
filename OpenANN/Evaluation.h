@@ -75,7 +75,7 @@ double ce(Learner& learner, DataSet& dataSet);
  *
  * @param learner learned model
  * @param dataSet dataset
- * @param accuracy
+ * @return accuracy
  */
 double accuracy(Learner& learner, DataSet& dataSet);
 
