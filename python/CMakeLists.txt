@@ -10,7 +10,7 @@ if(PYTHONINTERP_FOUND)
     set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"alglib\"")
   endif()
 
-  #  file(COPY test.py DESTINATION .)
+  file(COPY test.py DESTINATION .)
   file(COPY lib/cbindings.pxd DESTINATION .)
   file(COPY lib/log.pyx lib/openann.pyx lib/optimization.pyx lib/net.pyx lib/util.pyx DESTINATION .)
   configure_file(setup.py.in setup.py)
