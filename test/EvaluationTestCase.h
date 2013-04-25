@@ -9,4 +9,6 @@ class EvaluationTestCase : public TestCase
   void mse();
   void rmse();
   void ce();
+  void accuracy();
+  void confusionMatrix();
 };
