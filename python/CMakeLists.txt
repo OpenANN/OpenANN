@@ -12,7 +12,7 @@ if(PYTHONINTERP_FOUND)
 
   #  file(COPY test.py DESTINATION .)
   file(COPY lib/cbindings.pxd DESTINATION .)
-  file(COPY lib/log.pyx lib/openann.pyx lib/optimization.pyx lib/net.pyx lib/util.pyx DESTINATION .)
+  file(COPY lib/log.pyx lib/openann.pyx lib/optimization.pyx lib/net.pyx lib/util.pyx lib/dataset.pyx DESTINATION .)
   configure_file(setup.py.in setup.py)
 
   add_custom_command(

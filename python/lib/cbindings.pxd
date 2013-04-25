@@ -28,6 +28,22 @@ cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass Layer
 
+cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
+  cdef cppclass DataSet:
+    int samples()
+    int inputs()
+    int outputs()
+    VectorXd& getInstance(int i)
+    VectorXd& getTarget(int i)
+    void finishIteration(Learner& learner)
+
+cdef extern from "OpenANN/io/DirectStorageDataSet.h":
+  cdef enum LogInfo:
+    NONE
+    MULTICLASS
+
+  cdef cppclass DirectStorageDataSet(DataSet):
+    DirectStorageDataSet(MatrixXd& input, MatrixXd& output, LogInfo info, int)
 
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
   cdef enum ActivationFunction:
@@ -36,7 +52,6 @@ cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
     TANH_SCALED
     RECTIFIER
     LINEAR
-
 
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef enum ErrorFunction:
@@ -111,4 +126,9 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     unsigned int numberOflayer()
     VectorXd predict "operator()" (VectorXd& x)
     Learner& trainingSet(MatrixXd& inputs, MatrixXd& outputs)
+
+cdef extern from "OpenANN/io/LibSVM.h" namespace "OpenANN::LibSVM":
+  int load_from_libsvm "load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
+  void save_to_libsvm "save" (MatrixXd& input, MatrixXd& output, char *filename)
+
 

@@ -19,7 +19,6 @@ cdef openann.MatrixXd* __matrix_numpy_to_eigen__(object X_numpy):
     X_eigen.data()[r] = flatten_matrix[r]
   return X_eigen
 
-
 cdef object __matrix_eigen_to_numpy__(openann.MatrixXd* X_eigen):
   x_numpy = numpy.ndarray(shape=(X_eigen.rows(), X_eigen.cols()))
   for i in range(X_eigen.rows()):
