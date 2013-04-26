@@ -123,7 +123,7 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& s
 
     for(int j = 0; j < in.rows(); ++j) {
       if(std::fabs(in(j, i)) > 0.0e-20)
-        stream << " " << i + 1 << ":" << in(j, i);
+        stream << " " << j + 1 << ":" << in(j, i);
     }
 
     stream << std::endl;
