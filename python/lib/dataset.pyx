@@ -3,15 +3,15 @@ cdef class Dataset:
   cdef openann.MatrixXd* output
   cdef openann.DataSet* storage
 
-  def __cinit__(self, input, output):
-    self.input = __matrix_numpy_to_eigen__(input)
-    self.output = __matrix_numpy_to_eigen__(output)
-    self.storage = new openann.DirectStorageDataSet(deref(self.input), deref(self.output))
-
-  def __cinit__(self):
-    self.input = NULL
-    self.output = NULL
-    self.storage = NULL
+  def __cinit__(self, input=None, output=None):
+    if input != None and output != None:
+      self.input = __matrix_numpy_to_eigen__(input)
+      self.output = __matrix_numpy_to_eigen__(output)
+      self.storage = new openann.DirectStorageDataSet(deref(self.input), deref(self.output))
+    else:
+      self.input = NULL
+      self.output = NULL
+      self.storage = NULL
 
   def __dealloc__(self):
     if(self.storage != NULL):

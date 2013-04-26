@@ -36,9 +36,6 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
     ostream& get(LogLevel level, char* namespace = ?)
 
 
-cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
-  cdef cppclass Learner
-
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass Layer
 
@@ -120,8 +117,14 @@ cdef extern from "OpenANN/optimization/LMA.h" namespace "OpenANN":
   cdef cppclass LMA(Optimizer):
     LMA()
 
+cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
+  cdef cppclass Learner(Optimizable):
+    Learner& trainingSet(MatrixXd& input, MatrixXd& output)
+    Learner& trainingSet(DataSet& dataset)
+    VectorXd predict "operator()" (VectorXd& x)
+
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
-  cdef cppclass Net(Optimizable):
+  cdef cppclass Net(Learner):
     Net()
     Net& inputLayer(int dim1, int dim2, int dim3, bool bias)
     Net& alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
@@ -139,8 +142,12 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& useDropout(bool activate)
     Net& addLayer(Layer *layer)
     unsigned int numberOflayer()
-    VectorXd predict "operator()" (VectorXd& x)
-    Learner& trainingSet(MatrixXd& inputs, MatrixXd& outputs)
-    Learner& trainingSet(DataSet& dataset)
 
+cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
+  double sse(Learner& learner, DataSet& dataSet)
+  double mse(Learner& learner, DataSet& dataSet)
+  double rmse(Learner& learner, DataSet& dataSet)
+  double accuracy(Learner& learner, DataSet& dataSet)
+  int classificationHits(Learner& learner, DataSet& dataSet)
+  void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
 

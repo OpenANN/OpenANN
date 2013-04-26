@@ -35,9 +35,6 @@ void LMA::optimize()
 
   OpenANN::StoppingInterrupt interrupt;
 
-  OPENANN_DEBUG << "initial state" 
-      << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
-
   while(step() && !interrupt.isSignaled())
   {
     OPENANN_DEBUG << "iteration " << iteration 

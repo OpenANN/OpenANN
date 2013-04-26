@@ -16,11 +16,11 @@ cdef class StoppingCriteria:
     self.thisptr.minimalValueDifferences = stop.get('minimal_value_differences', self.thisptr.minimalValueDifferences)
     self.thisptr.minimalSearchSpaceStep = stop.get('minimal_search_space_step', self.thisptr.minimalSearchSpaceStep)
 
-
-cdef class StochasticGradientDescent:
-  cdef openann.MBSGD *thisptr
+cdef class Optimizer:
+  cdef openann.Optimizer *thisptr
   cdef object stopping_criteria
 
+cdef class StochasticGradientDescent(Optimizer):
   def __cinit__(self, 
       object stop={}, 
       double learning_rate=0.01, 
@@ -50,10 +50,7 @@ cdef class StochasticGradientDescent:
     self.thisptr.optimize()
 
 
-cdef class LMA:
-  cdef openann.LMA *thisptr
-  cdef object stopping_criteria
-
+cdef class LMA(Optimizer):
   def __cinit__(self, stop={}):
     self.thisptr = new openann.LMA()
     self.stopping_criteria = StoppingCriteria(stop)
