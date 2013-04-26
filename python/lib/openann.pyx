@@ -9,5 +9,6 @@ include "util.pyx"
 include "dataset.pyx"
 include "net.pyx"
 include "optimization.pyx"
+include "evaluation.pyx"
 
 
