@@ -58,20 +58,10 @@ void MBSGD::optimize()
 {
   OpenANN::StoppingInterrupt interrupt;
 
-  std::stringstream ss;
-  ss << "initial state, training error = " << FloatingPointFormatter(opt->error(), 4);
-
-  if(alphaDecay < 1.0)
-    ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
-
-  if(etaGain > 0.0)
-    ss << ", eta = " << FloatingPointFormatter(eta, 2);
-
-  OPENANN_DEBUG << ss.str();
 
   while(step() && !interrupt.isSignaled())
   {
-    ss.str("");
+    std::stringstream ss;
 
     ss << "iteration " << iteration;
     ss << ", training error = " << FloatingPointFormatter(opt->error(), 4);
