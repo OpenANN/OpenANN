@@ -1,5 +1,6 @@
 project(OctopusArmBenchmark)
 
+file(COPY benchmark.py DESTINATION .)
 file(COPY settings.xml DESTINATION .)
 file(COPY run DESTINATION .)
 file(COPY evaluate DESTINATION .)

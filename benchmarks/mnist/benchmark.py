@@ -19,7 +19,7 @@ def download_mnist():
         return
 
     for i in range(len(URLS)):
-        print("Downloading %s..." % URLS[i])
+        print("Downloading %s" % URLS[i])
         downloader = urllib.urlopen(URLS[i])
 
         with open(ARCHIVES[i], "wb") as out:
