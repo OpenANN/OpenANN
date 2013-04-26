@@ -1,5 +1,6 @@
 from libcpp cimport bool
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 cdef extern from "Eigen/Dense" namespace "Eigen":
   cdef cppclass VectorXd:
@@ -19,6 +20,21 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     double& get "operator()"(int rows, int cols)
 
+cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
+  cdef enum ActivationFunction:
+    LOGISTIC
+    TANH
+    TANH_SCALED
+    RECTIFIER
+    LINEAR
+
+cdef extern from "OpenANN/Net.h" namespace "OpenANN":
+  cdef enum ErrorFunction:
+    NO_E_DEFINED
+    SSE
+    MSE
+    CE
+
 cdef extern from "<iostream>" namespace "std":
   cdef cppclass ostream
   ostream& write "operator<<" (ostream& os, char* str)
@@ -37,7 +53,37 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
 
 
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
-  cdef cppclass Layer
+  cdef cppclass OutputInfo
+  cdef cppclass Layer:
+    OutputInfo initialize(vector[double*]& param, vector[double*] derivative)
+    void initializeParameters()
+    void updatedParameters()
+    void forwardPropagate(VectorXd* x, VectorXd*& y, bool dropout)
+    void backpropagate(VectorXd* ein, VectorXd*& eout)
+    VectorXd& getOutput()
+
+
+cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN::SigmaPi":
+  cdef cppclass Constraint:
+    double constrain "operator()" (int p1, int p2)
+    double constrain "operator()" (int p1, int p2, int p3)
+    double constrain "operator()" (int p1, int p2, int p3, int p4)
+
+cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN":
+  cdef cppclass SigmaPi(Layer):
+    SigmaPi(OutputInfo info, bool bias, ActivationFunction act, double stdDev)
+    SigmaPi& secondOrderNodes(int numbers)
+    SigmaPi& thirdOrderNodes(int numbers)
+    SigmaPi& fourthOrderNodes(int numbers)
+    SigmaPi& secondOrderNodes(int numbers, Constraint& constrain)
+    SigmaPi& thirdOrderNodes(int numbers, Constraint& constrain)
+    SigmaPi& fourthOrderNodes(int numbers, Constraint& constrain)
+
+cdef extern from "OpenANN/layers/SigmaPiConstraints.h" namespace "OpenANN":
+  cdef cppclass DistanceConstraint(Constraint):
+    DistanceConstraint(long width, long height)
+  cdef cppclass SlopeConstraint(Constraint):
+    SlopeConstraint(long width, long height)
 
 cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
   cdef cppclass DataSet:
@@ -56,21 +102,6 @@ cdef extern from "OpenANN/io/LibSVM.h":
   int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
   void save (MatrixXd& input, MatrixXd& output, char *filename)
 
-
-cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
-  cdef enum ActivationFunction:
-    LOGISTIC
-    TANH
-    TANH_SCALED
-    RECTIFIER
-    LINEAR
-
-cdef extern from "OpenANN/Net.h" namespace "OpenANN":
-  cdef enum ErrorFunction:
-    NO_E_DEFINED
-    SSE
-    MSE
-    CE
 
 cdef extern from "OpenANN/optimization/StoppingCriteria.h" namespace "OpenANN":
   cdef cppclass StoppingCriteria:
