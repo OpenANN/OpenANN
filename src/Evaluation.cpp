@@ -3,6 +3,7 @@
 #include <OpenANN/io/DataSet.h>
 #include <OpenANN/io/DataSetView.h>
 #include <OpenANN/io/Logger.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/optimization/Optimizer.h>
 #include <cmath>
 #include <vector>
@@ -116,7 +117,19 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     learner.initialize();
 
     opt.setOptimizable(learner);
-    opt.optimize();
+
+    OpenANN::StoppingInterrupt interrupt;
+    int iteration = 0;
+
+    while(opt.step() && !interrupt.isSignaled()) {
+      std::stringstream ss;
+
+      ss << "iteration " << ++iteration;
+      ss << ", training sse = " << FloatingPointFormatter(sse(learner, training), 4);
+      ss << ", test sse = " << FloatingPointFormatter(sse(learner, validation), 4);
+
+      OPENANN_DEBUG << ss.str();
+    }
 
     int training_hits = classificationHits(learner, training);
     int validation_hits = classificationHits(learner, validation);
