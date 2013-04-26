@@ -17,7 +17,12 @@ net.output_layer(1, Activation.LINEAR)
 inputs = numpy.atleast_2d(numpy.linspace(0, 2*numpy.pi, 500))
 outputs = numpy.sin(numpy.random.normal(inputs, 0.1))
 
-lma.optimize(net, inputs, outputs)
+dataset = Dataset(inputs, outputs)
+
+Log.info("Using {0} samples with {1} inputs and {2} outputs".
+    format(dataset.samples(), dataset.inputs(), dataset.outputs()))
+
+lma.optimize(net, dataset)
 
 prediction = [net.predict(inputs[:, i])[0]
               for i in range(inputs.shape[1])]
