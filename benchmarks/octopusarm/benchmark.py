@@ -100,7 +100,7 @@ def start_client(port, parameters, verbose=False):
     subprocess.call(cmd)
 
 
-def evaluate_octopusarm(plot_axes):
+def evaluate_octopusarm(plot_axes, moving_average=100):
     try:
         import pylab
         import numpy
@@ -112,7 +112,6 @@ def evaluate_octopusarm(plot_axes):
 
     log = {}
     for f in glob.iglob("logs/Neuro*.log"):
-        print f
         run = []
         for l in open(f, "r").readlines():
             l = l.strip()
@@ -120,9 +119,14 @@ def evaluate_octopusarm(plot_axes):
                 run.append(numpy.sum(map(float, l.split())))
         log[f] = numpy.array(run)
 
-    print(log)
     for run in log.keys():
-        pylab.plot(log[run])
+        if moving_average > 0:
+            # See http://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
+            window = numpy.ones(int(moving_average))/float(moving_average)
+            smoothed = numpy.convolve(log[run], window, 'same')
+            pylab.plot(smoothed)
+        else:
+            pylab.plot(log[run])
     pylab.show()
 
 
