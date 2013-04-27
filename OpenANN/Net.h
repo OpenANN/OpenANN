@@ -3,7 +3,6 @@
 #include <OpenANN/Learner.h>
 #include <OpenANN/ActivationFunctions.h>
 #include <OpenANN/layers/Layer.h>
-#include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
@@ -56,8 +55,11 @@ enum ErrorFunction
  *   position and velocity of the inputs from the noisy observation of the
  *   positions. Usually we need this layer for partially observable markov
  *   decision processes in reinforcement learning.
+ * - Dropout layer: a technique to increase the generalization of a neural
+ *   network. Neurons are randomly dropped out during training so that they
+ *   do not rely on each other.
  */
-class Net : public Optimizable, public Learner
+class Net : public Learner
 {
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
@@ -87,12 +89,9 @@ public:
    * @param dim2 second dimension, e. g. number of rows of an image
    * @param dim3 third dimension, e. g. number of columns of an image
    * @param bias add bias term
-   * @param dropoutProbability probability of dropout during training, a
-   *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
-  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true,
-                  double dropoutProbability = 0.0);
+  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true);
   /**
    * Add a alpha-beta filter layer.
    * @param deltaT temporal difference between two steps
@@ -108,8 +107,6 @@ public:
    * @param act activation function
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @param bias add bias term
-   * @param dropoutProbability probability of dropout during training, a
-   *        reasonable value is usually between 0 and 0.5
    * @param maxSquaredWeightNorm when training with dropout it is helpful to
    *        explore with a high learning rate and constrain the incoming
    *        weights of a neuron to have a maximum norm
@@ -117,7 +114,6 @@ public:
    */
   Net& fullyConnectedLayer(int units, ActivationFunction act,
                            double stdDev = 0.05, bool bias = true,
-                           double dropoutProbability = 0.0,
                            double maxSquaredWeightNorm = 0.0);
   /**
    * Add a compressed fully connected hidden layer.
@@ -129,13 +125,11 @@ public:
    *        dct, gaussian, sparse, average, edge
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @param bias add bias term
-   * @param dropoutProbability probability of dropout during training, a
-   *        reasonable value is usually between 0 and 0.5
    * @return this for chaining
    */
   Net& compressedLayer(int units, int params, ActivationFunction act,
                        const std::string& compression, double stdDev = 0.05,
-                       bool bias = true, double dropoutProbability = 0.0);
+                       bool bias = true);
   /**
    * Add a fully connected hidden layer with fixed weights.
    * @param units number of nodes (neurons)
@@ -193,6 +187,11 @@ public:
    */
   Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta,
                                       bool bias = true);
+  /**
+   * Add a dropout layer.
+   * @param dropoutProbability probability of suppression during training
+   */
+  Net& dropoutLayer(double dropoutProbability);
   /**
    * Add a fully connected output layer. This will initialize the network.
    * @param units number of nodes (neurons)

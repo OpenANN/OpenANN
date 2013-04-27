@@ -40,27 +40,19 @@ using namespace OpenANN;
  * represented by varying numbers of parameters (5-107) and the weights of a
  * neuron in the second layer are represented by 11 parameters.
  *
- * You can start the benchmark with
-\verbatim
-ruby run
-\endverbatim
- * and evaluate the results with
-\verbatim
-ruby evaluate
-\endverbatim
- * The log files that are needed for the evaluation script are collected in
- * the folder "logs" in the working directory. The evaluation script will list
- * the average return and the maximal return for each run and will calculate
- * the mean and standard deviation of the average returns and the maximum of
- * the maximal returns for each configuration. The average return indicates
- * how fast the agent learns a good policy and the maximal returns indicates
- * how good the best representable policy is.
+ * To execute the benchmark you can run the Python script:
+\code
+python benchmark.py [download] [run] [evaluate]
+\endcode
+ * download will download the dataset, run will start the benchmark and
+ * evaluate will plot the result. You can of course modify the script or do
+ * the each step manually.
  *
  * If you run this benchmark on one computer, it takes about 20 days. Thus,
  * it is recommended to start the benchmark on multiple computers. You can
  * modify the variable "runs" in the ruby script "run" and set it to a desired
  * number, start the script on separate computers, merge the results in a
- * single directory "logs" and run the script "evaluate". Each run will take
+ * single directory "logs" and run the script. Each run will take
  * approximately two days. If you set the number of runs to 2 and run the
  * script on 5 computers, it will take about 4 days to finish.
  */

@@ -8,6 +8,7 @@
 #include <OpenANN/layers/Subsampling.h>
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/layers/LocalResponseNormalization.h>
+#include <OpenANN/layers/Dropout.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -34,10 +35,9 @@ Net::~Net()
   layers.clear();
 }
 
-Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias,
-                     double dropoutProbability)
+Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias)
 {
-  return addLayer(new Input(dim1, dim2, dim3, bias, dropoutProbability));
+  return addLayer(new Input(dim1, dim2, dim3, bias));
 }
 
 Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
@@ -46,19 +46,18 @@ Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
 }
 
 Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
-                              bool bias, double dropoutProbability,
-                              double maxSquaredWeightNorm)
+                              bool bias, double maxSquaredWeightNorm)
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
-                                    dropoutProbability, maxSquaredWeightNorm));
+                                     maxSquaredWeightNorm));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
                           const std::string& compression, double stdDev,
-                          bool bias, double dropoutProbability)
+                          bool bias)
 {
   return addLayer(new Compressed(infos.back(), units, params, bias, act,
-                                compression, stdDev, dropoutProbability));
+                                compression, stdDev));
 }
 
 Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
@@ -92,6 +91,11 @@ Net& Net::localReponseNormalizationLayer(double k, int n, double alpha, double b
                                                  alpha, beta));
 }
 
+Net& Net::dropoutLayer(double dropoutProbability)
+{
+  return addLayer(new Dropout(infos.back(), dropoutProbability));
+}
+
 Net& Net::addLayer(Layer* layer)
 {
     OPENANN_CHECK(layer != 0);
@@ -105,13 +109,17 @@ Net& Net::addLayer(Layer* layer)
 
 Net& Net::outputLayer(int units, ActivationFunction act, double stdDev)
 {
-  return fullyConnectedLayer(units, act, stdDev, false);
+  fullyConnectedLayer(units, act, stdDev, false);
+  initializeNetwork();
+  return *this;
 }
 
 Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
                                 const std::string& compression, double stdDev)
 {
-  return compressedLayer(units, params, act, compression, stdDev, false);
+  compressedLayer(units, params, act, compression, stdDev, false);
+  initializeNetwork();
+  return *this;
 }
 
 unsigned int Net::numberOflayers()
@@ -139,6 +147,8 @@ void Net::initializeNetwork()
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
+  for(int p = 0; p < P; p++)
+    parameterVector(p) = *parameters[p];
   initialized = true;
 }
 
@@ -242,9 +252,7 @@ bool Net::providesInitialization()
 
 void Net::initialize()
 {
-    if(!initialized)
-        initializeNetwork();
-
+  OPENANN_CHECK(initialized);
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
     (**layer).initializeParameters();
@@ -254,25 +262,12 @@ void Net::initialize()
 
 double Net::error(unsigned int i)
 {
-  double e = 0.0;
   if(errorFunction == CE)
-  {
-    tempOutput = (*this)(dataSet->getInstance(i));
-    for(int f = 0; f < tempOutput.rows(); f++)
-    {
-      double out = tempOutput(f);
-      if(out < 1e-45)
-        out = 1e-45;
-      e -= dataSet->getTarget(i)(f) * std::log(out);
-    }
-  }
+    return -(dataSet->getTarget(i).array() *
+        (((*this)(dataSet->getInstance(i)).array() + 1e-10).log())).sum();
   else
-  {
-    tempOutput = (*this)(dataSet->getInstance(i));
-    tempError = tempOutput - dataSet->getTarget(i);
-    e += tempError.dot(tempError);
-  }
-  return e / 2.0;
+    return ((*this)(dataSet->getInstance(i)) -
+        dataSet->getTarget(i)).squaredNorm() / 2.0;
 }
 
 double Net::error()
@@ -280,48 +275,33 @@ double Net::error()
   double e = 0.0;
   for(int n = 0; n < N; n++)
     e += error(n);
-  switch(errorFunction)
-  {
-    case SSE:
-      return e;
-    case MSE:
-      return e / (double) N;
-    default:
-      return e;
-  }
+
+  if(errorFunction == MSE)
+    return e / (double) N;
+  else
+    return e;
 }
 
-double Net::errorFromDataSet(DataSet& dataset)
+double Net::errorFromDataSet(DataSet& dataSet)
 {
-    double e = 0.0;
-    for(int n = 0; n < dataset.samples(); ++n) {
-        double e_n  = 0.0;
+  double e = 0.0;
+  if(errorFunction == CE)
+  {
+    for(int n = 0; n < dataSet.samples(); ++n)
+      e -= (dataSet.getTarget(n).array() *
+          (((*this)(dataSet.getInstance(n)).array() + 1e-10).log())).sum();
+  }
+  else
+  {
+    for(int n = 0; n < dataSet.samples(); ++n)
+      e += ((*this)(dataSet.getInstance(n)) -
+          dataSet.getTarget(n)).squaredNorm() / 2.0;
+  }
 
-        tempOutput = (*this)(dataset.getInstance(n));
-
-        if(errorFunction == CE) 
-        {
-            for(int f = 0; f < tempOutput.rows(); ++f)
-                e_n -= dataset.getTarget(n)(f) * std::log(tempOutput(f));
-        }
-        else 
-        {
-            tempError = tempOutput - dataset.getTarget(n);
-            e_n += tempError.dot(tempError);
-        }
-
-        e += (e_n / 2);
-    }
-
-    switch(errorFunction) 
-    {
-        case SSE:
-            return e;
-        case MSE:
-            return e / (double) N;
-        default:
-            return e;
-    }
+  if(errorFunction == MSE)
+    return e / (double) N;
+  else
+    return e;
 }
 
 bool Net::providesGradient()

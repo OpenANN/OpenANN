@@ -16,7 +16,7 @@ namespace OpenANN {
  * @param dropout use dropout for regularization
  */
 void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
-           StoppingCriteria stop, bool reinitialize = true,
+           StoppingCriteria stop, bool reinitialize = false,
            bool dropout = false);
 
 }

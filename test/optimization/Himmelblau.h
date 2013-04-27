@@ -59,7 +59,7 @@ public:
 
   virtual Eigen::MatrixXd hessian()
   {
-    OPENANN_CHECK(false && "Himmelblau does not provide an hessian.");
+    OPENANN_CHECK(false && "Himmelblau does not provide a hessian.");
     return Eigen::MatrixXd();
   }
 };

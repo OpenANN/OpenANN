@@ -112,7 +112,6 @@ bool IPOPCMAES::restart()
 
   if(opt->providesInitialization())
   {
-    opt->initialize();
     Eigen::VectorXd initial = opt->currentParameters();
     for(unsigned i = 0; i < N; i++)
       initialX[i] = initial(i);

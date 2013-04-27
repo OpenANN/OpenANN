@@ -1,5 +1,8 @@
+#define OPENANN_LOG_NAMESPACE "LMA"
+
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
 #include <limits>
@@ -29,13 +32,13 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
-  while(step())
+
+  OpenANN::StoppingInterrupt interrupt;
+
+  while(step() && !interrupt.isSignaled())
   {
-    if(debugLogger.isActive())
-    {
-      debugLogger << "Iteration " << iteration << " finished.\n";
-      debugLogger << "Error = " << errorValues.sum() << ".\n";
-    }
+    OPENANN_DEBUG << "iteration " << iteration 
+      << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
   }
 }
 
@@ -121,17 +124,6 @@ std::string LMA::name()
 
 void LMA::initialize()
 {
-  if(opt->providesInitialization())
-    opt->initialize();
-  else
-  {
-    RandomNumberGenerator rng;
-    Eigen::VectorXd x(n);
-    for(unsigned i = 0; i < n; i++)
-      x(i) = rng.sampleNormalDistribution<double>();
-    opt->setParameters(x);
-  }
-
   n = opt->dimension();
 
   allocate();
@@ -145,12 +137,7 @@ void LMA::allocate()
   errorValues.resize(opt->examples());
   jacobian.resize(opt->examples(), n);
 
-  double* xArray = new double[n];
-  Eigen::VectorXd x = opt->currentParameters();
-  for(unsigned i = 0; i < n; i++)
-    xArray[i] = x(i);
-  xIn.setcontent(n, xArray);
-  delete[] xArray;
+  xIn.setcontent(n, opt->currentParameters().data());
 }
 
 void LMA::initALGLIB()

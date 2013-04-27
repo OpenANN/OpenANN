@@ -4,6 +4,8 @@ find_package(Qt4)
 find_package(OpenGL)
 find_package(GLUT)
 
+file(COPY benchmark.py DESTINATION .)
+
 add_definitions("${OPENANN_COMPILER_FLAGS}")
 add_executable(MNIST mnist.cpp)
 target_link_libraries(MNIST openann)

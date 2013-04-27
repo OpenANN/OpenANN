@@ -1,17 +1,21 @@
 #include "LayerTestCase.h"
+#include "FiniteDifferences.h"
 #include <OpenANN/OpenANN>
 #include <OpenANN/layers/FullyConnected.h>
 #include <OpenANN/layers/Compressed.h>
 #include <OpenANN/layers/Convolutional.h>
 #include <OpenANN/layers/Subsampling.h>
 #include <OpenANN/layers/MaxPooling.h>
+#include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/SigmaPi.h>
-#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/layers/Dropout.h>
+#include <OpenANN/Learner.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/util/OpenANNException.h>
 
 using namespace OpenANN;
 
-class LayerOptimizable : public Optimizable
+class LayerOptimizable : public Learner
 {
   Layer& layer;
   std::vector<double*> parameters;
@@ -79,6 +83,21 @@ public:
     return derivs;
   }
 
+  Eigen::VectorXd inputGradient()
+  {
+    Eigen::VectorXd* output;
+    layer.forwardPropagate(&input, output, false);
+    Eigen::VectorXd diff = *output;
+    for(int i = 0; i < desired.rows(); i++)
+      diff(i) = (*output)(i) - desired(i);
+    Eigen::VectorXd* e;
+    layer.backpropagate(&diff, e);
+    Eigen::VectorXd derivs(input.rows());
+    for(int i = 0; i < input.rows(); i++)
+      derivs(i) = (*e)(i);
+    return derivs;
+  }
+
   virtual Eigen::MatrixXd hessian()
   {
     return Eigen::MatrixXd::Random(dimension(), dimension());
@@ -102,23 +121,51 @@ public:
   {
     return true;
   }
+
+  virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x)
+  {
+    this->input = x;
+    Eigen::VectorXd* output;
+    layer.forwardPropagate(&input, output, false);
+    return *output;
+  }
+
+  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
+                               Eigen::MatrixXd& trainingOutput)
+  {
+    input = trainingInput.col(0);
+    desired = trainingOutput.col(0);
+  }
+
+  virtual Learner& trainingSet(DataSet& trainingSet)
+  {
+    throw OpenANN::OpenANNException("trainingSet is not implemented in "
+                                    "LayerOptimizable");
+  }
 };
 
 void LayerTestCase::run()
 {
   RUN(LayerTestCase, fullyConnected);
   RUN(LayerTestCase, fullyConnectedGradient);
+  RUN(LayerTestCase, fullyConnectedInputGradient);
   RUN(LayerTestCase, compressed);
   RUN(LayerTestCase, compressedGradient);
+  RUN(LayerTestCase, compressedInputGradient);
   RUN(LayerTestCase, convolutional);
   RUN(LayerTestCase, convolutionalGradient);
+  RUN(LayerTestCase, convolutionalInputGradient);
   RUN(LayerTestCase, subsampling);
   RUN(LayerTestCase, subsamplingGradient);
+  RUN(LayerTestCase, subsamplingInputGradient);
   RUN(LayerTestCase, maxPooling);
   RUN(LayerTestCase, maxPoolingGradient);
-  RUN(LayerTestCase, multilayerNetwork);
+  RUN(LayerTestCase, maxPoolingInputGradient);
+  RUN(LayerTestCase, localResponseNormalizationInputGradient);
+  RUN(LayerTestCase, dropout);
   RUN(LayerTestCase, sigmaPiNoConstraintGradient);
   RUN(LayerTestCase, sigmaPiWithConstraintGradient);
+  RUN(LayerTestCase, multilayerNetwork);
 }
 
 void LayerTestCase::fullyConnected()
@@ -126,7 +173,7 @@ void LayerTestCase::fullyConnected()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
 
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
@@ -171,78 +218,43 @@ void LayerTestCase::fullyConnectedGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = opt.gradientFD();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
 
-
-void LayerTestCase::sigmaPiNoConstraintGradient()
+void LayerTestCase::fullyConnectedInputGradient()
 {
-    OutputInfo info;
-    info.bias = false;
-    info.dimensions.push_back(5);
-    info.dimensions.push_back(5);
-    SigmaPi layer(info, true, TANH, 0.05);
-    layer.secondOrderNodes(2);
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  LayerOptimizable opt(layer, info);
 
-    LayerOptimizable opt(layer, info);
-
-    Eigen::VectorXd gradient = opt.gradient();
-    Eigen::VectorXd estimatedGradient = opt.gradientFD();
-
-    for(int i = 0; i < gradient.rows(); i++)
-        ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(2, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
-
-
-struct TestConstraint : public OpenANN::SigmaPi::Constraint
-{
-    virtual double operator() (int p1, int p2) const {
-        double x1 = p1 % 5;
-        double y1 = p1 / 5;
-        double x2 = p2 % 5;
-        double y2 = p2 / 5;
-
-        return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    }
-};
-
-void LayerTestCase::sigmaPiWithConstraintGradient()
-{
-    OutputInfo info;
-    info.bias = false;
-    info.dimensions.push_back(5);
-    info.dimensions.push_back(5);
-    TestConstraint constraint;
-    SigmaPi layer(info, true, TANH, 0.05);
-    layer.secondOrderNodes(2, constraint);
-
-    LayerOptimizable opt(layer, info);
-
-    Eigen::VectorXd gradient = opt.gradient();
-    Eigen::VectorXd estimatedGradient = opt.gradientFD();
-
-    for(int i = 0; i < gradient.rows(); i++)
-        ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-3);
-}
-
-
 
 void LayerTestCase::compressed()
 {
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 3, true, TANH, "average", 0.05, 0.0);
+  Compressed layer(info, 2, 3, true, TANH, "average", 0.05);
 
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
   ASSERT(info2.bias);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 3);
@@ -269,11 +281,28 @@ void LayerTestCase::compressedGradient()
   OutputInfo info;
   info.bias = false;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, 0.0);
+  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = opt.gradientFD();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void LayerTestCase::compressedInputGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
+  LayerOptimizable opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(2, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
@@ -288,7 +317,8 @@ void LayerTestCase::convolutional()
   Convolutional layer(info, 2, 3, 3, true, TANH, 0.05);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 2);
@@ -324,9 +354,28 @@ void LayerTestCase::convolutionalGradient()
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = opt.gradientFD();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-2);
+}
+
+void LayerTestCase::convolutionalInputGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(15);
+  info.dimensions.push_back(15);
+  Convolutional layer(info, 2, 3, 3, true, LINEAR, 0.05);
+  LayerOptimizable opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3*15*15, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(2*13*13, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
 
 void LayerTestCase::subsampling()
@@ -339,7 +388,8 @@ void LayerTestCase::subsampling()
   Subsampling layer(info, 2, 2, true, TANH, 0.05);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 3);
@@ -368,7 +418,26 @@ void LayerTestCase::subsamplingGradient()
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = opt.gradientFD();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void LayerTestCase::subsamplingInputGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  Subsampling layer(info, 3, 3, true, LINEAR, 0.05);
+  LayerOptimizable opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3*6*6, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(3*2*2, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
@@ -383,7 +452,8 @@ void LayerTestCase::maxPooling()
   MaxPooling layer(info, 2, 2, true);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 3);
@@ -408,16 +478,130 @@ void LayerTestCase::maxPoolingGradient()
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = opt.gradientFD();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+}
+
+void LayerTestCase::maxPoolingInputGradient()
+{
+  OutputInfo info;
+  info.bias = true;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  MaxPooling layer(info, 3, 3, true);
+  LayerOptimizable opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3*6*6, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(3*2*2, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void LayerTestCase::localResponseNormalizationInputGradient()
+{
+  OutputInfo info;
+  info.bias = true;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(3);
+  LocalResponseNormalization layer(info, false, 1, 3, 1e-5, 0.75);
+  LayerOptimizable opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(3*3*3, 1);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(3*3*3, 1);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x, y, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void LayerTestCase::dropout()
+{
+  double dropoutProbability = 0.5;
+  int samples = 10000;
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(samples);
+  Dropout layer(info, 0.5);
+  std::vector<double*> parameterPointers;
+  std::vector<double*> parameterDerivativePointers;
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
+  ASSERT_EQUALS(info2.dimensions.size(), 1);
+  ASSERT_EQUALS(info2.dimensions[0], samples);
+
+  // During training (dropout = true) approximately dropoutProbability neurons
+  // should be suppressed
+  Eigen::VectorXd x(samples);
+  x.fill(1.0);
+  Eigen::VectorXd* y;
+  layer.forwardPropagate(&x, y, true);
+  double mean = y->sum() / samples;
+  ASSERT_EQUALS_DELTA(mean, 0.5, 0.01);
+  // After training, the output should be scaled down
+  layer.forwardPropagate(&x, y, false);
+  mean = y->sum() / samples;
+  ASSERT_EQUALS(mean, 0.5);
+}
+
+void LayerTestCase::sigmaPiNoConstraintGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(5);
+  info.dimensions.push_back(5);
+  SigmaPi layer(info, true, TANH, 0.05);
+  layer.secondOrderNodes(2);
+
+  LayerOptimizable opt(layer, info);
+
+  Eigen::VectorXd gradient = opt.gradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+
+  for(int i = 0; i < gradient.rows(); i++)
+      ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
 
 
+struct TestConstraint : public OpenANN::SigmaPi::Constraint
+{
+  virtual double operator() (int p1, int p2) const {
+    double x1 = p1 % 5;
+    double y1 = p1 / 5;
+    double x2 = p2 % 5;
+    double y2 = p2 / 5;
+
+    return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+  }
+};
+
+void LayerTestCase::sigmaPiWithConstraintGradient()
+{
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(5);
+  info.dimensions.push_back(5);
+  TestConstraint constraint;
+  SigmaPi layer(info, true, TANH, 0.05);
+  layer.secondOrderNodes(2, constraint);
+
+  LayerOptimizable opt(layer, info);
+
+  Eigen::VectorXd gradient = opt.gradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-2);
+}
 
 void LayerTestCase::multilayerNetwork()
 {
-  int samples = 10;
-  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1*6*6, samples);
-  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(3, samples);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1*6*6, 1);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(3, 1);
   DirectStorageDataSet ds(X, Y);
 
   Net net;
@@ -431,24 +615,9 @@ void LayerTestCase::multilayerNetwork()
   net.trainingSet(ds);
   net.initialize();
 
-  net.initialize();
-
   Eigen::VectorXd g = net.gradient();
-  Eigen::VectorXd e = net.gradientFD();
+  Eigen::VectorXd e = FiniteDifferences::parameterGradient(0, net);
   double delta = std::max<double>(1e-2, 1e-5*e.norm());
   for(int j = 0; j < net.dimension(); j++)
     ASSERT_EQUALS_DELTA(g(j), e(j), delta);
-
-  Eigen::VectorXd values(samples);
-  Eigen::MatrixXd gradients(samples, net.dimension());
-  net.VJ(values, gradients);
-  for(int n = 0; n < samples; n++)
-  {
-    Eigen::VectorXd e = net.singleGradientFD(n);
-    double delta = std::max<double>(1e-2, 1e-5*e.norm());
-    for(int j = 0; j < net.dimension(); j++)
-      ASSERT_EQUALS_DELTA(gradients(n, j), e(j), delta);
-    double error = net.error(n);
-    ASSERT_EQUALS_DELTA(values(n), error, 1e-2);
-  }
 }

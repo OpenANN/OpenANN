@@ -8,7 +8,7 @@
 
 namespace OpenANN {
 
-class RBM : public Optimizable, public Learner
+class RBM : public Learner
 {
 public:
   RandomNumberGenerator rng;
