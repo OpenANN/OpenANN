@@ -1,3 +1,10 @@
+import glob
+import gzip
+import os
+import sys
+import subprocess
+import urllib
+
 FILES = ["train-images-idx3-ubyte", "train-labels-idx1-ubyte",
          "t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte"]
 ARCHIVES = ["%s.gz" % f for f in FILES]
@@ -10,16 +17,12 @@ def print_usage():
 
 
 def download_mnist():
-    import urllib
-    import gzip
-    import os
-
     if all(os.path.exists(f) for f in FILES):
         print("Download is not required.")
         return
 
     for i in range(len(URLS)):
-        print("Downloading %s..." % URLS[i])
+        print("Downloading %s" % URLS[i])
         downloader = urllib.urlopen(URLS[i])
 
         with open(ARCHIVES[i], "wb") as out:
@@ -34,7 +37,6 @@ def download_mnist():
 
 
 def run_mnist():
-    import subprocess
     subprocess.call("./MNIST")
 
 
@@ -45,8 +47,6 @@ def evaluate_mnist(plot_axes):
     except ImportError:
         print("Required libraries: NumPy, Matplotlib.")
         exit(1)
-    import os
-    import glob
 
     axes = ["Epoch", "MSE", "Correct", "Errors", "Time"]
 
@@ -69,8 +69,6 @@ def evaluate_mnist(plot_axes):
 
 
 if __name__ == "__main__":
-    import sys
-
     if len(sys.argv) == 1:
         print_usage()
 
