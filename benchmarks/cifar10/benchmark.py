@@ -1,3 +1,11 @@
+import glob
+import os
+import shutil
+import sys
+import subprocess
+import tarfile
+import urllib
+
 URL = "http://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz"
 ARCHIVE_NAME = "cifar-10-binary.tar.gz"
 DATA_FOLDER = "cifar-10-batches-bin"
@@ -11,10 +19,6 @@ def print_usage():
 
 
 def download_cifar10():
-    import os
-    import urllib
-    import tarfile
-    import shutil
     if all(os.path.exists(f) for f in DATA_FILES):
         print("Download is not required.")
         return
@@ -38,7 +42,6 @@ def download_cifar10():
 
 
 def run_cifar10():
-    import subprocess
     subprocess.call("./CIFAR10")
 
 
@@ -49,8 +52,6 @@ def evaluate_cifar10(plot_axes):
     except ImportError:
         print("Required libraries: NumPy, Matplotlib.")
         exit(1)
-    import os
-    import glob
 
     axes = ["Epoch", "MSE", "Correct", "Errors", "Time"]
 
@@ -73,8 +74,6 @@ def evaluate_cifar10(plot_axes):
 
 
 if __name__ == "__main__":
-    import sys
-
     if len(sys.argv) == 1:
         print_usage()
 
