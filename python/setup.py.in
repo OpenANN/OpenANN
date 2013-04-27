@@ -15,9 +15,9 @@ if __name__ == "__main__":
     ext_modules=[
       Extension("openann",
                 sources=["openann.pyx"],
-                library_dirs=["${CMAKE_INSTALL_PREFIX}/lib"],
+                library_dirs=["${PROJECT_BINARY_DIR}/lib", "${PROJECT_BINARY_DIR}/src"],
                 libraries=[${PYTHONEX_LINK_LIBRARIES}],
-                include_dirs=["${PROJECT_SOURCE_DIR}",
+                include_dirs=["${PROJECT_SOURCE_DIR}", "${PROJECT_SOURCE_DIR}/lib/ALGLIB",
                               "${PROJECT_SOURCE_DIR}/test/lib/CPP-Test",
                               "${EIGEN3_INCLUDE_DIRS}"],
                 define_macros=[("NDEBUG",)],

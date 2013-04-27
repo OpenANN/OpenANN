@@ -262,25 +262,12 @@ void Net::initialize()
 
 double Net::error(unsigned int i)
 {
-  double e = 0.0;
   if(errorFunction == CE)
-  {
-    tempOutput = (*this)(dataSet->getInstance(i));
-    for(int f = 0; f < tempOutput.rows(); f++)
-    {
-      double out = tempOutput(f);
-      if(out < 1e-45)
-        out = 1e-45;
-      e -= dataSet->getTarget(i)(f) * std::log(out);
-    }
-  }
+    return -(dataSet->getTarget(i).array() *
+        (((*this)(dataSet->getInstance(i)).array() + 1e-10).log())).sum();
   else
-  {
-    tempOutput = (*this)(dataSet->getInstance(i));
-    tempError = tempOutput - dataSet->getTarget(i);
-    e += tempError.dot(tempError);
-  }
-  return e / 2.0;
+    return ((*this)(dataSet->getInstance(i)) -
+        dataSet->getTarget(i)).squaredNorm() / 2.0;
 }
 
 double Net::error()
@@ -288,48 +275,33 @@ double Net::error()
   double e = 0.0;
   for(int n = 0; n < N; n++)
     e += error(n);
-  switch(errorFunction)
-  {
-    case SSE:
-      return e;
-    case MSE:
-      return e / (double) N;
-    default:
-      return e;
-  }
+
+  if(errorFunction == MSE)
+    return e / (double) N;
+  else
+    return e;
 }
 
-double Net::errorFromDataSet(DataSet& dataset)
+double Net::errorFromDataSet(DataSet& dataSet)
 {
-    double e = 0.0;
-    for(int n = 0; n < dataset.samples(); ++n) {
-        double e_n  = 0.0;
+  double e = 0.0;
+  if(errorFunction == CE)
+  {
+    for(int n = 0; n < dataSet.samples(); ++n)
+      e -= (dataSet.getTarget(n).array() *
+          (((*this)(dataSet.getInstance(n)).array() + 1e-10).log())).sum();
+  }
+  else
+  {
+    for(int n = 0; n < dataSet.samples(); ++n)
+      e += ((*this)(dataSet.getInstance(n)) -
+          dataSet.getTarget(n)).squaredNorm() / 2.0;
+  }
 
-        tempOutput = (*this)(dataset.getInstance(n));
-
-        if(errorFunction == CE) 
-        {
-            for(int f = 0; f < tempOutput.rows(); ++f)
-                e_n -= dataset.getTarget(n)(f) * std::log(tempOutput(f));
-        }
-        else 
-        {
-            tempError = tempOutput - dataset.getTarget(n);
-            e_n += tempError.dot(tempError);
-        }
-
-        e += (e_n / 2);
-    }
-
-    switch(errorFunction) 
-    {
-        case SSE:
-            return e;
-        case MSE:
-            return e / (double) N;
-        default:
-            return e;
-    }
+  if(errorFunction == MSE)
+    return e / (double) N;
+  else
+    return e;
 }
 
 bool Net::providesGradient()

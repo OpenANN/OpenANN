@@ -426,7 +426,7 @@ void LayerTestCase::subsamplingGradient()
 void LayerTestCase::subsamplingInputGradient()
 {
   OutputInfo info;
-  info.bias = true;
+  info.bias = false;
   info.dimensions.push_back(3);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);

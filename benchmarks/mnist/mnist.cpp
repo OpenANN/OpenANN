@@ -20,16 +20,13 @@
  * classification of the test set will be logged in the file "dataset-*.log",
  * where '*' is the starting time.
  *
- * You can display the accuracy on test set during the training with this
- * Gnuplot script:
- * \code
- * reset
- * unset key
- * set title "MNIST Data Set"
- * set xlabel "Training time / min"
- * set ylabel "Error / %"
- * plot "dataset-*.log" u ($5/60000):($4/100) w l
- * \endcode
+ * To execute the benchmark you can run the Python script:
+\code
+python benchmark.py [download] [run] [evaluate]
+\endcode
+ * download will download the dataset, run will start the benchmark and
+ * evaluate will plot the result. You can of course modify the script or do
+ * the each step manually.
  */
 
 int main(int argc, char** argv)
@@ -39,7 +36,7 @@ int main(int argc, char** argv)
 #endif
   OpenANN::Log::getLevel() = OpenANN::Log::DEBUG;
 
-  std::string directory = "mnist/";
+  std::string directory = "./";
   if(argc > 1)
     directory = std::string(argv[1]);
 
