@@ -16,12 +16,12 @@ setup = {
   "env_dir" : DIRECTORY + "/environment/",
   "settings_dir" : "./",
   "cmd_mod" : " > /dev/null 2> /dev/null < /dev/null",
-  "episodes" : 3,#1000,
+  "episodes" : 1000,
   "gui" : False,
   "hidden_units" : 10
 }
 param_configs = [0, 5, 10, 20, 40, 80, 107]
-runs = 1#10
+runs = 10
 
 
 def print_usage():
@@ -107,7 +107,23 @@ def evaluate_octopusarm(plot_axes):
     except ImportError:
         print("Required libraries: NumPy, Matplotlib.")
         exit(1)
-    raise NotImplementedError()
+
+    axes = ["Epoch", "MSE", "Correct", "Errors", "Time"]
+
+    log = {}
+    for f in glob.iglob("logs/Neuro*.log"):
+        print f
+        run = []
+        for l in open(f, "r").readlines():
+            l = l.strip()
+            if len(l) > 0 and l[0] != "#":
+                run.append(numpy.sum(map(float, l.split())))
+        log[f] = numpy.array(run)
+
+    print(log)
+    for run in log.keys():
+        pylab.plot(log[run])
+    pylab.show()
 
 
 if __name__ == "__main__":
