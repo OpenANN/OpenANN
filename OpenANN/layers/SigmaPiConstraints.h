@@ -14,6 +14,9 @@ struct DistanceConstraint : public SigmaPi::Constraint
       : width(width), height(height)
   {}
 
+  virtual ~DistanceConstraint()
+  {}
+
   virtual double operator() (int p1, int p2) const
   {
     double x1 = p1 % width;
@@ -40,6 +43,10 @@ struct SlopeConstraint : public SigmaPi::Constraint
 {
   SlopeConstraint(size_t width, size_t height)
       : width(width), height(height)
+  {
+  }
+
+  virtual ~SlopeConstraint()
   {}
 
   virtual double operator() (int p1, int p2) const
