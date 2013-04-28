@@ -10,8 +10,9 @@ RBM::RBM(int D, int H, int cdN, double stdDev)
     W(H, D), posGradW(H, D), negGradW(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H),
-    pv(D), v(D), ph(H), h(H)
+    pv(D), v(D), ph(H), h(H), K(D*H + D + H), params(K)
 {
+  initialize();
 }
 
 Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
@@ -28,13 +29,9 @@ bool RBM::providesInitialization()
 
 void RBM::initialize()
 {
-  for(int j = 0; j < H; j++)
-    for(int i = 0; i < D; i++)
-      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
-  for(int i = 0; i < D; i++)
-    bv(i) = rng.sampleNormalDistribution<double>() * stdDev;
-  for(int j = 0; j < H; j++)
-    bh(j) = rng.sampleNormalDistribution<double>() * stdDev;
+  for(int k = 0; k < K; k++)
+    params(k) = rng.sampleNormalDistribution<double>() * stdDev;
+  setParameters(params);
 }
 
 unsigned int RBM::examples()
@@ -44,11 +41,12 @@ unsigned int RBM::examples()
 
 unsigned int RBM::dimension()
 {
-  return D*H + D + H;
+  return K;
 }
 
 void RBM::setParameters(const Eigen::VectorXd& parameters)
 {
+  params = parameters;
   int idx = 0;
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
@@ -62,17 +60,7 @@ void RBM::setParameters(const Eigen::VectorXd& parameters)
 
 Eigen::VectorXd RBM::currentParameters()
 {
-  Eigen::VectorXd parameters(dimension());
-  int idx = 0;
-  for(int j = 0; j < H; j++)
-    for(int i = 0; i < D; i++)
-      parameters(idx++) = W(j, i);
-  for(int i = 0; i < D; i++)
-    parameters(idx++) = bv(i);
-  for(int j = 0; j < H; j++)
-    parameters(idx++) = bh(j);
-  OPENANN_CHECK_MATRIX_BROKEN(parameters);
-  return parameters;
+  return params;
 }
 
 double RBM::error()

@@ -18,7 +18,9 @@ public:
   Eigen::MatrixXd W, posGradW, negGradW;
   Eigen::VectorXd bv, posGradBv, negGradBv, bh, posGradBh, negGradBh;
   Eigen::VectorXd pv, v, ph, h;
-  DataSet* trainSet; // TODO unify code to store data sets (move to learner)
+  int K;
+  Eigen::VectorXd params;
+  DataSet* trainSet;
 
   RBM(int D, int H, int cdN = 1, double stdDev = 0.01);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);

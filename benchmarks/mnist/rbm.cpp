@@ -225,13 +225,12 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput);
   //OpenANN::DirectStorageDataSet testSet(loader.testInput);
 
-  OpenANN::RBM rbm(784, 500, 1, 0.01);
+  OpenANN::RBM rbm(784, 10, 1, 0.01);
   rbm.trainingSet(trainSet);
-  rbm.initialize();
 
-  OpenANN::MBSGD optimizer(0.001, 0.5, 25, 0.1);
+  OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.1);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 50;
+  stop.maximalIterations = 20;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   int it = 0;
