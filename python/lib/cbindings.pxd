@@ -53,7 +53,11 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
 
 
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
-  cdef cppclass OutputInfo
+  cdef cppclass OutputInfo:
+    bool bias
+    vector[int] dimension
+    int outputs()
+
   cdef cppclass Layer:
     OutputInfo initialize(vector[double*]& param, vector[double*] derivative)
     void initializeParameters()
@@ -172,7 +176,9 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& setErrorFunction(ErrorFunction errorFunction)
     Net& useDropout(bool activate)
     Net& addLayer(Layer *layer)
-    unsigned int numberOflayer()
+    Net& addOutputLayer(Layer *layer)
+    unsigned int numberOflayers()
+    OutputInfo getOutputInfo(int l)
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
