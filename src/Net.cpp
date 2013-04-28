@@ -159,7 +159,7 @@ Net& Net::useDropout(bool activate)
 
 Learner& Net::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
-  dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
+  dataSet = new DirectStorageDataSet(&trainingInput, &trainingOutput);
   deleteDataSet = true;
   N = dataSet->samples();
   return *this;
@@ -179,7 +179,7 @@ Net& Net::testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput)
 {
   if(deleteTestSet)
     delete testDataSet;
-  testDataSet = new DirectStorageDataSet(testInput, testOutput);
+  testDataSet = new DirectStorageDataSet(&testInput, &testOutput);
   deleteTestSet = true;
   return *this;
 }

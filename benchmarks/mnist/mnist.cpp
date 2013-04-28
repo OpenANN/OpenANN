@@ -52,7 +52,7 @@ int main(int argc, char** argv)
      .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)           //  84
      .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
-  OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
+  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);

@@ -222,8 +222,8 @@ int main(int argc, char** argv)
     directory = std::string(argv[1]);
 
   IDXLoader loader(28, 28, 60000, 1000, directory);
-  OpenANN::DirectStorageDataSet trainSet(loader.trainingInput, loader.trainingOutput);
-  //OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput);
+  OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput);
+  //OpenANN::DirectStorageDataSet testSet(loader.testInput);
 
   OpenANN::RBM rbm(784, 500, 1, 0.01);
   rbm.trainingSet(trainSet);

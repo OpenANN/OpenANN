@@ -71,7 +71,7 @@ class EvaluatableDataset : public OpenANN::DirectStorageDataSet
 public:
   int iterations;
   EvaluatableDataset(Eigen::MatrixXd& in, Eigen::MatrixXd& out)
-    : DirectStorageDataSet(in, out), iterations(0)
+    : DirectStorageDataSet(&in, &out), iterations(0)
   {}
   virtual void finishIteration(OpenANN::Learner& learner) { iterations++; }
 };

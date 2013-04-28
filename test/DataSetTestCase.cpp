@@ -26,7 +26,7 @@ void DataSetTestCase::run()
 
 void DataSetTestCase::directStorageDataSets()
 {
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
 
   ASSERT_EQUALS(dataset.samples(), 5);
   ASSERT_EQUALS(dataset.inputs(), 1);
@@ -49,7 +49,7 @@ void DataSetTestCase::directStorageDataSets()
 
 void DataSetTestCase::dataSetViews()
 {
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   DataSetView view(dataset);
 
   ASSERT_EQUALS(view.samples(), 0);
@@ -61,7 +61,7 @@ void DataSetTestCase::dataSetViews()
 
 void DataSetTestCase::dataSetSplitsFromGroups()
 {
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   
   std::vector<int> X;
   std::vector<int> Y;
@@ -98,7 +98,7 @@ void DataSetTestCase::dataSetSplitsFromGroups()
 
 void DataSetTestCase::dataSetSplitsFromRatio()
 {
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   
   std::vector<int> X;
   std::vector<int> Y;
@@ -139,7 +139,7 @@ void DataSetTestCase::dataSetSplitsFromRatio()
 
 void DataSetTestCase::dataSetMerge()
 {
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   DataSetView overall(dataset);
  
   std::vector<int> X;

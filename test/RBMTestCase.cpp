@@ -22,7 +22,7 @@ void RBMTestCase::learnSimpleExample()
   X.col(5) << 0, 0, 1, 1, 1, 0;
 
   RBM rbm(6, 2, 1, 0.1);
-  DirectStorageDataSet ds(X, X);
+  DirectStorageDataSet ds(&X);
   rbm.trainingSet(ds);
   rbm.initialize();
   MBSGD opt(0.1, 0.0, 2);

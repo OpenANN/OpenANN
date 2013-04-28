@@ -602,7 +602,7 @@ void LayerTestCase::multilayerNetwork()
 {
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(1*6*6, 1);
   Eigen::MatrixXd Y = Eigen::MatrixXd::Random(3, 1);
-  DirectStorageDataSet ds(X, Y);
+  DirectStorageDataSet ds(&X, &Y);
 
   Net net;
   net.inputLayer(1, 6, 6);
