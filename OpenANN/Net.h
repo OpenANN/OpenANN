@@ -8,6 +8,11 @@
 
 namespace OpenANN {
 
+/**
+ * @enum ErrorFunction
+ *
+ * Error function that will be minimized.
+ */
 enum ErrorFunction
 {
   NO_E_DEFINED,
