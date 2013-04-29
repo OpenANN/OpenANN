@@ -12,9 +12,11 @@ class Error:
 
 cdef class Net:
   cdef openann.Net *thisptr
+  cdef object layers
 
   def __cinit__(self):
     self.thisptr = new openann.Net()
+    self.layers = []
 
   def __dealloc__(self):
     del self.thisptr
@@ -63,6 +65,18 @@ cdef class Net:
   def dropout_layer(self, dropout_probability):
     self.thisptr.dropoutLayer(dropout_probability)
     return self
+
+  def add_layer(self, layer):
+    cdef int layers = self.thisptr.numberOflayers()
+    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
+    self.thisptr.addLayer((<Layer?>layer).construct(info))
+    self.layers.append(layer)
+
+  def add_output_layer(self, layer):
+    cdef int layers = self.thisptr.numberOflayers()
+    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
+    self.thisptr.addOutputLayer((<Layer?>layer).construct(info))
+    self.layers.append(layer)
 
   def compressed_output_layer(self, units, params, act, compression, std_dev=0.05):
     cdef char* comp = compression
