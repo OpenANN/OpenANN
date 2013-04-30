@@ -5,13 +5,14 @@
 #include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/io/Logger.h>
 #include <limits>
 #include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
 LMA::LMA()
-    : debugLogger(Logger::NONE), opt(0), iteration(-1)
+    : opt(0), iteration(-1)
 {
 }
 
@@ -174,37 +175,37 @@ void LMA::cleanUp()
   opt->setParameters(optimum);
 
   // Log result
-  if(debugLogger.isActive())
+  if(OpenANN::Log::DEBUG  <= OpenANN::Log::getLevel())
   {
-    debugLogger << "LMA terminated\n"
-                << "Iterations= " << report.iterationscount << "\n"
-                << "Function evaluations= " << report.nfunc << "\n"
-                << "Jacobi evaluations= " << report.njac << "\n"
-                << "Gradient evaluations= " << report.ngrad << "\n"
-                << "Hessian evaluations= " << report.nhess << "\n"
-                << "Cholesky decompositions= " << report.ncholesky << "\n"
-                << "Value= " << opt->error() << "\n"
-                << "Reason: ";
+    OPENANN_DEBUG << "LMA terminated\n"
+                  << "Iterations= " << report.iterationscount << std::endl
+                  << "Function evaluations= " << report.nfunc << std::endl
+                  << "Jacobi evaluations= " << report.njac << std::endl
+                  << "Gradient evaluations= " << report.ngrad << std::endl
+                  << "Hessian evaluations= " << report.nhess << std::endl
+                  << "Cholesky decompositions= " << report.ncholesky << std::endl
+                  << "Value= " << opt->error() << std::endl
+                  << "Reason: ";
     switch(report.terminationtype)
     {
     case 1:
-      debugLogger << "Relative function improvement is below threshold.\n";
+      OPENANN_DEBUG << "Relative function improvement is below threshold.";
       break;
     case 2:
-      debugLogger << "Relative step is below threshold.\n";
+      OPENANN_DEBUG << "Relative step is below threshold.";
       break;
     case 4:
-      debugLogger << "Gradient is below threshold.\n";
+      OPENANN_DEBUG << "Gradient is below threshold.";
       break;
     case 5:
-      debugLogger << "MaxIts steps was taken\n";
+      OPENANN_DEBUG << "MaxIts steps was taken";
       break;
     case 7:
-      debugLogger << "Stopping conditions are too stringent, "
-                  << "further improvement is impossible,\n";
+      OPENANN_DEBUG << "Stopping conditions are too stringent, "
+                  << "further improvement is impossible.";
       break;
     default:
-      debugLogger << "Unknown.\n";
+      OPENANN_DEBUG << "Unknown.";
     }
   }
 
