@@ -9,7 +9,8 @@
 
 namespace OpenANN {
 
-CG::CG() : opt(0)
+CG::CG()
+  : opt(0), iteration(-1)
 {
 }
 
@@ -30,7 +31,8 @@ void CG::setStopCriteria(const StoppingCriteria& stop)
 void CG::optimize()
 {
   OPENANN_CHECK(opt);
-  const unsigned n = opt->dimension();
+  if(iteration < 0)
+    initialize();
 
   alglib::mincgstate state;
   alglib::mincgreport report;
@@ -55,7 +57,6 @@ void CG::optimize()
   Eigen::VectorXd parameters(n);
   Eigen::VectorXd gradient(n);
 
-  int iteration = -1;
   alglib_impl::ae_state _alglib_env_state;
   alglib_impl::ae_state_init(&_alglib_env_state);
   try
@@ -132,6 +133,8 @@ void CG::optimize()
       OPENANN_DEBUG << "Unknown.";
     }
   }
+
+  iteration = -1;
 }
 
 Eigen::VectorXd CG::result()
@@ -144,6 +147,12 @@ Eigen::VectorXd CG::result()
 std::string CG::name()
 {
   return "Conjugate Gradient";
+}
+
+void CG::initialize()
+{
+  iteration = 0;
+  n = opt->dimension();
 }
 
 }
