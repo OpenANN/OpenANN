@@ -3,13 +3,13 @@
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/io/Logger.h>
 #include <limits>
 #include "optimization.h"
-#include "Test/Stopwatch.h"
 
 namespace OpenANN {
 
-CG::CG() : debugLogger(Logger::CONSOLE), opt(0)
+CG::CG() : opt(0)
 {
 }
 
@@ -31,22 +31,13 @@ void CG::optimize()
 {
   OPENANN_CHECK(opt);
   const unsigned n = opt->dimension();
-  if(!opt->providesInitialization())
-  {
-    Eigen::VectorXd init(n);
-    RandomNumberGenerator rng;
-    for(unsigned i = 0; i < n; i++)
-      init(i) = rng.sampleNormalDistribution<double>();
-    opt->setParameters(init);
-  }
 
   alglib::mincgstate state;
   alglib::mincgreport report;
   alglib::real_1d_array xIn;
-  double* lengthIndicator = new double[n];
+  double lengthIndicator[n];
   std::memset(lengthIndicator, 0, n*sizeof(double));
   xIn.setcontent(n, lengthIndicator);
-  delete[] lengthIndicator;
   for(unsigned i = 0; i < n; i++)
     xIn[i] = opt->currentParameters()(i);
 
@@ -69,21 +60,15 @@ void CG::optimize()
   alglib_impl::ae_state_init(&_alglib_env_state);
   try
   {
-    Stopwatch optimizerStopWatch;
     while(alglib_impl::mincgiteration(state.c_ptr(), &_alglib_env_state))
     {
       if(state.needfg)
       {
-        debugLogger << "computed optimization step in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
         for(unsigned i = 0; i < n; i++)
           parameters(i) = state.x[i];
         opt->setParameters(parameters);
-        optimizerStopWatch.start();
         state.f = opt->error();
-        debugLogger << "computed error in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
-        optimizerStopWatch.start();
         gradient = opt->gradient();
-        debugLogger << "computed gradient in " << optimizerStopWatch.stop(Stopwatch::MILLISECOND) << " ms\n";
         for(unsigned i = 0; i < n; i++)
           state.g[i] = (double) gradient(i, 0);
         if(iteration != state.c_ptr()->repiterationscount)
@@ -91,7 +76,6 @@ void CG::optimize()
           iteration = state.c_ptr()->repiterationscount;
           opt->finishedIteration();
         }
-        optimizerStopWatch.start();
         continue;
       }
       if(state.xupdated)
@@ -116,37 +100,36 @@ void CG::optimize()
   for(unsigned i = 0; i < n; i++)
     optimum(i, 0) = xIn[i];
 
-  if(debugLogger.isActive())
+  if(OpenANN::Log::DEBUG  <= OpenANN::Log::getLevel())
   {
-    debugLogger << "CG terminated\n"
-                << "iterations= " << report.iterationscount << "\n"
-                << "function evaluations= " << report.nfev << "\n"
-                //<< "optimum= " << optimum.transpose() << "\n"
+    OPENANN_DEBUG << "CG terminated" << std::endl
+                << "iterations= " << report.iterationscount << std::endl
+                << "function evaluations= " << report.nfev << std::endl
                 << "reason: ";
     switch(report.terminationtype)
     {
     case 1:
-      debugLogger << "Relative function improvement is no more than EpsF.\n";
+      OPENANN_DEBUG << "Relative function improvement is no more than EpsF.";
       break;
     case 2:
-      debugLogger << "Relative step is no more than EpsX.\n";
+      OPENANN_DEBUG << "Relative step is no more than EpsX.";
       break;
     case 4:
-      debugLogger << "Gradient norm is no more than EpsG.\n";
+      OPENANN_DEBUG << "Gradient norm is no more than EpsG.";
       break;
     case 5:
-      debugLogger << "MaxIts steps was taken.\n";
+      OPENANN_DEBUG << "MaxIts steps was taken.";
       break;
     case 7:
-      debugLogger << "Stopping conditions are too stringent, further"
+      OPENANN_DEBUG << "Stopping conditions are too stringent, further"
                   << "further improvement is impossible, we return best "
-                  << "X found so far.\n";
+                  << "X found so far.";
       break;
     case 8:
-      debugLogger << "Terminated by user.\n";
+      OPENANN_DEBUG << "Terminated by user.";
       break;
     default:
-      debugLogger << "Unknown.\n";
+      OPENANN_DEBUG << "Unknown.";
     }
   }
 }

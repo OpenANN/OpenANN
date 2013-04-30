@@ -2,7 +2,6 @@
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
-#include <OpenANN/io/Logger.h>
 #include <Eigen/Dense>
 
 namespace OpenANN {
@@ -14,7 +13,6 @@ namespace OpenANN {
  */
 class CG : public Optimizer
 {
-  Logger debugLogger;
   StoppingCriteria stop;
   Optimizable* opt; // do not delete
   Eigen::VectorXd optimum;
