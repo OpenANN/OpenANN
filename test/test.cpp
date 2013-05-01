@@ -17,6 +17,7 @@
 #include "IntrinsicPlasticityTestCase.h"
 #include "MBSGDTestCase.h"
 #include "LMATestCase.h"
+#include "CGTestCase.h"
 #include "DataSetTestCase.h"
 #include "IODataSetTestCase.h"
 #include "EvaluationTestCase.h"
@@ -42,14 +43,15 @@ int main(int argc, char** argv)
 
   TestSuite ts("OpenANN");
   ts.addTestCase(new ActivationFunctionsTestCase);
-  ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
   ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new LayerTestCase);
   ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
+  ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new MBSGDTestCase);
   ts.addTestCase(new LMATestCase);
+  ts.addTestCase(new CGTestCase);
   ts.addTestCase(new DataSetTestCase);
   ts.addTestCase(new IODataSetTestCase);
   ts.addTestCase(new EvaluationTestCase);

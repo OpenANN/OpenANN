@@ -1,5 +1,6 @@
 #include <OpenANN/OpenANN>
 #include <Eigen/Dense>
+#include <OpenANN/io/Logger.h>
 #include <iostream>
 
 using namespace OpenANN;
@@ -73,7 +74,7 @@ int main()
   // Train network
   StoppingCriteria stop;
   stop.minimalValueDifferences = 1e-10;
-  train(net, "CG", SSE, stop);
+  train(net, "LMA", SSE, stop);
 
   // Use network
   for(int n = 0; n < N; n++)
