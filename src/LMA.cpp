@@ -38,13 +38,14 @@ void LMA::optimize()
 
   while(step() && !interrupt.isSignaled())
   {
-    OPENANN_DEBUG << "iteration " << iteration 
+    OPENANN_DEBUG << "Iteration #" << iteration 
       << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
   }
 }
 
 bool LMA::step()
 {
+  OPENANN_CHECK(opt);
   if(iteration < 0)
       initialize();
 

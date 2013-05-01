@@ -10,7 +10,7 @@
 #ifndef NDEBUG
 
 #ifndef OPENANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
+  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG
 #endif // OPENANN_LOGLEVEL
 
 #define OPENANN_OUTPUT(msg) std::cout << __FILE__ << "(" << __LINE__ << "): " << msg << std::endl;
@@ -19,7 +19,7 @@
 #else // NDEBUG
 
 #ifndef OPENANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::INFO 
+  #define OPENANN_LOGLEVEL OpenANN::Log::INFO
 #endif // OPENANN_LOGLEVEL
 
 #define OPENANN_OUTPUT(msg) std::cout << msg << std::endl;

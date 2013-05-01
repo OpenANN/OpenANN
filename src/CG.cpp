@@ -36,14 +36,25 @@ bool CG::step()
   if(iteration < 0)
     initialize();
 
-  bool run;
   try
   {
-    while(true)
+    while(alglib_impl::mincgiteration(state.c_ptr(), &envState))
     {
-      run = alglib_impl::mincgiteration(state.c_ptr(), &envState);
-      if(!run)
-        break;
+      if(state.needf)
+      {
+        for(unsigned i = 0; i < n; i++)
+          parameters(i) = state.x[i];
+        opt->setParameters(parameters);
+        error = opt->error();
+        state.f = error;
+        if(iteration != state.c_ptr()->repiterationscount)
+        {
+          iteration = state.c_ptr()->repiterationscount;
+          opt->finishedIteration();
+          return true;
+        }
+        continue;
+      }
       if(state.needfg)
       {
         for(unsigned i = 0; i < n; i++)
@@ -58,7 +69,7 @@ bool CG::step()
         {
           iteration = state.c_ptr()->repiterationscount;
           opt->finishedIteration();
-          break;
+          return true;
         }
         continue;
       }
@@ -77,17 +88,18 @@ bool CG::step()
     throw;
   }
 
-  if(!run)
-    reset();
+  reset();
 
-  return run;
+  return false;
 }
 
 void CG::optimize()
 {
+  OPENANN_CHECK(opt);
   while(step())
   {
-    OPENANN_DEBUG << "Iteration #" << iteration << ", error = " << error;
+    OPENANN_DEBUG << "Iteration #" << iteration << ", training error = "
+        << FloatingPointFormatter(error, 4);
   }
 }
 
