@@ -218,12 +218,12 @@ int main(int argc, char** argv)
   IDXLoader loader(28, 28, 60000, 1000, directory);
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput);
 
-  OpenANN::RBM rbm(784, 40, 1, 0.01);
+  OpenANN::RBM rbm(784, 100, 1, 0.01);
   rbm.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.1);
+  OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.01);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 0;
+  stop.maximalIterations = 10;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   int it = 0;

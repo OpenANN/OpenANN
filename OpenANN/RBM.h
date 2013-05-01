@@ -8,6 +8,26 @@
 
 namespace OpenANN {
 
+/**
+ * @class RBM
+ *
+ * Restricted Boltzmann Machine.
+ *
+ * RBMs have been originally invented by Paul Smolensky in 1986 [1] and since
+ * contrastive divergence [2] can be used to calculate an approximation of a
+ * gradient, we can efficiently train RBMs. RBMs are usually used to learn
+ * unsupervised features. However, they can be stacked and we can use them
+ * to initialize deep autoencoders or feedforward networks for classification.
+ * Standard RBMs assume that the data is (at least approximately) binary.
+ *
+ * [1] Smolensky, Paul:
+ * Information Processing in Dynamical Systems: Foundations of Harmony Theory,
+ * MIT Press, 1986, pp. 194-281.
+ *
+ * [2] Hinton, Geoffrey E.:
+ * Training Products of Experts by Minimizing Contrastive Divergence,
+ * Technical Report, University College London, 2000.
+ */
 class RBM : public Learner
 {
 public:
