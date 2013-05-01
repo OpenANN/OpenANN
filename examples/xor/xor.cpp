@@ -1,5 +1,6 @@
 #include <OpenANN/OpenANN>
 #include <Eigen/Dense>
+#include <OpenANN/io/Logger.h>
 #include <iostream>
 
 using namespace OpenANN;

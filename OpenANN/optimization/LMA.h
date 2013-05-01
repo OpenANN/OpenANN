@@ -47,7 +47,7 @@ class LMA : public Optimizer
   Optimizable* opt; // do not delete
   Eigen::VectorXd optimum;
   int iteration, n;
-  alglib_impl::ae_state _alglib_env_state;
+  alglib_impl::ae_state envState;
   Eigen::VectorXd parameters, errorValues;
   Eigen::MatrixXd jacobian;
   alglib::real_1d_array xIn;
