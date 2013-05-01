@@ -17,6 +17,7 @@ class CG : public Optimizer
   Optimizable* opt; // do not delete
   Eigen::VectorXd optimum;
   int iteration, n;
+  Eigen::VectorXd parameters, gradient;
 
 public:
   CG();

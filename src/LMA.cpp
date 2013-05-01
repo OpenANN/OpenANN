@@ -5,9 +5,9 @@
 #include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
 #include <limits>
-#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -98,7 +98,7 @@ bool LMA::step()
   }
   catch(alglib_impl::ae_error_type)
   {
-    throw alglib::ap_error(_alglib_env_state.error_msg);
+    throw OpenANNException(_alglib_env_state.error_msg);
   }
   catch(...)
   {

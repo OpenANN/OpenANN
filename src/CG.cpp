@@ -1,8 +1,11 @@
+#define OPENANN_LOG_NAMESPACE "CG"
+
 #include <OpenANN/optimization/CG.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
 #include <limits>
 #include "optimization.h"
@@ -37,11 +40,7 @@ void CG::optimize()
   alglib::mincgstate state;
   alglib::mincgreport report;
   alglib::real_1d_array xIn;
-  double lengthIndicator[n];
-  std::memset(lengthIndicator, 0, n*sizeof(double));
-  xIn.setcontent(n, lengthIndicator);
-  for(unsigned i = 0; i < n; i++)
-    xIn[i] = opt->currentParameters()(i);
+  xIn.setcontent(n, opt->currentParameters().data());
 
   alglib::mincgcreate(xIn, state);
   alglib::mincgsetcond(state,
@@ -53,9 +52,8 @@ void CG::optimize()
       stop.maximalIterations != StoppingCriteria::defaultValue.maximalIterations ?
           stop.maximalIterations : 0);
 
-  // temporary vectors to avoid allocations
-  Eigen::VectorXd parameters(n);
-  Eigen::VectorXd gradient(n);
+  parameters.resize(n);
+  gradient.resize(n);
 
   alglib_impl::ae_state _alglib_env_state;
   alglib_impl::ae_state_init(&_alglib_env_state);
@@ -80,16 +78,14 @@ void CG::optimize()
         continue;
       }
       if(state.xupdated)
-      {
         continue;
-      }
       throw alglib::ap_error("ALGLIB: error in 'mincgoptimize' (some derivatives were not provided?)");
     }
     alglib_impl::ae_state_clear(&_alglib_env_state);
   }
   catch(alglib_impl::ae_error_type)
   {
-    throw alglib::ap_error(_alglib_env_state.error_msg);
+    throw OpenANNException(_alglib_env_state.error_msg);
   }
   catch(...)
   {
