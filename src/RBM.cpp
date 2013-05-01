@@ -119,6 +119,7 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
 Eigen::VectorXd RBM::reconstructProb(int n, int steps)
 {
   v = trainSet->getInstance(n);
+  pv = v;
   for(int i = 0; i < steps; i++)
   {
     sampleHgivenV();

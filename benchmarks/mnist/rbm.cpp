@@ -1,6 +1,7 @@
 #include <OpenANN/RBM.h>
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include "IDXLoader.h"
@@ -16,20 +17,20 @@ class RBMVisualization : public QGLWidget
 {
   OpenANN::RBM& rbm;
   OpenANN::DataSet& dataSet;
-  int visualizedNeurons;
-  int rows, cols;
+  int neuronRows, neuronCols;
   int width, height;
   int instance;
   int offset;
   int fantasy;
+  bool showFilters;
 public:
   RBMVisualization(OpenANN::RBM& rbm, OpenANN::DataSet& dataSet,
-                   int visualizedNeurons, int rows, int cols,
+                   int neuronRows, int neuronCols, int width, int height,
                    QWidget* parent = 0, const QGLWidget* shareWidget = 0,
                    Qt::WindowFlags f = 0)
-      : rbm(rbm), dataSet(dataSet), visualizedNeurons(visualizedNeurons),
-        rows(rows), cols(cols), width(800), height(600), instance(0),
-        offset(0), fantasy(0)
+      : rbm(rbm), dataSet(dataSet), neuronRows(neuronRows),
+        neuronCols(neuronCols), width(width), height(height), instance(0),
+        offset(0), fantasy(0), showFilters(false)
   {
   }
 
@@ -79,83 +80,68 @@ public:
 
     float scale = 1.0;
 
-    glBegin(GL_QUADS);
-    for(int xIdx = 0; xIdx < 28; xIdx++)
+    if(showFilters)
     {
-      for(int yIdx = 0; yIdx < 28; yIdx++)
-      {
-        float c = x(yIdx*28+xIdx);
-        float x = xIdx*scale;
-        float y = 28.0f*scale - yIdx*scale;
-        glColor3f(c, c, c);
-        glVertex2f(x, y);
-        glVertex2f(x+scale, y);
-        glVertex2f(x+scale, y+scale);
-        glVertex2f(x, y+scale);
-      }
-    }
-    glEnd();
-
-    Eigen::VectorXd r = rbm.reconstruct(instance, 1);
-    glBegin(GL_QUADS);
-    for(int xIdx = 0; xIdx < 28; xIdx++)
-    {
-      for(int yIdx = 0; yIdx < 28; yIdx++)
-      {
-        float c = r(yIdx*28+xIdx);
-        float x = 30.0f + xIdx*scale;
-        float y = 28.0f*scale - yIdx*scale;
-        glColor3f(c, c, c);
-        glVertex2f(x, y);
-        glVertex2f(x+scale, y);
-        glVertex2f(x+scale, y+scale);
-        glVertex2f(x, y+scale);
-      }
-    }
-    glEnd();
-
-    for(int i = 0; i < 3; i++)
-    {
-      Eigen::VectorXd rp = rbm.reconstructProb(instance, 1+i+fantasy);
-      glBegin(GL_QUADS);
-      for(int xIdx = 0; xIdx < 28; xIdx++)
-      {
-        for(int yIdx = 0; yIdx < 28; yIdx++)
-        {
-          float c = rp(yIdx*28+xIdx);
-          float x = (i+2)*30.0f + xIdx*scale;
-          float y = 28.0f*scale - yIdx*scale;
-          glColor3f(c, c, c);
-          glVertex2f(x, y);
-          glVertex2f(x+scale, y);
-          glVertex2f(x+scale, y+scale);
-          glVertex2f(x, y+scale);
-        }
-      }
-      glEnd();
-    }
-
-    for(int i = 0; i < visualizedNeurons; i++)
-    {
-      glBegin(GL_QUADS);
-      double mi = rbm.W.row(i).minCoeff();
-      double ma = rbm.W.row(i).maxCoeff();
+      double mi = rbm.W.minCoeff();
+      double ma = rbm.W.maxCoeff();
       double range = ma-mi;
-      for(int xIdx = 0; xIdx < 28; xIdx++)
+      for(int row = 0, filter = 0; row < neuronRows; row++)
       {
-        for(int yIdx = 0; yIdx < 28; yIdx++)
+        for(int col = 0; col < neuronCols; col++, filter++)
         {
-          float c = (rbm.W(i+offset, yIdx*28+xIdx) - mi) / range;
-          float x = i*30.0f*scale + xIdx*scale;
-          float y = 30.0f + (28.0f-yIdx)*scale;
-          glColor3f(c, c, c);
-          glVertex2f(x, y);
-          glVertex2f(x+scale, y);
-          glVertex2f(x+scale, y+scale);
-          glVertex2f(x, y+scale);
+          glBegin(GL_QUADS);
+          for(int yIdx = 0; yIdx < 28; yIdx++)
+          {
+            for(int xIdx = 0; xIdx < 28; xIdx++)
+            {
+              int h = filter+offset;
+              if(h >= rbm.W.rows())
+                throw OpenANN::OpenANNException("Illegal index for hidden unit");
+              int idx = yIdx*28+xIdx;
+              if(idx >= rbm.W.cols())
+                throw OpenANN::OpenANNException("Illegal index for pixel");
+              float c = (rbm.W(h, idx) - mi) / range;
+              float x = xIdx*scale + col*29.0f*scale - 30.0f;
+              float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
+              glColor3f(c, c, c);
+              glVertex2f(x, y);
+              glVertex2f(x+scale, y);
+              glVertex2f(x+scale, y+scale);
+              glVertex2f(x, y+scale);
+            }
+          }
+          glEnd();
         }
       }
-      glEnd();
+    }
+    else
+    {
+      rbm.reconstructProb(instance, offset);
+      for(int row = 0; row < neuronRows; row++)
+      {
+        for(int col = 0; col < neuronCols; col++)
+        {
+          glBegin(GL_QUADS);
+          for(int yIdx = 0; yIdx < 28; yIdx++)
+          {
+            for(int xIdx = 0; xIdx < 28; xIdx++)
+            {
+              int idx = yIdx*28+xIdx;
+              float c = rbm.pv(idx);
+              float x = xIdx*scale + col*29.0f*scale - 30.0f;
+              float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
+              glColor3f(c, c, c);
+              glVertex2f(x, y);
+              glVertex2f(x+scale, y);
+              glVertex2f(x+scale, y+scale);
+              glVertex2f(x, y+scale);
+            }
+          }
+          glEnd();
+          rbm.sampleHgivenV();
+          rbm.sampleVgivenH();
+        }
+      }
     }
 
     glColor3f(0.0f,0.0f,0.0f);
@@ -187,9 +173,14 @@ public:
         update();
         break;
       case Qt::Key_Right:
-        offset++; // TODO we could reach to max. hidden unit
+      {
+        offset++;
+        int tooHi = offset + neuronRows*neuronCols - rbm.H;
+        if(tooHi > 0)
+          offset -= tooHi;
         update();
         break;
+      }
       case Qt::Key_Minus:
         fantasy--;
         if(fantasy < 0)
@@ -198,6 +189,10 @@ public:
         break;
       case Qt::Key_Plus:
         fantasy++;
+        update();
+        break;
+      case Qt::Key_S:
+        showFilters = !showFilters;
         update();
         break;
       default:
@@ -213,7 +208,6 @@ int main(int argc, char** argv)
   omp_set_num_threads(PARALLEL_CORES);
 #endif
   OpenANN::Logger logger(OpenANN::Logger::CONSOLE);
-  OpenANN::Logger parameterLogger(OpenANN::Logger::APPEND_FILE, "rbm-weights");
 
   QApplication app(argc, argv);
 
@@ -223,14 +217,13 @@ int main(int argc, char** argv)
 
   IDXLoader loader(28, 28, 60000, 1000, directory);
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput);
-  //OpenANN::DirectStorageDataSet testSet(loader.testInput);
 
-  OpenANN::RBM rbm(784, 10, 1, 0.01);
+  OpenANN::RBM rbm(784, 40, 1, 0.01);
   rbm.trainingSet(trainSet);
 
   OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.1);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 20;
+  stop.maximalIterations = 0;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   int it = 0;
@@ -238,9 +231,8 @@ int main(int argc, char** argv)
   {
     OPENANN_INFO << "Iteration #" << ++it << " finished.";
   }
-  parameterLogger << rbm.currentParameters();
 
-  RBMVisualization visual(rbm, trainSet, 5, 800, 600);
+  RBMVisualization visual(rbm, trainSet, 5, 7, 800, 600);
   visual.show();
   visual.resize(800, 600);
 

@@ -42,7 +42,7 @@ public:
 
   Eigen::VectorXd reconstructProb(int n, int steps);
   Eigen::VectorXd reconstruct(int n, int steps);
-private:
+
   void reality(int n);
   void daydream();
   void sampleHgivenV();
