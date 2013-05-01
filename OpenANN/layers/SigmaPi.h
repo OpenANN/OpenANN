@@ -77,6 +77,8 @@ protected:
    */
   struct Constraint
   {
+    Constraint() {}
+    virtual ~Constraint() {}
     /**
       * function call operator for corresponding second-order nodes
       */

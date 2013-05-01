@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _OPENANN_LOGGER_H_
+#define _OPENANN_LOGGER_H_
 
 #include <string>
 #include <iostream>
@@ -8,8 +9,8 @@
 
 #ifndef NDEBUG
 
-#ifndef OPENNANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
+#ifndef OPENANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG
 #endif // OPENANN_LOGLEVEL
 
 #define OPENANN_OUTPUT(msg) std::cout << __FILE__ << "(" << __LINE__ << "): " << msg << std::endl;
@@ -17,8 +18,8 @@
 
 #else // NDEBUG
 
-#ifndef OPENNANN_LOGLEVEL 
-  #define OPENANN_LOGLEVEL OpenANN::Log::INFO 
+#ifndef OPENANN_LOGLEVEL 
+  #define OPENANN_LOGLEVEL OpenANN::Log::INFO
 #endif // OPENANN_LOGLEVEL
 
 #define OPENANN_OUTPUT(msg) std::cout << msg << std::endl;
@@ -113,3 +114,5 @@ Logger& operator<<(Logger& logger, const T& t)
 }
 
 }
+
+#endif // _OPENANN_LOGGER_H_

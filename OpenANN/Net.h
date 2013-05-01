@@ -8,6 +8,11 @@
 
 namespace OpenANN {
 
+/**
+ * @enum ErrorFunction
+ *
+ * Error function that will be minimized.
+ */
 enum ErrorFunction
 {
   NO_E_DEFINED,
@@ -222,6 +227,16 @@ public:
    * @return this for chaining
    */
   Net& addLayer(Layer* layer);
+
+  /** 
+   * Add a new output layer to this deep neural network. 
+   * Never free/delete the added layer outside of this class. 
+   * Its cleaned up by Net's destructor automatically.
+   * @param layer pointer to an instance that implements the Layer interface
+   * @return this for chaining
+   */
+  Net& addOutputLayer(Layer* layer);
+
 
   unsigned int numberOflayers();
   Layer& getLayer(unsigned int l);

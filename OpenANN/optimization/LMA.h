@@ -3,7 +3,6 @@
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
-#include <OpenANN/io/Logger.h>
 #include <Eigen/Dense>
 #include <optimization.h>
 
@@ -44,12 +43,11 @@ namespace OpenANN {
  */
 class LMA : public Optimizer
 {
-  Logger debugLogger;
   StoppingCriteria stop;
   Optimizable* opt; // do not delete
   Eigen::VectorXd optimum;
   int iteration, n;
-  alglib_impl::ae_state _alglib_env_state;
+  alglib_impl::ae_state envState;
   Eigen::VectorXd parameters, errorValues;
   Eigen::MatrixXd jacobian;
   alglib::real_1d_array xIn;
@@ -66,9 +64,7 @@ public:
   virtual std::string name();
 private:
   void initialize();
-  void allocate();
-  void initALGLIB();
-  void cleanUp();
+  void reset();
 };
 
 }

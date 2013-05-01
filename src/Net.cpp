@@ -107,6 +107,14 @@ Net& Net::addLayer(Layer* layer)
     return *this;
 }
 
+Net& Net::addOutputLayer(Layer* layer)
+{
+    addLayer(layer);
+    initializeNetwork();
+    return *this;
+}
+
+
 Net& Net::outputLayer(int units, ActivationFunction act, double stdDev)
 {
   fullyConnectedLayer(units, act, stdDev, false);

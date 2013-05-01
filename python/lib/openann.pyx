@@ -7,6 +7,7 @@ import numpy
 
 include "util.pyx"
 include "dataset.pyx"
+include "layer.pyx"
 include "net.pyx"
 include "optimization.pyx"
 include "evaluation.pyx"
