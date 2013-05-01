@@ -5,9 +5,9 @@
 #include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
 #include <limits>
-#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -38,19 +38,20 @@ void LMA::optimize()
 
   while(step() && !interrupt.isSignaled())
   {
-    OPENANN_DEBUG << "iteration " << iteration 
+    OPENANN_DEBUG << "Iteration #" << iteration 
       << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
   }
 }
 
 bool LMA::step()
 {
+  OPENANN_CHECK(opt);
   if(iteration < 0)
       initialize();
 
   try
   {
-    while(alglib_impl::minlmiteration(state.c_ptr(), &_alglib_env_state))
+    while(alglib_impl::minlmiteration(state.c_ptr(), &envState))
     {
       if(state.needfi)
       {
@@ -94,18 +95,18 @@ bool LMA::step()
       throw alglib::ap_error("ALGLIB: error in 'minlmoptimize' (some "
           "derivatives were not provided?)");
     }
-    alglib_impl::ae_state_clear(&_alglib_env_state);
+    alglib_impl::ae_state_clear(&envState);
   }
   catch(alglib_impl::ae_error_type)
   {
-    throw alglib::ap_error(_alglib_env_state.error_msg);
+    throw OpenANNException(envState.error_msg);
   }
   catch(...)
   {
     throw;
   }
 
-  cleanUp();
+  reset();
   return false;
 }
 
@@ -127,22 +128,13 @@ void LMA::initialize()
 {
   n = opt->dimension();
 
-  allocate();
-  initALGLIB();
-}
-
-void LMA::allocate()
-{
   // temporary vectors to avoid allocations
   parameters.resize(n);
   errorValues.resize(opt->examples());
   jacobian.resize(opt->examples(), n);
 
   xIn.setcontent(n, opt->currentParameters().data());
-}
 
-void LMA::initALGLIB()
-{
   // Initialize optimizer
   alglib::minlmcreatevj(opt->examples(), xIn, state);
 
@@ -160,10 +152,10 @@ void LMA::initALGLIB()
       0.0, maximalIterations);
 
   // Initialize optimizer state
-  alglib_impl::ae_state_init(&_alglib_env_state);
+  alglib_impl::ae_state_init(&envState);
 }
 
-void LMA::cleanUp()
+void LMA::reset()
 {
   // Read out results
   alglib::minlmresults(state, xIn, report);
@@ -175,38 +167,35 @@ void LMA::cleanUp()
   opt->setParameters(optimum);
 
   // Log result
-  if(OpenANN::Log::DEBUG  <= OpenANN::Log::getLevel())
+  OPENANN_DEBUG << "LMA terminated\n"
+                << "Iterations= " << report.iterationscount << std::endl
+                << "Function evaluations= " << report.nfunc << std::endl
+                << "Jacobi evaluations= " << report.njac << std::endl
+                << "Gradient evaluations= " << report.ngrad << std::endl
+                << "Hessian evaluations= " << report.nhess << std::endl
+                << "Cholesky decompositions= " << report.ncholesky << std::endl
+                << "Value= " << opt->error() << std::endl
+                << "Reason: ";
+  switch(report.terminationtype)
   {
-    OPENANN_DEBUG << "LMA terminated\n"
-                  << "Iterations= " << report.iterationscount << std::endl
-                  << "Function evaluations= " << report.nfunc << std::endl
-                  << "Jacobi evaluations= " << report.njac << std::endl
-                  << "Gradient evaluations= " << report.ngrad << std::endl
-                  << "Hessian evaluations= " << report.nhess << std::endl
-                  << "Cholesky decompositions= " << report.ncholesky << std::endl
-                  << "Value= " << opt->error() << std::endl
-                  << "Reason: ";
-    switch(report.terminationtype)
-    {
-    case 1:
-      OPENANN_DEBUG << "Relative function improvement is below threshold.";
-      break;
-    case 2:
-      OPENANN_DEBUG << "Relative step is below threshold.";
-      break;
-    case 4:
-      OPENANN_DEBUG << "Gradient is below threshold.";
-      break;
-    case 5:
-      OPENANN_DEBUG << "MaxIts steps was taken";
-      break;
-    case 7:
-      OPENANN_DEBUG << "Stopping conditions are too stringent, "
-                  << "further improvement is impossible.";
-      break;
-    default:
-      OPENANN_DEBUG << "Unknown.";
-    }
+  case 1:
+    OPENANN_DEBUG << "Relative function improvement is below threshold.";
+    break;
+  case 2:
+    OPENANN_DEBUG << "Relative step is below threshold.";
+    break;
+  case 4:
+    OPENANN_DEBUG << "Gradient is below threshold.";
+    break;
+  case 5:
+    OPENANN_DEBUG << "MaxIts steps was taken";
+    break;
+  case 7:
+    OPENANN_DEBUG << "Stopping conditions are too stringent, "
+                << "further improvement is impossible.";
+    break;
+  default:
+    OPENANN_DEBUG << "Unknown.";
   }
 
   iteration = -1;
