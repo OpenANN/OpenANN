@@ -39,13 +39,12 @@ cdef extern from "<iostream>" namespace "std":
   cdef cppclass ostream
   ostream& write "operator<<" (ostream& os, char* str)
 
-cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
-  cdef cppclass Logger
-    cdef enum Target:
-      NONE
-      CONSOLE
-      FILE
-      APPEND_FILE
+cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Logger":
+  cdef enum Target:
+    NONE
+    CONSOLE
+    FILE
+    APPEND_FILE
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   cdef enum LogLevel:
