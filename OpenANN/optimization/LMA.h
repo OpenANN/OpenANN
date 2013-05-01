@@ -64,9 +64,7 @@ public:
   virtual std::string name();
 private:
   void initialize();
-  void allocate();
-  void initALGLIB();
-  void cleanUp();
+  void reset();
 };
 
 }

@@ -105,7 +105,7 @@ bool LMA::step()
     throw;
   }
 
-  cleanUp();
+  reset();
   return false;
 }
 
@@ -127,22 +127,13 @@ void LMA::initialize()
 {
   n = opt->dimension();
 
-  allocate();
-  initALGLIB();
-}
-
-void LMA::allocate()
-{
   // temporary vectors to avoid allocations
   parameters.resize(n);
   errorValues.resize(opt->examples());
   jacobian.resize(opt->examples(), n);
 
   xIn.setcontent(n, opt->currentParameters().data());
-}
 
-void LMA::initALGLIB()
-{
   // Initialize optimizer
   alglib::minlmcreatevj(opt->examples(), xIn, state);
 
@@ -163,7 +154,7 @@ void LMA::initALGLIB()
   alglib_impl::ae_state_init(&envState);
 }
 
-void LMA::cleanUp()
+void LMA::reset()
 {
   // Read out results
   alglib::minlmresults(state, xIn, report);
