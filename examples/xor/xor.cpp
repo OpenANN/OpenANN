@@ -1,5 +1,4 @@
 #include <OpenANN/OpenANN>
-#include <OpenANN/optimization/MBSGD.h>
 #include <Eigen/Dense>
 #include <iostream>
 
