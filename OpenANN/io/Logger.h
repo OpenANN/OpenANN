@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _OPENANN_LOGGER_H_
+#define _OPENANN_LOGGER_H_
 
 #include <string>
 #include <iostream>
@@ -8,7 +9,7 @@
 
 #ifndef NDEBUG
 
-#ifndef OPENNANN_LOGLEVEL 
+#ifndef OPENANN_LOGLEVEL 
   #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG 
 #endif // OPENANN_LOGLEVEL
 
@@ -17,7 +18,7 @@
 
 #else // NDEBUG
 
-#ifndef OPENNANN_LOGLEVEL 
+#ifndef OPENANN_LOGLEVEL 
   #define OPENANN_LOGLEVEL OpenANN::Log::INFO 
 #endif // OPENANN_LOGLEVEL
 
@@ -113,3 +114,5 @@ Logger& operator<<(Logger& logger, const T& t)
 }
 
 }
+
+#endif // _OPENANN_LOGGER_H_
