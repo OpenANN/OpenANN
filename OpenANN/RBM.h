@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenANN/Learner.h>
+#include <OpenANN/layers/Layer.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/util/Random.h>
@@ -35,15 +36,16 @@ namespace OpenANN {
  * Training Products of Experts by Minimizing Contrastive Divergence,
  * Technical Report, University College London, 2000.
  */
-class RBM : public Learner
+class RBM : public Learner, public Layer
 {
   RandomNumberGenerator rng;
   int D, H;
   int cdN;
   double stdDev;
-  Eigen::MatrixXd W, posGradW, negGradW;
-  Eigen::VectorXd bv, posGradBv, negGradBv, bh, posGradBh, negGradBh;
-  Eigen::VectorXd pv, v, ph, h;
+  Eigen::MatrixXd W, posGradW, negGradW, Wd;
+  Eigen::VectorXd bv, posGradBv, negGradBv, bh, posGradBh, negGradBh, bhd;
+  Eigen::VectorXd pv, v, ph, h, phd;
+  Eigen::VectorXd deltas, e;
   int K;
   Eigen::VectorXd params;
   DataSet* trainSet;
@@ -59,6 +61,7 @@ public:
    * @param stdDev standard deviation of initial weights
    */
   RBM(int D, int H, int cdN = 1, double stdDev = 0.01);
+  virtual ~RBM() {}
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual bool providesInitialization();
   virtual void initialize();
@@ -75,6 +78,13 @@ public:
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
+
+  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual Eigen::VectorXd& getOutput();
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
+  virtual void initializeParameters() {}
+  virtual void updatedParameters() {}
 
   int visibleUnits();
   int hiddenUnits();

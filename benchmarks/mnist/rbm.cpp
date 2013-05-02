@@ -1,3 +1,4 @@
+#include <OpenANN/OpenANN>
 #include <OpenANN/RBM.h>
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
@@ -207,23 +208,28 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
-  OpenANN::Logger logger(OpenANN::Logger::CONSOLE);
 
-  QApplication app(argc, argv);
-
-  std::string directory = "mnist/";
+  std::string directory = "./";
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 60000, 1000, directory);
-  OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput);
+  IDXLoader loader(28, 28, 100, 100, directory);
+  OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
+                                         &loader.trainingOutput);
 
-  OpenANN::RBM rbm(784, 100, 1, 0.01);
+  OpenANN::RBM rbm = *(new OpenANN::RBM(784, 100, 1, 0.01));
   rbm.trainingSet(trainSet);
+
+  OpenANN::Net net;
+  net.inputLayer(1, 28, 28, false)
+     .addLayer(&rbm)
+     .outputLayer(10, OpenANN::LINEAR)
+     .setErrorFunction(OpenANN::CE)
+     .trainingSet(trainSet);
 
   OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.01);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 10;
+  stop.maximalIterations = 1;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   int it = 0;
@@ -232,9 +238,23 @@ int main(int argc, char** argv)
     OPENANN_INFO << "Iteration #" << ++it << " finished.";
   }
 
-  RBMVisualization visual(rbm, trainSet, 5, 7, 800, 600);
+  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
+                                        OpenANN::DirectStorageDataSet::MULTICLASS,
+                                        OpenANN::Logger::FILE);
+  net.testSet(testSet);
+
+  stop.maximalIterations = 1;
+  OpenANN::MBSGD netOptimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  netOptimizer.setOptimizable(net);
+  netOptimizer.setStopCriteria(stop);
+  while(netOptimizer.step())
+  {
+    OPENANN_INFO << "Iteration #" << ++it << " finished.";
+  }
+
+  /*QApplication app(argc, argv);
+  RBMVisualization visual(*rbm, trainSet, 5, 7, 800, 600);
   visual.show();
   visual.resize(800, 600);
-
-  return app.exec();
+  return app.exec();*/
 }

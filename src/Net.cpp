@@ -27,11 +27,20 @@ Net::Net()
 Net::~Net()
 {
   if(deleteDataSet)
+  {
     delete dataSet;
+    dataSet = 0;
+  }
   if(deleteTestSet)
+  {
     delete testDataSet;
+    testDataSet = 0;
+  }
   for(int i = 0; i < layers.size(); i++)
+  {
     delete layers[i];
+    layers[i] = 0;
+  }
   layers.clear();
 }
 

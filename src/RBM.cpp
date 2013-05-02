@@ -1,16 +1,18 @@
 #include <OpenANN/RBM.h>
 #include <OpenANN/ActivationFunctions.h>
 #include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
 
 namespace OpenANN {
 
 RBM::RBM(int D, int H, int cdN, double stdDev)
   : D(D), H(H), cdN(cdN), stdDev(stdDev),
-    W(H, D), posGradW(H, D), negGradW(H, D),
+    W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
-    bh(H), posGradBh(H), negGradBh(H),
-    pv(D), v(D), ph(H), h(H), K(D*H + D + H), params(K)
+    bh(H), posGradBh(H), negGradBh(H), bhd(H),
+    pv(D), v(D), ph(H), h(H), phd(H), K(D*H + D + H), params(K),
+    deltas(H), e(D)
 {
   initialize();
 }
@@ -102,18 +104,66 @@ bool RBM::providesHessian()
 
 Eigen::MatrixXd RBM::hessian()
 {
-  // TODO return dummy
+  throw OpenANNException("RBM::hessian() is not implemented!");
 }
 
 Learner& RBM::trainingSet(Eigen::MatrixXd& trainingInput,
                           Eigen::MatrixXd& trainingOutput)
 {
-  // TODO
+  throw OpenANNException("RBM::trainingSet(input, output) is not implemented!");
 }
 
 Learner& RBM::trainingSet(DataSet& trainingSet)
 {
   trainSet = &trainingSet;
+}
+
+void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+{
+  // Derive activations
+  activationFunctionDerivative(LOGISTIC, ph, phd);
+  for(int j = 0; j < H; j++)
+    deltas(j) = phd(j) * (*ein)(j);
+  // Weight derivatives
+  Wd = deltas * v.transpose();
+  // Prepare error signals for previous layer
+  e = W.transpose() * deltas;
+  eout = &e;
+}
+
+void RBM::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+{
+  v = *x;
+  sampleHgivenV();
+  y = &ph;
+}
+
+Eigen::VectorXd& RBM::getOutput()
+{
+  return ph;
+}
+
+OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
+                           std::vector<double*>& parameterDerivativePointers)
+{
+  for(int j = 0; j < H; j++)
+  {
+    for(int i = 0; i < D; i++)
+    {
+      parameterPointers.push_back(&W(j, i));
+      parameterDerivativePointers.push_back(&Wd(j, i));
+    }
+  }
+  for(int j = 0; j < H; j++)
+  {
+    parameterPointers.push_back(&bh(j));
+    parameterDerivativePointers.push_back(&bh(j));
+  }
+
+  OutputInfo info;
+  info.bias = false;
+  info.dimensions.push_back(H);
+  return info;
 }
 
 int RBM::visibleUnits()
