@@ -16,9 +16,16 @@ namespace OpenANN {
  * RBMs have been originally invented by Paul Smolensky in 1986 [1] and since
  * contrastive divergence [2] can be used to calculate an approximation of a
  * gradient, we can efficiently train RBMs. RBMs are usually used to learn
- * unsupervised features. However, they can be stacked and we can use them
- * to initialize deep autoencoders or feedforward networks for classification.
- * Standard RBMs assume that the data is (at least approximately) binary.
+ * features unsupervised. However, they can be stacked and we can use them
+ * to initialize deep autoencoders for dimensionality reduction or feedforward
+ * networks for classification. Standard RBMs assume that the data is binary
+ * (at least approximately, i.e. the values have to be within [0, 1]).
+ *
+ * Deep networks are usually difficult to train because the required learning
+ * rate in the first layer is usually much higher than in the upper layers.
+ * This problem can be solved by initializing the first layers with RBMs,
+ * which was the major breakthrouh in deep learning. There are also other ways
+ * to make deep learning work, e.g. CNNs (weight sharing), ReLUs, maxout, etc.
  *
  * [1] Smolensky, Paul:
  * Information Processing in Dynamical Systems: Foundations of Harmony Theory,
