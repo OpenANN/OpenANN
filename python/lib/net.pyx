@@ -21,6 +21,9 @@ cdef class Net:
   def __dealloc__(self):
     del self.thisptr
 
+  def parameter_size(self):
+    return self.thisptr.currentParameters().rows()
+
   def input_layer(self, width, height, dim=1, bias=True):
     self.thisptr.inputLayer(width, height, dim, bias)
     return self
