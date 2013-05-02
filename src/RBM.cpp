@@ -116,6 +116,31 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
   trainSet = &trainingSet;
 }
 
+int RBM::visibleUnits()
+{
+  return D;
+}
+
+int RBM::hiddenUnits()
+{
+  return H;
+}
+
+const Eigen::MatrixXd& RBM::getWeights()
+{
+  return W;
+}
+
+const Eigen::VectorXd& RBM::getVisibleProbs()
+{
+  return pv;
+}
+
+const Eigen::VectorXd& RBM::getVisibleSample()
+{
+  return v;
+}
+
 Eigen::VectorXd RBM::reconstructProb(int n, int steps)
 {
   v = trainSet->getInstance(n);

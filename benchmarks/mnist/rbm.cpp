@@ -82,8 +82,8 @@ public:
 
     if(showFilters)
     {
-      double mi = rbm.W.minCoeff();
-      double ma = rbm.W.maxCoeff();
+      double mi = rbm.getWeights().minCoeff();
+      double ma = rbm.getWeights().maxCoeff();
       double range = ma-mi;
       for(int row = 0, filter = 0; row < neuronRows; row++)
       {
@@ -95,12 +95,12 @@ public:
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
               int h = filter+offset;
-              if(h >= rbm.W.rows())
+              if(h >= rbm.getWeights().rows())
                 throw OpenANN::OpenANNException("Illegal index for hidden unit");
               int idx = yIdx*28+xIdx;
-              if(idx >= rbm.W.cols())
+              if(idx >= rbm.getWeights().cols())
                 throw OpenANN::OpenANNException("Illegal index for pixel");
-              float c = (rbm.W(h, idx) - mi) / range;
+              float c = (rbm.getWeights()(h, idx) - mi) / range;
               float x = xIdx*scale + col*29.0f*scale - 30.0f;
               float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
               glColor3f(c, c, c);
@@ -127,7 +127,7 @@ public:
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
               int idx = yIdx*28+xIdx;
-              float c = rbm.pv(idx);
+              float c = rbm.getVisibleProbs()(idx);
               float x = xIdx*scale + col*29.0f*scale - 30.0f;
               float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
               glColor3f(c, c, c);
@@ -175,7 +175,7 @@ public:
       case Qt::Key_Right:
       {
         offset++;
-        int tooHi = offset + neuronRows*neuronCols - rbm.H;
+        int tooHi = offset + neuronRows*neuronCols - rbm.hiddenUnits();
         if(tooHi > 0)
           offset -= tooHi;
         update();

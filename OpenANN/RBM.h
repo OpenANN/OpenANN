@@ -37,7 +37,6 @@ namespace OpenANN {
  */
 class RBM : public Learner
 {
-public:
   RandomNumberGenerator rng;
   int D, H;
   int cdN;
@@ -49,6 +48,16 @@ public:
   Eigen::VectorXd params;
   DataSet* trainSet;
 
+public:
+
+  /**
+   * Construct RBM.
+   *
+   * @param D number of inputs
+   * @param H number of hidden nodes
+   * @param cdN number of contrastive divergence steps
+   * @param stdDev standard deviation of initial weights
+   */
   RBM(int D, int H, int cdN = 1, double stdDev = 0.01);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual bool providesInitialization();
@@ -66,6 +75,12 @@ public:
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
+
+  int visibleUnits();
+  int hiddenUnits();
+  const Eigen::MatrixXd& getWeights();
+  const Eigen::VectorXd& getVisibleProbs();
+  const Eigen::VectorXd& getVisibleSample();
 
   Eigen::VectorXd reconstructProb(int n, int steps);
   Eigen::VectorXd reconstruct(int n, int steps);

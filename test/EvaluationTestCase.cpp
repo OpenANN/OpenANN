@@ -25,6 +25,8 @@ public:
 
 void EvaluationTestCase::run()
 {
+  OpenANN::RandomNumberGenerator rng;
+  rng.seed(0);
   RUN(EvaluationTestCase, sse);
   RUN(EvaluationTestCase, mse);
   RUN(EvaluationTestCase, rmse);

@@ -8,6 +8,8 @@ using namespace OpenANN;
 
 void RBMTestCase::run()
 {
+  OpenANN::RandomNumberGenerator rng;
+  rng.seed(0);
   RUN(RBMTestCase, learnSimpleExample);
 }
 
