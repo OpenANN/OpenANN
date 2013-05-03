@@ -1,6 +1,7 @@
 #include <OpenANN/layers/SigmaPi.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/OpenANNException.h>
+#include <omp.h>
 
 namespace OpenANN {
 
@@ -66,6 +67,7 @@ void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dro
 
         double sum = 0.0;
 
+#pragma omp parallel for reduction(+:sum)
         for(int j = 0; j < neuron.size(); ++j) {
             HigherOrderUnit& unit = neuron[j];
 
@@ -75,7 +77,7 @@ void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dro
                korrelation *= (*x)(unit.position.at(k));
             }
 
-            sum += w[unit.weight] * korrelation;
+            sum = sum +  w[unit.weight] * korrelation;
         }
 
         a(i) = sum;
@@ -111,8 +113,9 @@ void SigmaPi::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_o
             double korrelation = 1.0;
 
             for(int k = 0; k < unit.position.size(); ++k) {
-                korrelation *= (*x)(unit.position.at(k));
-                e(unit.position.at(k)) += w[unit.weight] * deltas(i);
+              int index = unit.position.at(k);
+              korrelation *= (*x)(index);
+              e(index) += w[unit.weight] * deltas(i);
             }
 
             wd[unit.weight] += deltas(i) * korrelation;
