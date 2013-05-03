@@ -213,23 +213,25 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 100, 100, directory);
+  IDXLoader loader(28, 28, 60000, 10000, directory);
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingOutput);
 
-  OpenANN::RBM rbm = *(new OpenANN::RBM(784, 100, 1, 0.01));
-  rbm.trainingSet(trainSet);
 
   OpenANN::Net net;
   net.inputLayer(1, 28, 28, false)
-     .addLayer(&rbm)
+     .restrictedBoltzmannMachineLayer(200, 1, 0.01)
+     .fullyConnectedLayer(100, OpenANN::LOGISTIC, 0.05, true)
      .outputLayer(10, OpenANN::LINEAR)
      .setErrorFunction(OpenANN::CE)
      .trainingSet(trainSet);
 
+  OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
+  rbm.trainingSet(trainSet);
+
   OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.01);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 1;
+  stop.maximalIterations = 10;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   int it = 0;
@@ -243,10 +245,11 @@ int main(int argc, char** argv)
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
 
-  stop.maximalIterations = 1;
+  OpenANN::StoppingCriteria stopNet;
+  stopNet.maximalIterations = 5;
   OpenANN::MBSGD netOptimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
-  netOptimizer.setStopCriteria(stop);
+  netOptimizer.setStopCriteria(stopNet);
   while(netOptimizer.step())
   {
     OPENANN_INFO << "Iteration #" << ++it << " finished.";

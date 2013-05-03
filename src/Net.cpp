@@ -9,6 +9,7 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/Dropout.h>
+#include <OpenANN/RBM.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -59,6 +60,11 @@ Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                      maxSquaredWeightNorm));
+}
+
+Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev)
+{
+  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
