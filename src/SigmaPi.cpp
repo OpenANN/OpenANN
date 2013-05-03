@@ -111,8 +111,9 @@ void SigmaPi::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_o
             double korrelation = 1.0;
 
             for(int k = 0; k < unit.position.size(); ++k) {
-                korrelation *= (*x)(unit.position.at(k));
-                e(unit.position.at(k)) += w[unit.weight] * deltas(i);
+              int index = unit.position.at(k);
+              korrelation *= (*x)(index);
+              e(index) += w[unit.weight] * deltas(i);
             }
 
             wd[unit.weight] += deltas(i) * korrelation;
