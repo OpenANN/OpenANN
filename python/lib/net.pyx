@@ -22,7 +22,7 @@ cdef class Net:
     del self.thisptr
 
   def parameter_size(self):
-    return self.thisptr.currentParameters().rows()
+    return self.thisptr.dimension()
 
   def input_layer(self, width, height, dim=1, bias=True):
     self.thisptr.inputLayer(width, height, dim, bias)
