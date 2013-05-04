@@ -7,33 +7,28 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, double stdDev,
                                double maxSquaredWeightNorm)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
-    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I), Wd(J, I), x(0), a(J),
-    y(J+bias), yd(J), deltas(J), e(I)
+    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I+bias), Wd(J, I+bias), x(0), a(J),
+    y(J), yd(J), deltas(J), e(I)
 {
 }
 
 OutputInfo FullyConnected::initialize(std::vector<double*>& parameterPointers,
                                       std::vector<double*>& parameterDerivativePointers)
 {
-  parameterPointers.reserve(parameterPointers.size() + J*I);
-  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*I);
+  parameterPointers.reserve(parameterPointers.size() + J*(I+bias));
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*(I+bias));
   for(int j = 0; j < J; j++)
   {
-    for(int i = 0; i < I; i++)
+    for(int i = 0; i < I+bias; i++)
     {
       parameterPointers.push_back(&W(j, i));
       parameterDerivativePointers.push_back(&Wd(j, i));
     }
   }
 
-  // Bias component will not change after initialization
-  if(bias)
-    y(J) = 1.0;
-
   initializeParameters();
 
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(J);
   return info;
 }
@@ -42,7 +37,7 @@ void FullyConnected::initializeParameters()
 {
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
-    for(int i = 0; i < I; i++)
+    for(int i = 0; i < I+bias; i++)
       W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
 }
 
@@ -63,7 +58,9 @@ void FullyConnected::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, b
 {
   this->x = x;
   // Activate neurons
-  a = W * *x;
+  a = W.leftCols(I) * *x;
+  if(bias)
+    a += W.rightCols(1);
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
@@ -76,9 +73,11 @@ void FullyConnected::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   for(int j = 0; j < J; j++)
     deltas(j) = yd(j) * (*ein)(j);
   // Weight derivatives
-  Wd = deltas * x->transpose();
+  Wd.leftCols(I) = deltas * x->transpose();
+  if(bias)
+    Wd.rightCols(1) = deltas;
   // Prepare error signals for previous layer
-  e = W.transpose() * deltas;
+  e = W.leftCols(I).transpose() * deltas;
   eout = &e;
 }
 

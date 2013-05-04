@@ -3,9 +3,9 @@
 
 namespace OpenANN {
 
-AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, double deltaT, bool bias, double stdDev)
-  : I(info.outputs()), J(2*I), deltaT(deltaT), bias(bias), stdDev(stdDev), gamma(I),
-    gammad(I), alpha(I), beta(I), first(true), x(0), y(J+bias)
+AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, double deltaT, double stdDev)
+  : I(info.outputs()), J(2*I), deltaT(deltaT), stdDev(stdDev), gamma(I),
+    gammad(I), alpha(I), beta(I), first(true), x(0), y(J)
 {
 }
 
@@ -20,14 +20,9 @@ OutputInfo AlphaBetaFilter::initialize(std::vector<double*>& parameterPointers,
     parameterDerivativePointers.push_back(&gammad(i));
   }
 
-  // Bias component will not change after initialization
-  if(bias)
-    y(J) = double(1.0);
-
   initializeParameters();
 
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(J);
   return info;
 }

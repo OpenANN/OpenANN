@@ -8,8 +8,7 @@ Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
                          bool bias, ActivationFunction act, double stdDev)
   : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), kernelRows(kernelRows),
-    kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
-    stdDev(stdDev), x(0), e(I)
+    kernelCols(kernelCols), bias(bias), act(act), stdDev(stdDev), x(0), e(I)
 {
 }
 
@@ -17,7 +16,6 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
                                    std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(fm);
   outRows = inRows/kernelRows;
   outCols = inCols/kernelCols;
@@ -30,8 +28,8 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
 
   W.resize(fm, Eigen::MatrixXd(outRows, outCols));
   Wd.resize(fm, Eigen::MatrixXd(outRows, outCols));
-  int numParams = fm * outRows * outCols;
-  if(weightForBias)
+  int numParams = fm * outRows * outCols * kernelRows * kernelCols;
+  if(bias)
   {
     Wb.resize(fm, Eigen::MatrixXd(outRows, outCols));
     Wbd.resize(fm, Eigen::MatrixXd(outRows, outCols));
@@ -47,7 +45,7 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
       {
         parameterPointers.push_back(&W[fmo](r, c));
         parameterDerivativePointers.push_back(&Wd[fmo](r, c));
-        if(weightForBias)
+        if(bias)
         {
           parameterPointers.push_back(&Wb[fmo](r, c));
           parameterDerivativePointers.push_back(&Wbd[fmo](r, c));
@@ -58,12 +56,10 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
 
   initializeParameters();
 
-  a.resize(info.outputs()-bias);
+  a.resize(info.outputs());
   y.resize(info.outputs());
-  if(bias)
-    y(y.rows()-1) = 1.0;
-  yd.resize(info.outputs()-bias);
-  deltas.resize(info.outputs()-bias);
+  yd.resize(info.outputs());
+  deltas.resize(info.outputs());
 
   return info;
 }
@@ -78,7 +74,7 @@ void Subsampling::initializeParameters()
       for(int c = 0; c < outCols; c++)
       {
         W[fmo](r, c) = rng.sampleNormalDistribution<double>() * stdDev;
-        if(weightForBias)
+        if(bias)
           Wb[fmo](r, c) = rng.sampleNormalDistribution<double>() * stdDev;
       }
     }
@@ -89,8 +85,8 @@ void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fm * inRows * inCols + weightForBias);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols + bias);
+  OPENANN_CHECK_EQUALS(x->rows(), fm * inRows * inCols);
+  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols);
 
   a.fill(0.0);
   int outputIdx = 0;
@@ -108,7 +104,7 @@ void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
             a(outputIdx) += (*x)(inputIdx) * W[fmo](ro, co);
         }
-        if(weightForBias)
+        if(bias)
           a(outputIdx) += Wb[fmo](ro, co);
       }
     }
@@ -132,7 +128,7 @@ void Subsampling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   for(int fmo = 0; fmo < fm; fmo++)
   {
     Wd[fmo].fill(0.0);
-    if(weightForBias)
+    if(bias)
       Wbd[fmo].fill(0.0);
     for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
     {
@@ -148,7 +144,7 @@ void Subsampling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
             Wd[fmo](ro, co) += deltas(outputIdx) * (*x)(inputIdx);
           }
         }
-        if(weightForBias)
+        if(bias)
           Wbd[fmo](ro, co) += deltas(outputIdx);
       }
     }

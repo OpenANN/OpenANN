@@ -28,7 +28,7 @@ namespace OpenANN {
 class Convolutional : public Layer
 {
   int I, fmin, inRows, inCols, fmout, kernelRows, kernelCols;
-  bool bias, weightForBias;
+  bool bias;
   ActivationFunction act;
   double stdDev;
   Eigen::VectorXd* x;
