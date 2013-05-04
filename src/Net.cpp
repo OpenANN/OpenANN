@@ -79,9 +79,9 @@ Net& Net::subsamplingLayer(int kernelRows, int kernelCols,
   return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
 }
 
-Net& Net::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
+Net& Net::maxPoolingLayer(int kernelRows, int kernelCols)
 {
-  return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols, bias));
+  return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols));
 }
 
 Net& Net::localReponseNormalizationLayer(double k, int n, double alpha, double beta,

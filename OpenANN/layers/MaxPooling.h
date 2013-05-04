@@ -31,7 +31,7 @@ class MaxPooling : public Layer
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
-  MaxPooling(OutputInfo info, int kernelRows, int kernelCols, bool bias);
+  MaxPooling(OutputInfo info, int kernelRows, int kernelCols);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

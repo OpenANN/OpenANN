@@ -5,7 +5,7 @@
 
 namespace OpenANN {
 
-MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols, bool bias)
+MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
   : I(info.outputs()), fm(info.dimensions[0]),
     inRows(info.dimensions[1]), inCols(info.dimensions[2]),
     kernelRows(kernelRows), kernelCols(kernelCols), bias(bias), x(0), e(I)
@@ -16,7 +16,6 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
                                    std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(fm);
   outRows = inRows/kernelRows;
   outCols = inCols/kernelCols;

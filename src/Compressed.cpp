@@ -84,7 +84,7 @@ void Compressed::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
     Wd.rightCols(1) = deltas;
   alphad = Wd * phi.transpose();
   // Prepare error signals for previous layer
-  e = W.transpose() * deltas;
+  e = W.leftCols(I).transpose() * deltas;
   eout = &e;
 }
 

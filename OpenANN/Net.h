@@ -177,7 +177,7 @@ public:
    * @param bias add bias term
    * @return this for chaining
    */
-  Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias = true);
+  Net& maxPoolingLayer(int kernelRows, int kernelCols);
   /**
    * Add a local response normalization layer.
    * \f$ y^i_{rc} = x^i_{rc} / \left( k +
