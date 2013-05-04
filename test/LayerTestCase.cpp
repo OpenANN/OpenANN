@@ -243,7 +243,7 @@ void LayerTestCase::compressed()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 3, true, TANH, "average", 0.05);
+  Compressed layer(info, 2, 3, false, TANH, "average", 0.05);
 
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;

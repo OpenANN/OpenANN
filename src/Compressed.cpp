@@ -8,7 +8,7 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
                        double stdDev)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
-    W(J, I+bias), Wd(J, I+bias), phi(M, I+bias), alpha(J, M), alphad(J, M),
+    W(J, I+bias), Wd(J, I+bias), phi(M, I+1), alpha(J, M), alphad(J, M),
     x(0), a(J), y(J), yd(J), deltas(J), e(I+bias)
 {
   CompressionMatrixFactory::Transformation transformation =
@@ -59,7 +59,7 @@ void Compressed::initializeParameters()
 
 void Compressed::updatedParameters()
 {
-  W = alpha * phi.block(0, 0, M, I);
+  W = alpha * phi.block(0, 0, M, I+bias);
 }
 
 void Compressed::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
@@ -84,7 +84,7 @@ void Compressed::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   Wd.leftCols(I) = deltas * x->transpose();
   if(bias)
     Wd.rightCols(1) = deltas;
-  alphad = Wd * phi.block(0, 0, M, I).transpose();
+  alphad = Wd * phi.block(0, 0, M, I+bias).transpose();
   // Prepare error signals for previous layer
   e = W.leftCols(I).transpose() * deltas;
   eout = &e;
