@@ -4,7 +4,7 @@
 namespace OpenANN {
 
 Dropout::Dropout(OutputInfo info, double dropoutProbability)
-  : info(info), I(info.outputs()), bias(info.bias),
+  : info(info), I(info.outputs()),
     dropoutProbability(dropoutProbability), y(I), dropoutMask(I), e(I)
 {
 }

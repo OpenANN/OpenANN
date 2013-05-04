@@ -4,9 +4,9 @@
 namespace OpenANN {
 
 LocalResponseNormalization::LocalResponseNormalization(
-        OutputInfo info, bool bias, double k, int n, double alpha, double beta)
-  : I(info.outputs()-bias), fm(info.dimensions[0]), rows(info.dimensions[1]),
-    cols(info.dimensions[2]), bias(bias), x(0), denoms(I), y(I+bias), etmp(I),
+        OutputInfo info, double k, int n, double alpha, double beta)
+  : I(info.outputs()), fm(info.dimensions[0]), rows(info.dimensions[1]),
+    cols(info.dimensions[2]), x(0), denoms(I), y(I), etmp(I),
     e(I), k(k), n(n), alpha(alpha), beta(beta)
 {
 }
@@ -15,14 +15,9 @@ OutputInfo LocalResponseNormalization::initialize(
     std::vector<double*>& parameterPointers,
     std::vector<double*>& parameterDerivativePointers)
 {
-  // Bias component will not change after initialization
-  if(bias)
-    y(I) = double(1.0);
-
   fmSize = rows*cols;
 
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(fm);
   info.dimensions.push_back(rows);
   info.dimensions.push_back(cols);

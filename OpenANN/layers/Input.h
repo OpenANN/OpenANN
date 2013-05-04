@@ -13,11 +13,10 @@ namespace OpenANN {
 class Input : public Layer
 {
   int J, dim1, dim2, dim3;
-  bool bias;
-  Eigen::VectorXd y;
+  Eigen::VectorXd* x;
 
 public:
-  Input(int dim1, int dim2, int dim3, bool bias);
+  Input(int dim1, int dim2, int dim3);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

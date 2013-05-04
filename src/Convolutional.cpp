@@ -9,7 +9,7 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                              double stdDev)
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
-    kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
+    kernelCols(kernelCols), bias(bias), act(act),
     stdDev(stdDev), x(0), e(I)
 {
 }
@@ -18,7 +18,6 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
                                      std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(fmout);
   outRows = inRows-kernelRows/2*2;
   outCols = inCols-kernelCols/2*2;
@@ -32,7 +31,7 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
   W.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
   Wd.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
   int numParams = fmout*kernelRows*kernelCols;
-  if(weightForBias)
+  if(bias)
   {
     Wb.resize(fmout, fmin);
     Wbd.resize(fmout, fmin);
@@ -52,7 +51,7 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
           parameterDerivativePointers.push_back(&Wd[fmo][fmi](kr, kc));
         }
       }
-      if(weightForBias)
+      if(bias)
       {
         parameterPointers.push_back(&Wb(fmo, fmi));
         parameterDerivativePointers.push_back(&Wbd(fmo, fmi));
@@ -62,12 +61,10 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
 
   initializeParameters();
 
-  a.resize(info.outputs()-bias);
+  a.resize(info.outputs());
   y.resize(info.outputs());
-  if(bias)
-    y(y.rows()-1) = 1.0;
-  yd.resize(info.outputs()-bias);
-  deltas.resize(info.outputs()-bias);
+  yd.resize(info.outputs());
+  deltas.resize(info.outputs());
 
   return info;
 }
@@ -82,7 +79,7 @@ void Convolutional::initializeParameters()
       for(int kr = 0; kr < kernelRows; kr++)
         for(int kc = 0; kc < kernelCols; kc++)
           W[fmo][fmi](kr, kc) = rng.sampleNormalDistribution<double>() * stdDev;
-      if(weightForBias)
+      if(bias)
         Wb(fmo, fmi) = rng.sampleNormalDistribution<double>() * stdDev;
     }
   }
@@ -92,8 +89,8 @@ void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bo
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fmin * inRows * inRows + weightForBias);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fmout * outRows * outCols + bias);
+  OPENANN_CHECK_EQUALS(x->rows(), fmin * inRows * inRows);
+  OPENANN_CHECK_EQUALS(this->y.rows(), fmout * outRows * outCols);
 
   this->a.fill(0.0);
   for(int fmo = 0; fmo < fmout; fmo++)
@@ -117,7 +114,7 @@ void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bo
               a(outputIdx) += W[fmo][fmi](kr, kc)*(*x)(inputIdx);
             }
           }
-          if(weightForBias && fmi == 0)
+          if(bias && fmi == 0)
             a(outputIdx) += Wb(fmo, fmi);
         }
       }
@@ -161,7 +158,7 @@ void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
               Wd[fmo][fmi](kr, kc) += deltas(outputIdx) * (*x)(inputIdx);
             }
           }
-          if(weightForBias && fmi == 0)
+          if(bias && fmi == 0)
             Wbd(fmo, fmi) += deltas(outputIdx);
         }
       }
