@@ -40,7 +40,6 @@ class LocalResponseNormalization : public Layer
 {
   int I, fm, rows, cols;
   int fmSize;
-  bool bias;
   double k;
   int n;
   double alpha;
@@ -52,8 +51,8 @@ class LocalResponseNormalization : public Layer
   Eigen::VectorXd e;
 
 public:
-  LocalResponseNormalization(OutputInfo info, bool bias, double k, int n,
-                             double alpha, double beta);
+  LocalResponseNormalization(OutputInfo info, double k, int n, double alpha,
+                             double beta);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}

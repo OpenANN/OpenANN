@@ -93,19 +93,17 @@ public:
    *             of an image
    * @param dim2 second dimension, e. g. number of rows of an image
    * @param dim3 third dimension, e. g. number of columns of an image
-   * @param bias add bias term
    * @return this for chaining
    */
-  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true);
+  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1);
   /**
    * Add a alpha-beta filter layer.
    * @param deltaT temporal difference between two steps
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
-   * @param bias add bias term
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
    * @return this for chaining
    */
-  Net& alphaBetaFilterLayer(double deltaT, double stdDev = 0.05,
-                            bool bias = true);
+  Net& alphaBetaFilterLayer(double deltaT, double stdDev = 0.05);
   /**
    * Add a fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -174,7 +172,6 @@ public:
    * Add a max-pooling layer.
    * @param kernelRows number of kernel rows
    * @param kernelCols number of kernel columns
-   * @param bias add bias term
    * @return this for chaining
    */
   Net& maxPoolingLayer(int kernelRows, int kernelCols);
@@ -187,11 +184,10 @@ public:
    * @param n number of adjacent feature maps
    * @param alpha controls strength of inhibition, alpha > 0, e.g. 1e-4
    * @param beta controls strength of inhibition, beta > 0, e.g. 0.75
-   * @param bias add bias term
    * @return this for chaining
    */
-  Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta,
-                                      bool bias = true);
+  Net& localReponseNormalizationLayer(double k, int n, double alpha,
+                                      double beta);
   /**
    * Add a dropout layer.
    * @param dropoutProbability probability of suppression during training

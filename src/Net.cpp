@@ -35,14 +35,14 @@ Net::~Net()
   layers.clear();
 }
 
-Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias)
+Net& Net::inputLayer(int dim1, int dim2, int dim3)
 {
-  return addLayer(new Input(dim1, dim2, dim3, bias));
+  return addLayer(new Input(dim1, dim2, dim3));
 }
 
-Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
+Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev)
 {
-  return addLayer(new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev));
+  return addLayer(new AlphaBetaFilter(infos.back(), deltaT, stdDev));
 }
 
 Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
@@ -84,11 +84,11 @@ Net& Net::maxPoolingLayer(int kernelRows, int kernelCols)
   return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols));
 }
 
-Net& Net::localReponseNormalizationLayer(double k, int n, double alpha, double beta,
-                                         bool bias)
+Net& Net::localReponseNormalizationLayer(double k, int n, double alpha,
+                                         double beta)
 {
-  return addLayer(new LocalResponseNormalization(infos.back(), bias, k, n,
-                                                 alpha, beta));
+  return addLayer(new LocalResponseNormalization(infos.back(), k, n, alpha,
+                                                 beta));
 }
 
 Net& Net::dropoutLayer(double dropoutProbability)
@@ -150,7 +150,7 @@ OutputInfo Net::getOutputInfo(unsigned int l)
 void Net::initializeNetwork()
 {
   P = parameters.size();
-  tempInput.resize(infos[0].outputs() - infos[0].bias);
+  tempInput.resize(infos[0].outputs());
   tempOutput.resize(infos.back().outputs());
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);

@@ -29,7 +29,7 @@ public:
   {
     info = layer.initialize(parameters, derivatives);
     input = Eigen::VectorXd::Random(inputs.outputs());
-    desired = Eigen::VectorXd::Random(info.outputs()-info.bias);
+    desired = Eigen::VectorXd::Random(info.outputs());
   }
 
   virtual unsigned int dimension()
@@ -171,16 +171,14 @@ void LayerTestCase::run()
 void LayerTestCase::fullyConnected()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
 
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
-  ASSERT(info2.bias);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
-  ASSERT_EQUALS(info2.outputs(), 3);
+  ASSERT_EQUALS(info2.outputs(), 2);
 
   for(std::vector<double*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
@@ -190,12 +188,11 @@ void LayerTestCase::fullyConnected()
   Eigen::VectorXd e(3);
   e << 1.0, 2.0, 0.0;
 
-  Eigen::VectorXd* y;
+  Eigen::VectorXd* y = 0;
   layer.forwardPropagate(&x, y, false);
   ASSERT(y != 0);
   ASSERT_EQUALS_DELTA((*y)(0), tanh(3.5), 1e-10);
   ASSERT_EQUALS_DELTA((*y)(1), tanh(3.5), 1e-10);
-  ASSERT_EQUALS_DELTA((*y)(2), 1.0, 1e-10);
 
   Eigen::VectorXd* e2;
   layer.backpropagate(&e, e2);
@@ -216,9 +213,8 @@ void LayerTestCase::fullyConnected()
 void LayerTestCase::fullyConnectedGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
@@ -230,9 +226,8 @@ void LayerTestCase::fullyConnectedGradient()
 void LayerTestCase::fullyConnectedInputGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
   LayerOptimizable opt(layer, info);
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(3, 1);
@@ -247,7 +242,6 @@ void LayerTestCase::fullyConnectedInputGradient()
 void LayerTestCase::compressed()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
   Compressed layer(info, 2, 3, true, TANH, "average", 0.05);
 
@@ -255,9 +249,8 @@ void LayerTestCase::compressed()
   std::vector<double*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers,
                                       parameterDerivativePointers);
-  ASSERT(info2.bias);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
-  ASSERT_EQUALS(info2.outputs(), 3);
+  ASSERT_EQUALS(info2.outputs(), 2);
 
   for(std::vector<double*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
@@ -279,7 +272,6 @@ void LayerTestCase::compressed()
 void LayerTestCase::compressedGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
   Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerOptimizable opt(layer, info);
@@ -293,7 +285,6 @@ void LayerTestCase::compressedGradient()
 void LayerTestCase::compressedInputGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
   Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerOptimizable opt(layer, info);
@@ -310,7 +301,6 @@ void LayerTestCase::compressedInputGradient()
 void LayerTestCase::convolutional()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
@@ -346,7 +336,6 @@ void LayerTestCase::convolutional()
 void LayerTestCase::convolutionalGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
   info.dimensions.push_back(15);
   info.dimensions.push_back(15);
@@ -362,7 +351,6 @@ void LayerTestCase::convolutionalGradient()
 void LayerTestCase::convolutionalInputGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
   info.dimensions.push_back(15);
   info.dimensions.push_back(15);
@@ -381,7 +369,6 @@ void LayerTestCase::convolutionalInputGradient()
 void LayerTestCase::subsampling()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(2);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
@@ -410,7 +397,6 @@ void LayerTestCase::subsampling()
 void LayerTestCase::subsamplingGradient()
 {
   OutputInfo info;
-  info.bias = true;
   info.dimensions.push_back(3);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
@@ -426,7 +412,6 @@ void LayerTestCase::subsamplingGradient()
 void LayerTestCase::subsamplingInputGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(3);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
@@ -445,11 +430,10 @@ void LayerTestCase::subsamplingInputGradient()
 void LayerTestCase::maxPooling()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(2);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  MaxPooling layer(info, 2, 2, true);
+  MaxPooling layer(info, 2, 2);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers,
@@ -470,11 +454,10 @@ void LayerTestCase::maxPooling()
 void LayerTestCase::maxPoolingGradient()
 {
   OutputInfo info;
-  info.bias = true;
   info.dimensions.push_back(3);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  MaxPooling layer(info, 3, 3, true);
+  MaxPooling layer(info, 3, 3);
   LayerOptimizable opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
@@ -484,11 +467,10 @@ void LayerTestCase::maxPoolingGradient()
 void LayerTestCase::maxPoolingInputGradient()
 {
   OutputInfo info;
-  info.bias = true;
   info.dimensions.push_back(3);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  MaxPooling layer(info, 3, 3, true);
+  MaxPooling layer(info, 3, 3);
   LayerOptimizable opt(layer, info);
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(3*6*6, 1);
@@ -503,11 +485,10 @@ void LayerTestCase::maxPoolingInputGradient()
 void LayerTestCase::localResponseNormalizationInputGradient()
 {
   OutputInfo info;
-  info.bias = true;
   info.dimensions.push_back(3);
   info.dimensions.push_back(3);
   info.dimensions.push_back(3);
-  LocalResponseNormalization layer(info, false, 1, 3, 1e-5, 0.75);
+  LocalResponseNormalization layer(info, 1, 3, 1e-5, 0.75);
   LayerOptimizable opt(layer, info);
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(3*3*3, 1);
@@ -524,7 +505,6 @@ void LayerTestCase::dropout()
   double dropoutProbability = 0.5;
   int samples = 10000;
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(samples);
   Dropout layer(info, 0.5);
   std::vector<double*> parameterPointers;
@@ -551,10 +531,9 @@ void LayerTestCase::dropout()
 void LayerTestCase::sigmaPiNoConstraintGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(5);
   info.dimensions.push_back(5);
-  SigmaPi layer(info, true, TANH, 0.05);
+  SigmaPi layer(info, false, TANH, 0.05);
   layer.secondOrderNodes(2);
 
   LayerOptimizable opt(layer, info);
@@ -582,11 +561,10 @@ struct TestConstraint : public OpenANN::SigmaPi::Constraint
 void LayerTestCase::sigmaPiWithConstraintGradient()
 {
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(5);
   info.dimensions.push_back(5);
   TestConstraint constraint;
-  SigmaPi layer(info, true, TANH, 0.05);
+  SigmaPi layer(info, false, TANH, 0.05);
   layer.secondOrderNodes(2, constraint);
 
   LayerOptimizable opt(layer, info);

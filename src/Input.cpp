@@ -3,8 +3,8 @@
 
 namespace OpenANN {
 
-Input::Input(int dim1, int dim2, int dim3, bool bias)
-  : J(dim1*dim2*dim3), dim1(dim1), dim2(dim2), dim3(dim3), bias(bias), y(J+bias)
+Input::Input(int dim1, int dim2, int dim3)
+  : J(dim1*dim2*dim3), dim1(dim1), dim2(dim2), dim3(dim3), x(0)
 {
 }
 
@@ -12,10 +12,7 @@ OutputInfo Input::initialize(std::vector<double*>& parameterPointers,
                              std::vector<double*>& parameterDerivativePointers)
 {
   // Bias component will not change after initialization
-  if(bias)
-    y(J) = 1.0;
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(dim1);
   info.dimensions.push_back(dim2);
   info.dimensions.push_back(dim3);
@@ -29,10 +26,8 @@ void Input::initializeParameters()
 
 void Input::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
-  // Copy entries and add bias
-  for(int i = 0; i < J; i++)
-    this->y(i) = (*x)(i);
-  y = &(this->y);
+  this->x = x;
+  y = this->x;
 }
 
 void Input::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
@@ -42,7 +37,7 @@ void Input::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 
 Eigen::VectorXd& Input::getOutput()
 {
-  return y;
+  return *x;
 }
 
 }
