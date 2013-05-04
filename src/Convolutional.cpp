@@ -91,8 +91,8 @@ void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bo
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fmin * inRows * inRows + weightForBias);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fmout * outRows * outCols + bias);
+  OPENANN_CHECK_EQUALS(x->rows(), fmin * inRows * inRows);
+  OPENANN_CHECK_EQUALS(this->y.rows(), fmout * outRows * outCols);
 
   this->a.fill(0.0);
   for(int fmo = 0; fmo < fmout; fmo++)
