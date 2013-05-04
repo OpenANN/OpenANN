@@ -161,7 +161,6 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
   }
 
   OutputInfo info;
-  info.bias = false;
   info.dimensions.push_back(H);
   return info;
 }
