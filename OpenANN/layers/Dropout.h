@@ -23,7 +23,6 @@ class Dropout : public Layer
 {
   OutputInfo info;
   int I;
-  bool bias;
   double dropoutProbability;
   Eigen::VectorXd dropoutMask;
   Eigen::VectorXd y;

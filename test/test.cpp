@@ -38,6 +38,7 @@ int main(int argc, char** argv)
   }
 
   OpenANN::Logger::deactivate = true;
+  OpenANN::Log::getLevel() = OpenANN::Log::INFO;
   OpenANN::RandomNumberGenerator rng;
   rng.seed(4);
 

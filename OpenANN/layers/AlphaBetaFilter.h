@@ -9,7 +9,6 @@ class AlphaBetaFilter : public Layer
 {
   int I, J;
   double deltaT;
-  bool bias;
   double stdDev;
   Eigen::VectorXd gamma;
   Eigen::VectorXd gammad;
@@ -20,7 +19,7 @@ class AlphaBetaFilter : public Layer
   Eigen::VectorXd y;
 
 public:
-  AlphaBetaFilter(OutputInfo info, double deltaT, bool bias, double stdDev);
+  AlphaBetaFilter(OutputInfo info, double deltaT, double stdDev);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters();
