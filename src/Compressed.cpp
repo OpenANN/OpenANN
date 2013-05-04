@@ -8,8 +8,8 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
                        double stdDev)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
-    W(J, I), Wd(J, I), phi(M, I), alpha(J, M), alphad(J, M), x(0), a(J),
-    y(J+bias), yd(J), deltas(J), e(I)
+    W(J, I+bias), Wd(J, I+bias), phi(M, I+bias), alpha(J, M), alphad(J, M),
+    x(0), a(J), y(J), yd(J), deltas(J), e(I+bias)
 {
   CompressionMatrixFactory::Transformation transformation =
       CompressionMatrixFactory::SPARSE_RANDOM;
@@ -39,14 +39,9 @@ OutputInfo Compressed::initialize(std::vector<double*>& parameterPointers,
     }
   }
 
-  // Bias component will not change after initialization
-  if(bias)
-    y(J) = 1.0;
-
   initializeParameters();
 
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(J);
   return info;
 }
@@ -69,7 +64,9 @@ void Compressed::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool 
 {
   this->x = x;
   // Activate neurons
-  a = W * *x;
+  a = W.leftCols(I) * *x;
+  if(bias)
+    a += W.rightCols(1);
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
@@ -82,7 +79,9 @@ void Compressed::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   for(int j = 0; j < J; j++)
     deltas(j) = yd(j) * (*ein)(j);
   // Weight derivatives
-  Wd = deltas * x->transpose();
+  Wd.leftCols(I) = deltas * x->transpose();
+  if(bias)
+    Wd.rightCols(1) = deltas;
   alphad = Wd * phi.transpose();
   // Prepare error signals for previous layer
   e = W.transpose() * deltas;

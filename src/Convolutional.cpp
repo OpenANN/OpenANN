@@ -9,7 +9,7 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                              double stdDev)
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
-    kernelCols(kernelCols), bias(bias), weightForBias(info.bias), act(act),
+    kernelCols(kernelCols), bias(bias), act(act),
     stdDev(stdDev), x(0), e(I)
 {
 }
@@ -18,7 +18,6 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
                                      std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
-  info.bias = bias;
   info.dimensions.push_back(fmout);
   outRows = inRows-kernelRows/2*2;
   outCols = inCols-kernelCols/2*2;
@@ -32,7 +31,7 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
   W.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
   Wd.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
   int numParams = fmout*kernelRows*kernelCols;
-  if(weightForBias)
+  if(bias)
   {
     Wb.resize(fmout, fmin);
     Wbd.resize(fmout, fmin);
@@ -52,7 +51,7 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
           parameterDerivativePointers.push_back(&Wd[fmo][fmi](kr, kc));
         }
       }
-      if(weightForBias)
+      if(bias)
       {
         parameterPointers.push_back(&Wb(fmo, fmi));
         parameterDerivativePointers.push_back(&Wbd(fmo, fmi));
