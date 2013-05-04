@@ -23,7 +23,6 @@ namespace OpenANN {
 class MaxPooling : public Layer
 {
   int I, fm, inRows, inCols, kernelRows, kernelCols;
-  bool bias;
   Eigen::VectorXd* x;
   Eigen::VectorXd y;
   Eigen::VectorXd deltas;

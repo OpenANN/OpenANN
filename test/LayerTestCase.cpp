@@ -266,7 +266,6 @@ void LayerTestCase::compressed()
   ASSERT(y != 0);
   ASSERT_EQUALS_DELTA((*y)(0), tanh(3.5), 1e-10);
   ASSERT_EQUALS_DELTA((*y)(1), tanh(3.5), 1e-10);
-  ASSERT_EQUALS_DELTA((*y)(2), 1.0, 1e-10);
 }
 
 void LayerTestCase::compressedGradient()
@@ -304,7 +303,7 @@ void LayerTestCase::convolutional()
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  Convolutional layer(info, 2, 3, 3, true, TANH, 0.05);
+  Convolutional layer(info, 2, 3, 3, false, TANH, 0.05);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers,
@@ -372,7 +371,7 @@ void LayerTestCase::subsampling()
   info.dimensions.push_back(2);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  Subsampling layer(info, 2, 2, true, TANH, 0.05);
+  Subsampling layer(info, 2, 2, false, TANH, 0.05);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers,

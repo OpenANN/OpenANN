@@ -61,12 +61,10 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
 
   initializeParameters();
 
-  a.resize(info.outputs()-bias);
+  a.resize(info.outputs());
   y.resize(info.outputs());
-  if(bias)
-    y(y.rows()-1) = 1.0;
-  yd.resize(info.outputs()-bias);
-  deltas.resize(info.outputs()-bias);
+  yd.resize(info.outputs());
+  deltas.resize(info.outputs());
 
   return info;
 }

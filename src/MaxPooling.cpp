@@ -8,7 +8,7 @@ namespace OpenANN {
 MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
   : I(info.outputs()), fm(info.dimensions[0]),
     inRows(info.dimensions[1]), inCols(info.dimensions[2]),
-    kernelRows(kernelRows), kernelCols(kernelCols), bias(bias), x(0), e(I)
+    kernelRows(kernelRows), kernelCols(kernelCols), x(0), e(I)
 {
 }
 
@@ -27,9 +27,7 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
   maxCol = inCols-kernelCols+1;
 
   y.resize(info.outputs());
-  if(bias)
-    y(y.rows()-1) = 1.0;
-  deltas.resize(info.outputs()-bias);
+  deltas.resize(info.outputs());
 
   return info;
 }
@@ -44,7 +42,7 @@ void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool 
 
   OPENANN_CHECK(x->rows() == fm * inRows * inRows
       || x->rows() == fm * inRows * inRows + 1);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols + bias);
+  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols);
 
   int outputIdx = 0;
   int inputIdx = 0;

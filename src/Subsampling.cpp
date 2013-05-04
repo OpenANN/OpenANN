@@ -28,7 +28,7 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
 
   W.resize(fm, Eigen::MatrixXd(outRows, outCols));
   Wd.resize(fm, Eigen::MatrixXd(outRows, outCols));
-  int numParams = fm * outRows * outCols;
+  int numParams = fm * outRows * outCols * kernelRows * kernelCols;
   if(bias)
   {
     Wb.resize(fm, Eigen::MatrixXd(outRows, outCols));
