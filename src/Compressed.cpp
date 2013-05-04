@@ -21,7 +21,9 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
     transformation = CompressionMatrixFactory::AVERAGE;
   else if(compression == std::string("edge"))
     transformation = CompressionMatrixFactory::EDGE;
-  CompressionMatrixFactory cmf(I, M, transformation);
+  // For compatibility reasons, we create a compression matrix that assumes
+  // that there is a bias.
+  CompressionMatrixFactory cmf(I+1, M, transformation);
   cmf.createCompressionMatrix(phi);
 }
 
@@ -57,7 +59,7 @@ void Compressed::initializeParameters()
 
 void Compressed::updatedParameters()
 {
-  W = alpha * phi;
+  W = alpha * phi.block(0, 0, M, I);
 }
 
 void Compressed::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
@@ -82,7 +84,7 @@ void Compressed::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   Wd.leftCols(I) = deltas * x->transpose();
   if(bias)
     Wd.rightCols(1) = deltas;
-  alphad = Wd * phi.transpose();
+  alphad = Wd * phi.block(0, 0, M, I).transpose();
   // Prepare error signals for previous layer
   e = W.leftCols(I).transpose() * deltas;
   eout = &e;
