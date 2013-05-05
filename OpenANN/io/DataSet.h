@@ -11,7 +11,9 @@ class Learner;
  *
  * Data set interface.
  *
- * A data set can be either a training set or a test set.
+ * A data set can be either a training, validation or test set. Supervised
+ * data sets provide instances and targets. Unsupervised data sets might
+ * provide only instances.
  *
  * See \ref CreateDataSet.
  */
