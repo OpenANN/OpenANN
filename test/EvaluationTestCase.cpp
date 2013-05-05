@@ -33,6 +33,12 @@ void EvaluationTestCase::run()
   RUN(EvaluationTestCase, confusionMatrix);
 }
 
+void EvaluationTestCase::setUp()
+{
+  OpenANN::RandomNumberGenerator rng;
+  rng.seed(0);
+}
+
 void EvaluationTestCase::sse()
 {
   OpenANN::RandomNumberGenerator rng;
