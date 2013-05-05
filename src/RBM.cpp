@@ -69,7 +69,7 @@ double RBM::error()
 {
   double error = 0.0;
   for(int n = 0; n < trainSet->samples(); n++)
-    error += (reconstructProb(n, 1) - trainSet->getTarget(n)).squaredNorm();
+    error += (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
   return error;
 }
 
