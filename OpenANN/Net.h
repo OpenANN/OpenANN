@@ -125,10 +125,11 @@ public:
    * @param cdN number of gibbs sampling steps for pretraining
    * @param stdDev standard deviation of the Gaussian distributed initial
    *               weights
+   * @param backprop finetune weights with backpropagation
    * @return this for chaining
    */
-  Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1,
-                                       double stdDev = 0.01);
+  Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1, double stdDev = 0.01,
+                                       bool backprop = true);
   /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)

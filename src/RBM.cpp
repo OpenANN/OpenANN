@@ -6,13 +6,13 @@
 
 namespace OpenANN {
 
-RBM::RBM(int D, int H, int cdN, double stdDev)
+RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop)
   : D(D), H(H), cdN(cdN), stdDev(stdDev),
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
     pv(D), v(D), ph(H), h(H), phd(H), K(D*H + D + H), params(K),
-    deltas(H), e(D)
+    deltas(H), e(D), backprop(backprop)
 {
   initialize();
 }
@@ -118,6 +118,31 @@ Learner& RBM::trainingSet(DataSet& trainingSet)
   trainSet = &trainingSet;
 }
 
+OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
+                           std::vector<double*>& parameterDerivativePointers)
+{
+  if(backprop)
+  {
+    for(int j = 0; j < H; j++)
+    {
+      for(int i = 0; i < D; i++)
+      {
+        parameterPointers.push_back(&W(j, i));
+        parameterDerivativePointers.push_back(&Wd(j, i));
+      }
+    }
+    for(int j = 0; j < H; j++)
+    {
+      parameterPointers.push_back(&bh(j));
+      parameterDerivativePointers.push_back(&bh(j));
+    }
+  }
+
+  OutputInfo info;
+  info.dimensions.push_back(H);
+  return info;
+}
+
 void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
 {
   // Derive activations
@@ -125,7 +150,8 @@ void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   for(int j = 0; j < H; j++)
     deltas(j) = phd(j) * (*ein)(j);
   // Weight derivatives
-  Wd = deltas * v.transpose();
+  if(backprop)
+    Wd = deltas * v.transpose();
   // Prepare error signals for previous layer
   e = W.transpose() * deltas;
   eout = &e;
@@ -141,28 +167,6 @@ void RBM::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout
 Eigen::VectorXd& RBM::getOutput()
 {
   return ph;
-}
-
-OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
-                           std::vector<double*>& parameterDerivativePointers)
-{
-  for(int j = 0; j < H; j++)
-  {
-    for(int i = 0; i < D; i++)
-    {
-      parameterPointers.push_back(&W(j, i));
-      parameterDerivativePointers.push_back(&Wd(j, i));
-    }
-  }
-  for(int j = 0; j < H; j++)
-  {
-    parameterPointers.push_back(&bh(j));
-    parameterDerivativePointers.push_back(&bh(j));
-  }
-
-  OutputInfo info;
-  info.dimensions.push_back(H);
-  return info;
 }
 
 int RBM::visibleUnits()

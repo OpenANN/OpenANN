@@ -49,6 +49,7 @@ class RBM : public Learner, public Layer
   int K;
   Eigen::VectorXd params;
   DataSet* trainSet;
+  bool backprop;
 
 public:
 
@@ -59,8 +60,9 @@ public:
    * @param H number of hidden nodes
    * @param cdN number of contrastive divergence steps
    * @param stdDev standard deviation of initial weights
+   * @param backprop weights can be finetuned with backprop
    */
-  RBM(int D, int H, int cdN = 1, double stdDev = 0.01);
+  RBM(int D, int H, int cdN = 1, double stdDev = 0.01, bool backprop = true);
   virtual ~RBM() {}
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual bool providesInitialization();

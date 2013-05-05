@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, 28, 28)
-     .restrictedBoltzmannMachineLayer(100, 1, 0.01)
+     .restrictedBoltzmannMachineLayer(100, 1, 0.01, false)
      .fullyConnectedLayer(100, OpenANN::LOGISTIC, 0.05)
      .outputLayer(10, OpenANN::LINEAR)
      .setErrorFunction(OpenANN::CE)
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
   }
 
   /*QApplication app(argc, argv);
-  RBMVisualization visual(*rbm, trainSet, 5, 7, 800, 600);
+  RBMVisualization visual(rbm, trainSet, 5, 7, 800, 600);
   visual.show();
   visual.resize(800, 600);
   return app.exec();*/
