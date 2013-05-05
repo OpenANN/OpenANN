@@ -8,6 +8,11 @@
 
 namespace OpenANN {
 
+/**
+ * @enum ErrorFunction
+ *
+ * Error function that will be minimized.
+ */
 enum ErrorFunction
 {
   NO_E_DEFINED,
@@ -33,6 +38,7 @@ enum ErrorFunction
  *   is a fully connected output layer.
  * - FullyConnected layer: each neuron is connected to each neuron of the
  *   previous layer.
+ * - RBM layer: a restricted boltzmann machine that can be pretrained.
  * - Compressed layer: fully connected layer. The I incoming weights of a
  *   neuron are represented by M (usually M < I) parameters.
  * - Extreme layer: fully connected layer with fixed random weights.
@@ -88,19 +94,17 @@ public:
    *             of an image
    * @param dim2 second dimension, e. g. number of rows of an image
    * @param dim3 third dimension, e. g. number of columns of an image
-   * @param bias add bias term
    * @return this for chaining
    */
-  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1, bool bias = true);
+  Net& inputLayer(int dim1, int dim2 = 1, int dim3 = 1);
   /**
    * Add a alpha-beta filter layer.
    * @param deltaT temporal difference between two steps
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
-   * @param bias add bias term
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
    * @return this for chaining
    */
-  Net& alphaBetaFilterLayer(double deltaT, double stdDev = 0.05,
-                            bool bias = true);
+  Net& alphaBetaFilterLayer(double deltaT, double stdDev = 0.05);
   /**
    * Add a fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -115,6 +119,17 @@ public:
   Net& fullyConnectedLayer(int units, ActivationFunction act,
                            double stdDev = 0.05, bool bias = true,
                            double maxSquaredWeightNorm = 0.0);
+  /**
+   * Add a layer that contains an RBM.
+   * @param H number of nodes (neurons)
+   * @param cdN number of gibbs sampling steps for pretraining
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
+   * @param backprop finetune weights with backpropagation
+   * @return this for chaining
+   */
+  Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1, double stdDev = 0.01,
+                                       bool backprop = true);
   /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)
@@ -158,7 +173,8 @@ public:
    * @param kernelRows number of kernel rows
    * @param kernelCols number of kernel columns
    * @param act activation function
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
    * @param bias add bias term
    * @return this for chaining
    */
@@ -169,10 +185,9 @@ public:
    * Add a max-pooling layer.
    * @param kernelRows number of kernel rows
    * @param kernelCols number of kernel columns
-   * @param bias add bias term
    * @return this for chaining
    */
-  Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias = true);
+  Net& maxPoolingLayer(int kernelRows, int kernelCols);
   /**
    * Add a local response normalization layer.
    * \f$ y^i_{rc} = x^i_{rc} / \left( k +
@@ -182,11 +197,10 @@ public:
    * @param n number of adjacent feature maps
    * @param alpha controls strength of inhibition, alpha > 0, e.g. 1e-4
    * @param beta controls strength of inhibition, beta > 0, e.g. 0.75
-   * @param bias add bias term
    * @return this for chaining
    */
-  Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta,
-                                      bool bias = true);
+  Net& localReponseNormalizationLayer(double k, int n, double alpha,
+                                      double beta);
   /**
    * Add a dropout layer.
    * @param dropoutProbability probability of suppression during training
@@ -196,10 +210,13 @@ public:
    * Add a fully connected output layer. This will initialize the network.
    * @param units number of nodes (neurons)
    * @param act activation function
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
+   * @param bias add bias term
    * @return this for chaining
    */
-  Net& outputLayer(int units, ActivationFunction act, double stdDev = 0.05);
+  Net& outputLayer(int units, ActivationFunction act, double stdDev = 0.05,
+                   bool bias = true);
   /**
    * Add a compressed output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -208,12 +225,14 @@ public:
    * @param act activation function
    * @param compression type of compression matrix, possible values are
    *        dct, gaussian, sparse, average, edge
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
+   * @param bias add bias term
    * @return this for chaining
    */
   Net& compressedOutputLayer(int units, int params, ActivationFunction act,
                              const std::string& compression,
-                             double stdDev = 0.05);
+                             double stdDev = 0.05, bool bias = true);
   /** 
    * Add a new layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
@@ -222,6 +241,16 @@ public:
    * @return this for chaining
    */
   Net& addLayer(Layer* layer);
+
+  /** 
+   * Add a new output layer to this deep neural network. 
+   * Never free/delete the added layer outside of this class. 
+   * Its cleaned up by Net's destructor automatically.
+   * @param layer pointer to an instance that implements the Layer interface
+   * @return this for chaining
+   */
+  Net& addOutputLayer(Layer* layer);
+
 
   unsigned int numberOflayers();
   Layer& getLayer(unsigned int l);

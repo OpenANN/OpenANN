@@ -7,7 +7,7 @@ cdef class Dataset:
     if input != None and output != None:
       self.input = __matrix_numpy_to_eigen__(input)
       self.output = __matrix_numpy_to_eigen__(output)
-      self.storage = new openann.DirectStorageDataSet(deref(self.input), deref(self.output))
+      self.storage = new openann.DirectStorageDataSet(self.input, self.output)
     else:
       self.input = NULL
       self.output = NULL
@@ -59,6 +59,6 @@ def load_from_libsvm(filename):
   dset.input = input
   dset.output = output
   openann.libsvm_load(deref(input), deref(output), filename, 0)
-  dset.storage = new openann.DirectStorageDataSet(deref(input), deref(output))
+  dset.storage = new openann.DirectStorageDataSet(input, output)
   return dset 
 

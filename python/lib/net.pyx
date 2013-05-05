@@ -12,19 +12,24 @@ class Error:
 
 cdef class Net:
   cdef openann.Net *thisptr
+  cdef object layers
 
   def __cinit__(self):
     self.thisptr = new openann.Net()
+    self.layers = []
 
   def __dealloc__(self):
     del self.thisptr
 
-  def input_layer(self, width, height, dim=1, bias=True):
-    self.thisptr.inputLayer(width, height, dim, bias)
+  def parameter_size(self):
+    return self.thisptr.dimension()
+
+  def input_layer(self, width, height, dim=1):
+    self.thisptr.inputLayer(width, height, dim)
     return self
 
-  def alpha_beta_filter_layer(self, delta_t, std_dev=0.05, bias=True):
-    self.thisptr.alphaBetaFilterLayer(delta_t, std_dev, bias)
+  def alpha_beta_filter_layer(self, delta_t, std_dev=0.05):
+    self.thisptr.alphaBetaFilterLayer(delta_t, std_dev)
     return self
 
   def fully_connected_layer(self, units, act, std_dev=0.05, bias=True):
@@ -48,12 +53,12 @@ cdef class Net:
     self.thisptr.subsamplingLayer(kernelRows, kernelCols, act, std_dev, bias)
     return self
 
-  def maxpooling_layer(self, kernelRows, kernelCols, bias=True):
-    self.thisptr.maxPoolingLayer(kernelRows, kernelCols, bias)
+  def maxpooling_layer(self, kernelRows, kernelCols):
+    self.thisptr.maxPoolingLayer(kernelRows, kernelCols)
     return self
 
-  def local_response_normalization_layer(self, k, n, alpha, beta, bias=True):
-    self.thisptr.localReponseNormalizationLayer(k, n, alpha, beta, bias)
+  def local_response_normalization_layer(self, k, n, alpha, beta):
+    self.thisptr.localReponseNormalizationLayer(k, n, alpha, beta)
     return self
 
   def output_layer(self, units, act, std_dev=0.05):
@@ -63,6 +68,18 @@ cdef class Net:
   def dropout_layer(self, dropout_probability):
     self.thisptr.dropoutLayer(dropout_probability)
     return self
+
+  def add_layer(self, layer):
+    cdef int layers = self.thisptr.numberOflayers()
+    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
+    self.thisptr.addLayer((<Layer?>layer).construct(info))
+    self.layers.append(layer)
+
+  def add_output_layer(self, layer):
+    cdef int layers = self.thisptr.numberOflayers()
+    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
+    self.thisptr.addOutputLayer((<Layer?>layer).construct(info))
+    self.layers.append(layer)
 
   def compressed_output_layer(self, units, params, act, compression, std_dev=0.05):
     cdef char* comp = compression

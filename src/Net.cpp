@@ -9,6 +9,7 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/Dropout.h>
+#include <OpenANN/RBM.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -27,22 +28,31 @@ Net::Net()
 Net::~Net()
 {
   if(deleteDataSet)
+  {
     delete dataSet;
+    dataSet = 0;
+  }
   if(deleteTestSet)
+  {
     delete testDataSet;
+    testDataSet = 0;
+  }
   for(int i = 0; i < layers.size(); i++)
+  {
     delete layers[i];
+    layers[i] = 0;
+  }
   layers.clear();
 }
 
-Net& Net::inputLayer(int dim1, int dim2, int dim3, bool bias)
+Net& Net::inputLayer(int dim1, int dim2, int dim3)
 {
-  return addLayer(new Input(dim1, dim2, dim3, bias));
+  return addLayer(new Input(dim1, dim2, dim3));
 }
 
-Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
+Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev)
 {
-  return addLayer(new AlphaBetaFilter(infos.back(), deltaT, bias, stdDev));
+  return addLayer(new AlphaBetaFilter(infos.back(), deltaT, stdDev));
 }
 
 Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
@@ -50,6 +60,12 @@ Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                      maxSquaredWeightNorm));
+}
+
+Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
+                                          bool backprop)
+{
+  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev, backprop));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
@@ -79,16 +95,16 @@ Net& Net::subsamplingLayer(int kernelRows, int kernelCols,
   return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
 }
 
-Net& Net::maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
+Net& Net::maxPoolingLayer(int kernelRows, int kernelCols)
 {
-  return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols, bias));
+  return addLayer(new MaxPooling(infos.back(), kernelRows, kernelCols));
 }
 
-Net& Net::localReponseNormalizationLayer(double k, int n, double alpha, double beta,
-                                         bool bias)
+Net& Net::localReponseNormalizationLayer(double k, int n, double alpha,
+                                         double beta)
 {
-  return addLayer(new LocalResponseNormalization(infos.back(), bias, k, n,
-                                                 alpha, beta));
+  return addLayer(new LocalResponseNormalization(infos.back(), k, n, alpha,
+                                                 beta));
 }
 
 Net& Net::dropoutLayer(double dropoutProbability)
@@ -107,17 +123,26 @@ Net& Net::addLayer(Layer* layer)
     return *this;
 }
 
-Net& Net::outputLayer(int units, ActivationFunction act, double stdDev)
+Net& Net::addOutputLayer(Layer* layer)
 {
-  fullyConnectedLayer(units, act, stdDev, false);
+    addLayer(layer);
+    initializeNetwork();
+    return *this;
+}
+
+
+Net& Net::outputLayer(int units, ActivationFunction act, double stdDev, bool bias)
+{
+  fullyConnectedLayer(units, act, stdDev, bias);
   initializeNetwork();
   return *this;
 }
 
 Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
-                                const std::string& compression, double stdDev)
+                                const std::string& compression, double stdDev,
+                                bool bias)
 {
-  compressedLayer(units, params, act, compression, stdDev, false);
+  compressedLayer(units, params, act, compression, stdDev, bias);
   initializeNetwork();
   return *this;
 }
@@ -142,7 +167,7 @@ OutputInfo Net::getOutputInfo(unsigned int l)
 void Net::initializeNetwork()
 {
   P = parameters.size();
-  tempInput.resize(infos[0].outputs() - infos[0].bias);
+  tempInput.resize(infos[0].outputs());
   tempOutput.resize(infos.back().outputs());
   tempError.resize(infos.back().outputs());
   tempGradient.resize(P);
@@ -159,7 +184,7 @@ Net& Net::useDropout(bool activate)
 
 Learner& Net::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
-  dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
+  dataSet = new DirectStorageDataSet(&trainingInput, &trainingOutput);
   deleteDataSet = true;
   N = dataSet->samples();
   return *this;
@@ -179,7 +204,7 @@ Net& Net::testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput)
 {
   if(deleteTestSet)
     delete testDataSet;
-  testDataSet = new DirectStorageDataSet(testInput, testOutput);
+  testDataSet = new DirectStorageDataSet(&testInput, &testOutput);
   deleteTestSet = true;
   return *this;
 }

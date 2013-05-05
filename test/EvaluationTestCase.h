@@ -5,6 +5,7 @@
 class EvaluationTestCase : public TestCase
 {
   virtual void run();
+  virtual void setUp();
   void sse();
   void mse();
   void rmse();

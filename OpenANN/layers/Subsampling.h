@@ -26,7 +26,7 @@ namespace OpenANN {
 class Subsampling : public Layer
 {
   int I, fm, inRows, inCols, kernelRows, kernelCols;
-  bool bias, weightForBias;
+  bool bias;
   ActivationFunction act;
   double stdDev;
   Eigen::VectorXd* x;

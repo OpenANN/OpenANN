@@ -39,7 +39,7 @@ protected:
   ActivationFunction act;
   double stdDev;
 
-  Eigen::VectorXd* x;
+  Eigen::VectorXd x;
   Eigen::VectorXd a;
   Eigen::VectorXd y;
   Eigen::VectorXd yd;
@@ -77,6 +77,8 @@ protected:
    */
   struct Constraint
   {
+    Constraint() {}
+    virtual ~Constraint() {}
     /**
       * function call operator for corresponding second-order nodes
       */

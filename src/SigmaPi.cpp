@@ -1,6 +1,7 @@
 #include <OpenANN/layers/SigmaPi.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/OpenANNException.h>
+#include <omp.h>
 
 namespace OpenANN {
 
@@ -38,8 +39,11 @@ struct NoConstraint : public OpenANN::SigmaPi::Constraint
 
 
 SigmaPi::SigmaPi(OutputInfo info, bool bias, ActivationFunction act, double stdDev)
-    : info(info), bias(bias), act(act), stdDev(stdDev), x(0), e(info.outputs())
+    : info(info), bias(bias), act(act), stdDev(stdDev),
+      x(info.outputs() + bias), e(info.outputs())
 {
+  if(bias)
+    x(info.outputs()) = 1.0;
 }
 
 
@@ -59,13 +63,14 @@ void SigmaPi::updatedParameters()
 void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
 {
     int J = nodes.size();
-    this->x = x;
+    this->x.head(info.outputs()) = *x;
 
     for(int i = 0; i < nodes.size(); ++i) {
         HigherOrderNeuron& neuron = nodes[i];
 
         double sum = 0.0;
 
+#pragma omp parallel for reduction(+:sum)
         for(int j = 0; j < neuron.size(); ++j) {
             HigherOrderUnit& unit = neuron[j];
 
@@ -75,16 +80,13 @@ void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dro
                korrelation *= (*x)(unit.position.at(k));
             }
 
-            sum += w[unit.weight] * korrelation;
+            sum = sum + w[unit.weight] * korrelation;
         }
 
         a(i) = sum;
     }
 
     activationFunction(act, a, this->y);
-
-    if(bias)
-        this->y(J) = 1.0;
 
     y = &(this->y);
 }
@@ -111,8 +113,9 @@ void SigmaPi::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_o
             double korrelation = 1.0;
 
             for(int k = 0; k < unit.position.size(); ++k) {
-                korrelation *= (*x)(unit.position.at(k));
-                e(unit.position.at(k)) += w[unit.weight] * deltas(i);
+              int index = unit.position.at(k);
+              korrelation *= x(index);
+              e(index) += w[unit.weight] * deltas(i);
             }
 
             wd[unit.weight] += deltas(i) * korrelation;
@@ -142,13 +145,9 @@ OutputInfo SigmaPi::initialize(std::vector<double*>& parameterPointers, std::vec
     deltas.resize(J);
     a.resize(J);
 
-    if(bias)
-        y(J) = 1.0;
-
     initializeParameters();
 
     OutputInfo info;
-    info.bias = bias;
     info.dimensions.push_back(J);
     return info;
 }
@@ -176,7 +175,7 @@ SigmaPi& SigmaPi::fourthOrderNodes(int numbers)
 
 SigmaPi& SigmaPi::secondOrderNodes(int numbers, const Constraint& constraint)
 {
-    int I = info.outputs();
+    int I = info.outputs() + bias;
 
     for(int i = 0; i < numbers; ++i) {
         HigherOrderNeuron neuron;
@@ -225,7 +224,7 @@ SigmaPi& SigmaPi::secondOrderNodes(int numbers, const Constraint& constraint)
 
 SigmaPi& SigmaPi::thirdOrderNodes(int numbers, const Constraint& constraint)
 {
-    int I = info.outputs();
+    int I = info.outputs() + bias;
 
     for(int i = 0; i < numbers; ++i) {
         HigherOrderNeuron neuron;
@@ -278,7 +277,7 @@ SigmaPi& SigmaPi::thirdOrderNodes(int numbers, const Constraint& constraint)
 
 SigmaPi& SigmaPi::fourthOrderNodes(int numbers, const Constraint& constraint)
 {
-    int I = info.outputs();
+    int I = info.outputs() + bias;
 
     for(int i = 0; i < numbers; ++i) {
         HigherOrderNeuron neuron;

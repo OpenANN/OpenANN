@@ -25,12 +25,12 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
   ActivationFunction act = a == "tanh" ? TANH : LINEAR;
   inputSize = (fullyObservable || alphaBetaFilter ? 1 : 2)
       * environment.stateSpaceDimension();
-  policy.inputLayer(inputSize, 1, 1, b);
+  policy.inputLayer(inputSize, 1, 1);
 
   if(!fullyObservable)
   {
     if(alphaBetaFilter)
-      policy.alphaBetaFilterLayer(environment.deltaT(), 5.0, b);
+      policy.alphaBetaFilterLayer(environment.deltaT(), 5.0);
     else if(doubleExponentialSmoothing)
     {
       des.resize(environment.stateSpaceDimension());
@@ -50,14 +50,14 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
       policy.compressedLayer(h, m, act, std::string("dct"), 0.05, b);
     else
       policy.fullyConnectedLayer(h, act, 0.05, b);
-    policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
+    policy.outputLayer(environment.actionSpaceDimension(), act, 0.05, b);
   }
   else
   {
     if(compress)
-      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"), 0.05);
+      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"), 0.05, b);
     else
-      policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
+      policy.outputLayer(environment.actionSpaceDimension(), act, 0.05, b);
   }
 
   StoppingCriteria stop;

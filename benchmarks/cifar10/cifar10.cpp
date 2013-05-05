@@ -122,7 +122,7 @@ int main(int argc, char** argv)
   CIFARLoader loader(directory);
 
   OpenANN::Net net;                                                      // Nodes per layer:
-  net.inputLayer(loader.C, loader.X, loader.Y, true);                    //   3 x 32 x 32
+  net.inputLayer(loader.C, loader.X, loader.Y);                    //   3 x 32 x 32
   if(bigNet)
   {
      net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)         // 200 x 28 x 28
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
   }
   net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                            //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
-  OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
+  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);

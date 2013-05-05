@@ -1,5 +1,6 @@
 from libcpp cimport bool
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 cdef extern from "Eigen/Dense" namespace "Eigen":
   cdef cppclass VectorXd:
@@ -19,9 +20,31 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     double& get "operator()"(int rows, int cols)
 
+cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
+  cdef enum ActivationFunction:
+    LOGISTIC
+    TANH
+    TANH_SCALED
+    RECTIFIER
+    LINEAR
+
+cdef extern from "OpenANN/Net.h" namespace "OpenANN":
+  cdef enum ErrorFunction:
+    NO_E_DEFINED
+    SSE
+    MSE
+    CE
+
 cdef extern from "<iostream>" namespace "std":
   cdef cppclass ostream
   ostream& write "operator<<" (ostream& os, char* str)
+
+cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Logger":
+  cdef enum Target:
+    NONE
+    CONSOLE
+    FILE
+    APPEND_FILE
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   cdef enum LogLevel:
@@ -37,7 +60,41 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
 
 
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
-  cdef cppclass Layer
+  cdef cppclass OutputInfo:
+    bool bias
+    vector[int] dimension
+    int outputs()
+
+  cdef cppclass Layer:
+    OutputInfo initialize(vector[double*]& param, vector[double*] derivative)
+    void initializeParameters()
+    void updatedParameters()
+    void forwardPropagate(VectorXd* x, VectorXd*& y, bool dropout)
+    void backpropagate(VectorXd* ein, VectorXd*& eout)
+    VectorXd& getOutput()
+
+
+cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN::SigmaPi":
+  cdef cppclass Constraint:
+    double constrain "operator()" (int p1, int p2)
+    double constrain "operator()" (int p1, int p2, int p3)
+    double constrain "operator()" (int p1, int p2, int p3, int p4)
+
+cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN":
+  cdef cppclass SigmaPi(Layer):
+    SigmaPi(OutputInfo info, bool bias, ActivationFunction act, double stdDev)
+    SigmaPi& secondOrderNodes(int numbers)
+    SigmaPi& thirdOrderNodes(int numbers)
+    SigmaPi& fourthOrderNodes(int numbers)
+    SigmaPi& secondOrderNodes(int numbers, Constraint& constrain)
+    SigmaPi& thirdOrderNodes(int numbers, Constraint& constrain)
+    SigmaPi& fourthOrderNodes(int numbers, Constraint& constrain)
+
+cdef extern from "OpenANN/layers/SigmaPiConstraints.h" namespace "OpenANN":
+  cdef cppclass DistanceConstraint(Constraint):
+    DistanceConstraint(long width, long height)
+  cdef cppclass SlopeConstraint(Constraint):
+    SlopeConstraint(long width, long height)
 
 cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
   cdef cppclass DataSet:
@@ -50,27 +107,12 @@ cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/io/DirectStorageDataSet.h" namespace "OpenANN":
   cdef cppclass DirectStorageDataSet(DataSet):
-    DirectStorageDataSet(MatrixXd& input, MatrixXd& output)
+    DirectStorageDataSet(MatrixXd* input, MatrixXd* output)
 
 cdef extern from "OpenANN/io/LibSVM.h":
   int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
   void save (MatrixXd& input, MatrixXd& output, char *filename)
 
-
-cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
-  cdef enum ActivationFunction:
-    LOGISTIC
-    TANH
-    TANH_SCALED
-    RECTIFIER
-    LINEAR
-
-cdef extern from "OpenANN/Net.h" namespace "OpenANN":
-  cdef enum ErrorFunction:
-    NO_E_DEFINED
-    SSE
-    MSE
-    CE
 
 cdef extern from "OpenANN/optimization/StoppingCriteria.h" namespace "OpenANN":
   cdef cppclass StoppingCriteria:
@@ -88,6 +130,7 @@ cdef extern from "OpenANN/optimization/Optimizable.h" namespace "OpenANN":
     bool providesInitialization()
     void initialize()
     VectorXd currentParameters()
+    int dimension()
     double error()
     double error_from "error" (unsigned int i)
     bool providesGradient()
@@ -126,22 +169,24 @@ cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef cppclass Net(Learner):
     Net()
-    Net& inputLayer(int dim1, int dim2, int dim3, bool bias)
-    Net& alphaBetaFilterLayer(double deltaT, double stdDev, bool bias)
+    Net& inputLayer(int dim1, int dim2, int dim3)
+    Net& alphaBetaFilterLayer(double deltaT, double stdDev)
     Net& fullyConnectedLayer(int units, ActivationFunction act, double stdDev, bool bias)
     Net& compressedLayer(int units, int params, ActivationFunction act, string compression, double stdDev, bool bias)
     Net& extremeLayer(int units, ActivationFunction act, double stdDev, bool bias)
     Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols, ActivationFunction act, double stdDev, bool bias)
     Net& subsamplingLayer(int kernelRows, int kernelCols, ActivationFunction act, double stdDev, bool bias)
-    Net& maxPoolingLayer(int kernelRows, int kernelCols, bool bias)
-    Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta, bool bias)
+    Net& maxPoolingLayer(int kernelRows, int kernelCols)
+    Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta)
     Net& outputLayer(int units, ActivationFunction act, double stdDev)
     Net& compressedOutputLayer(int units, int params, ActivationFunction act, string& compression, double stdDev)
     Net& dropoutLayer(double dropoutProbability) 
     Net& setErrorFunction(ErrorFunction errorFunction)
     Net& useDropout(bool activate)
     Net& addLayer(Layer *layer)
-    unsigned int numberOflayer()
+    Net& addOutputLayer(Layer *layer)
+    unsigned int numberOflayers()
+    OutputInfo getOutputInfo(int l)
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)

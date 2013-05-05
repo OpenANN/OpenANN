@@ -1,15 +1,13 @@
 #include <OpenANN/layers/Layer.h>
+#include <numeric>
 
 namespace OpenANN
 {
 
 int OutputInfo::outputs()
 {
-  int prod = 1;
-  for(std::vector<int>::const_iterator it = dimensions.begin();
-      it != dimensions.end(); it++)
-    prod *= *it;
-  return prod + bias;
+  return std::accumulate(dimensions.begin(), dimensions.end(), 1,
+                         std::multiplies<int>());;
 }
 
 }

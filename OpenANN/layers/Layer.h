@@ -13,8 +13,6 @@ namespace OpenANN {
 class OutputInfo
 {
 public:
-  //! Is there a bias in this layer, i. e. an input node that is always 1?
-  bool bias;
   //! The dimensions of the output. There can be 1-3 dimensions.
   std::vector<int> dimensions;
 
@@ -34,6 +32,7 @@ public:
 class Layer
 {
 public:
+  virtual ~Layer() {}
   /**
    * Fill in the parameter pointers and parameter derivative pointers.
    * @param parameterPointers pointers to parameters

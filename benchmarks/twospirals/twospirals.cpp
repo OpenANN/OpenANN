@@ -71,7 +71,7 @@ class EvaluatableDataset : public OpenANN::DirectStorageDataSet
 public:
   int iterations;
   EvaluatableDataset(Eigen::MatrixXd& in, Eigen::MatrixXd& out)
-    : DirectStorageDataSet(in, out), iterations(0)
+    : DirectStorageDataSet(&in, &out), iterations(0)
   {}
   virtual void finishIteration(OpenANN::Learner& learner) { iterations++; }
 };
@@ -263,7 +263,7 @@ int main(int argc, char** argv)
       EvaluatableDataset ds(Xtr, Ytr);
       net.trainingSet(ds);
       sw.start();
-      OpenANN::train(net, "LMA", OpenANN::SSE, stop);
+      OpenANN::train(net, "LMA", OpenANN::SSE, stop, true);
       time += sw.stop(Stopwatch::MILLISECOND);
       Result result = evaluate(net, Xte, Yte, ds);
       results.push_back(result);

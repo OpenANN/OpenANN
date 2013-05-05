@@ -127,7 +127,7 @@ Learner& IntrinsicPlasticity::trainingSet(Eigen::MatrixXd& trainingInput, Eigen:
 {
   if(deleteDataSet)
     delete dataSet;
-  dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
+  dataSet = new DirectStorageDataSet(&trainingInput, &trainingOutput);
   deleteDataSet = true;
 }
 

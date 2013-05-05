@@ -47,7 +47,7 @@ int main(int argc, char** argv)
                               distorter);
 
   OpenANN::Net net;                                               // Nodes per layer:
-  net.inputLayer(1, loader.padToX, loader.padToY, true)           //   1 x 28 x 28
+  net.inputLayer(1, loader.padToX, loader.padToY)                 //   1 x 28 x 28
      .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  10 x 24 x 24
      .maxPoolingLayer(2, 2)                                       //  10 x 12 x 12
      .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)      //  16 x  8 x  8
@@ -55,8 +55,8 @@ int main(int argc, char** argv)
      .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)          // 120
      .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)           //  84
      .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
-     .trainingSet(trainingSet);
-  OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
+     .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);

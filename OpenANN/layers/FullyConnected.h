@@ -11,10 +11,11 @@ namespace OpenANN {
  * Fully connected layer.
  *
  * Each neuron in the previous layer is taken as input for each neuron of this
- * layer. Forward propagation is usually done by \f$ a = W \cdot x, y_j =
- * g(a_j) \f$, where \f$ a_j \f$ is the activation of the jth neuron, \f$ y_j
- * \f$ its output, \f$ g \f$ a typically nonlinear activation function, \f$ x
- * \f$ is the input of the layer and \f$ W \f$ is a weight matrix.
+ * layer. Forward propagation is usually done by \f$ a = W \cdot x + b, y =
+ * g(a) \f$, where \f$ a \f$ is the activation vector, \f$ y \f$ is the
+ * output, \f$ g \f$ a typically nonlinear activation function that operates
+ * on a vector, \f$ x \f$ is the input of the layer, \f$ W \f$ is a weight
+ * matrix and \f$ b \f$ is a bias vector.
  *
  * Neural networks with one fully connected hidden layer and a nonlinear
  * activation function are universal function approximators, i. e. with a
