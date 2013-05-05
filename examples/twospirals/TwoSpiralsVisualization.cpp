@@ -178,7 +178,7 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
 }
 
 TwoSpiralsDataSet::TwoSpiralsDataSet(const Eigen::MatrixXd& inputs, const Eigen::MatrixXd& outputs)
-  : in(inputs), out(outputs), dataSet(this->in, this->out), visualization(0)
+  : in(inputs), out(outputs), dataSet(&this->in, &this->out), visualization(0)
 {
 }
 

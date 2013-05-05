@@ -21,7 +21,7 @@ void DataSetTestCase::directStorageDataSets()
   Eigen::MatrixXd out(1, 5);
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
 
   ASSERT_EQUALS(dataset.samples(), 5);
   ASSERT_EQUALS(dataset.inputs(), 1);
@@ -48,7 +48,7 @@ void DataSetTestCase::dataSetViews()
   Eigen::MatrixXd out(1, 5);
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   DataSetView view(dataset);
 
   ASSERT_EQUALS(view.samples(), 0);
@@ -64,7 +64,7 @@ void DataSetTestCase::dataSetSplitsFromGroups()
   Eigen::MatrixXd out(1, 5);
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   
   std::vector<int> X;
   std::vector<int> Y;
@@ -105,7 +105,7 @@ void DataSetTestCase::dataSetSplitsFromRatio()
   Eigen::MatrixXd out(1, 5);
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   
   std::vector<int> X;
   std::vector<int> Y;
@@ -150,7 +150,7 @@ void DataSetTestCase::dataSetMerge()
   Eigen::MatrixXd out(1, 5);
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
-  DirectStorageDataSet dataset(in, out);
+  DirectStorageDataSet dataset(&in, &out);
   DataSetView overall(dataset);
  
   std::vector<int> X;

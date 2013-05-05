@@ -130,7 +130,7 @@ bool MBSGD::step()
 
   const bool run = (stop.maximalIterations == // Maximum iterations reached?
       StoppingCriteria::defaultValue.maximalIterations ||
-      iteration <= stop.maximalIterations) &&
+      iteration < stop.maximalIterations) &&
       (stop.minimalSearchSpaceStep == // Gradient too small?
       StoppingCriteria::defaultValue.minimalSearchSpaceStep ||
       momentum.norm() >= stop.minimalSearchSpaceStep);

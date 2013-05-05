@@ -147,7 +147,7 @@ int main(int argc, char** argv)
   }
   net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                            //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
-  OpenANN::DirectStorageDataSet testSet(loader.testInput, loader.testOutput,
+  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
