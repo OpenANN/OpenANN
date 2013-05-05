@@ -14,7 +14,7 @@ public:
                   int generateAfterIteration, Distorter& distorter,
                   LogInfo logInfo = NONE,
                   OpenANN::Logger::Target target = OpenANN::Logger::CONSOLE)
-    : DirectStorageDataSet(in, out, logInfo, target),
+    : DirectStorageDataSet(&in, &out, logInfo, target),
       generateAfterIteration(generateAfterIteration), iteration(0),
       distorter(distorter), original(&in), pixelsPerDim(std::sqrt(in.rows()))
   {
