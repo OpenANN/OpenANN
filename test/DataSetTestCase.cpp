@@ -6,13 +6,6 @@
 
 using namespace OpenANN;
 
-DataSetTestCase::DataSetTestCase()
-  : in(1, 5), out(1, 5)
-{
-  in << 1, 2, 3, 4, 5;
-  out << 5, 4, 3, 2, 1;
-}
-
 void DataSetTestCase::run()
 {
   RUN(DataSetTestCase, directStorageDataSets);
@@ -22,10 +15,12 @@ void DataSetTestCase::run()
   RUN(DataSetTestCase, dataSetMerge);
 }
 
-
-
 void DataSetTestCase::directStorageDataSets()
 {
+  Eigen::MatrixXd in(1, 5);
+  Eigen::MatrixXd out(1, 5);
+  in << 1, 2, 3, 4, 5;
+  out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
 
   ASSERT_EQUALS(dataset.samples(), 5);
@@ -49,6 +44,10 @@ void DataSetTestCase::directStorageDataSets()
 
 void DataSetTestCase::dataSetViews()
 {
+  Eigen::MatrixXd in(1, 5);
+  Eigen::MatrixXd out(1, 5);
+  in << 1, 2, 3, 4, 5;
+  out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
   DataSetView view(dataset);
 
@@ -61,6 +60,10 @@ void DataSetTestCase::dataSetViews()
 
 void DataSetTestCase::dataSetSplitsFromGroups()
 {
+  Eigen::MatrixXd in(1, 5);
+  Eigen::MatrixXd out(1, 5);
+  in << 1, 2, 3, 4, 5;
+  out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
   
   std::vector<int> X;
@@ -98,6 +101,10 @@ void DataSetTestCase::dataSetSplitsFromGroups()
 
 void DataSetTestCase::dataSetSplitsFromRatio()
 {
+  Eigen::MatrixXd in(1, 5);
+  Eigen::MatrixXd out(1, 5);
+  in << 1, 2, 3, 4, 5;
+  out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
   
   std::vector<int> X;
@@ -139,6 +146,10 @@ void DataSetTestCase::dataSetSplitsFromRatio()
 
 void DataSetTestCase::dataSetMerge()
 {
+  Eigen::MatrixXd in(1, 5);
+  Eigen::MatrixXd out(1, 5);
+  in << 1, 2, 3, 4, 5;
+  out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
   DataSetView overall(dataset);
  

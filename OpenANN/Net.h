@@ -173,7 +173,8 @@ public:
    * @param kernelRows number of kernel rows
    * @param kernelCols number of kernel columns
    * @param act activation function
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
    * @param bias add bias term
    * @return this for chaining
    */
@@ -209,10 +210,13 @@ public:
    * Add a fully connected output layer. This will initialize the network.
    * @param units number of nodes (neurons)
    * @param act activation function
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
+   * @param bias add bias term
    * @return this for chaining
    */
-  Net& outputLayer(int units, ActivationFunction act, double stdDev = 0.05);
+  Net& outputLayer(int units, ActivationFunction act, double stdDev = 0.05,
+                   bool bias = true);
   /**
    * Add a compressed output layer. This will initialize the network.
    * @param units number of nodes (neurons)
@@ -221,12 +225,14 @@ public:
    * @param act activation function
    * @param compression type of compression matrix, possible values are
    *        dct, gaussian, sparse, average, edge
-   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
+   * @param bias add bias term
    * @return this for chaining
    */
   Net& compressedOutputLayer(int units, int params, ActivationFunction act,
                              const std::string& compression,
-                             double stdDev = 0.05);
+                             double stdDev = 0.05, bool bias = true);
   /** 
    * Add a new layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 

@@ -131,17 +131,18 @@ Net& Net::addOutputLayer(Layer* layer)
 }
 
 
-Net& Net::outputLayer(int units, ActivationFunction act, double stdDev)
+Net& Net::outputLayer(int units, ActivationFunction act, double stdDev, bool bias)
 {
-  fullyConnectedLayer(units, act, stdDev, false);
+  fullyConnectedLayer(units, act, stdDev, bias);
   initializeNetwork();
   return *this;
 }
 
 Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
-                                const std::string& compression, double stdDev)
+                                const std::string& compression, double stdDev,
+                                bool bias)
 {
-  compressedLayer(units, params, act, compression, stdDev, false);
+  compressedLayer(units, params, act, compression, stdDev, bias);
   initializeNetwork();
   return *this;
 }

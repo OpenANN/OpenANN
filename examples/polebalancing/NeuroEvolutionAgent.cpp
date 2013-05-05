@@ -50,14 +50,14 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
       policy.compressedLayer(h, m, act, std::string("dct"), 0.05, b);
     else
       policy.fullyConnectedLayer(h, act, 0.05, b);
-    policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
+    policy.outputLayer(environment.actionSpaceDimension(), act, 0.05, b);
   }
   else
   {
     if(compress)
-      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"), 0.05);
+      policy.compressedOutputLayer(environment.actionSpaceDimension(), m, act, std::string("dct"), 0.05, b);
     else
-      policy.outputLayer(environment.actionSpaceDimension(), act, 0.05);
+      policy.outputLayer(environment.actionSpaceDimension(), act, 0.05, b);
   }
 
   StoppingCriteria stop;
