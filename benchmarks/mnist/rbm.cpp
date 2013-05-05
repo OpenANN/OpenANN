@@ -17,9 +17,9 @@
 /**
  * \page MNISTRBM Restricted Boltzmann Machine on MNIST dataset
  *
- * An RBM with 50 hidden nodes is trained for one iteration on the MNIST
- * dataset and then used to generate features for another neural network that
- * will be trained supervised.
+ * An RBM with 50 hidden nodes is trained on the MNIST dataset and then used
+ * to generate features for another neural network that will be trained
+ * supervised.
  */
 
 class RBMVisualization : public QGLWidget
@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY)
-     .restrictedBoltzmannMachineLayer(50, 10, 0.01, false)
+     .restrictedBoltzmannMachineLayer(50, 1, 0.01, false)
      .outputLayer(10, OpenANN::LINEAR)
      .setErrorFunction(OpenANN::CE)
      .trainingSet(trainSet);
@@ -237,9 +237,9 @@ int main(int argc, char** argv)
   OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
   rbm.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.1, 0.5, 10, 0.01);
+  OpenANN::MBSGD optimizer(0.01, 0.5, 10, 0.01);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 1;
+  stop.maximalIterations = 20;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   OPENANN_INFO << "Reconstruction error = " << rbm.error();
