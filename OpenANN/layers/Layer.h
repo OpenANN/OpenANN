@@ -32,6 +32,7 @@ public:
 class Layer
 {
 public:
+  virtual ~Layer() {}
   /**
    * Fill in the parameter pointers and parameter derivative pointers.
    * @param parameterPointers pointers to parameters

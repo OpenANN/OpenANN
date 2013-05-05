@@ -38,6 +38,7 @@ enum ErrorFunction
  *   is a fully connected output layer.
  * - FullyConnected layer: each neuron is connected to each neuron of the
  *   previous layer.
+ * - RBM layer: a restricted boltzmann machine that can be pretrained.
  * - Compressed layer: fully connected layer. The I incoming weights of a
  *   neuron are represented by M (usually M < I) parameters.
  * - Extreme layer: fully connected layer with fixed random weights.
@@ -118,6 +119,17 @@ public:
   Net& fullyConnectedLayer(int units, ActivationFunction act,
                            double stdDev = 0.05, bool bias = true,
                            double maxSquaredWeightNorm = 0.0);
+  /**
+   * Add a layer that contains an RBM.
+   * @param H number of nodes (neurons)
+   * @param cdN number of gibbs sampling steps for pretraining
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               weights
+   * @param backprop finetune weights with backpropagation
+   * @return this for chaining
+   */
+  Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1, double stdDev = 0.01,
+                                       bool backprop = true);
   /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)

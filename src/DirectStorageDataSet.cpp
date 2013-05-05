@@ -5,15 +5,17 @@
 
 namespace OpenANN {
 
-DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd& in, Eigen::MatrixXd& out, LogInfo logInfo,
+DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
+                                           Eigen::MatrixXd* out,
+                                           LogInfo logInfo,
                                            Logger::Target target)
-  : in(&in), out(&out), N(in.cols()), D(in.rows()), F(out.rows()),
-    temporaryInput(in.rows()), temporaryOutput(out.rows()), logInfo(logInfo),
+  : in(in), out(out), N(in->cols()), D(in->rows()),
+    F(out ? out->rows() : 0), temporaryInput(in->rows()),
+    temporaryOutput(out ? out->rows() : 0), logInfo(logInfo),
     logger(target, "dataset"), iteration(0)
 {
-  OPENANN_CHECK(in.rows() > 0);
-  OPENANN_CHECK(out.rows() > 0);
-  OPENANN_CHECK_EQUALS(in.cols(), out.cols());
+  OPENANN_CHECK(in->rows() > 0);
+  OPENANN_CHECK(!out || in->cols() == out->cols());
   if(logInfo != NONE)
   {
     logger << "\n\n# Logging data set " << N << " x (" << D << " -> " << F << ").\n";
@@ -34,6 +36,7 @@ Eigen::VectorXd& DirectStorageDataSet::getInstance(int i)
 
 Eigen::VectorXd& DirectStorageDataSet::getTarget(int i)
 {
+  OPENANN_CHECK(out != 0);
   OPENANN_CHECK_WITHIN(i, 0, out->cols()-1);
   temporaryOutput = out->col(i);
   return temporaryOutput;

@@ -39,6 +39,13 @@ cdef extern from "<iostream>" namespace "std":
   cdef cppclass ostream
   ostream& write "operator<<" (ostream& os, char* str)
 
+cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Logger":
+  cdef enum Target:
+    NONE
+    CONSOLE
+    FILE
+    APPEND_FILE
+
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   cdef enum LogLevel:
     DISABLED
@@ -100,7 +107,7 @@ cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/io/DirectStorageDataSet.h" namespace "OpenANN":
   cdef cppclass DirectStorageDataSet(DataSet):
-    DirectStorageDataSet(MatrixXd& input, MatrixXd& output)
+    DirectStorageDataSet(MatrixXd* input, MatrixXd* output)
 
 cdef extern from "OpenANN/io/LibSVM.h":
   int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)

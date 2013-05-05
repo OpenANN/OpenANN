@@ -9,6 +9,7 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/Dropout.h>
+#include <OpenANN/RBM.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -27,11 +28,20 @@ Net::Net()
 Net::~Net()
 {
   if(deleteDataSet)
+  {
     delete dataSet;
+    dataSet = 0;
+  }
   if(deleteTestSet)
+  {
     delete testDataSet;
+    testDataSet = 0;
+  }
   for(int i = 0; i < layers.size(); i++)
+  {
     delete layers[i];
+    layers[i] = 0;
+  }
   layers.clear();
 }
 
@@ -50,6 +60,12 @@ Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                      maxSquaredWeightNorm));
+}
+
+Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
+                                          bool backprop)
+{
+  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev, backprop));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
@@ -168,7 +184,7 @@ Net& Net::useDropout(bool activate)
 
 Learner& Net::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
-  dataSet = new DirectStorageDataSet(trainingInput, trainingOutput);
+  dataSet = new DirectStorageDataSet(&trainingInput, &trainingOutput);
   deleteDataSet = true;
   N = dataSet->samples();
   return *this;
@@ -188,7 +204,7 @@ Net& Net::testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput)
 {
   if(deleteTestSet)
     delete testDataSet;
-  testDataSet = new DirectStorageDataSet(testInput, testOutput);
+  testDataSet = new DirectStorageDataSet(&testInput, &testOutput);
   deleteTestSet = true;
   return *this;
 }
