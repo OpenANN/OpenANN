@@ -14,6 +14,14 @@
 #include <omp.h>
 #endif
 
+/**
+ * \page MNISTRBM Restricted Boltzmann Machine on MNIST dataset
+ *
+ * An RBM with 50 hidden nodes is trained for one iteration on the MNIST
+ * dataset and then used to generate features for another neural network that
+ * will be trained supervised.
+ */
+
 class RBMVisualization : public QGLWidget
 {
   OpenANN::RBM& rbm;
@@ -217,28 +225,31 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingOutput);
 
-
   OpenANN::Net net;
-  net.inputLayer(1, 28, 28)
-     .restrictedBoltzmannMachineLayer(100, 1, 0.01, false)
-     .fullyConnectedLayer(100, OpenANN::LOGISTIC, 0.05)
+  net.inputLayer(1, loader.padToX, loader.padToY)
+     .restrictedBoltzmannMachineLayer(50, 10, 0.01, false)
      .outputLayer(10, OpenANN::LINEAR)
      .setErrorFunction(OpenANN::CE)
      .trainingSet(trainSet);
 
+  int it = 0;
+
   OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
   rbm.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.01, 0.5, 50, 0.01);
+  OpenANN::MBSGD optimizer(0.1, 0.5, 10, 0.01);
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 1;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
-  int it = 0;
+  OPENANN_INFO << "Reconstruction error = " << rbm.error();
   while(optimizer.step())
   {
     OPENANN_INFO << "Iteration #" << ++it << " finished.";
+    OPENANN_INFO << "Reconstruction error = " << rbm.error();
   }
+  OPENANN_INFO << "Iteration #" << ++it << " finished.";
+  OPENANN_INFO << "Reconstruction error = " << rbm.error();
 
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
@@ -247,17 +258,19 @@ int main(int argc, char** argv)
 
   OpenANN::StoppingCriteria stopNet;
   stopNet.maximalIterations = 5;
-  OpenANN::MBSGD netOptimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  OpenANN::MBSGD netOptimizer(0.01, 0.5, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
   netOptimizer.setStopCriteria(stopNet);
+  it = 0;
   while(netOptimizer.step())
   {
     OPENANN_INFO << "Iteration #" << ++it << " finished.";
   }
+  OPENANN_INFO << "Reconstruction error = " << rbm.error();
 
-  /*QApplication app(argc, argv);
+  QApplication app(argc, argv);
   RBMVisualization visual(rbm, trainSet, 5, 7, 800, 600);
   visual.show();
   visual.resize(800, 600);
-  return app.exec();*/
+  return app.exec();
 }
