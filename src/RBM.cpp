@@ -67,7 +67,10 @@ Eigen::VectorXd RBM::currentParameters()
 
 double RBM::error()
 {
-  return 0.0; // TODO reconstruction error?
+  double error = 0.0;
+  for(int n = 0; n < trainSet->samples(); n++)
+    error += (reconstructProb(n, 1) - trainSet->getTarget(n)).squaredNorm();
+  return error;
 }
 
 bool RBM::providesGradient()
@@ -77,7 +80,11 @@ bool RBM::providesGradient()
 
 Eigen::VectorXd RBM::gradient()
 {
-  // TODO CD-n
+  Eigen::VectorXd grad(dimension());
+  grad.fill(0.0);
+  for(int n = 0; n < trainSet->samples(); n++)
+    grad += gradient(n);
+  return grad;
 }
 
 Eigen::VectorXd RBM::gradient(unsigned int i)

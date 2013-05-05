@@ -52,7 +52,6 @@ class RBM : public Learner, public Layer
   bool backprop;
 
 public:
-
   /**
    * Construct RBM.
    *
@@ -64,6 +63,8 @@ public:
    */
   RBM(int D, int H, int cdN = 1, double stdDev = 0.01, bool backprop = true);
   virtual ~RBM() {}
+
+  // Learner interface
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual bool providesInitialization();
   virtual void initialize();
@@ -81,22 +82,24 @@ public:
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
 
+  // Layer interface
   virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
+  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y,
+                                bool dropout);
   virtual Eigen::VectorXd& getOutput();
-  virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
 
+  // RBM interface
   int visibleUnits();
   int hiddenUnits();
   const Eigen::MatrixXd& getWeights();
   const Eigen::VectorXd& getVisibleProbs();
   const Eigen::VectorXd& getVisibleSample();
-
   Eigen::VectorXd reconstructProb(int n, int steps);
   Eigen::VectorXd reconstruct(int n, int steps);
-
   void reality(int n);
   void daydream();
   void sampleHgivenV();
