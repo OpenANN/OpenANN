@@ -72,7 +72,7 @@ public:
       D = padToX * padToY;
     int colNumber = padToX > (int)cols ? padToX : (int)cols;
 
-    input.resize(D, N);
+    input.resize(N, D);
     for(int n = 0; n < N; n++)
     {
       int r = 0;
@@ -83,12 +83,12 @@ public:
         {
           read(inputFile, tmp);
           double value = (double) tmp;
-          input(r*colNumber+c, n) = 1.0-value/255.0; // scale to [0:1]
+          input(n, r*colNumber+c) = 1.0-value/255.0; // scale to [0:1]
         }
         int lastC = c-1;
         for(; c < padToX; c++)
         {
-          input(r*colNumber+c, n) = input(r*colNumber+lastC, n);
+          input(n, r*colNumber+c) = input(n, r*colNumber+lastC);
         }
       }
       int lastR = r-1;
@@ -96,7 +96,7 @@ public:
       {
         for(int c = 0; c < padToX; c++)
         {
-          input(r*colNumber+c, n) = input(lastR*colNumber+c, n);
+          input(n, r*colNumber+c) = input(n, lastR*colNumber+c);
         }
       }
     }
@@ -123,12 +123,12 @@ public:
     OPENANN_CHECK_EQUALS(images, items);
     F = 10;
 
-    output.resize(F, N);
+    output.resize(N, F);
     for(int n = 0; n < N; n++)
     {
       read(labelFile, tmp);
       for(int c = 0; c < F; c++)
-        output(c, n) = (255 - (int) tmp) == c ? 1.0 : 0.0;
+        output(n, c) = (255 - (int) tmp) == c ? 1.0 : 0.0;
     }
   }
 
