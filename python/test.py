@@ -1,5 +1,5 @@
 from openann import *
-from numpy import *
+import numpy
 import pylab
 
 stop  = {
@@ -7,15 +7,16 @@ stop  = {
     "minimal_value_differences": 1e-8
 }
 
-net   = Net()
-lma   = LMA(stop)
+net = Net()
+lma = LMA(stop)
 
 net.input_layer(1, 1)
-net.fully_connected_layer(200, Activation.LOGISTIC)
+net.fully_connected_layer(10, Activation.LOGISTIC)
+net.fully_connected_layer(10, Activation.LOGISTIC)
 net.output_layer(1, Activation.LINEAR)
 
-inputs = numpy.linspace(0, 2*numpy.pi, 500)[:, newaxis]
-outputs = numpy.sin(numpy.random.normal(inputs, 0.1))
+inputs = numpy.linspace(0, 2*numpy.pi, 500)[:, numpy.newaxis]
+outputs = numpy.sin(inputs) + numpy.random.normal(numpy.zeros_like(inputs), 0.1)
 
 dataset = Dataset(inputs, outputs)
 
