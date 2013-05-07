@@ -91,5 +91,3 @@ cdef class Net:
     cdef openann.VectorXd y_eigen = self.thisptr.predict(deref(x_eigen))
     del x_eigen
     return __vector_eigen_to_numpy__(&y_eigen)
-
-

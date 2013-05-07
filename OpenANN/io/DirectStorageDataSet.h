@@ -41,8 +41,8 @@ private:
 public:
   /**
    * Create an instance of DirectStorageDataSet.
-   * @param in contains an instance in each column
-   * @param out cointains a target in each column
+   * @param in contains an instance in each row
+   * @param out cointains a target in each row
    * @param logInfo activate evaluation of the model during optimization
    * @param target target of evaluation logger
    */

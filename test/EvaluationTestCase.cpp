@@ -25,8 +25,6 @@ public:
 
 void EvaluationTestCase::run()
 {
-  OpenANN::RandomNumberGenerator rng;
-  rng.seed(0);
   RUN(EvaluationTestCase, sse);
   RUN(EvaluationTestCase, mse);
   RUN(EvaluationTestCase, rmse);
@@ -46,11 +44,11 @@ void EvaluationTestCase::sse()
   OpenANN::RandomNumberGenerator rng;
   const int N = 1000;
   const int F = 10;
-  Eigen::MatrixXd Y(F, N);
+  Eigen::MatrixXd Y(N, F);
   for(int n = 0; n < N; n++)
     for(int f = 0; f < F; f++)
-      Y(f, n) = rng.sampleNormalDistribution<double>()*2.0;
-  Eigen::MatrixXd T(F, N);
+      Y(n, f) = rng.sampleNormalDistribution<double>()*2.0;
+  Eigen::MatrixXd T(N, F);
   T.fill(0.0);
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
@@ -63,11 +61,11 @@ void EvaluationTestCase::mse()
   OpenANN::RandomNumberGenerator rng;
   const int N = 1000;
   const int F = 10;
-  Eigen::MatrixXd Y(F, N);
+  Eigen::MatrixXd Y(N, F);
   for(int n = 0; n < N; n++)
     for(int f = 0; f < F; f++)
-      Y(f, n) = rng.sampleNormalDistribution<double>()*2.0;
-  Eigen::MatrixXd T(F, N);
+      Y(n, f) = rng.sampleNormalDistribution<double>()*2.0;
+  Eigen::MatrixXd T(N, F);
   T.fill(0.0);
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
@@ -80,11 +78,11 @@ void EvaluationTestCase::rmse()
   OpenANN::RandomNumberGenerator rng;
   const int N = 100000;
   const int F = 10;
-  Eigen::MatrixXd Y(F, N);
+  Eigen::MatrixXd Y(N, F);
   for(int n = 0; n < N; n++)
     for(int f = 0; f < F; f++)
-      Y(f, n) = rng.sampleNormalDistribution<double>()*2.0;
-  Eigen::MatrixXd T(F, N);
+      Y(n, f) = rng.sampleNormalDistribution<double>()*2.0;
+  Eigen::MatrixXd T(N, F);
   T.fill(0.0);
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
@@ -96,12 +94,12 @@ void EvaluationTestCase::ce()
 {
   const int N = 2;
   const int F = 2;
-  Eigen::MatrixXd Y(F, N);
-  Eigen::MatrixXd T(F, N);
-  Y.col(0) << 0.5, 0.5;
-  Y.col(1) << 0.0, 1.0;
-  T.col(0) << 0.0, 1.0;
-  T.col(1) << 1.0, 0.0;
+  Eigen::MatrixXd Y(N, F);
+  Eigen::MatrixXd T(N, F);
+  Y.row(0) << 0.5, 0.5;
+  Y.row(1) << 0.0, 1.0;
+  T.row(0) << 0.0, 1.0;
+  T.row(1) << 1.0, 0.0;
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   double ce = OpenANN::ce(learner, dataSet);
@@ -112,14 +110,14 @@ void EvaluationTestCase::accuracy()
 {
   const int N = 3;
   const int F = 3;
-  Eigen::MatrixXd Y(F, N);
-  Eigen::MatrixXd T(F, N);
-  Y.col(0) << 1.0, 0.0, 0.0;
-  Y.col(1) << 0.0, 0.0, 1.0;
-  Y.col(2) << 0.0, 1.0, 0.0;
-  T.col(0) << 1.0, 0.0, 0.0;
-  T.col(1) << 0.0, 1.0, 0.0;
-  T.col(2) << 0.0, 1.0, 0.0;
+  Eigen::MatrixXd Y(N, F);
+  Eigen::MatrixXd T(N, F);
+  Y.row(0) << 1.0, 0.0, 0.0;
+  Y.row(1) << 0.0, 0.0, 1.0;
+  Y.row(2) << 0.0, 1.0, 0.0;
+  T.row(0) << 1.0, 0.0, 0.0;
+  T.row(1) << 0.0, 1.0, 0.0;
+  T.row(2) << 0.0, 1.0, 0.0;
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   double accuracy = OpenANN::accuracy(learner, dataSet);
@@ -130,18 +128,18 @@ void EvaluationTestCase::confusionMatrix()
 {
   const int N = 5;
   const int F = 3;
-  Eigen::MatrixXd Y(F, N);
-  Eigen::MatrixXd T(F, N);
-  Y.col(0) << 1.0, 0.0, 0.0;
-  Y.col(1) << 1.0, 0.0, 0.0;
-  Y.col(2) << 0.0, 1.0, 0.0;
-  Y.col(3) << 0.0, 0.0, 1.0;
-  Y.col(4) << 1.0, 0.0, 0.0;
-  T.col(0) << 1.0, 0.0, 0.0;
-  T.col(1) << 1.0, 0.0, 0.0;
-  T.col(2) << 1.0, 0.0, 0.0;
-  T.col(3) << 0.0, 0.0, 1.0;
-  T.col(4) << 0.0, 0.0, 1.0;
+  Eigen::MatrixXd Y(N, F);
+  Eigen::MatrixXd T(N, F);
+  Y.row(0) << 1.0, 0.0, 0.0;
+  Y.row(1) << 1.0, 0.0, 0.0;
+  Y.row(2) << 0.0, 1.0, 0.0;
+  Y.row(3) << 0.0, 0.0, 1.0;
+  Y.row(4) << 1.0, 0.0, 0.0;
+  T.row(0) << 1.0, 0.0, 0.0;
+  T.row(1) << 1.0, 0.0, 0.0;
+  T.row(2) << 1.0, 0.0, 0.0;
+  T.row(3) << 0.0, 0.0, 1.0;
+  T.row(4) << 0.0, 0.0, 1.0;
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   Eigen::MatrixXi confusionMatrix = OpenANN::confusionMatrix(learner, dataSet);

@@ -165,10 +165,10 @@ Result evaluate(OpenANN::Net& net, const Eigen::MatrixXd& testInput, const Eigen
                 EvaluatableDataset& ds)
 {
   Result result;
-  for(int n = 0; n < testInput.cols(); n++)
+  for(int n = 0; n < testInput.rows(); n++)
   {
-    double y = net(testInput.col(n)).eval()(0);
-    double t = testOutput(0, n);
+    double y = net(testInput.row(n))(0);
+    double t = testOutput(n, 0);
     if(y > 0.0 && t > 0.0)
       result.tp++;
     else if(y > 0.0 && t < 0.0)
@@ -180,7 +180,7 @@ Result evaluate(OpenANN::Net& net, const Eigen::MatrixXd& testInput, const Eigen
   }
   result.correct = result.tn + result.tp;
   result.wrong = result.fn + result.fp;
-  result.accuracy = (double) result.correct / (double) testInput.cols();
+  result.accuracy = (double) result.correct / (double) testInput.rows();
   result.iterations = ds.iterations;
   return result;
 }

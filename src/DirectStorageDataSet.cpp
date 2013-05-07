@@ -9,13 +9,13 @@ DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
                                            Eigen::MatrixXd* out,
                                            LogInfo logInfo,
                                            Logger::Target target)
-  : in(in), out(out), N(in->cols()), D(in->rows()),
-    F(out ? out->rows() : 0), temporaryInput(in->rows()),
-    temporaryOutput(out ? out->rows() : 0), logInfo(logInfo),
+  : in(in), out(out), N(in->rows()), D(in->cols()),
+    F(out ? out->cols() : 0), temporaryInput(in->cols()),
+    temporaryOutput(out ? out->cols() : 0), logInfo(logInfo),
     logger(target, "dataset"), iteration(0)
 {
-  OPENANN_CHECK(in->rows() > 0);
-  OPENANN_CHECK(!out || in->cols() == out->cols());
+  OPENANN_CHECK(in->cols() > 0);
+  OPENANN_CHECK(!out || in->rows() == out->rows());
   if(logInfo != NONE)
   {
     logger << "\n\n# Logging data set " << N << " x (" << D << " -> " << F << ").\n";
@@ -29,16 +29,16 @@ DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
 
 Eigen::VectorXd& DirectStorageDataSet::getInstance(int i)
 {
-  OPENANN_CHECK_WITHIN(i, 0, in->cols()-1);
-  temporaryInput = in->col(i);
+  OPENANN_CHECK_WITHIN(i, 0, in->rows()-1);
+  temporaryInput = in->row(i);
   return temporaryInput;
 }
 
 Eigen::VectorXd& DirectStorageDataSet::getTarget(int i)
 {
   OPENANN_CHECK(out != 0);
-  OPENANN_CHECK_WITHIN(i, 0, out->cols()-1);
-  temporaryOutput = out->col(i);
+  OPENANN_CHECK_WITHIN(i, 0, out->rows()-1);
+  temporaryOutput = out->row(i);
   return temporaryOutput;
 }
 
@@ -52,8 +52,8 @@ void DirectStorageDataSet::finishIteration(Learner& learner)
     int wrong = 0;
     for(int n = 0; n < N; n++)
     {
-      temporaryInput = in->col(n);
-      temporaryOutput = out->col(n);
+      temporaryInput = in->row(n);
+      temporaryOutput = out->row(n);
       Eigen::VectorXd y = learner(temporaryInput);
       Eigen::VectorXd diff = y - temporaryOutput;
       e += diff.dot(diff);

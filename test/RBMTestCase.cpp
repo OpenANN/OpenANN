@@ -8,20 +8,24 @@ using namespace OpenANN;
 
 void RBMTestCase::run()
 {
+  RUN(RBMTestCase, learnSimpleExample);
+}
+
+void RBMTestCase::setUp()
+{
   OpenANN::RandomNumberGenerator rng;
   rng.seed(0);
-  RUN(RBMTestCase, learnSimpleExample);
 }
 
 void RBMTestCase::learnSimpleExample()
 {
   Eigen::MatrixXd X(6, 6);
-  X.col(0) << 1, 1, 1, 0, 0, 0;
-  X.col(1) << 1, 0, 1, 0, 0, 0;
-  X.col(2) << 1, 1, 1, 0, 0, 0;
-  X.col(3) << 0, 0, 1, 1, 1, 0;
-  X.col(4) << 0, 0, 1, 1, 0, 0;
-  X.col(5) << 0, 0, 1, 1, 1, 0;
+  X.row(0) << 1, 1, 1, 0, 0, 0;
+  X.row(1) << 1, 0, 1, 0, 0, 0;
+  X.row(2) << 1, 1, 1, 0, 0, 0;
+  X.row(3) << 0, 0, 1, 1, 1, 0;
+  X.row(4) << 0, 0, 1, 1, 0, 0;
+  X.row(5) << 0, 0, 1, 1, 1, 0;
 
   RBM rbm(6, 2, 1, 0.1);
   DirectStorageDataSet ds(&X);
@@ -43,7 +47,7 @@ void RBMTestCase::learnSimpleExample()
     ASSERT(v(3) < 0.5);
     ASSERT(v(4) < 0.5);
     ASSERT(v(5) < 0.5);
-    Eigen::VectorXd h = rbm(X.col(i));
+    Eigen::VectorXd h = rbm(X.row(i));
     ASSERT(h(0) > 0.5);
     ASSERT(h(1) < 0.5);
   }
@@ -57,7 +61,7 @@ void RBMTestCase::learnSimpleExample()
     ASSERT(v(3) > 0.5);
     ASSERT(v(4) > 0.5);
     ASSERT(v(5) < 0.5);
-    Eigen::VectorXd h = rbm(X.col(i));
+    Eigen::VectorXd h = rbm(X.row(i));
     ASSERT(h(0) < 0.5);
     ASSERT(h(1) > 0.5);
   }

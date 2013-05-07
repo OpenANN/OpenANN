@@ -57,17 +57,17 @@ int main()
   const int D = 2;
   const int F = 1;
   const int N = 4;
-  Eigen::MatrixXd x(D, N);
-  Eigen::MatrixXd t(F, N);
-  x.col(0) << 0.0, 1.0; t.col(0) << 1.0;
-  x.col(1) << 0.0, 0.0; t.col(1) << 0.0;
-  x.col(2) << 1.0, 1.0; t.col(2) << 0.0;
-  x.col(3) << 1.0, 0.0; t.col(3) << 1.0;
+  Eigen::MatrixXd x(N, D);
+  Eigen::MatrixXd t(N, F);
+  x.row(0) << 0.0, 1.0; t.row(0) << 1.0;
+  x.row(1) << 0.0, 0.0; t.row(1) << 0.0;
+  x.row(2) << 1.0, 1.0; t.row(2) << 0.0;
+  x.row(3) << 1.0, 0.0; t.row(3) << 1.0;
 
   // Create network
   Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(3, LOGISTIC)
+     .fullyConnectedLayer(2, LOGISTIC)
      .outputLayer(F, LOGISTIC)
      .trainingSet(x, t);
 
@@ -79,7 +79,7 @@ int main()
   // Use network
   for(int n = 0; n < N; n++)
   {
-    Eigen::VectorXd y = net(x.col(n));
+    Eigen::VectorXd y = net(x.row(n));
     std::cout << y << std::endl;
   }
 
