@@ -60,12 +60,12 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
   }
 
   // prepare matrices
-  in.resize(minimal_features, instances);
+  in.resize(instances, minimal_features);
   
   if(classes.size() > 2)
-    out.resize(classes.size(), instances);
+    out.resize(instances, classes.size());
   else
-    out.resize(1, instances);
+    out.resize(instances, 1);
   
   in.setZero();
   out.setZero();
@@ -73,14 +73,14 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
   // setup output matrix from collected targets
   for(int i = 0; i < targets.size(); ++i) {
     if(classes.size() > 2) {
-      out(targets[i] - 1, i) = 1.0;
+      out(i, targets[i] - 1) = 1.0;
     } else {
-      out(0, i) = targets.at(i);
+      out(i) = targets.at(i);
     }
   }
 
   // setup input matrix from collected tokens
-  for(int i = 0, column = 0; i < features.size(); ++i) {
+  for(int i = 0, row = 0; i < features.size(); ++i) {
     std::string& tok = features.at(i);
 
     if(!tok.empty()) {
@@ -93,11 +93,13 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
       if(classes.size() > 1) 
         index--;
 
-      in(index, column) = value;
+      in(row, index) = value;
     } else {
-      column++;
+      row++;
     }
   }
+
+  OPENANN_CHECK_EQUALS(in.rows(), out.rows());
 
   return instances;
 }
@@ -113,17 +115,19 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, const char* fil
 
 void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& stream)
 {
-  OPENANN_CHECK_EQUALS(in.cols(), out.cols());
+  OPENANN_CHECK_EQUALS(in.rows(), out.rows());
 
-  for(int i = 0; i < in.cols(); ++i) {
-    if(out.rows() > 1)
-      stream << static_cast<int>(out.col(i).maxCoeff());
-    else
-      stream << out(0, i);
+  for(int i = 0; i < in.rows(); ++i) {
+    if(out.cols() > 1) {
+      int index;
+      out.row(i).maxCoeff(&index);
+      stream << static_cast<int>(index);
+    } else
+      stream << out(i, 0);
 
-    for(int j = 0; j < in.rows(); ++j) {
-      if(std::fabs(in(j, i)) > 0.0e-20)
-        stream << " " << j + 1 << ":" << in(j, i);
+    for(int j = 0; j < in.cols(); ++j) {
+      if(std::fabs(in(i, j)) > 0.0e-20)
+        stream << " " << j + 1 << ":" << in(i, j);
     }
 
     stream << std::endl;
