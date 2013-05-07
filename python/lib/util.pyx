@@ -14,7 +14,7 @@ cdef object __vector_eigen_to_numpy__(openann.VectorXd* x_eigen):
 
 cdef openann.MatrixXd* __matrix_numpy_to_eigen__(object X_numpy):
   cdef openann.MatrixXd* X_eigen = new openann.MatrixXd(X_numpy.shape[0], X_numpy.shape[1])
-  flatten_matrix = numpy.reshape(X_numpy, X_numpy.size, order='F')
+  flatten_matrix = numpy.reshape(X_numpy, X_numpy.size, order='C')
   for r in range(X_numpy.size):
     X_eigen.data()[r] = flatten_matrix[r]
   return X_eigen
