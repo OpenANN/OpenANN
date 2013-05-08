@@ -5,25 +5,23 @@
 
 namespace OpenANN {
 
-namespace LibSVM {
+namespace FANN {
 
 /**
- * Read a libsvm-encoded dataset from the filesystem and load
+ * Read a FANN-encoded dataset from the filesystem and load
  * its values into given in- and output matrices.
  *
  * @param in input matrix with an unspecific dimension that
- *      will contain the data 
+ *           will contain the data 
  * @param out output matrix with an unspecific dimension that
- *      will contain the data.
+ *            will contain the data.
  * @param filename name to the corresponding libsvm dataset file
- * @param min_inputs sets the minimal numbers of feature for input matrix in
  * @return the number of loaded instances from the dataset
  */
-int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename,
-         int min_inputs = 0);
+int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename);
 
 /**
- * Read a libsvm-encoded dataset from any input stream and load
+ * Read a FANN-encoded dataset from any input stream and load
  * its values into given in- and output matrices. 
  *
  * @param in input matrix with an unspecific dimension that
@@ -31,11 +29,9 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename,
  * @param out output matrix with an unspecific dimension that
  *      will contain the data.
  * @param stream general STL data stream for getting libsvm-encoded datasets
- * @param min_inputs sets the minimal numbers of feature for input matrix in
  * @return the number of loaded instances from the dataset
  */
-int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream,
-         int min_inputs = 0);
+int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream);
 
 /**
  * Export a given dataset represented by in- and output matrices into a libsvm file.
@@ -44,18 +40,17 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream,
  * @param out matrix containt all output values (classes, targets)
  * @param filename name to the generating libsvm dataset file
  */
-void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out,
-          const char* filename);
+void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, const char* filename);
 
 /**
- * Write a given dataset from in- and output matrices to an output stream in libsvm format.
+ * Write a given dataset from in- and output matrices to an output stream in
+ * libsvm format.
  *
  * @param in matrix containing all input values (features)
  * @param out matrix containt all output values (classes, targets)
  * @param stream general STL data stream that will receive libsvm encoded dataset
  */
-void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out,
-          std::ostream& stream);
+void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& stream);
 
 }
 

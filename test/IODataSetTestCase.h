@@ -8,4 +8,6 @@ class IODataSetTestCase : public TestCase
 
   void loadLibSVM();
   void saveLibSVM();
+  void loadFANN();
+  void saveFANN();
 };
