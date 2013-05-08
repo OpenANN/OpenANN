@@ -5,9 +5,13 @@
 
 void IntrinsicPlasticityTestCase::run()
 {
+  RUN(IntrinsicPlasticityTestCase, learn);
+}
+
+void IntrinsicPlasticityTestCase::setUp()
+{
   OpenANN::RandomNumberGenerator rng;
   rng.seed(0);
-  RUN(IntrinsicPlasticityTestCase, learn);
 }
 
 void IntrinsicPlasticityTestCase::learn()
@@ -16,14 +20,14 @@ void IntrinsicPlasticityTestCase::learn()
 
   OpenANN::RandomNumberGenerator rng;
   int samples = 10000;
-  Eigen::MatrixXd X(2, samples);
-  Eigen::MatrixXd Y(2, samples);
+  Eigen::MatrixXd X(samples, 2);
+  Eigen::MatrixXd Y(samples, 2);
   for(int i = 0; i < samples; i++)
   {
     for(int j = 0; j < 2; j++)
     {
-      X(j, i) = rng.sampleNormalDistribution<double>();
-      Y(j, i) = rng.sampleNormalDistribution<double>();
+      X(i, j) = rng.sampleNormalDistribution<double>();
+      Y(i, j) = rng.sampleNormalDistribution<double>();
     }
   }
   ip.trainingSet(X, Y);
@@ -46,7 +50,7 @@ void IntrinsicPlasticityTestCase::learn()
   Eigen::VectorXd y(2);
   y.fill(0.0);
   for(int i = 0; i < samples; i++)
-    y += ip(X.col(i));
+    y += ip(X.row(i));
   Eigen::VectorXd mean = y / (double) samples;
   ASSERT_EQUALS_DELTA(mean(0), 0.5, 2e-2);
   ASSERT_EQUALS_DELTA(mean(1), 0.5, 2e-2);
@@ -61,7 +65,7 @@ void IntrinsicPlasticityTestCase::learn()
 
   y.fill(0.0);
   for(int i = 0; i < samples; i++)
-    y += ip(X.col(i));
+    y += ip(X.row(i));
   mean = y / (double) samples;
   ASSERT_EQUALS_DELTA(mean(0), 0.2, 2e-2);
   ASSERT_EQUALS_DELTA(mean(1), 0.2, 2e-2);

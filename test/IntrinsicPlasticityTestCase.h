@@ -4,6 +4,7 @@
 
 class IntrinsicPlasticityTestCase : public TestCase
 {
-  void run();
+  virtual void run();
+  virtual void setUp();
   void learn();
 };

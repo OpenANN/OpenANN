@@ -39,10 +39,10 @@ public:
     testFiles.push_back("test_batch.bin");
     trainingN = trainFiles.size() * NperFile;
     testN = testFiles.size() * NperFile;
-    trainingInput.resize(D, trainingN);
-    trainingOutput.resize(F, trainingN);
-    testInput.resize(D, testN);
-    testOutput.resize(F, testN);
+    trainingInput.resize(trainingN, D);
+    trainingOutput.resize(trainingN, F);
+    testInput.resize(testN, D);
+    testOutput.resize(testN, F);
   }
 
   void load(std::vector<std::string>& file_names, Eigen::MatrixXd& inputs, Eigen::MatrixXd& outputs)
@@ -66,8 +66,8 @@ public:
         debugLogger << "Instance #" << instance << ", class: " << (int) values[0] << "\n\n";
         if(values[0] < 0 || values[0] >= F)
           throw OpenANN::OpenANNException("Unknown class detected.");
-        outputs.col(instance).fill(0.0);
-        outputs.col(instance)(*reinterpret_cast<unsigned char*>(&values[0])) = 1.0;
+        outputs.row(instance).fill(0.0);
+        outputs.row(instance)(*reinterpret_cast<unsigned char*>(&values[0])) = 1.0;
 
         int idx = 0;
         for(int c = 0; c < C; c++)
@@ -77,8 +77,8 @@ public:
             for(int y = 0; y < Y; y++, idx++)
             {
               // Scale data to [-1, 1]
-              inputs(idx, instance) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / 128.0 - 1.0;
-              debugLogger << inputs(idx, instance) << " ";
+              inputs(instance, idx) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / 128.0 - 1.0;
+              debugLogger << inputs(instance, idx) << " ";
             }
             debugLogger << "\n";
           }

@@ -40,10 +40,10 @@ void FANNFormatLoader::load()
 
 void FANNFormatLoader::allocateMemory()
 {
-  trainingInput.resize(D, trainingN);
-  trainingOutput.resize(F, trainingN);
-  testInput.resize(D, testN);
-  testOutput.resize(F, testN);
+  trainingInput.resize(trainingN, D);
+  trainingOutput.resize(trainingN, F);
+  testInput.resize(testN, D);
+  testOutput.resize(testN, F);
 }
 
 void FANNFormatLoader::load(bool train)
@@ -57,9 +57,9 @@ void FANNFormatLoader::load(bool train)
     int idx = 0;
     double del = 0.0;
     for(int d = 0; d < D; d++)
-      stream >> input(idx++, n);
+      stream >> input(n, idx++);
     for(int f = 0; f < F; f++)
-      stream >> output(f, n);
+      stream >> output(n, f);
   }
   progressLogger << "Loaded " << (train ? "training" : "test") << " set.\n";
 }

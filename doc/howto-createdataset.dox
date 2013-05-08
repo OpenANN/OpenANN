@@ -23,9 +23,9 @@ int main()
   const int D = 2;  // input space dimension
   const int F = 1;  // output space dimension
   // here we generate a random data set
-  Eigen::MatrixXf X = Eigen::MatrixXf::Random(D, N);
-  Eigen::MatrixXf T = Eigen::MatrixXf::Random(F, N);
-  // We could e. g. get the input vector x_n with X.col(n-1).
+  Eigen::MatrixXf X = Eigen::MatrixXf::Random(N, D);
+  Eigen::MatrixXf T = Eigen::MatrixXf::Random(N, F);
+  // We could e. g. get the input vector x_n with X.row(n-1).
   // Now we can train the neural network:
   Net net;
   ... // initialize net

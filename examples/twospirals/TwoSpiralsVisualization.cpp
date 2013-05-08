@@ -18,12 +18,12 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
   QObject::connect(this, SIGNAL(updatedData()), this, SLOT(repaint()));
 
   // initialize MLP
-  net->inputLayer(trainingInput.rows())
+  net->inputLayer(trainingSet.inputs())
     // use this as only hidden layer to try extreme learning machine
     //.extremeLayer(1500, RECTIFIER, 1.0)
     .fullyConnectedLayer(20, TANH)
     .fullyConnectedLayer(20, TANH)
-    .outputLayer(trainingOutput.rows(), TANH)
+    .outputLayer(trainingSet.outputs(), TANH)
     .trainingSet(trainingSet);
   net->initialize();
 

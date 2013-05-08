@@ -12,8 +12,8 @@ Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
   const int D = x.rows();
   Eigen::VectorXd gradient(D);
   gradient.fill(0.0);
-  Eigen::MatrixXd in = x;
-  Eigen::MatrixXd out = y;
+  Eigen::MatrixXd in = x.transpose();
+  Eigen::MatrixXd out = y.transpose();
   for(unsigned i = 0; i < D; i++)
   {
     in(i) += eps;

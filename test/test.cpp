@@ -44,11 +44,11 @@ int main(int argc, char** argv)
   rng.seed(4);
 
   TestSuite ts("OpenANN");
+  ts.addTestCase(new RandomTestCase);
+  ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
-  ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new LayerTestCase);
-  ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new RBMTestCase);
   ts.addTestCase(new CMAESTestCase);
