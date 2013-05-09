@@ -19,7 +19,7 @@ RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop)
 
 Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
 {
-  v = x;
+  v = x.transpose();
   sampleHgivenV();
   return ph;
 }
@@ -141,7 +141,7 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
     for(int j = 0; j < H; j++)
     {
       parameterPointers.push_back(&bh(j));
-      parameterDerivativePointers.push_back(&bh(j));
+      parameterDerivativePointers.push_back(&bhd(j));
     }
   }
 
@@ -162,10 +162,12 @@ void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   // Derive activations
   activationFunctionDerivative(LOGISTIC, ph, phd);
   for(int j = 0; j < H; j++)
-    deltas(j) = phd(j) * (*ein)(j);
-  // Weight derivatives
+    deltas(0, j) = phd(0, j) * (*ein)(0, j);
   if(backprop)
-    Wd = deltas * v.transpose();
+  {
+    Wd = deltas.transpose() * v;
+    bhd = deltas.transpose();
+  }
   // Prepare error signals for previous layer
   e = W.transpose() * deltas;
   eout = &e;
