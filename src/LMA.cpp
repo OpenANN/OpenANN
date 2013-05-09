@@ -73,7 +73,11 @@ bool LMA::step()
         for(unsigned i = 0; i < n; i++)
           parameters(i) = state.x[i];
         opt->setParameters(parameters);
-        opt->VJ(errorValues, jacobian);
+        for(int ex = 0; ex < opt->examples(); ex++)
+        {
+          opt->errorGradient(ex, errorValues(ex), gradient);
+          jacobian.row(ex) = gradient;
+        }
         for(unsigned ex = 0; ex < opt->examples(); ex++)
         {
           state.fi[ex] = errorValues(ex);
@@ -131,6 +135,7 @@ void LMA::initialize()
   // temporary vectors to avoid allocations
   parameters.resize(n);
   errorValues.resize(opt->examples());
+  gradient.resize(n);
   jacobian.resize(opt->examples(), n);
 
   xIn.setcontent(n, opt->currentParameters().data());

@@ -60,11 +60,10 @@ bool CG::step()
         for(unsigned i = 0; i < n; i++)
           parameters(i) = state.x[i];
         opt->setParameters(parameters);
-        error = opt->error();
+        opt->errorGradient(error, gradient);
         state.f = error;
-        gradient = opt->gradient();
         for(unsigned i = 0; i < n; i++)
-          state.g[i] = (double) gradient(i, 0);
+          state.g[i] = (double) gradient(i);
         if(iteration != state.c_ptr()->repiterationscount)
         {
           iteration = state.c_ptr()->repiterationscount;
