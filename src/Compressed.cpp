@@ -81,12 +81,12 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   for(int j = 0; j < J; j++)
     deltas(0, j) = yd(0, j) * (*ein)(0, j);
   // Weight derivatives
-  Wd.leftCols(I) = deltas * *x;
+  Wd.leftCols(I) = deltas.transpose() * *x;
   if(bias)
-    Wd.rightCols(1) = deltas;
+    Wd.rightCols(1) = deltas.transpose();
   alphad = Wd * phi.block(0, 0, M, I+bias).transpose();
   // Prepare error signals for previous layer
-  e = W.leftCols(I).transpose() * deltas;
+  e = deltas * W.leftCols(I);
   eout = &e;
 }
 

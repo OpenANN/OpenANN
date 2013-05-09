@@ -12,7 +12,7 @@ void ActivationFunctionsTestCase::run()
 void ActivationFunctionsTestCase::softmax()
 {
   const int N = 1000;
-  Eigen::MatrixXd a = Eigen::VectorXd::Random(N);
+  Eigen::MatrixXd a = Eigen::VectorXd::Random(N).transpose();
   OpenANN::softmax(a);
   ASSERT_EQUALS_DELTA(1.0, a.sum(), 1e-3);
   ASSERT_WITHIN(a.minCoeff(), 0.0, 1.0);

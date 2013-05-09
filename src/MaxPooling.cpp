@@ -41,9 +41,8 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 {
   this->x = x;
 
-  OPENANN_CHECK(x->rows() == fm * inRows * inRows
-      || x->rows() == fm * inRows * inRows + 1);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols);
+  OPENANN_CHECK(x->cols() == fm * inRows * inRows);
+  OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
   int outputIdx = 0;
   int inputIdx = 0;

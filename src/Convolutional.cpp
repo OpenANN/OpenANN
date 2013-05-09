@@ -89,8 +89,8 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fmin * inRows * inRows);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fmout * outRows * outCols);
+  OPENANN_CHECK_EQUALS(x->cols(), fmin * inRows * inRows);
+  OPENANN_CHECK_EQUALS(this->y.cols(), fmout * outRows * outCols);
 
   this->a.fill(0.0);
   for(int fmo = 0; fmo < fmout; fmo++)
@@ -109,8 +109,8 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
             int inputIdx = rowBase+col;
             for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
             {
-              OPENANN_CHECK(outputIdx < a.rows());
-              OPENANN_CHECK(inputIdx < x->rows());
+              OPENANN_CHECK(outputIdx < a.cols());
+              OPENANN_CHECK(inputIdx < x->cols());
               a(0, outputIdx) += W[fmo][fmi](kr, kc)*(*x)(0, inputIdx);
             }
           }
@@ -130,7 +130,7 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
-  for(int j = 0; j < deltas.rows(); j++)
+  for(int j = 0; j < deltas.cols(); j++)
     deltas(0, j) = yd(0, j) * (*ein)(0, j);
 
   e.fill(0.0);
@@ -152,8 +152,8 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
             int inputIdx = rowBase+col;
             for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
             {
-              OPENANN_CHECK(outputIdx < a.rows());
-              OPENANN_CHECK(inputIdx < x->rows());
+              OPENANN_CHECK(outputIdx < a.cols());
+              OPENANN_CHECK(inputIdx < x->cols());
               e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(outputIdx);
               Wd[fmo][fmi](kr, kc) += deltas(0, outputIdx) * (*x)(0, inputIdx);
             }

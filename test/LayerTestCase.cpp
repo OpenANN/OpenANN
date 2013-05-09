@@ -28,8 +28,8 @@ public:
     : layer(layer)
   {
     info = layer.initialize(parameters, derivatives);
-    input = Eigen::VectorXd::Random(inputs.outputs());
-    desired = Eigen::VectorXd::Random(info.outputs());
+    input = Eigen::VectorXd::Random(inputs.outputs()).transpose();
+    desired = Eigen::VectorXd::Random(info.outputs()).transpose();
   }
 
   virtual unsigned int dimension()

@@ -242,7 +242,7 @@ Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
   tempOutput = *y;
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
-  return tempOutput;
+  return tempOutput.transpose();
 }
 
 unsigned int Net::dimension()
@@ -337,7 +337,7 @@ bool Net::providesGradient()
 Eigen::VectorXd Net::gradient(unsigned int i)
 {
   tempOutput = (*this)(dataSet->getInstance(i));
-  tempError = tempOutput - dataSet->getTarget(i);
+  tempError = (tempOutput - dataSet->getTarget(i)).transpose();
   Eigen::MatrixXd* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
@@ -353,7 +353,7 @@ Eigen::VectorXd Net::gradient()
   for(int n = 0; n < N; n++)
   {
     tempOutput = (*this)(dataSet->getInstance(n));
-    tempError = tempOutput - dataSet->getTarget(n);
+    tempError = (tempOutput - dataSet->getTarget(n)).transpose();
     Eigen::MatrixXd* e = &tempError;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
@@ -361,20 +361,15 @@ Eigen::VectorXd Net::gradient()
     for(int i = 0; i < P; i++)
       tempGradient(i) += *derivatives[i];
   }
-  switch(errorFunction)
-  {
-    case MSE:
-      tempGradient /= (double) dimension();
-    default:
-      break;
-  }
+  if(errorFunction == MSE)
+    tempGradient /= (double) dimension();
   return tempGradient;
 }
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 {
   tempOutput = (*this)(dataSet->getInstance(n));
-  tempError = tempOutput - dataSet->getTarget(n);
+  tempError = (tempOutput - dataSet->getTarget(n)).transpose();
   if(errorFunction == CE)
     value = -(dataSet->getTarget(n).array() *
         ((tempOutput.array() + 1e-10).log())).sum();

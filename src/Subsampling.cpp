@@ -103,10 +103,10 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
         {
           inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            a(1, outputIdx) += (*x)(1, inputIdx) * W[fmo](ro, co);
+            a(0, outputIdx) += (*x)(0, inputIdx) * W[fmo](ro, co);
         }
         if(bias)
-          a(1, outputIdx) += Wb[fmo](ro, co);
+          a(0, outputIdx) += Wb[fmo](ro, co);
       }
     }
   }
