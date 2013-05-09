@@ -167,6 +167,7 @@ int main(int argc, char** argv)
   omp_set_num_threads(PARALLEL_CORES);
 #endif
 
+  OpenANN::Log::getLevel() = OpenANN::Log::INFO;
   OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
 
   std::string directory = ".";
