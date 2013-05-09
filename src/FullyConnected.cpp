@@ -7,8 +7,8 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, double stdDev,
                                double maxSquaredWeightNorm)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
-    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I+bias), Wd(J, I+bias), x(0), a(J),
-    y(J), yd(J), deltas(J), e(I)
+    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I+bias), Wd(J, I+bias), x(0), a(1, J),
+    y(1, J), yd(1, J), deltas(1, J), e(1, I)
 {
 }
 
@@ -54,26 +54,26 @@ void FullyConnected::updatedParameters()
   }
 }
 
-void FullyConnected::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   this->x = x;
   // Activate neurons
-  a = W.leftCols(I) * *x;
+  a = *x * W.leftCols(I).transpose();
   if(bias)
-    a += W.rightCols(1);
+    a += W.rightCols(1).transpose();
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
 
-void FullyConnected::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
   for(int j = 0; j < J; j++)
-    deltas(j) = yd(j) * (*ein)(j);
+    deltas(0, j) = yd(0, j) * (*ein)(0, j);
   // Weight derivatives
-  Wd.leftCols(I) = deltas * x->transpose();
+  Wd.leftCols(I) = deltas * *x;
   if(bias)
     Wd.rightCols(1) = deltas;
   // Prepare error signals for previous layer
@@ -81,7 +81,7 @@ void FullyConnected::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-Eigen::VectorXd& FullyConnected::getOutput()
+Eigen::MatrixXd& FullyConnected::getOutput()
 {
   return y;
 }

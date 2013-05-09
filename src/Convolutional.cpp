@@ -10,7 +10,7 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act),
-    stdDev(stdDev), x(0), e(I)
+    stdDev(stdDev), x(0), e(1, I)
 {
 }
 
@@ -61,10 +61,10 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
 
   initializeParameters();
 
-  a.resize(info.outputs());
-  y.resize(info.outputs());
-  yd.resize(info.outputs());
-  deltas.resize(info.outputs());
+  a.resize(1, info.outputs());
+  y.resize(1, info.outputs());
+  yd.resize(1, info.outputs());
+  deltas.resize(1, info.outputs());
 
   return info;
 }
@@ -85,7 +85,7 @@ void Convolutional::initializeParameters()
   }
 }
 
-void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   this->x = x;
 
@@ -111,11 +111,11 @@ void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bo
             {
               OPENANN_CHECK(outputIdx < a.rows());
               OPENANN_CHECK(inputIdx < x->rows());
-              a(outputIdx) += W[fmo][fmi](kr, kc)*(*x)(inputIdx);
+              a(0, outputIdx) += W[fmo][fmi](kr, kc)*(*x)(0, inputIdx);
             }
           }
           if(bias && fmi == 0)
-            a(outputIdx) += Wb(fmo, fmi);
+            a(0, outputIdx) += Wb(fmo, fmi);
         }
       }
     }
@@ -126,12 +126,12 @@ void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bo
   y = &(this->y);
 }
 
-void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
   for(int j = 0; j < deltas.rows(); j++)
-    deltas(j) = yd(j) * (*ein)(j);
+    deltas(0, j) = yd(0, j) * (*ein)(0, j);
 
   e.fill(0.0);
   Wbd.fill(0.0);
@@ -155,11 +155,11 @@ void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
               OPENANN_CHECK(outputIdx < a.rows());
               OPENANN_CHECK(inputIdx < x->rows());
               e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(outputIdx);
-              Wd[fmo][fmi](kr, kc) += deltas(outputIdx) * (*x)(inputIdx);
+              Wd[fmo][fmi](kr, kc) += deltas(0, outputIdx) * (*x)(0, inputIdx);
             }
           }
           if(bias && fmi == 0)
-            Wbd(fmo, fmi) += deltas(outputIdx);
+            Wbd(fmo, fmi) += deltas(0, outputIdx);
         }
       }
     }
@@ -168,7 +168,7 @@ void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-Eigen::VectorXd& Convolutional::getOutput()
+Eigen::MatrixXd& Convolutional::getOutput()
 {
   return y;
 }

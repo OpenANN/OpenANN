@@ -13,7 +13,7 @@ namespace OpenANN {
 class Input : public Layer
 {
   int J, dim1, dim2, dim3;
-  Eigen::VectorXd* x;
+  Eigen::MatrixXd* x;
 
 public:
   Input(int dim1, int dim2, int dim3);
@@ -21,9 +21,9 @@ public:
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }

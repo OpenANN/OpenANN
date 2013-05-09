@@ -167,9 +167,9 @@ OutputInfo Net::getOutputInfo(unsigned int l)
 void Net::initializeNetwork()
 {
   P = parameters.size();
-  tempInput.resize(infos[0].outputs());
-  tempOutput.resize(infos.back().outputs());
-  tempError.resize(infos.back().outputs());
+  tempInput.resize(1, infos[0].outputs());
+  tempOutput.resize(1, infos.back().outputs());
+  tempError.resize(1, infos.back().outputs());
   tempGradient.resize(P);
   parameterVector.resize(P);
   for(int p = 0; p < P; p++)
@@ -234,8 +234,8 @@ void Net::finishedIteration()
 
 Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
 {
-  tempInput = x;
-  Eigen::VectorXd* y = &tempInput;
+  tempInput = x.transpose();
+  Eigen::MatrixXd* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); layer++)
     (**layer).forwardPropagate(y, y, dropout);
@@ -338,7 +338,7 @@ Eigen::VectorXd Net::gradient(unsigned int i)
 {
   tempOutput = (*this)(dataSet->getInstance(i));
   tempError = tempOutput - dataSet->getTarget(i);
-  Eigen::VectorXd* e = &tempError;
+  Eigen::MatrixXd* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
     (**layer).backpropagate(e, e);
@@ -354,7 +354,7 @@ Eigen::VectorXd Net::gradient()
   {
     tempOutput = (*this)(dataSet->getInstance(n));
     tempError = tempOutput - dataSet->getTarget(n);
-    Eigen::VectorXd* e = &tempError;
+    Eigen::MatrixXd* e = &tempError;
     for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
         layer != layers.rend(); layer++)
       (**layer).backpropagate(e, e);
@@ -380,7 +380,7 @@ void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
         ((tempOutput.array() + 1e-10).log())).sum();
   else
     value = tempError.squaredNorm() / 2.0;
-  Eigen::VectorXd* e = &tempError;
+  Eigen::MatrixXd* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); layer++)
     (**layer).backpropagate(e, e);

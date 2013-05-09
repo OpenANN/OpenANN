@@ -21,8 +21,8 @@ class LayerOptimizable : public Learner
   std::vector<double*> parameters;
   std::vector<double*> derivatives;
   OutputInfo info;
-  Eigen::VectorXd input;
-  Eigen::VectorXd desired;
+  Eigen::MatrixXd input;
+  Eigen::MatrixXd desired;
 public:
   LayerOptimizable(Layer& layer, OutputInfo inputs)
     : layer(layer)
@@ -56,7 +56,7 @@ public:
 
   virtual double error()
   {
-    Eigen::VectorXd* output;
+    Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
     double error = 0.0;
     for(int i = 0; i < desired.rows(); i++)
@@ -69,12 +69,12 @@ public:
 
   virtual Eigen::VectorXd gradient()
   {
-    Eigen::VectorXd* output;
+    Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
-    Eigen::VectorXd diff = *output;
+    Eigen::MatrixXd diff = *output;
     for(int i = 0; i < desired.rows(); i++)
       diff(i) = (*output)(i) - desired(i);
-    Eigen::VectorXd* e;
+    Eigen::MatrixXd* e;
     layer.backpropagate(&diff, e);
     Eigen::VectorXd derivs(dimension());
     std::vector<double*>::const_iterator it = derivatives.begin();
@@ -85,12 +85,12 @@ public:
 
   Eigen::VectorXd inputGradient()
   {
-    Eigen::VectorXd* output;
+    Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
-    Eigen::VectorXd diff = *output;
+    Eigen::MatrixXd diff = *output;
     for(int i = 0; i < desired.rows(); i++)
       diff(i) = (*output)(i) - desired(i);
-    Eigen::VectorXd* e;
+    Eigen::MatrixXd* e;
     layer.backpropagate(&diff, e);
     Eigen::VectorXd derivs(input.rows());
     for(int i = 0; i < input.rows(); i++)
@@ -125,7 +125,7 @@ public:
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x)
   {
     this->input = x;
-    Eigen::VectorXd* output;
+    Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
     return *output;
   }
@@ -183,18 +183,18 @@ void LayerTestCase::fullyConnected()
   for(std::vector<double*>::iterator it = parameterPointers.begin();
       it != parameterPointers.end(); it++)
     **it = 1.0;
-  Eigen::VectorXd x(3);
+  Eigen::MatrixXd x(1, 3);
   x << 0.5, 1.0, 2.0;
-  Eigen::VectorXd e(3);
+  Eigen::MatrixXd e(1, 3);
   e << 1.0, 2.0, 0.0;
 
-  Eigen::VectorXd* y = 0;
+  Eigen::MatrixXd* y = 0;
   layer.forwardPropagate(&x, y, false);
   ASSERT(y != 0);
   ASSERT_EQUALS_DELTA((*y)(0), tanh(3.5), 1e-10);
   ASSERT_EQUALS_DELTA((*y)(1), tanh(3.5), 1e-10);
 
-  Eigen::VectorXd* e2;
+  Eigen::MatrixXd* e2;
   layer.backpropagate(&e, e2);
   Eigen::VectorXd Wd(6);
   int i = 0;
@@ -256,12 +256,12 @@ void LayerTestCase::compressed()
       it != parameterPointers.end(); it++)
     **it = 1.0;
   layer.updatedParameters();
-  Eigen::VectorXd x(3);
+  Eigen::MatrixXd x(1, 3);
   x << 0.5, 1.0, 2.0;
-  Eigen::VectorXd e(3);
+  Eigen::MatrixXd e(1, 3);
   e << 1.0, 2.0, 0.0;
 
-  Eigen::VectorXd* y;
+  Eigen::MatrixXd* y;
   layer.forwardPropagate(&x, y, false);
   ASSERT(y != 0);
   ASSERT_EQUALS_DELTA((*y)(0), tanh(3.5), 1e-10);
@@ -318,9 +318,9 @@ void LayerTestCase::convolutional()
     **it = 0.01;
   layer.updatedParameters();
 
-  Eigen::VectorXd x(info.outputs());
+  Eigen::MatrixXd x(1, info.outputs());
   x.fill(1.0);
-  Eigen::VectorXd* y;
+  Eigen::MatrixXd* y;
   layer.forwardPropagate(&x, y, false);
   ASSERT_EQUALS_DELTA((*y)(0), tanh(0.18), 1e-5);
   ASSERT_EQUALS_DELTA((*y)(1), tanh(0.18), 1e-5);
@@ -385,9 +385,9 @@ void LayerTestCase::subsampling()
       it != parameterPointers.end(); it++)
     **it = 0.1;
 
-  Eigen::VectorXd x(info.outputs());
+  Eigen::MatrixXd x(1, info.outputs());
   x.fill(1.0);
-  Eigen::VectorXd* y;
+  Eigen::MatrixXd* y;
   layer.forwardPropagate(&x, y, false);
   for(int i = 0; i < 18; i++)
     ASSERT_EQUALS_DELTA((*y)(i), tanh(0.4), 1e-5);
@@ -442,9 +442,9 @@ void LayerTestCase::maxPooling()
   ASSERT_EQUALS(info2.dimensions[1], 3);
   ASSERT_EQUALS(info2.dimensions[2], 3);
 
-  Eigen::VectorXd x(info.outputs());
+  Eigen::MatrixXd x(1, info.outputs());
   x.fill(1.0);
-  Eigen::VectorXd* y;
+  Eigen::MatrixXd* y;
   layer.forwardPropagate(&x, y, false);
   for(int i = 0; i < 18; i++)
     ASSERT_EQUALS_DELTA((*y)(i), 1.0, 1e-5);
@@ -515,9 +515,9 @@ void LayerTestCase::dropout()
 
   // During training (dropout = true) approximately dropoutProbability neurons
   // should be suppressed
-  Eigen::VectorXd x(samples);
+  Eigen::MatrixXd x(1, samples);
   x.fill(1.0);
-  Eigen::VectorXd* y;
+  Eigen::MatrixXd* y;
   layer.forwardPropagate(&x, y, true);
   double mean = y->sum() / samples;
   ASSERT_EQUALS_DELTA(mean, 0.5, 0.01);

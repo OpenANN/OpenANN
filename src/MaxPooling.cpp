@@ -8,7 +8,7 @@ namespace OpenANN {
 MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
   : I(info.outputs()), fm(info.dimensions[0]),
     inRows(info.dimensions[1]), inCols(info.dimensions[2]),
-    kernelRows(kernelRows), kernelCols(kernelCols), x(0), e(I)
+    kernelRows(kernelRows), kernelCols(kernelCols), x(0), e(1, I)
 {
 }
 
@@ -26,8 +26,8 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
   maxRow = inRows-kernelRows+1;
   maxCol = inCols-kernelCols+1;
 
-  y.resize(info.outputs());
-  deltas.resize(info.outputs());
+  y.resize(1, info.outputs());
+  deltas.resize(1, info.outputs());
 
   return info;
 }
@@ -36,7 +36,8 @@ void MaxPooling::initializeParameters()
 {
 }
 
-void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                  bool dropout)
 {
   this->x = x;
 
@@ -58,9 +59,9 @@ void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool 
         {
           inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            m = std::max(m, (*x)(inputIdx));
+            m = std::max(m, (*x)(0, inputIdx));
         }
-        this->y(outputIdx) = m;
+        this->y(0, outputIdx) = m;
       }
     }
   }
@@ -68,7 +69,7 @@ void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool 
   y = &(this->y);
 }
 
-void MaxPooling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   for(int j = 0; j < deltas.rows(); j++)
     deltas(j) = (*ein)(j);
@@ -89,13 +90,13 @@ void MaxPooling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
         {
           inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            if((*x)(inputIdx) > m)
+            if((*x)(0, inputIdx) > m)
             {
-              m = (*x)(inputIdx);
+              m = (*x)(0, inputIdx);
               idx = inputIdx;
             }
         }
-        e(idx) = deltas(outputIdx);
+        e(0, idx) = deltas(0, outputIdx);
       }
     }
   }
@@ -103,7 +104,7 @@ void MaxPooling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-Eigen::VectorXd& MaxPooling::getOutput()
+Eigen::MatrixXd& MaxPooling::getOutput()
 {
   return y;
 }

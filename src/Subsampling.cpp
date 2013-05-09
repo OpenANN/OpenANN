@@ -8,7 +8,8 @@ Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
                          bool bias, ActivationFunction act, double stdDev)
   : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), kernelRows(kernelRows),
-    kernelCols(kernelCols), bias(bias), act(act), stdDev(stdDev), x(0), e(I)
+    kernelCols(kernelCols), bias(bias), act(act), stdDev(stdDev), x(0),
+    e(1, I)
 {
 }
 
@@ -56,10 +57,10 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
 
   initializeParameters();
 
-  a.resize(info.outputs());
-  y.resize(info.outputs());
-  yd.resize(info.outputs());
-  deltas.resize(info.outputs());
+  a.resize(1, info.outputs());
+  y.resize(1, info.outputs());
+  yd.resize(1, info.outputs());
+  deltas.resize(1, info.outputs());
 
   return info;
 }
@@ -81,12 +82,12 @@ void Subsampling::initializeParameters()
   }
 }
 
-void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fm * inRows * inCols);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols);
+  OPENANN_CHECK_EQUALS(x->cols(), fm * inRows * inCols);
+  OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
   a.fill(0.0);
   int outputIdx = 0;
@@ -102,10 +103,10 @@ void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool
         {
           inputIdx = rowBase + ci;
           for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            a(outputIdx) += (*x)(inputIdx) * W[fmo](ro, co);
+            a(1, outputIdx) += (*x)(1, inputIdx) * W[fmo](ro, co);
         }
         if(bias)
-          a(outputIdx) += Wb[fmo](ro, co);
+          a(1, outputIdx) += Wb[fmo](ro, co);
       }
     }
   }
@@ -115,7 +116,7 @@ void Subsampling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool
   y = &(this->y);
 }
 
-void Subsampling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
@@ -153,7 +154,7 @@ void Subsampling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-Eigen::VectorXd& Subsampling::getOutput()
+Eigen::MatrixXd& Subsampling::getOutput()
 {
   return y;
 }

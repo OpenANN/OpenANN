@@ -57,19 +57,19 @@ public:
    * @param y returns a pointer to output of the layer
    * @param dropout enable dropout for regularization
    */
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout) = 0;
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout) = 0;
   /**
    * Backpropagation in this layer.
    * @param ein pointer to error signal of the higher layer
    * @param eout returns a pointer to error signal of the layer (derivative of
    *             the error with respect to the input)
    */
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout) = 0;
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout) = 0;
   /**
    * Output after last forward propagation.
    * @return output
    */
-  virtual Eigen::VectorXd& getOutput() = 0;
+  virtual Eigen::MatrixXd& getOutput() = 0;
 };
 
 }

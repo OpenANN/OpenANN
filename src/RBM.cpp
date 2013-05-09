@@ -11,8 +11,8 @@ RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop)
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
-    pv(D), v(D), ph(H), h(H), phd(H), K(D*H + D + H), params(K),
-    deltas(H), e(D), backprop(backprop)
+    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D*H + D + H),
+    deltas(1, H), e(1, D), params(K), backprop(backprop)
 {
   initialize();
 }
@@ -150,7 +150,14 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
   return info;
 }
 
-void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+{
+  v = *x;
+  sampleHgivenV();
+  y = &ph;
+}
+
+void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(LOGISTIC, ph, phd);
@@ -164,14 +171,7 @@ void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-void RBM::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
-{
-  v = *x;
-  sampleHgivenV();
-  y = &ph;
-}
-
-Eigen::VectorXd& RBM::getOutput()
+Eigen::MatrixXd& RBM::getOutput()
 {
   return ph;
 }
@@ -191,17 +191,17 @@ const Eigen::MatrixXd& RBM::getWeights()
   return W;
 }
 
-const Eigen::VectorXd& RBM::getVisibleProbs()
+const Eigen::MatrixXd& RBM::getVisibleProbs()
 {
   return pv;
 }
 
-const Eigen::VectorXd& RBM::getVisibleSample()
+const Eigen::MatrixXd& RBM::getVisibleSample()
 {
   return v;
 }
 
-Eigen::VectorXd RBM::reconstructProb(int n, int steps)
+Eigen::MatrixXd RBM::reconstructProb(int n, int steps)
 {
   v = trainSet->getInstance(n);
   pv = v;
@@ -213,7 +213,7 @@ Eigen::VectorXd RBM::reconstructProb(int n, int steps)
   return pv;
 }
 
-Eigen::VectorXd RBM::reconstruct(int n, int steps)
+Eigen::MatrixXd RBM::reconstruct(int n, int steps)
 {
   v = trainSet->getInstance(n);
   for(int i = 0; i < steps; i++)

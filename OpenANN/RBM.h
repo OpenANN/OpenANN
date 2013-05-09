@@ -44,8 +44,8 @@ class RBM : public Learner, public Layer
   double stdDev;
   Eigen::MatrixXd W, posGradW, negGradW, Wd;
   Eigen::VectorXd bv, posGradBv, negGradBv, bh, posGradBh, negGradBh, bhd;
-  Eigen::VectorXd pv, v, ph, h, phd;
-  Eigen::VectorXd deltas, e;
+  Eigen::MatrixXd pv, v, ph, h, phd;
+  Eigen::MatrixXd deltas, e;
   int K;
   Eigen::VectorXd params;
   DataSet* trainSet;
@@ -83,10 +83,10 @@ public:
   virtual Learner& trainingSet(DataSet& trainingSet);
 
   // Layer interface
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y,
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                 bool dropout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual Eigen::MatrixXd& getOutput();
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
@@ -96,10 +96,10 @@ public:
   int visibleUnits();
   int hiddenUnits();
   const Eigen::MatrixXd& getWeights();
-  const Eigen::VectorXd& getVisibleProbs();
-  const Eigen::VectorXd& getVisibleSample();
-  Eigen::VectorXd reconstructProb(int n, int steps);
-  Eigen::VectorXd reconstruct(int n, int steps);
+  const Eigen::MatrixXd& getVisibleProbs();
+  const Eigen::MatrixXd& getVisibleSample();
+  Eigen::MatrixXd reconstructProb(int n, int steps);
+  Eigen::MatrixXd reconstruct(int n, int steps);
   void reality(int n);
   void daydream();
   void sampleHgivenV();

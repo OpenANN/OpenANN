@@ -79,8 +79,8 @@ class Net : public Learner
 
   bool initialized;
   int P, N, L;
-  Eigen::VectorXd parameterVector;
-  Eigen::VectorXd tempInput, tempOutput, tempError, tempGradient;
+  Eigen::VectorXd parameterVector, tempGradient;
+  Eigen::MatrixXd tempInput, tempOutput, tempError;
 
   void initializeNetwork();
 
