@@ -232,24 +232,15 @@ int main(int argc, char** argv)
      .setErrorFunction(OpenANN::CE)
      .trainingSet(trainSet);
 
-  int it = 0;
-
   OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
   rbm.trainingSet(trainSet);
 
   OpenANN::MBSGD optimizer(0.01, 0.5, 10, 0.01);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 20;
+  stop.maximalIterations = 2;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
-  OPENANN_INFO << "Reconstruction error = " << rbm.error();
-  while(optimizer.step())
-  {
-    OPENANN_INFO << "Iteration #" << ++it << " finished.";
-    OPENANN_INFO << "Reconstruction error = " << rbm.error();
-  }
-  OPENANN_INFO << "Iteration #" << ++it << " finished.";
-  OPENANN_INFO << "Reconstruction error = " << rbm.error();
+  optimizer.optimize();
 
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
@@ -257,16 +248,11 @@ int main(int argc, char** argv)
   net.testSet(testSet);
 
   OpenANN::StoppingCriteria stopNet;
-  stopNet.maximalIterations = 5;
+  stopNet.maximalIterations = 20;
   OpenANN::MBSGD netOptimizer(0.01, 0.5, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
   netOptimizer.setStopCriteria(stopNet);
-  it = 0;
-  while(netOptimizer.step())
-  {
-    OPENANN_INFO << "Iteration #" << ++it << " finished.";
-  }
-  OPENANN_INFO << "Reconstruction error = " << rbm.error();
+  netOptimizer.optimize();
 
   QApplication app(argc, argv);
   RBMVisualization visual(rbm, trainSet, 5, 7, 800, 600);
