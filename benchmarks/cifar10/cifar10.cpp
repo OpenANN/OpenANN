@@ -8,7 +8,6 @@
 
 class CIFARLoader
 {
-  OpenANN::Logger debugLogger;
   std::string directory;
 public:
   std::vector<std::string> trainFiles, testFiles;
@@ -16,7 +15,7 @@ public:
   int C, X, Y, D, F, trainingN, testN, NperFile;
 
   CIFARLoader(const std::string& directory)
-      : debugLogger(OpenANN::Logger::NONE), directory(directory)
+      : directory(directory)
   {
     setup();
     load(trainFiles, trainingInput, trainingOutput);
@@ -63,7 +62,6 @@ public:
               + file_names[f] + ".");
 
         file.read(values, D+1);
-        debugLogger << "Instance #" << instance << ", class: " << (int) values[0] << "\n\n";
         if(values[0] < 0 || values[0] >= F)
           throw OpenANN::OpenANNException("Unknown class detected.");
         outputs.row(instance).fill(0.0);
@@ -78,13 +76,9 @@ public:
             {
               // Scale data to [-1, 1]
               inputs(instance, idx) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / 128.0 - 1.0;
-              debugLogger << inputs(instance, idx) << " ";
             }
-            debugLogger << "\n";
           }
-          debugLogger << "\n";
         }
-        debugLogger << "\n";
       }
     }
   }
@@ -110,8 +104,6 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
-  OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
-
   bool bigNet = false;
   std::string directory = ".";
   if(argc > 1)
@@ -122,7 +114,7 @@ int main(int argc, char** argv)
   CIFARLoader loader(directory);
 
   OpenANN::Net net;                                                      // Nodes per layer:
-  net.inputLayer(loader.C, loader.X, loader.Y);                    //   3 x 32 x 32
+  net.inputLayer(loader.C, loader.X, loader.Y);                          //   3 x 32 x 32
   if(bigNet)
   {
      net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)         // 200 x 28 x 28
@@ -145,25 +137,26 @@ int main(int argc, char** argv)
         .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 100
         .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true, 15.0);  //  50
   }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                            //  10
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                       //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
   net.testSet(testSet);
   net.setErrorFunction(OpenANN::CE);
-  interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
-      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
+  OPENANN_INFO << "Created MLP.";
+  OPENANN_INFO << "D = " << loader.D << ", F = " << loader.F << ", N = "
+               << loader.trainingN << ", L = " << net.dimension();
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
   OpenANN::MBSGD optimizer(0.01, 0.6, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
-  while(optimizer.step());
+  optimizer.optimize();
 
-  interfaceLogger << "Error = " << net.error() << "\n\n";
-  interfaceLogger << "Wrote data to dataset-*.log.\n";
+  OPENANN_INFO << "Error = " << net.error();
+  OPENANN_INFO << "Wrote data to dataset-*.log.";
 
   return EXIT_SUCCESS;
 }
