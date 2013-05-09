@@ -371,19 +371,21 @@ Eigen::VectorXd Net::gradient()
   return tempGradient;
 }
 
-void Net::VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian)
+void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 {
-  for(unsigned n = 0; n < N; n++)
-  {
-    tempError = (*this)(dataSet->getInstance(n)) - dataSet->getTarget(n);
-    values(n) = tempError.dot(tempError) / 2.0;
-    Eigen::VectorXd* e = &tempError;
-    for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-        layer != layers.rend(); layer++)
-      (**layer).backpropagate(e, e);
-    for(int p = 0; p < P; p++)
-      jacobian(n, p) = *derivatives[p];
-  }
+  tempOutput = (*this)(dataSet->getInstance(n));
+  tempError = tempOutput - dataSet->getTarget(n);
+  if(errorFunction == CE)
+    value = -(dataSet->getTarget(n).array() *
+        ((tempOutput.array() + 1e-10).log())).sum();
+  else
+    value = tempError.squaredNorm() / 2.0;
+  Eigen::VectorXd* e = &tempError;
+  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+      layer != layers.rend(); layer++)
+    (**layer).backpropagate(e, e);
+  for(int i = 0; i < P; i++)
+    grad(i) = *derivatives[i];
 }
 
 bool Net::providesHessian()

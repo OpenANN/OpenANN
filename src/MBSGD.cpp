@@ -64,13 +64,13 @@ void MBSGD::optimize()
     std::stringstream ss;
 
     ss << "iteration " << iteration;
-    ss << ", training error = " << FloatingPointFormatter(opt->error(), 4);
+    ss << ", training error = " << FloatingPointFormatter(accumulatedError, 4);
 
     if(alphaDecay < 1.0)
-      ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
+      ss << ", alpha = " << FloatingPointFormatter(alpha, 3);
 
     if(etaGain > 0.0)
-      ss << ", eta = " << FloatingPointFormatter(eta, 2);
+      ss << ", eta = " << FloatingPointFormatter(eta, 3);
 
     OPENANN_DEBUG << ss.str();
   }
@@ -81,6 +81,8 @@ bool MBSGD::step()
   if(iteration < 0)
     initialize();
 
+  accumulatedError = 0.0;
+  double currentError;
   rng.generateIndices<std::vector<int> >(N, randomIndices, true);
   for(int n = 0; n < N; n++)
     batchAssignment[n % batches].push_back(randomIndices[n]);
@@ -89,7 +91,11 @@ bool MBSGD::step()
     gradient.fill(0.0);
     for(std::list<int>::const_iterator it = batchAssignment[b].begin();
         it != batchAssignment[b].end(); it++)
-      gradient += opt->gradient(*it);
+    {
+      opt->errorGradient(*it, currentError, currentGradient);
+      accumulatedError += currentError;
+      gradient += currentGradient;
+    }
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
     gradient /= (double) batchAssignment[b].size();
     batchAssignment[b].clear();
@@ -165,6 +171,7 @@ void MBSGD::initialize()
   batches = std::max(N / batchSize, 1);
   gradient.resize(P);
   gradient.fill(0.0);
+  currentGradient.resize(P);
   gains.resize(P);
   gains.fill(1.0);
   parameters = opt->currentParameters();

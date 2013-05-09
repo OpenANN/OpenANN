@@ -144,8 +144,6 @@ void DoublePoleBalancingVisualization::keyPressEvent(QKeyEvent* keyEvent)
 
 void DoublePoleBalancingVisualization::run()
 {
-  Logger environmentLogger(Logger::NONE), returnLogger(Logger::CONSOLE, "steps");
-
   Environment* env;
   if(singlePole)
     env = new SinglePoleBalancing(fullyObservable);
@@ -167,16 +165,13 @@ void DoublePoleBalancingVisualization::run()
       angle1 = lastState(fullyObservable ? 2 : 1);
       angle2 = singlePole ? 0.0 : lastState(fullyObservable ? 4 : 2);
       agent.chooseAction();
-      environmentLogger << "(s, a, r, s') = (" << lastState.transpose()
-          << ", " << environment.getAction() << ", " << environment.reward()
-          << ", " << environment.getState().transpose() << ")\n";
       force = environment.getAction()(0);
       update();
       QCoreApplication::processEvents();
       usleep(pause);
     }
-    returnLogger << "Episode " << (double) i << ", "
-        << (double) environment.stepsInEpisode() << " steps\n";
+    OPENANN_INFO << "Episode " << (i+1) << ", "
+                 << environment.stepsInEpisode() << " steps";
     if(environment.stepsInEpisode() >= 100000)
     {
       best = environment.stepsInEpisode();
@@ -185,7 +180,7 @@ void DoublePoleBalancingVisualization::run()
     else if(environment.stepsInEpisode() > best)
       best = environment.stepsInEpisode();
   }
-  returnLogger << "longest episode: " << best << " steps\n";
+  OPENANN_INFO << "longest episode: " << best << " steps";
 
   delete env;
 }

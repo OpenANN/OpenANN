@@ -137,7 +137,8 @@ class MBSGD : public Optimizer
   int iteration;
   RandomNumberGenerator rng;
   int P, N, batches;
-  Eigen::VectorXd gradient, gains, parameters, momentum;
+  Eigen::VectorXd gradient, gains, parameters, momentum, currentGradient;
+  double accumulatedError;
   std::vector<int> randomIndices;
   std::vector<std::list<int> > batchAssignment;
 public:

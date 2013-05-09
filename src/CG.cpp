@@ -60,11 +60,10 @@ bool CG::step()
         for(unsigned i = 0; i < n; i++)
           parameters(i) = state.x[i];
         opt->setParameters(parameters);
-        error = opt->error();
+        opt->errorGradient(error, gradient);
         state.f = error;
-        gradient = opt->gradient();
         for(unsigned i = 0; i < n; i++)
-          state.g[i] = (double) gradient(i, 0);
+          state.g[i] = (double) gradient(i);
         if(iteration != state.c_ptr()->repiterationscount)
         {
           iteration = state.c_ptr()->repiterationscount;
@@ -99,7 +98,7 @@ void CG::optimize()
   while(step())
   {
     OPENANN_DEBUG << "Iteration #" << iteration << ", training error = "
-        << FloatingPointFormatter(error, 4);
+                  << FloatingPointFormatter(error, 4);
   }
 }
 
@@ -155,10 +154,10 @@ void CG::reset()
   for(unsigned i = 0; i < n; i++)
     optimum(i) = xIn[i];
 
-  OPENANN_DEBUG << "CG terminated" << std::endl
-              << "iterations= " << report.iterationscount << std::endl
-              << "function evaluations= " << report.nfev << std::endl
-              << "reason: ";
+  OPENANN_DEBUG << "CG terminated";
+  OPENANN_DEBUG << report.iterationscount << " iterations";
+  OPENANN_DEBUG << report.nfev << " function evaluations= ";
+  OPENANN_DEBUG << "reason: ";
   switch(report.terminationtype)
   {
   case 1:
@@ -175,7 +174,7 @@ void CG::reset()
     break;
   case 7:
     OPENANN_DEBUG << "Stopping conditions are too stringent, further"
-                << "further improvement is impossible, we return best "
+                << " improvement is impossible, we return the best "
                 << "X found so far.";
     break;
   case 8:
