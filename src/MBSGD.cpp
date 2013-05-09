@@ -67,10 +67,10 @@ void MBSGD::optimize()
     ss << ", training error = " << FloatingPointFormatter(accumulatedError, 4);
 
     if(alphaDecay < 1.0)
-      ss << ", alpha = " << FloatingPointFormatter(alpha, 2);
+      ss << ", alpha = " << FloatingPointFormatter(alpha, 3);
 
     if(etaGain > 0.0)
-      ss << ", eta = " << FloatingPointFormatter(eta, 2);
+      ss << ", eta = " << FloatingPointFormatter(eta, 3);
 
     OPENANN_DEBUG << ss.str();
   }

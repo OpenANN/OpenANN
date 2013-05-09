@@ -39,7 +39,8 @@ void LMA::optimize()
   while(step() && !interrupt.isSignaled())
   {
     OPENANN_DEBUG << "Iteration #" << iteration 
-      << ", training error = " << FloatingPointFormatter(errorValues.sum(), 4);
+                  << ", training error = "
+                  << FloatingPointFormatter(errorValues.sum(), 4);
   }
 }
 
@@ -172,15 +173,12 @@ void LMA::reset()
   opt->setParameters(optimum);
 
   // Log result
-  OPENANN_DEBUG << "LMA terminated\n"
-                << "Iterations= " << report.iterationscount << std::endl
-                << "Function evaluations= " << report.nfunc << std::endl
-                << "Jacobi evaluations= " << report.njac << std::endl
-                << "Gradient evaluations= " << report.ngrad << std::endl
-                << "Hessian evaluations= " << report.nhess << std::endl
-                << "Cholesky decompositions= " << report.ncholesky << std::endl
-                << "Value= " << opt->error() << std::endl
-                << "Reason: ";
+  OPENANN_DEBUG << "Terminated:";
+  OPENANN_DEBUG << report.iterationscount << " iterations";
+  OPENANN_DEBUG << report.nfunc << " function evaluations";
+  OPENANN_DEBUG << report.njac << " Jacobi evaluations";
+  OPENANN_DEBUG << "Error = " << opt->error();
+  OPENANN_DEBUG << "Reason:";
   switch(report.terminationtype)
   {
   case 1:
