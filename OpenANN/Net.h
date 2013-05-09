@@ -278,7 +278,7 @@ public:
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient(unsigned int i);
   virtual Eigen::VectorXd gradient();
-  virtual void VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian);
+  virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad);
   virtual bool providesHessian();
   virtual Eigen::MatrixXd hessian();
 };

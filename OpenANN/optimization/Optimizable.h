@@ -67,21 +67,45 @@ public:
   /**
    * @return error of the i-th training example
    */
-  virtual double error(unsigned i) { return error(); }
+  virtual double error(unsigned n) { return error(); }
   /**
-   * @return gradient of the i-th training example
+   * @return gradient of the n-th training example
    */
-  virtual Eigen::VectorXd gradient(unsigned i) { return gradient(); }
+  virtual Eigen::VectorXd gradient(unsigned n) { return gradient(); }
   /**
-   * @return hessian of the i-th training example
+   * @return hessian of the n-th training example
    */
-  virtual Eigen::VectorXd hessian(unsigned i) { return hessian(); }
+  virtual Eigen::VectorXd hessian(unsigned n) { return hessian(); }
   /**
-   * Calculates the function values and gradients of all training examples.
-   * @param values function values
-   * @param jacobian contains one gradient per row
+   * Calculates the function value and gradient of a training example.
+   * @param n index of training example
+   * @param value function value
+   * @param grad gradient of the function
    */
-  virtual void VJ(Eigen::VectorXd& values, Eigen::MatrixXd& jacobian);
+  virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad)
+  {
+    value = error(n);
+    grad = gradient(n);
+  }
+  /**
+   * Calculates the function value and gradient of all training examples.
+   * @param value function value
+   * @param grad gradient of the function
+   */
+  virtual void errorGradient(double& value, Eigen::VectorXd& grad)
+  {
+    const int N = examples();
+    double tempValue;
+    Eigen::VectorXd tempGrad(dimension());
+    value = 0.0;
+    grad.fill(0.0);
+    for(int n = 0; n < N; n++)
+    {
+      errorGradient(n, tempValue, tempGrad);
+      value += tempValue;
+      grad += tempGrad;
+    }
+  }
   /**
    * This callback is called after each optimization algorithm iteration.
    */

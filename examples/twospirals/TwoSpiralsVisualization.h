@@ -1,7 +1,6 @@
 #pragma once
 
 #include <OpenANN/OpenANN>
-#include <OpenANN/io/Logger.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
 #include <QGLWidget>
@@ -40,7 +39,6 @@ class TwoSpiralsVisualization : public QGLWidget
   bool showTraining, showTest, showPrediction, showSmooth;
   Net* net;
   StoppingCriteria stop;
-  Logger eventLogger;
 
 public:
   TwoSpiralsVisualization(const Eigen::MatrixXd& trainingInput, const Eigen::MatrixXd& trainingOutput,

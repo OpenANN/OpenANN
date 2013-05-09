@@ -9,9 +9,9 @@ TwoSpiralsVisualization::TwoSpiralsVisualization(
     const Eigen::MatrixXd& testInput,
     const Eigen::MatrixXd& testOutput)
     : width(500), height(500),
-      trainingSet(trainingInput, trainingOutput), testSet(testInput, testOutput),
-      showTraining(true), showTest(true), showPrediction(true), showSmooth(true),
-      net(new Net), eventLogger(Logger::CONSOLE)
+      trainingSet(trainingInput, trainingOutput),
+      testSet(testInput, testOutput), showTraining(true), showTest(true),
+      showPrediction(true), showSmooth(true), net(new Net)
 {
   std::memset(classes, 0, sizeof(double)*100*100);
   trainingSet.setVisualization(this);
@@ -143,32 +143,31 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
   switch(keyEvent->key())
   {
     case Qt::Key_Q:
-      eventLogger << "Switching training set on/off.\n";
+      OPENANN_INFO << "Switching training set on/off.";
       showTraining = !showTraining;
       update();
       break;
     case Qt::Key_W:
-      eventLogger << "Switching test set on/off.\n";
+      OPENANN_INFO << "Switching test set on/off.";
       showTest = !showTest;
       update();
       break;
     case Qt::Key_E:
-      eventLogger << "Switching prediction on/off.\n";
+      OPENANN_INFO << "Switching prediction on/off.";
       showPrediction = !showPrediction;
       update();
       break;
     case Qt::Key_R:
-      eventLogger << "Switching smooth classes on/off.\n";
+      OPENANN_INFO << "Switching smooth classes on/off.";
       showSmooth = !showSmooth;
       update();
       break;
     case Qt::Key_A:
-      eventLogger << "Training with restart (" << net->dimension() << " parameters)...";
-      train(*net, "LMA", SSE, stop);
-      eventLogger << " finished.\n";
+      OPENANN_INFO << "Training with restart (" << net->dimension() << " parameters)...";
+      train(*net, "LMA", SSE, stop, true);
       break;
     case Qt::Key_Escape:
-      eventLogger << "Quitting application.\n";
+      OPENANN_INFO << "Quitting application.";
       QApplication::quit();
       break;
     default:

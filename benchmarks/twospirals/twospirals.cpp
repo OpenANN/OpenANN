@@ -92,6 +92,7 @@ struct Result
  */
 void setup(OpenANN::Net& net, int architecture)
 {
+  OpenANN::Log::getLevel() = OpenANN::Log::INFO;
   OpenANN::Logger setupLogger(OpenANN::Logger::CONSOLE);
   setupLogger << "Architecture: ";
   switch(architecture)
