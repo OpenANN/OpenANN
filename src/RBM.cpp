@@ -67,10 +67,15 @@ Eigen::VectorXd RBM::currentParameters()
 
 double RBM::error()
 {
-  double error = 0.0;
+  double e = 0.0;
   for(int n = 0; n < trainSet->samples(); n++)
-    error += (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
-  return error;
+    e += error(n);
+  return e;
+}
+
+double RBM::error(unsigned int n)
+{
+  return (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
 }
 
 bool RBM::providesGradient()
@@ -141,7 +146,7 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
     for(int j = 0; j < H; j++)
     {
       parameterPointers.push_back(&bh(j));
-      parameterDerivativePointers.push_back(&bh(j));
+      parameterDerivativePointers.push_back(&bhd(j));
     }
   }
 
@@ -158,7 +163,10 @@ void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
     deltas(j) = phd(j) * (*ein)(j);
   // Weight derivatives
   if(backprop)
+  {
     Wd = deltas * v.transpose();
+    bhd = deltas;
+  }
   // Prepare error signals for previous layer
   e = W.transpose() * deltas;
   eout = &e;
