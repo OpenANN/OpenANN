@@ -40,13 +40,13 @@ void RBMTestCase::learnSimpleExample()
 
   for(int i = 0; i < 3; i++)
   {
-    Eigen::VectorXd v = rbm.reconstructProb(i, 1);
-    ASSERT(v(0) > 0.5);
-    ASSERT(v(1) > 0.5);
-    ASSERT(v(2) > 0.5);
-    ASSERT(v(3) < 0.5);
-    ASSERT(v(4) < 0.5);
-    ASSERT(v(5) < 0.5);
+    Eigen::MatrixXd v = rbm.reconstructProb(i, 1);
+    ASSERT(v(0, 0) > 0.5);
+    ASSERT(v(0, 1) > 0.5);
+    ASSERT(v(0, 2) > 0.5);
+    ASSERT(v(0, 3) < 0.5);
+    ASSERT(v(0, 4) < 0.5);
+    ASSERT(v(0, 5) < 0.5);
     Eigen::VectorXd h = rbm(X.row(i));
     ASSERT(h(0) > 0.5);
     ASSERT(h(1) < 0.5);
@@ -54,13 +54,13 @@ void RBMTestCase::learnSimpleExample()
 
   for(int i = 3; i < 6; i++)
   {
-    Eigen::VectorXd v = rbm.reconstructProb(i, 1);
-    ASSERT(v(0) < 0.5);
-    ASSERT(v(1) < 0.5);
-    ASSERT(v(2) > 0.5);
-    ASSERT(v(3) > 0.5);
-    ASSERT(v(4) > 0.5);
-    ASSERT(v(5) < 0.5);
+    Eigen::MatrixXd v = rbm.reconstructProb(i, 1);
+    ASSERT(v(0, 0) < 0.5);
+    ASSERT(v(0, 1) < 0.5);
+    ASSERT(v(0, 2) > 0.5);
+    ASSERT(v(0, 3) > 0.5);
+    ASSERT(v(0, 4) > 0.5);
+    ASSERT(v(0, 5) < 0.5);
     Eigen::VectorXd h = rbm(X.row(i));
     ASSERT(h(0) < 0.5);
     ASSERT(h(1) > 0.5);

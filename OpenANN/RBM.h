@@ -100,7 +100,6 @@ public:
   const Eigen::MatrixXd& getVisibleProbs();
   const Eigen::MatrixXd& getVisibleSample();
   Eigen::MatrixXd reconstructProb(int n, int steps);
-  Eigen::MatrixXd reconstruct(int n, int steps);
   void reality(int n);
   void daydream();
   void sampleHgivenV();

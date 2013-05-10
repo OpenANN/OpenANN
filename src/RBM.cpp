@@ -21,7 +21,7 @@ Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
 {
   v = x.transpose();
   sampleHgivenV();
-  return ph;
+  return ph.transpose();
 }
 
 bool RBM::providesInitialization()
@@ -75,7 +75,7 @@ double RBM::error()
 
 double RBM::error(unsigned int n)
 {
-  return (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
+  return (reconstructProb(n, 1) - trainSet->getInstance(n).transpose()).squaredNorm();
 }
 
 bool RBM::providesGradient()
@@ -210,7 +210,7 @@ const Eigen::MatrixXd& RBM::getVisibleSample()
 
 Eigen::MatrixXd RBM::reconstructProb(int n, int steps)
 {
-  v = trainSet->getInstance(n);
+  v = trainSet->getInstance(n).transpose();
   pv = v;
   for(int i = 0; i < steps; i++)
   {
@@ -220,26 +220,15 @@ Eigen::MatrixXd RBM::reconstructProb(int n, int steps)
   return pv;
 }
 
-Eigen::MatrixXd RBM::reconstruct(int n, int steps)
-{
-  v = trainSet->getInstance(n);
-  for(int i = 0; i < steps; i++)
-  {
-    sampleHgivenV();
-    sampleVgivenH();
-  }
-  return v;
-}
-
 void RBM::reality(int n)
 {
-  v = trainSet->getInstance(n);
+  v = trainSet->getInstance(n).transpose();
 
   sampleHgivenV();
 
-  posGradW = ph * v.transpose();
-  posGradBv = v;
-  posGradBh = ph;
+  posGradW = ph.transpose() * v;
+  posGradBv = v.transpose();
+  posGradBh = ph.transpose();
 }
 
 void RBM::daydream()
@@ -250,25 +239,25 @@ void RBM::daydream()
     sampleHgivenV();
   }
 
-  negGradW = ph * pv.transpose();
-  negGradBv = pv;
-  negGradBh = ph;
+  negGradW = ph.transpose() * pv;
+  negGradBv = pv.transpose();
+  negGradBh = ph.transpose();
 }
 
 void RBM::sampleHgivenV()
 {
-  ph = W * v + bh;
+  ph = v * W.transpose() + bh.transpose();
   activationFunction(LOGISTIC, ph, ph);
   for(int j = 0; j < H; j++)
-    h(j) = (double) (ph(j) > rng.generate<double>(0.0, 1.0));
+    h(0, j) = (double) (ph(0, j) > rng.generate<double>(0.0, 1.0));
 }
 
 void RBM::sampleVgivenH()
 {
-  pv = W.transpose() * h + bv;
+  pv = h * W + bv.transpose();
   activationFunction(LOGISTIC, pv, pv);
   for(int i = 0; i < D; i++)
-    v(i) = (double) (pv(i) > rng.generate<double>(0.0, 1.0));
+    v(0, i) = (double) (pv(0, i) > rng.generate<double>(0.0, 1.0));
 }
 
 }
