@@ -78,8 +78,7 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
-  for(int j = 0; j < J; j++)
-    deltas(0, j) = yd(0, j) * (*ein)(0, j);
+  deltas = yd.cwiseProduct(*ein);
   // Weight derivatives
   Wd.leftCols(I) = deltas.transpose() * *x;
   if(bias)

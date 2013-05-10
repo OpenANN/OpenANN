@@ -44,8 +44,7 @@ void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
-  for(int j = 0; j < J; j++)
-    deltas(0, j) = yd(0, j) * (*ein)(0, j);
+  deltas = yd.cwiseProduct(*ein);
   // Prepare error signals for previous layer
   e = deltas * W.leftCols(I);
   eout = &e;

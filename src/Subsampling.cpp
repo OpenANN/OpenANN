@@ -120,8 +120,7 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(act, y, yd);
-  for(int j = 0; j < deltas.cols(); j++)
-    deltas(0, j) = yd(0, j) * (*ein)(0, j);
+  deltas = yd.cwiseProduct(*ein);
 
   e.fill(0.0);
   int outputIdx = 0;

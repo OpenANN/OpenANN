@@ -52,9 +52,8 @@ void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x, Eigen::Mat
 
 void LocalResponseNormalization::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
-  for(int i = 0; i < I; i++)
-    etmp(0, i) = (*ein)(0, i) * y(0, i) / denoms(0, i);
-  etmp *= -2.0*alpha*beta;
+  etmp = (*ein).cwiseProduct(y).cwiseProduct(denoms.cwiseInverse()).array() *
+      (-2.0*alpha*beta);
 
   for(int fmOut=0, outputIdx=0; fmOut < fm; fmOut++)
   {

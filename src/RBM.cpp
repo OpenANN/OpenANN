@@ -166,8 +166,7 @@ void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   activationFunctionDerivative(LOGISTIC, ph, phd);
-  for(int j = 0; j < H; j++)
-    deltas(0, j) = phd(0, j) * (*ein)(0, j);
+  deltas = phd.cwiseProduct(*ein);
   if(backprop)
   {
     Wd = deltas.transpose() * v;

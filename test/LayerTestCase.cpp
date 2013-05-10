@@ -165,19 +165,18 @@ void LayerTestCase::fullyConnected()
   info.dimensions.push_back(3);
   FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
 
-  std::vector<double*> parameterPointers;
-  std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers, parameterDerivativePointers);
+  std::vector<double*> pp;
+  std::vector<double*> pdp;
+  OutputInfo info2 = layer.initialize(pp, pdp);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = parameterPointers.begin();
-      it != parameterPointers.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
     **it = 1.0;
   Eigen::MatrixXd x(1, 3);
   x << 0.5, 1.0, 2.0;
-  Eigen::MatrixXd e(1, 3);
-  e << 1.0, 2.0, 0.0;
+  Eigen::MatrixXd e(1, 2);
+  e << 1.0, 2.0;
 
   Eigen::MatrixXd* y = 0;
   layer.forwardPropagate(&x, y, false);
@@ -189,8 +188,7 @@ void LayerTestCase::fullyConnected()
   layer.backpropagate(&e, e2);
   Eigen::VectorXd Wd(6);
   int i = 0;
-  for(std::vector<double*>::iterator it = parameterDerivativePointers.begin();
-      it != parameterDerivativePointers.end(); it++)
+  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); it++)
     Wd(i++) = **it;
   ASSERT_EQUALS_DELTA(Wd(0), 0.5*(1.0-(*y)(0)*(*y)(0))*1.0, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(1), 1.0*(1.0-(*y)(0)*(*y)(0))*1.0, 1e-7);
