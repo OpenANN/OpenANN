@@ -371,7 +371,7 @@ void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
   tempOutput = (*this)(dataSet->getInstance(n));
   tempError = (tempOutput - dataSet->getTarget(n)).transpose();
   if(errorFunction == CE)
-    value = -(dataSet->getTarget(n).array() *
+    value = -(dataSet->getTarget(n).transpose().array() *
         ((tempOutput.array() + 1e-10).log())).sum();
   else
     value = tempError.squaredNorm() / 2.0;
