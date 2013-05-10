@@ -70,8 +70,7 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 
 void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
-  for(int j = 0; j < deltas.rows(); j++)
-    deltas(j) = (*ein)(j);
+  deltas = (*ein);
 
   e.fill(0.0);
   int outputIdx = 0;

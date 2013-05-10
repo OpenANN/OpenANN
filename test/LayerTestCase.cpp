@@ -58,24 +58,17 @@ public:
   {
     Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
-    double error = 0.0;
-    for(int i = 0; i < desired.rows(); i++)
-    {
-      double diff = (*output)(i) - desired(i);
-      error += diff*diff;
-    }
-    return error/2.0;
+    Eigen::MatrixXd diff = (*output) - desired;
+    return (diff * diff.transpose()).eval()(0, 0) / 2.0;
   }
 
   virtual Eigen::VectorXd gradient()
   {
     Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
-    Eigen::MatrixXd diff = *output;
-    for(int i = 0; i < desired.rows(); i++)
-      diff(i) = (*output)(i) - desired(i);
-    Eigen::MatrixXd* e;
-    layer.backpropagate(&diff, e);
+    Eigen::MatrixXd diff = *output - desired;
+    Eigen::MatrixXd* e = &diff;
+    layer.backpropagate(e, e);
     Eigen::VectorXd derivs(dimension());
     std::vector<double*>::const_iterator it = derivatives.begin();
     for(int i = 0; i < dimension(); i++, it++)
@@ -87,14 +80,12 @@ public:
   {
     Eigen::MatrixXd* output;
     layer.forwardPropagate(&input, output, false);
-    Eigen::MatrixXd diff = *output;
-    for(int i = 0; i < desired.rows(); i++)
-      diff(i) = (*output)(i) - desired(i);
-    Eigen::MatrixXd* e;
-    layer.backpropagate(&diff, e);
-    Eigen::VectorXd derivs(input.rows());
-    for(int i = 0; i < input.rows(); i++)
-      derivs(i) = (*e)(i);
+    Eigen::MatrixXd diff = *output - desired;
+    Eigen::MatrixXd* e = &diff;
+    layer.backpropagate(e, e);
+    Eigen::VectorXd derivs(input.cols());
+    for(int i = 0; i < input.cols(); i++)
+      derivs(i) = (*e)(0, i);
     return derivs;
   }
 
