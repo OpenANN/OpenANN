@@ -82,8 +82,6 @@ public:
     int zoom = -200;
     glTranslatef(xOffset, yOffset, zoom);
 
-    Eigen::VectorXd x = dataSet.getInstance(instance);
-
     glColor3f(0.0f, 0.0f, 0.0f);
     glLineWidth(5.0);
 
@@ -136,7 +134,7 @@ public:
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
               int idx = yIdx*28+xIdx;
-              float c = rbm.getVisibleProbs()(idx);
+              float c = rbm.getVisibleProbs()(0, idx);
               float x = xIdx*scale + col*29.0f*scale - 30.0f;
               float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
               glColor3f(c, c, c);
@@ -248,7 +246,7 @@ int main(int argc, char** argv)
   net.testSet(testSet);
 
   OpenANN::StoppingCriteria stopNet;
-  stopNet.maximalIterations = 20;
+  stopNet.maximalIterations = 2;
   OpenANN::MBSGD netOptimizer(0.01, 0.5, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
   netOptimizer.setStopCriteria(stopNet);
