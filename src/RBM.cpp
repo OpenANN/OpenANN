@@ -67,10 +67,15 @@ Eigen::VectorXd RBM::currentParameters()
 
 double RBM::error()
 {
-  double error = 0.0;
+  double e = 0.0;
   for(int n = 0; n < trainSet->samples(); n++)
-    error += (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
-  return error;
+    e += error(n);
+  return e;
+}
+
+double RBM::error(unsigned int n)
+{
+  return (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
 }
 
 bool RBM::providesGradient()
