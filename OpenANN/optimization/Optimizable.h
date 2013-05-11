@@ -80,7 +80,7 @@ public:
    * Calculates the function value and gradient of a training example.
    * @param n index of training example
    * @param value function value
-   * @param grad gradient of the function
+   * @param grad gradient of the function, lenght must be dimension()
    */
   virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad)
   {
@@ -90,7 +90,7 @@ public:
   /**
    * Calculates the function value and gradient of all training examples.
    * @param value function value
-   * @param grad gradient of the function
+   * @param grad gradient of the function, lenght must be dimension()
    */
   virtual void errorGradient(double& value, Eigen::VectorXd& grad)
   {

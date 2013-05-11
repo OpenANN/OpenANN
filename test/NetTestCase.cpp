@@ -7,6 +7,7 @@ using namespace OpenANN;
 void NetTestCase::run()
 {
   RUN(NetTestCase, dimension);
+  RUN(NetTestCase, error);
   RUN(NetTestCase, gradient);
 }
 
@@ -36,6 +37,26 @@ void NetTestCase::dimension()
   ASSERT_EQUALS(net.currentParameters().rows(), expectedDimension);
 }
 
+void NetTestCase::error()
+{
+  const int D = 5;
+  const int F = 2;
+  const int N = 2;
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
+
+  Net net;
+  net.inputLayer(D)
+     .fullyConnectedLayer(2, TANH)
+     .outputLayer(F, LINEAR)
+     .trainingSet(X, T);
+
+  double error0 = net.error(0);
+  double error1 = net.error(1);
+  double error = net.error();
+  ASSERT_EQUALS(error, error0 + error1);
+}
+
 void NetTestCase::gradient()
 {
   const int D = 5;
@@ -53,6 +74,7 @@ void NetTestCase::gradient()
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
   Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
   Eigen::VectorXd ga = ga0 + ga1;
+
   Eigen::VectorXd g = net.gradient();
   double error;
   for(int k = 0; k < net.dimension(); k++)

@@ -1,6 +1,7 @@
 #include <OpenANN/layers/Convolutional.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
 
 namespace OpenANN {
 
@@ -66,6 +67,10 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
   yd.resize(1, info.outputs());
   deltas.resize(1, info.outputs());
 
+  if(info.outputs() < 1)
+    throw OpenANNException("Number of outputs in convolutional layer is below"
+                           " 1. You should either choose a smaller filter"
+                           " size or generate a bigger input.");
   return info;
 }
 
@@ -92,7 +97,7 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
   OPENANN_CHECK_EQUALS(x->cols(), fmin * inRows * inRows);
   OPENANN_CHECK_EQUALS(this->y.cols(), fmout * outRows * outCols);
 
-  this->a.fill(0.0);
+  a.fill(0.0);
   for(int fmo = 0; fmo < fmout; fmo++)
   {
     int fmInBase = 0;
@@ -151,9 +156,9 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
             int inputIdx = rowBase+col;
             for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
             {
-              OPENANN_CHECK(outputIdx < a.cols());
+              OPENANN_CHECK(outputIdx < deltas.cols());
               OPENANN_CHECK(inputIdx < x->cols());
-              e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(outputIdx);
+              e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(0, outputIdx);
               Wd[fmo][fmi](kr, kc) += deltas(0, outputIdx) * (*x)(0, inputIdx);
             }
           }

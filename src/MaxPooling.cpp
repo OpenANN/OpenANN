@@ -1,5 +1,6 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <limits>
 #include <algorithm>
 
@@ -29,6 +30,10 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
   y.resize(1, info.outputs());
   deltas.resize(1, info.outputs());
 
+  if(info.outputs() < 1)
+    throw OpenANNException("Number of outputs in max-pooling layer is below"
+                           " 1. You should either choose a smaller filter"
+                           " size or generate a bigger input.");
   return info;
 }
 

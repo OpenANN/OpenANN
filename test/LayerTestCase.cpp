@@ -579,7 +579,6 @@ void LayerTestCase::multilayerNetwork()
   net.extremeLayer(10, TANH, 0.05);
   net.outputLayer(3, LINEAR, 0.5);
   net.trainingSet(ds);
-  net.initialize();
 
   Eigen::VectorXd g = net.gradient();
   Eigen::VectorXd e = FiniteDifferences::parameterGradient(0, net);

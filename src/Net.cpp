@@ -368,6 +368,7 @@ Eigen::VectorXd Net::gradient()
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 {
+  OPENANN_CHECK_EQUALS(grad.rows(), dimension());
   tempOutput = (*this)(dataSet->getInstance(n));
   tempError = (tempOutput - dataSet->getTarget(n)).transpose();
   if(errorFunction == CE)
