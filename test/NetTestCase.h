@@ -7,5 +7,6 @@ class NetTestCase : public TestCase
   virtual void run();
   virtual void dimension();
   virtual void error();
-  virtual void gradient();
+  virtual void gradientSSE();
+  virtual void gradientCE();
 };
