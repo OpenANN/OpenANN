@@ -240,6 +240,7 @@ Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
       layer != layers.end(); layer++)
     (**layer).forwardPropagate(y, y, dropout);
   tempOutput = *y;
+  OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
   return tempOutput.transpose();
@@ -324,7 +325,7 @@ double Net::errorFromDataSet(DataSet& dataSet)
   }
 
   if(errorFunction == MSE)
-    return e / (double) N;
+    return e / (double) dataSet.samples();
   else
     return e;
 }
@@ -334,54 +335,28 @@ bool Net::providesGradient()
   return true;
 }
 
-Eigen::VectorXd Net::gradient(unsigned int i)
+Eigen::VectorXd Net::gradient(unsigned int n)
 {
-  tempOutput = (*this)(dataSet->getInstance(i));
-  tempError = (tempOutput - dataSet->getTarget(i)).transpose();
-  Eigen::MatrixXd* e = &tempError;
-  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-      layer != layers.rend(); layer++)
-    (**layer).backpropagate(e, e);
-  for(int i = 0; i < P; i++)
-    tempGradient(i) = *derivatives[i];
+  generalErrorGradient(false, tempGradient, n);
   return tempGradient;
 }
 
 Eigen::VectorXd Net::gradient()
 {
-  tempGradient.fill(0.0);
-  for(int n = 0; n < N; n++)
-  {
-    tempOutput = (*this)(dataSet->getInstance(n));
-    tempError = (tempOutput - dataSet->getTarget(n)).transpose();
-    Eigen::MatrixXd* e = &tempError;
-    for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-        layer != layers.rend(); layer++)
-      (**layer).backpropagate(e, e);
-    for(int i = 0; i < P; i++)
-      tempGradient(i) += *derivatives[i];
-  }
+  generalErrorGradient(false, tempGradient);
   if(errorFunction == MSE)
-    tempGradient /= (double) dimension();
+    tempGradient /= (double) examples();
   return tempGradient;
 }
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 {
-  OPENANN_CHECK_EQUALS(grad.rows(), dimension());
-  tempOutput = (*this)(dataSet->getInstance(n));
-  tempError = (tempOutput - dataSet->getTarget(n)).transpose();
-  if(errorFunction == CE)
-    value = -(dataSet->getTarget(n).transpose().array() *
-        ((tempOutput.array() + 1e-10).log())).sum();
-  else
-    value = tempError.squaredNorm() / 2.0;
-  Eigen::MatrixXd* e = &tempError;
-  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-      layer != layers.rend(); layer++)
-    (**layer).backpropagate(e, e);
-  for(int i = 0; i < P; i++)
-    grad(i) = *derivatives[i];
+  value = generalErrorGradient(true, grad, n);
+}
+
+void Net::errorGradient(double& value, Eigen::VectorXd& grad)
+{
+  value = generalErrorGradient(true, grad, -1);
 }
 
 bool Net::providesHessian()
@@ -392,6 +367,52 @@ bool Net::providesHessian()
 Eigen::MatrixXd Net::hessian()
 {
   return Eigen::MatrixXd::Identity(dimension(), dimension());
+}
+
+double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
+{
+  OPENANN_CHECK_EQUALS(g.rows(), dimension());
+
+  const bool singleGradient = n >= 0;
+  if(!singleGradient)
+    g.fill(0.0);
+
+  const int start = singleGradient * n;
+  const int end = singleGradient ? n+1 : examples();
+
+  double error = 0.0;
+  for(int i = start; i < end; i++)
+  {
+    tempError = ((*this)(dataSet->getInstance(i)) -
+        dataSet->getTarget(i)).transpose();
+
+    if(computeError)
+    {
+      if(errorFunction == CE)
+        error += -(dataSet->getTarget(i).array() *
+            ((tempOutput.array() + 1e-10).log())).sum();
+      else
+        error += tempError.squaredNorm() / 2.0;
+    }
+
+    Eigen::MatrixXd* e = &tempError;
+    for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+        layer != layers.rend(); layer++)
+      (**layer).backpropagate(e, e);
+
+    if(singleGradient)
+    {
+      for(int p = 0; p < P; p++)
+        g(p) = *derivatives[p];
+    }
+    else
+    {
+      for(int p = 0; p < P; p++)
+        g(p) += *derivatives[p];
+    }
+  }
+
+  return error;
 }
 
 }

@@ -32,7 +32,7 @@ void NetTestCase::dimension()
   Eigen::VectorXd grad(net.dimension());
   net.errorGradient(0, error, grad);
   ASSERT_EQUALS(grad.rows(), expectedDimension);
-  ((Optimizable &) net).errorGradient(error, grad);
+  net.errorGradient(error, grad);
   ASSERT_EQUALS(grad.rows(), expectedDimension);
   ASSERT_EQUALS(net.currentParameters().rows(), expectedDimension);
 }
@@ -80,7 +80,7 @@ void NetTestCase::gradient()
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 
-  ((Optimizable&) net).errorGradient(error, g);
+  net.errorGradient(error, g);
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 

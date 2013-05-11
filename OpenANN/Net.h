@@ -276,11 +276,14 @@ public:
   virtual double error();
   virtual double errorFromDataSet(DataSet& dataset);
   virtual bool providesGradient();
-  virtual Eigen::VectorXd gradient(unsigned int i);
+  virtual Eigen::VectorXd gradient(unsigned int n);
   virtual Eigen::VectorXd gradient();
   virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad);
+  virtual void errorGradient(double& value, Eigen::VectorXd& grad);
   virtual bool providesHessian();
   virtual Eigen::MatrixXd hessian();
+private:
+  double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };
 
 }
