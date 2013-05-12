@@ -7,6 +7,7 @@ void ActivationFunctionsTestCase::run()
   RUN(ActivationFunctionsTestCase, logistic);
   RUN(ActivationFunctionsTestCase, normaltanh);
   RUN(ActivationFunctionsTestCase, linear);
+  RUN(ActivationFunctionsTestCase, rectifier);
 }
 
 void ActivationFunctionsTestCase::softmax()
@@ -61,5 +62,22 @@ void ActivationFunctionsTestCase::linear()
   Eigen::MatrixXd gd = Eigen::VectorXd::Zero(N);
   Eigen::MatrixXd expected = Eigen::VectorXd::Ones(N);
   OpenANN::linearDerivative(gd);
+  ASSERT_EQUALS(gd.sum(), expected.sum());
+}
+
+void ActivationFunctionsTestCase::rectifier()
+{
+  const int N = 1000;
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(1, N) * 10.0;
+  Eigen::MatrixXd z = Eigen::MatrixXd::Zero(1, N);
+  OpenANN::rectifier(a, z);
+  ASSERT_EQUALS(0.0, z.minCoeff());
+  ASSERT_EQUALS(a.maxCoeff(), z.maxCoeff());
+
+  Eigen::MatrixXd gd = Eigen::MatrixXd::Zero(1, N);
+  Eigen::MatrixXd expected = Eigen::MatrixXd::Ones(1, N);
+  for(int i = 0; i < N; i++)
+    expected(i) *= (double) (z(i) > 0.0);
+  OpenANN::rectifierDerivative(z, gd);
   ASSERT_EQUALS(gd.sum(), expected.sum());
 }

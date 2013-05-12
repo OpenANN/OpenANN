@@ -138,7 +138,7 @@ void rectifierDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
   double* gdPtr = gd.data();
   double const* zEnd = zPtr + z.rows()*z.cols();
   for(; zPtr < zEnd; zPtr++, gdPtr++)
-    *gdPtr = (double) (*zPtr == 0.0) * 1.0;
+    *gdPtr = (double) (*zPtr > 0.0) * 1.0;
 }
 
 void linear(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
