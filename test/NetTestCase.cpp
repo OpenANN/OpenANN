@@ -3,8 +3,6 @@
 #include <OpenANN/Net.h>
 #include <OpenANN/util/Random.h>
 
-using namespace OpenANN;
-
 void NetTestCase::run()
 {
   RUN(NetTestCase, dimension);
@@ -21,10 +19,10 @@ void NetTestCase::dimension()
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
 
-  Net net;
+  OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, TANH)
-     .outputLayer(F, LINEAR)
+     .fullyConnectedLayer(2, OpenANN::TANH)
+     .outputLayer(F, OpenANN::LINEAR)
      .trainingSet(X, T);
 
   const int expectedDimension = 18;
@@ -47,10 +45,10 @@ void NetTestCase::error()
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
 
-  Net net;
+  OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, TANH)
-     .outputLayer(F, LINEAR)
+     .fullyConnectedLayer(2, OpenANN::TANH)
+     .outputLayer(F, OpenANN::LINEAR)
      .trainingSet(X, T);
 
   double error0 = net.error(0);
@@ -67,10 +65,10 @@ void NetTestCase::gradientSSE()
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
 
-  Net net;
+  OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, TANH)
-     .outputLayer(F, LINEAR)
+     .fullyConnectedLayer(2, OpenANN::TANH)
+     .outputLayer(F, OpenANN::LINEAR)
      .trainingSet(X, T);
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
@@ -104,15 +102,15 @@ void NetTestCase::gradientCE()
   // Target components have to sum up to 1
   Eigen::MatrixXd T(N, F);
   T.fill(0.0);
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   for(int n = 0; n < N; n++)
     T(n, rng.generateIndex(F)) = 1.0;
 
-  Net net;
+  OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, TANH)
-     .outputLayer(F, LINEAR)
-     .setErrorFunction(CE)
+     .fullyConnectedLayer(2, OpenANN::TANH)
+     .outputLayer(F, OpenANN::LINEAR)
+     .setErrorFunction(OpenANN::CE)
      .trainingSet(X, T);
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
