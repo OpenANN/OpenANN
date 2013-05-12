@@ -1,5 +1,6 @@
 project(TwoSpiralsBenchmark)
 
+file(COPY benchmark.py DESTINATION .)
 include_directories("${CMAKE_SOURCE_DIR}/examples/twospirals")
 add_definitions("${OPENANN_COMPILER_FLAGS}")
 add_executable(TwoSpiralsBenchmark twospirals.cpp)
