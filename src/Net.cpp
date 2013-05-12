@@ -308,28 +308,6 @@ double Net::error()
     return e;
 }
 
-double Net::errorFromDataSet(DataSet& dataSet)
-{
-  double e = 0.0;
-  if(errorFunction == CE)
-  {
-    for(int n = 0; n < dataSet.samples(); ++n)
-      e -= (dataSet.getTarget(n).array() *
-          (((*this)(dataSet.getInstance(n)).array() + 1e-10).log())).sum();
-  }
-  else
-  {
-    for(int n = 0; n < dataSet.samples(); ++n)
-      e += ((*this)(dataSet.getInstance(n)) -
-          dataSet.getTarget(n)).squaredNorm() / 2.0;
-  }
-
-  if(errorFunction == MSE)
-    return e / (double) dataSet.samples();
-  else
-    return e;
-}
-
 bool Net::providesGradient()
 {
   return true;
@@ -390,7 +368,7 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
     {
       if(errorFunction == CE)
         error += -(dataSet->getTarget(i).array() *
-            ((tempOutput.array() + 1e-10).log())).sum();
+            ((tempOutput.transpose().array() + 1e-10).log())).sum();
       else
         error += tempError.squaredNorm() / 2.0;
     }

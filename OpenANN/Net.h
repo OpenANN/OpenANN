@@ -274,7 +274,6 @@ public:
   virtual void initialize();
   virtual double error(unsigned int i);
   virtual double error();
-  virtual double errorFromDataSet(DataSet& dataset);
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient(unsigned int n);
   virtual Eigen::VectorXd gradient();
