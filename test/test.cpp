@@ -23,6 +23,7 @@
 #include "DataSetTestCase.h"
 #include "IODataSetTestCase.h"
 #include "EvaluationTestCase.h"
+#include "SigmaPiConstraintTestCase.h"
 
 int main(int argc, char** argv)
 {
@@ -60,6 +61,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new DataSetTestCase);
   ts.addTestCase(new IODataSetTestCase);
   ts.addTestCase(new EvaluationTestCase);
+  ts.addTestCase(new SigmaPiConstraintTestCase);
 
   if(qt)
   {
