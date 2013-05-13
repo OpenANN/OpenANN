@@ -15,6 +15,7 @@
 #include <map>
 #include <numeric>
 #include <vector>
+#include <unistd.h>
 
 DoublePoleBalancingVisualization::DoublePoleBalancingVisualization(
     bool singlePole, bool fullyObservable, bool alphaBetaFilter,
