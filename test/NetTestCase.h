@@ -9,4 +9,5 @@ class NetTestCase : public TestCase
   virtual void error();
   virtual void gradientSSE();
   virtual void gradientCE();
+  virtual void predictMinibatch();
 };
