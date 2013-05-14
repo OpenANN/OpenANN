@@ -28,8 +28,15 @@ public:
   /**
    * Make a prediction.
    * @param x Input vector.
+   * @return Prediction.
    */
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) = 0;
+  /**
+   * Make predictions.
+   * @param X Each row represents an input vector.
+   * @return Each row represents a prediction.
+   */
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X) = 0;
 };
 
 }

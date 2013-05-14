@@ -66,6 +66,7 @@ public:
 
   // Learner interface
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual bool providesInitialization();
   virtual void initialize();
   virtual unsigned int examples();

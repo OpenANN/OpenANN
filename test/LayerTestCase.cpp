@@ -121,6 +121,14 @@ public:
     return *output;
   }
 
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X)
+  {
+    this->input = X;
+    Eigen::MatrixXd* output;
+    layer.forwardPropagate(&input, output, false);
+    return *output;
+  }
+
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput)
   {

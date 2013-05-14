@@ -38,6 +38,8 @@ void RBMTestCase::learnSimpleExample()
   opt.setStopCriteria(stop);
   opt.optimize();
 
+  Eigen::MatrixXd H = rbm(X);
+
   for(int i = 0; i < 3; i++)
   {
     Eigen::MatrixXd v = rbm.reconstructProb(i, 1);
@@ -47,9 +49,9 @@ void RBMTestCase::learnSimpleExample()
     ASSERT(v(0, 3) < 0.5);
     ASSERT(v(0, 4) < 0.5);
     ASSERT(v(0, 5) < 0.5);
-    Eigen::VectorXd h = rbm(X.row(i));
-    ASSERT(h(0) > 0.5);
-    ASSERT(h(1) < 0.5);
+
+    ASSERT(H(i, 0) > 0.5);
+    ASSERT(H(i, 1) < 0.5);
   }
 
   for(int i = 3; i < 6; i++)
@@ -61,8 +63,8 @@ void RBMTestCase::learnSimpleExample()
     ASSERT(v(0, 3) > 0.5);
     ASSERT(v(0, 4) > 0.5);
     ASSERT(v(0, 5) < 0.5);
-    Eigen::VectorXd h = rbm(X.row(i));
-    ASSERT(h(0) < 0.5);
-    ASSERT(h(1) > 0.5);
+
+    ASSERT(H(i, 0) < 0.5);
+    ASSERT(H(i, 1) > 0.5);
   }
 }

@@ -24,6 +24,13 @@ Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
   return ph.transpose();
 }
 
+Eigen::MatrixXd RBM::operator()(const Eigen::MatrixXd& X)
+{
+  v = X;
+  sampleHgivenV();
+  return ph;
+}
+
 bool RBM::providesInitialization()
 {
   return true;
@@ -245,7 +252,8 @@ void RBM::daydream()
 
 void RBM::sampleHgivenV()
 {
-  ph = v * W.transpose() + bh.transpose();
+  ph = v * W.transpose();
+  ph.rowwise() += bh.transpose();
   activationFunction(LOGISTIC, ph, ph);
   for(int j = 0; j < H; j++)
     h(0, j) = (double) (ph(0, j) > rng.generate<double>(0.0, 1.0));
@@ -253,7 +261,8 @@ void RBM::sampleHgivenV()
 
 void RBM::sampleVgivenH()
 {
-  pv = h * W + bv.transpose();
+  pv = h * W;
+  pv.rowwise() += bv.transpose();
   activationFunction(LOGISTIC, pv, pv);
   for(int i = 0; i < D; i++)
     v(0, i) = (double) (pv(0, i) > rng.generate<double>(0.0, 1.0));

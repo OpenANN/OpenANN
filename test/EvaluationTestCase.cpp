@@ -9,6 +9,7 @@ class ReturnInput : public OpenANN::Learner
 public:
   ReturnInput() {}
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) { return x; }
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X) { return X; }
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput) {}
   virtual Learner& trainingSet(OpenANN::DataSet& trainingSet) {}
   virtual Eigen::VectorXd currentParameters() {}

@@ -2,6 +2,7 @@
 #include <OpenANN/IntrinsicPlasticity.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 
 void IntrinsicPlasticityTestCase::run()
 {
@@ -30,7 +31,8 @@ void IntrinsicPlasticityTestCase::learn()
       Y(i, j) = rng.sampleNormalDistribution<double>();
     }
   }
-  ip.trainingSet(X, Y);
+  OpenANN::DirectStorageDataSet ds(&X, &Y);
+  ip.trainingSet(ds);
 
   ip.initialize();
   Eigen::VectorXd p = ip.currentParameters();
@@ -50,7 +52,7 @@ void IntrinsicPlasticityTestCase::learn()
   Eigen::VectorXd y(2);
   y.fill(0.0);
   for(int i = 0; i < samples; i++)
-    y += ip(X.row(i));
+    y += ip(ds.getInstance(i));
   Eigen::VectorXd mean = y / (double) samples;
   ASSERT_EQUALS_DELTA(mean(0), 0.5, 2e-2);
   ASSERT_EQUALS_DELTA(mean(1), 0.5, 2e-2);
@@ -65,7 +67,7 @@ void IntrinsicPlasticityTestCase::learn()
 
   y.fill(0.0);
   for(int i = 0; i < samples; i++)
-    y += ip(X.row(i));
+    y += ip(ds.getInstance(i));
   mean = y / (double) samples;
   ASSERT_EQUALS_DELTA(mean(0), 0.2, 2e-2);
   ASSERT_EQUALS_DELTA(mean(1), 0.2, 2e-2);

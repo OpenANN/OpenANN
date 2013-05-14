@@ -1,6 +1,7 @@
 #include <OpenANN/OpenANN>
-#include <Eigen/Dense>
 #include <OpenANN/io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
+#include <Eigen/Dense>
 #include <iostream>
 
 using namespace OpenANN;
@@ -57,19 +58,20 @@ int main()
   const int D = 2;
   const int F = 1;
   const int N = 4;
-  Eigen::MatrixXd x(N, D);
-  Eigen::MatrixXd t(N, F);
-  x.row(0) << 0.0, 1.0; t.row(0) << 1.0;
-  x.row(1) << 0.0, 0.0; t.row(1) << 0.0;
-  x.row(2) << 1.0, 1.0; t.row(2) << 0.0;
-  x.row(3) << 1.0, 0.0; t.row(3) << 1.0;
+  Eigen::MatrixXd X(N, D);
+  Eigen::MatrixXd T(N, F);
+  X.row(0) << 0.0, 1.0; T.row(0) << 1.0;
+  X.row(1) << 0.0, 0.0; T.row(1) << 0.0;
+  X.row(2) << 1.0, 1.0; T.row(2) << 0.0;
+  X.row(3) << 1.0, 0.0; T.row(3) << 1.0;
+  DirectStorageDataSet dataSet(&X, &T);
 
   // Create network
   Net net;
   net.inputLayer(D)
      .fullyConnectedLayer(2, LOGISTIC)
      .outputLayer(F, LOGISTIC)
-     .trainingSet(x, t);
+     .trainingSet(dataSet);
 
   // Train network
   StoppingCriteria stop;
@@ -79,7 +81,7 @@ int main()
   // Use network
   for(int n = 0; n < N; n++)
   {
-    Eigen::VectorXd y = net(x.row(n));
+    Eigen::VectorXd y = net(dataSet.getInstance(n));
     std::cout << y << std::endl;
   }
 

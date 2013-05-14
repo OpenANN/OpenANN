@@ -246,6 +246,20 @@ Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
   return tempOutput.transpose();
 }
 
+Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
+{
+  tempInput = x;
+  Eigen::MatrixXd* y = &tempInput;
+  for(std::vector<Layer*>::iterator layer = layers.begin();
+      layer != layers.end(); layer++)
+    (**layer).forwardPropagate(y, y, dropout);
+  tempOutput = *y;
+  OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
+  if(errorFunction == CE)
+    OpenANN::softmax(tempOutput);
+  return tempOutput;
+}
+
 unsigned int Net::dimension()
 {
   return P;

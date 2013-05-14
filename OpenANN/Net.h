@@ -266,6 +266,7 @@ public:
 
   virtual void finishedIteration();
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();
   virtual unsigned int examples();
   virtual Eigen::VectorXd currentParameters();

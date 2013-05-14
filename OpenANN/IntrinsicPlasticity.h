@@ -62,6 +62,7 @@ public:
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& a);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& A);
 };
 
 }
