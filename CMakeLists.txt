@@ -5,12 +5,16 @@ project(OpenANN)
 find_package(Doxygen)
 find_package(OpenMP)
 find_package(CUDA)
+include(CheckIncludeFiles)
 include(cmake/UseDoxygen.cmake)
 include(cmake/Utilities.cmake)
 include(cmake/FindEigen3.cmake)
 
 if(NOT EIGEN3_FOUND)
-  message(FATAL_ERROR "Could not find Eigen 3 library. Download it from http://eigen.tuxfamily.org/ and install it with CMake.")
+  message(FATAL_ERROR "Could not find Eigen 3 library. You can either "
+                      "install it with your package management system or "
+                      "download it from http://eigen.tuxfamily.org/ and "
+                      "install it with CMake.")
 endif()
 
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})

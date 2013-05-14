@@ -1,9 +1,7 @@
-find_path(EIGEN3_INCLUDE_DIRS Eigen/Dense ${CMAKE_INSTALL_PREFIX}/include/eigen3 /usr/include/eigen3)
+find_path(EIGEN3_INCLUDE_DIRS Eigen/Dense
+  ${CMAKE_INSTALL_PREFIX}/include/eigen3
+  /usr/include/eigen3
+  /opt/local/include/eigen3
+  DOC "Eigen 3 include directory")
 
-message(STATUS ${EIGEN3_INCLUDE_DIRS})
-
-if(EIGEN_INCLUDE_DIRS EQUAL "")
-  set(EIGEN3_FOUND FALSE)
-else()
-  set(EIGEN3_FOUND TRUE)
-endif()
+set(EIGEN3_FOUND ${EIGEN3_INCLUDE_DIRS} CACHE BOOL "" FORCE)
