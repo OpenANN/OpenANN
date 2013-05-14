@@ -7,8 +7,8 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, double stdDev,
                                double maxSquaredWeightNorm)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
-    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I+bias), Wd(J, I+bias), x(0), a(1, J),
-    y(1, J), yd(1, J), deltas(1, J), e(1, I)
+    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I), Wd(J, I),
+    b(J), bd(J), x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I)
 {
 }
 
@@ -19,10 +19,15 @@ OutputInfo FullyConnected::initialize(std::vector<double*>& parameterPointers,
   parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*(I+bias));
   for(int j = 0; j < J; j++)
   {
-    for(int i = 0; i < I+bias; i++)
+    for(int i = 0; i < I; i++)
     {
       parameterPointers.push_back(&W(j, i));
       parameterDerivativePointers.push_back(&Wd(j, i));
+    }
+    if(bias)
+    {
+      parameterPointers.push_back(&b(j));
+      parameterDerivativePointers.push_back(&bd(j));
     }
   }
 
@@ -37,8 +42,12 @@ void FullyConnected::initializeParameters()
 {
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
-    for(int i = 0; i < I+bias; i++)
+  {
+    for(int i = 0; i < I; i++)
       W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
+    if(bias)
+      b(j) = rng.sampleNormalDistribution<double>() * stdDev;
+  }
 }
 
 void FullyConnected::updatedParameters()
@@ -58,10 +67,11 @@ void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, b
 {
   this->x = x;
   // Activate neurons
-  a = *x * W.leftCols(I).transpose();
+  a = *x * W.transpose();
   if(bias)
-    a += W.rightCols(1).transpose();
+    a.rowwise() += b;
   // Compute output
+  this->y.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
@@ -72,11 +82,11 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
   // Weight derivatives
-  Wd.leftCols(I) = deltas.transpose() * *x;
+  Wd = deltas.transpose() * *x;
   if(bias)
-    Wd.rightCols(1) = deltas.transpose();
+    bd = deltas.transpose();
   // Prepare error signals for previous layer
-  e = deltas * W.leftCols(I);
+  e = deltas * W;
   eout = &e;
 }
 

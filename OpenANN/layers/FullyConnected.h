@@ -42,6 +42,8 @@ class FullyConnected : public Layer
   double maxSquaredWeightNorm;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
+  Eigen::VectorXd b;
+  Eigen::VectorXd bd;
   Eigen::MatrixXd* x;
   Eigen::MatrixXd a;
   Eigen::MatrixXd y;
