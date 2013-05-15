@@ -82,17 +82,11 @@ cmake -D CMAKE_BUILD_TYPE:String=Release ../..
 make
 \endcode
 
-\section TodoList Todo list
+- What can I do to contribute to OpenANN?
 
-  @todo layer: Radial basis functions layer (RBF)
-  @todo layer: Support vector machines (SVM, maybe include libsvm?)
-  @todo Unsupervised methods (RBM, DBN, SOM, autoencoders, ...)
-  @todo example: NORB data set
-  @todo example: Caltech-101/256 data set
-  @todo example: ImageNet
-  @todo implementation: GPU (matrix multiplication, convolution, activation functions, ...)
-  @todo port: Mac and Windows
-  @todo port: test other compilers
+There is a list of open issues at our github page:
+<a href="https://github.com/OpenANN/OpenANN/issues?state=open"
+target="_blank">issues</a>.
 
 */
 
