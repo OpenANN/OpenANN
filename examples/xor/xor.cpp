@@ -1,6 +1,6 @@
 #include <OpenANN/OpenANN>
-#include <Eigen/Dense>
 #include <OpenANN/io/Logger.h>
+#include <Eigen/Dense>
 #include <iostream>
 
 using namespace OpenANN;
@@ -54,11 +54,12 @@ using namespace OpenANN;
 int main()
 {
   // Create dataset
-  const int D = 2;
-  const int F = 1;
-  const int N = 4;
-  Eigen::MatrixXd x(N, D);
-  Eigen::MatrixXd t(N, F);
+  const int D = 2; // number of inputs
+  const int F = 1; // number of outputs
+  const int N = 4; // size of training set
+  Eigen::MatrixXd x(N, D); // inputs
+  Eigen::MatrixXd t(N, F); // outputs
+  // Each row represents an input
   x.row(0) << 0.0, 1.0; t.row(0) << 1.0;
   x.row(1) << 0.0, 0.0; t.row(1) << 0.0;
   x.row(2) << 1.0, 1.0; t.row(2) << 0.0;
@@ -66,17 +67,25 @@ int main()
 
   // Create network
   Net net;
+  // Add an input layer with D inputs
   net.inputLayer(D)
+  // Add a fully connected hidden layer with 2 nodes and logistic activation
+  // function
      .fullyConnectedLayer(2, LOGISTIC)
+  // Add an output layer with F outputs and logistic activation function
      .outputLayer(F, LOGISTIC)
+  // Add training set
      .trainingSet(x, t);
 
-  // Train network
+  // Set stopping conditions
   StoppingCriteria stop;
   stop.minimalValueDifferences = 1e-10;
+  // Train network, i.e. minimize sum of squared errors (SSE) with
+  // Levenberg-Marquardt optimization algorithm until the stopping criteria
+  // are satisfied.
   train(net, "LMA", SSE, stop);
 
-  // Use network
+  // Use network to predict labels of the training data
   for(int n = 0; n < N; n++)
   {
     Eigen::VectorXd y = net(x.row(n));
