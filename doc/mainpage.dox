@@ -32,8 +32,10 @@ COPYING.LESSER.
     subsampling layers and max-pooling layers
   - random projections for data and network compression and extreme learning
     machines
+  - restricted Boltzmann machines (RBM) for unsupervised pretraining
 - optimization algorithms
   - mini-batch stochastic gradient descent (MBSGD) for large networks
+  - conjugate gradient (CG) for large networks
   - Levenberg-Marquardt algorithm (LMA) for small networks
   - (increasing population size) covariance matrix adaption evolution
     strategies (IPOPCMAES) for reinforcement learning
