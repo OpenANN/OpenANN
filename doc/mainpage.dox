@@ -8,6 +8,7 @@ namespace OpenANN
 \b Table \b of \b contents
   - \ref License
   - \ref Features
+  - \ref Applications
   - \ref OtherLibs
   - \ref Howtos
 
@@ -42,6 +43,19 @@ COPYING.LESSER.
 - supported languages
   - C++
   - Python bindings
+
+\section Applications
+
+OpenANN has been used to
+
+- develop a new network compression technique based on compressed sensing that
+can be used for supervised as well as for reinforcement learning [1]
+- examine invariant pattern recognition approaches with constrained higher
+order nodes
+
+[1] A. Fabisch, Y. Kassahun, H. Wöhrle and F. Kirchner:
+Learning in compressed space,
+Neural Networks 42, pp. 83-93, ISSN 0893-6080, 2013.
 
 \section OtherLibs How does OpenANN relate to other neural network libraries?
 
