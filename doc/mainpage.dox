@@ -20,6 +20,9 @@ that want to implement new technologies and students that want to understand
 the tricks that are required to implement neural networks. It follows a
 minimal dependency policy, i.e. we rely on only a few libraries and tools.
 
+To start using OpenANN it might be helpful to take a look at
+\ref GettingStarted to see how it works.
+
 \section License
 
 The license is LGPL 3. You can find the license text in the files COPYING and
