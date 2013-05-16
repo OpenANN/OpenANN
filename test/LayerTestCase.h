@@ -5,9 +5,6 @@
 class LayerTestCase : public TestCase
 {
   virtual void run();
-  void fullyConnected();
-  void fullyConnectedGradient();
-  void fullyConnectedInputGradient();
   void compressed();
   void compressedGradient();
   void compressedInputGradient();
