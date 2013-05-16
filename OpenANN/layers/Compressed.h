@@ -21,7 +21,7 @@ namespace OpenANN {
  *
  * [1] A. Fabisch, Y. Kassahun, H. Wöhrle and F. Kirchner:
  * Learning in compressed space,
- * Neural Networks, accepted, to appear 2013.
+ * Neural Networks 42, pp. 83-93, ISSN 0893-6080, 2013.
  */
 class Compressed : public Layer
 {
