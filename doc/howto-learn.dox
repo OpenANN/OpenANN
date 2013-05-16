@@ -48,17 +48,20 @@ small.
 
 \section Optimization Optimization Algorithm
 
-We can choose between stochastic gradient descent (MBSGD) and
-Levenberg-Marquardt (LMA). LMA is usally better because it uses second-order
-information of the error function, i.e. it approximates the second derivative.
-But it has some drawbacks:
+We can choose between stochastic gradient descent (MBSGD), conjugate gradient
+(CG) and Levenberg-Marquardt (LMA). LMA is usally the best algorithm because
+it uses second-order information of the error function, i.e. it approximates
+the second derivative. But it has some drawbacks:
 
 - It works only for SSE.
 - It has time complexity \f$ O(L^3) \f$, where L is the number of weights.
 - It has space complexity \f$ O(LN) \f$, where N is the number of examples.
 
 Thus, it is neither applicable for large nets, nor for large datasets. In this
-case, we use MBSGD because it has only \f$ O(L) \f$ time and space complexity.
+case, we often use MBSGD because it has only \f$ O(L) \f$ time and space
+complexity. It usually works very well for large redundant datasets for
+classification. It might also be useful to take a look at conjugate gradient
+for datasets that are not redundant, e.g. regression problems.
 
 \section References
 

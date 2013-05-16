@@ -5,51 +5,48 @@ namespace OpenANN
 
 \mainpage
 
-\b Table \b of \b contents
-  - \ref License
-  - \ref Features
-  - \ref Applications
-  - \ref OtherLibs
-  - \ref Documentation
+This is the API documentation of %OpenANN.
 
-This is the API documentation of OpenANN.
-
-OpenANN is an open source library for artificial neural networks. It is open
+%OpenANN is an open source library for artificial neural networks. It is open
 for users that want to apply ANN to their problems, developers and researchers
 that want to implement new technologies and students that want to understand
 the tricks that are required to implement neural networks. It follows a
 minimal dependency policy, i.e. we rely on only a few libraries and tools.
 
-To start using OpenANN it might be helpful to take a look at
+To start using %OpenANN it might be helpful to take a look at
 \ref GettingStarted to see how it works.
 
-\section License
+\section Documentation
 
-The license is LGPL 3. You can find the license text in the files COPYING and
-COPYING.LESSER.
+  - \ref Install
+  - \ref GettingStarted
+  - \ref HowtoLearn
+  - \ref CreateDataSet
+  - \ref OtherLibs
+  - \ref Contributing
 
 \section Features
 
-- artificial neural networks
-  - multilayer neural network
-  - convolutional neural network (CNN) with convolutional layers,
+- Various types of artificial neural networks
+  - Multilayer neural network
+  - %Convolutional neural network (CNN) with convolutional layers,
     subsampling layers and max-pooling layers
-  - random projections for data and network compression and extreme learning
+  - Random projections for data and network compression and extreme learning
     machines
-  - restricted Boltzmann machines (RBM) for unsupervised pretraining
-- optimization algorithms
-  - mini-batch stochastic gradient descent (MBSGD) for large networks
-  - conjugate gradient (CG) for large networks
+  - Restricted Boltzmann machines (RBM) for unsupervised pretraining
+- Optimization algorithms
+  - Mini-batch stochastic gradient descent (MBSGD) for large networks
+  - Conjugate gradient (CG) for large networks
   - Levenberg-Marquardt algorithm (LMA) for small networks
-  - (increasing population size) covariance matrix adaption evolution
+  - (Increasing population size) covariance matrix adaption evolution
     strategies (IPOPCMAES) for reinforcement learning
-- supported languages
+- Supported languages
   - C++
   - Python bindings
 
 \section Applications
 
-OpenANN has been used to
+%OpenANN has been used to
 
 - develop a new network compression technique based on compressed sensing that
 can be used for supervised as well as for reinforcement learning [1]
@@ -60,14 +57,10 @@ order nodes
 Learning in compressed space,
 Neural Networks 42, pp. 83-93, ISSN 0893-6080, 2013.
 
-\section Documentation
+\section License
 
-  - \ref Install
-  - \ref GettingStarted
-  - \ref HowtoLearn
-  - \ref CreateDataSet
-  - \ref OtherLibs
-  - \ref Contributing
+The license is LGPL 3. You can find the license text in the files COPYING and
+COPYING.LESSER.
 
 */
 
