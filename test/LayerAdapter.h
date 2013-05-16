@@ -5,11 +5,6 @@
 #include <OpenANN/layers/Layer.h>
 #include <Eigen/Dense>
 
-namespace OpenANN
-{
-class DataSet;
-}
-
 class LayerAdapter : public OpenANN::Learner
 {
   OpenANN::Layer& layer;

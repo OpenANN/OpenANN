@@ -13,6 +13,7 @@
 #include "CompressionMatrixFactoryTestCase.h"
 #include "RandomTestCase.h"
 #include "LayerTestCase.h"
+#include "FullyConnectedTestCase.h"
 #include "NetTestCase.h"
 #include "PreprocessingTestCase.h"
 #include "IntrinsicPlasticityTestCase.h"
@@ -51,6 +52,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
   ts.addTestCase(new LayerTestCase);
+  ts.addTestCase(new FullyConnectedTestCase);
   ts.addTestCase(new NetTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new RBMTestCase);
