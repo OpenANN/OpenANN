@@ -8,8 +8,9 @@ namespace OpenANN
 \b Table \b of \b contents
   - \ref License
   - \ref Features
+  - \ref Applications
   - \ref OtherLibs
-  - \ref Howtos
+  - \ref Documentation
 
 This is the API documentation of OpenANN.
 
@@ -19,12 +20,15 @@ that want to implement new technologies and students that want to understand
 the tricks that are required to implement neural networks. It follows a
 minimal dependency policy, i.e. we rely on only a few libraries and tools.
 
+To start using OpenANN it might be helpful to take a look at
+\ref GettingStarted to see how it works.
+
 \section License
 
 The license is LGPL 3. You can find the license text in the files COPYING and
 COPYING.LESSER.
 
-\section Features List of Features
+\section Features
 
 - artificial neural networks
   - multilayer neural network
@@ -32,8 +36,10 @@ COPYING.LESSER.
     subsampling layers and max-pooling layers
   - random projections for data and network compression and extreme learning
     machines
+  - restricted Boltzmann machines (RBM) for unsupervised pretraining
 - optimization algorithms
   - mini-batch stochastic gradient descent (MBSGD) for large networks
+  - conjugate gradient (CG) for large networks
   - Levenberg-Marquardt algorithm (LMA) for small networks
   - (increasing population size) covariance matrix adaption evolution
     strategies (IPOPCMAES) for reinforcement learning
@@ -41,104 +47,26 @@ COPYING.LESSER.
   - C++
   - Python bindings
 
-\section OtherLibs How does OpenANN relate to other neural network libraries?
+\section Applications
 
-<table>
-<tr>
-<th></th>
-<th>Website</th>
-<th>Languages</th>
-<th>License</th>
-<th>Focus</th>
-</tr>
-<tr>
-<th>OpenANN</th>
-<td><a href="https://github.com/AlexanderFabisch/OpenANN" target=_blank>Link</a></td>
-<td>C++, Python</td>
-<td>GPL</td>
-<td>
-An easy to use, extend and understand C++ library for artificial neural
-networks with Python bindings.
-</td>
-</tr>
-<tr>
-<th>FANN</th>
-<td><a href="http://leenissen.dk/fann/" target=_blank>Link</a></td>
-<td>C, C++, Python, Ruby, C#, Java, Perl, Delphi, ... (almost everything)</td>
-<td>LGPL</td>
-<td>
-A well-known and widly used library for feedforward neural networks written in
-C with bindings for almost any languages. FANN has limited functionality but
-is easy to use and robust. It usually used for small datasets and
-applications.
-</td>
-</tr>
-<tr>
-<th>pylearn2</th>
-<td><a href="https://github.com/lisa-lab/pylearn2"
-target=_blank>Link</a></td>
-<td>Python</td>
-<td>BSD</td>
-<td>
-State of the art implementations of many deep learning algorithms that are
-build upon Theano in Python.
-</td>
-</tr>
-<tr>
-<th>PyBrain</th>
-<td><a href="http://pybrain.org/" target=_blank>Link</a></td>
-<td>Python</td>
-<td>BSD</td>
-<td>
-A huge python library that contains many types of neural networks for
-supervised, unsupervised and reinforcement learning, e.g. recurrent neural
-networks (long short-term memory, reservoir), restricted boltzman machines,
-self-organizing maps, ...
-</td>
-</tr>
-<tr>
-<th>cuda-convnet</th>
-<td><a href="http://code.google.com/p/cuda-convnet/" target=_blank>Link</a></td>
-<td>C++/CUDA, Python</td>
-<td>BSD</td>
-<td>
-State of the art CUDA library for large CNNs. It is really fast, has
-python bindings and has been used to achieve state of the art results on the
-ImageNet dataset. Many types of layers and activations functions are
-implemented and new types can be added easily. However, using it and can be
-very difficult.
-</td>
-</tr>
-<tr>
-<th>EBLearn</th>
-<td><a href="http://eblearn.cs.nyu.edu:21991/doku.php" target=_blank>Link</a></td>
-<td>C++</td>
-<td>BSD</td>
-<td>
-A state of the art library for energy based models and e.g.
-convolutional neural networks with a large infrastructure. It allows to use
-CUDA code.
-</td>
-</tr>
-<tr>
-<th>Torch7</th>
-<td><a href="http://www.torch.ch/" target=_blank>Link</a></td>
-<td>C++, Lua</td>
-<td>BSD</td>
-<td>
-Yet another state of the art library for neural networks that builds upon a
-very efficient tensor library that supports speed-up with SSE, OpenMP and
-CUDA. It has a Lua interface.
-</td>
-</tr>
-</table>
+OpenANN has been used to
 
-\section Howtos
+- develop a new network compression technique based on compressed sensing that
+can be used for supervised as well as for reinforcement learning [1]
+- examine invariant pattern recognition approaches with constrained higher
+order nodes
+
+[1] A. Fabisch, Y. Kassahun, H. Wöhrle and F. Kirchner:
+Learning in compressed space,
+Neural Networks 42, pp. 83-93, ISSN 0893-6080, 2013.
+
+\section Documentation
 
   - \ref Install
   - \ref GettingStarted
   - \ref HowtoLearn
   - \ref CreateDataSet
+  - \ref OtherLibs
   - \ref Contributing
 
 */
