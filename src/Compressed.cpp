@@ -86,7 +86,7 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   alphad = Wd.leftCols(I) * phi.block(0, 0, M, I).transpose();
   if(bias)
   {
-    Wd.rightCols(1) = deltas.transpose();
+    Wd.rightCols(1) = deltas.colwise().sum().transpose();
     alphad += Wd.rightCols(1) * phi.rightCols(1).transpose();
   }
   // Prepare error signals for previous layer

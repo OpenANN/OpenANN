@@ -85,7 +85,7 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   // Weight derivatives
   Wd = deltas.transpose() * *x;
   if(bias)
-    bd = deltas.transpose();
+    bd = deltas.colwise().sum().transpose();
   // Prepare error signals for previous layer
   e = deltas * W;
   eout = &e;
