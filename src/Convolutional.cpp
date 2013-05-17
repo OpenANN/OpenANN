@@ -97,35 +97,41 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
   OPENANN_CHECK_EQUALS(x->cols(), fmin * inRows * inRows);
   OPENANN_CHECK_EQUALS(this->y.cols(), fmout * outRows * outCols);
 
+  const int N = x->rows();
+  a.conservativeResize(N, Eigen::NoChange);
   a.fill(0.0);
-  for(int fmo = 0; fmo < fmout; fmo++)
+  for(int n = 0; n < N; n++)
   {
-    int fmInBase = 0;
-    for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
+    for(int fmo = 0; fmo < fmout; fmo++)
     {
-      int outputIdx = fmo * fmOutSize;
-      for(int row = 0; row < maxRow; row++)
+      int fmInBase = 0;
+      for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
       {
-        for(int col = 0; col < maxCol; col++, outputIdx++)
+        int outputIdx = fmo * fmOutSize;
+        for(int row = 0; row < maxRow; row++)
         {
-          int rowBase = fmInBase+row*inCols;
-          for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
+          for(int col = 0; col < maxCol; col++, outputIdx++)
           {
-            int inputIdx = rowBase+col;
-            for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+            int rowBase = fmInBase+row*inCols;
+            for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
             {
-              OPENANN_CHECK(outputIdx < a.cols());
-              OPENANN_CHECK(inputIdx < x->cols());
-              a(0, outputIdx) += W[fmo][fmi](kr, kc)*(*x)(0, inputIdx);
+              int inputIdx = rowBase+col;
+              for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+              {
+                OPENANN_CHECK(outputIdx < a.cols());
+                OPENANN_CHECK(inputIdx < x->cols());
+                a(n, outputIdx) += W[fmo][fmi](kr, kc)*(*x)(n, inputIdx);
+              }
             }
+            if(bias && fmi == 0)
+              a(n, outputIdx) += Wb(fmo, fmi);
           }
-          if(bias && fmi == 0)
-            a(0, outputIdx) += Wb(fmo, fmi);
         }
       }
     }
   }
 
+  this->y.conservativeResize(N, Eigen::NoChange);
   activationFunction(act, a, this->y);
 
   y = &(this->y);
@@ -133,37 +139,43 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
 
 void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = a.rows();
   // Derive activations
+  this->yd.conservativeResize(N, Eigen::NoChange);
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
 
+  e.conservativeResize(N, Eigen::NoChange);
   e.fill(0.0);
   Wbd.fill(0.0);
-  for(int fmo = 0; fmo < fmout; fmo++)
+  for(int n = 0; n < N; n++)
   {
-    int fmInBase = 0;
-    for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
+    for(int fmo = 0; fmo < fmout; fmo++)
     {
-      Wd[fmo][fmi].fill(0.0);
-      int outputIdx = fmo * fmOutSize;
-      for(int row = 0; row < maxRow; row++)
+      int fmInBase = 0;
+      for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
       {
-        for(int col = 0; col < maxCol; col++, outputIdx++)
+        Wd[fmo][fmi].fill(0.0);
+        int outputIdx = fmo * fmOutSize;
+        for(int row = 0; row < maxRow; row++)
         {
-          int rowBase = fmInBase+row*inCols;
-          for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
+          for(int col = 0; col < maxCol; col++, outputIdx++)
           {
-            int inputIdx = rowBase+col;
-            for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+            int rowBase = fmInBase+row*inCols;
+            for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
             {
-              OPENANN_CHECK(outputIdx < deltas.cols());
-              OPENANN_CHECK(inputIdx < x->cols());
-              e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(0, outputIdx);
-              Wd[fmo][fmi](kr, kc) += deltas(0, outputIdx) * (*x)(0, inputIdx);
+              int inputIdx = rowBase+col;
+              for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+              {
+                OPENANN_CHECK(outputIdx < deltas.cols());
+                OPENANN_CHECK(inputIdx < x->cols());
+                e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(n, outputIdx);
+                Wd[fmo][fmi](kr, kc) += deltas(n, outputIdx) * (*x)(n, inputIdx);
+              }
             }
+            if(bias && fmi == 0)
+              Wbd(fmo, fmi) += deltas(n, outputIdx);
           }
-          if(bias && fmi == 0)
-            Wbd(fmo, fmi) += deltas(0, outputIdx);
         }
       }
     }
