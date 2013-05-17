@@ -2,6 +2,7 @@ class Constraint:
   NONE = 0
   DISTANCE = 1
   SLOPE = 2
+  TRIANGLE = 3
 
 cdef class Layer:
   cdef openann.Layer* construct(self, openann.OutputInfo& info):
@@ -17,6 +18,7 @@ cdef class SigmaPiLayer(Layer):
   cdef object nodes
   cdef openann.Constraint* distance
   cdef openann.Constraint* slope
+  cdef openann.Constraint* triangle
 
   def __cinit__(self, width, height, activation, std_dev =0.05, bias=False):
     self.std_dev = std_dev
@@ -28,6 +30,11 @@ cdef class SigmaPiLayer(Layer):
     self.height = height
     self.distance = new openann.DistanceConstraint(width, height)
     self.slope = new openann.SlopeConstraint(width, height)
+    self.triangle = new openann.TriangleConstraint(width, height)
+
+  def set_triangle_resolution(angle_resolution):
+      del self.triangle
+      self.triangle = new openann.TriangleConstraint(self.width, self.height, angle_resolution)
 
   def __dealloc__(self):
     del self.distance

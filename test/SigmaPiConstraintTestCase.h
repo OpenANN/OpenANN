@@ -12,6 +12,7 @@ public:
 
   void distance();
   void slope();
+  void triangle();
 
   Eigen::VectorXd T1;
   Eigen::VectorXd T2;
