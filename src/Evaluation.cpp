@@ -109,7 +109,7 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     training_splits.erase(training_splits.begin() + i);
 
     // generate validation and training set
-    DataSetView& validation = splits.at(i);
+    DataSetView& test = splits.at(i);
     DataSetView training(dataSet);
     merge(training, training_splits);
   
@@ -121,18 +121,22 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     OpenANN::StoppingInterrupt interrupt;
     int iteration = 0;
 
+    int training_hits = 0;
+    int test_hits = 0;
+
     while(opt.step() && !interrupt.isSignaled()) {
       std::stringstream ss;
+      
+      int training_hits = classificationHits(learner, training);
+      int test_hits = classificationHits(learner, test);
 
       ss << "iteration " << ++iteration;
       ss << ", training sse = " << FloatingPointFormatter(sse(learner, training), 4);
-      ss << ", test sse = " << FloatingPointFormatter(sse(learner, validation), 4);
+      ss << ", training accuracy = " << FloatingPointFormatter((100.0 * training_hits) / training.samples(), 2) << "%";
+      ss << ", test accuracy = " << FloatingPointFormatter((100.0 * test_hits) / test.samples(), 2) << "%";
 
       OPENANN_DEBUG << ss.str();
     }
-
-    int training_hits = classificationHits(learner, training);
-    int validation_hits = classificationHits(learner, validation);
 
     OPENANN_INFO
       << "Fold [" << i + 1 << "] "
@@ -140,8 +144,8 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
       << OpenANN::FloatingPointFormatter(100.0 * ((double) training_hits / training.samples()), 2) 
       << "% (" << training_hits << "/" << training.samples() << "), "
       << "test result = " 
-      << OpenANN::FloatingPointFormatter(100.0 * ((double) validation_hits / validation.samples()), 2) 
-      << "% (" << validation_hits << "/" << validation.samples() << ")  [classification]";
+      << OpenANN::FloatingPointFormatter(100.0 * ((double) test_hits / test.samples()), 2) 
+      << "% (" << test_hits << "/" << test.samples() << ")  [classification]";
   }
 }
 
