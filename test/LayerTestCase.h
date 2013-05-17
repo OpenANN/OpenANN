@@ -5,12 +5,6 @@
 class LayerTestCase : public TestCase
 {
   virtual void run();
-  void compressed();
-  void compressedGradient();
-  void compressedInputGradient();
-  void convolutional();
-  void convolutionalGradient();
-  void convolutionalInputGradient();
   void subsampling();
   void subsamplingGradient();
   void subsamplingInputGradient();

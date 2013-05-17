@@ -15,6 +15,7 @@
 #include "LayerTestCase.h"
 #include "FullyConnectedTestCase.h"
 #include "CompressedTestCase.h"
+#include "ConvolutionalTestCase.h"
 #include "NetTestCase.h"
 #include "PreprocessingTestCase.h"
 #include "IntrinsicPlasticityTestCase.h"
@@ -57,6 +58,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new LayerTestCase);
   ts.addTestCase(new FullyConnectedTestCase);
   ts.addTestCase(new CompressedTestCase);
+  ts.addTestCase(new ConvolutionalTestCase);
 
   ts.addTestCase(new NetTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
