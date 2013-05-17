@@ -127,8 +127,8 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     while(opt.step() && !interrupt.isSignaled()) {
       std::stringstream ss;
       
-      int training_hits = classificationHits(learner, training);
-      int test_hits = classificationHits(learner, test);
+      training_hits = classificationHits(learner, training);
+      test_hits = classificationHits(learner, test);
 
       ss << "iteration " << ++iteration;
       ss << ", training sse = " << FloatingPointFormatter(sse(learner, training), 4);
