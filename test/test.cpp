@@ -14,6 +14,7 @@
 #include "RandomTestCase.h"
 #include "LayerTestCase.h"
 #include "FullyConnectedTestCase.h"
+#include "CompressedTestCase.h"
 #include "NetTestCase.h"
 #include "PreprocessingTestCase.h"
 #include "IntrinsicPlasticityTestCase.h"
@@ -47,19 +48,25 @@ int main(int argc, char** argv)
   rng.seed(4);
 
   TestSuite ts("OpenANN");
+
   ts.addTestCase(new RandomTestCase);
   ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
+
   ts.addTestCase(new LayerTestCase);
   ts.addTestCase(new FullyConnectedTestCase);
+  ts.addTestCase(new CompressedTestCase);
+
   ts.addTestCase(new NetTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new RBMTestCase);
+
   ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new MBSGDTestCase);
   ts.addTestCase(new LMATestCase);
   ts.addTestCase(new CGTestCase);
+
   ts.addTestCase(new DataSetTestCase);
   ts.addTestCase(new IODataSetTestCase);
   ts.addTestCase(new EvaluationTestCase);

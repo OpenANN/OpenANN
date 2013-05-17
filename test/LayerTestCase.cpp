@@ -2,7 +2,6 @@
 #include "FiniteDifferences.h"
 #include "LayerAdapter.h"
 #include <OpenANN/OpenANN>
-#include <OpenANN/layers/Compressed.h>
 #include <OpenANN/layers/Convolutional.h>
 #include <OpenANN/layers/Subsampling.h>
 #include <OpenANN/layers/MaxPooling.h>
@@ -15,9 +14,6 @@ using namespace OpenANN;
 
 void LayerTestCase::run()
 {
-  RUN(LayerTestCase, compressed);
-  RUN(LayerTestCase, compressedGradient);
-  RUN(LayerTestCase, compressedInputGradient);
   RUN(LayerTestCase, convolutional);
   RUN(LayerTestCase, convolutionalGradient);
   RUN(LayerTestCase, convolutionalInputGradient);
@@ -32,64 +28,6 @@ void LayerTestCase::run()
   RUN(LayerTestCase, sigmaPiNoConstraintGradient);
   RUN(LayerTestCase, sigmaPiWithConstraintGradient);
   RUN(LayerTestCase, multilayerNetwork);
-}
-
-void LayerTestCase::compressed()
-{
-  OutputInfo info;
-  info.dimensions.push_back(3);
-  Compressed layer(info, 2, 3, false, TANH, "average", 0.05);
-
-  std::vector<double*> parameterPointers;
-  std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
-                                      parameterDerivativePointers);
-  ASSERT_EQUALS(info2.dimensions.size(), 1);
-  ASSERT_EQUALS(info2.outputs(), 2);
-
-  for(std::vector<double*>::iterator it = parameterPointers.begin();
-      it != parameterPointers.end(); it++)
-    **it = 1.0;
-  layer.updatedParameters();
-  Eigen::MatrixXd x(1, 3);
-  x << 0.5, 1.0, 2.0;
-  Eigen::MatrixXd e(1, 3);
-  e << 1.0, 2.0, 0.0;
-
-  Eigen::MatrixXd* y;
-  layer.forwardPropagate(&x, y, false);
-  ASSERT(y != 0);
-  ASSERT_EQUALS_DELTA((*y)(0), tanh(3.5), 1e-10);
-  ASSERT_EQUALS_DELTA((*y)(1), tanh(3.5), 1e-10);
-}
-
-void LayerTestCase::compressedGradient()
-{
-  OutputInfo info;
-  info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
-  LayerAdapter opt(layer, info);
-
-  Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
-  for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
-}
-
-void LayerTestCase::compressedInputGradient()
-{
-  OutputInfo info;
-  info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
-  LayerAdapter opt(layer, info);
-
-  Eigen::MatrixXd x = Eigen::MatrixXd::Random(1, 3);
-  Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2);
-  opt.trainingSet(x, y);
-  Eigen::VectorXd gradient = opt.inputGradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x.transpose(), y.transpose(), opt);
-  for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
 
 void LayerTestCase::convolutional()
