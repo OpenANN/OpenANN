@@ -19,15 +19,13 @@ void CompressedTestCase::compressed()
   info.dimensions.push_back(3);
   Compressed layer(info, 2, 3, false, TANH, "average", 0.05);
 
-  std::vector<double*> parameterPointers;
-  std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
-                                      parameterDerivativePointers);
+  std::vector<double*> pp;
+  std::vector<double*> pdp;
+  OutputInfo info2 = layer.initialize(pp, pdp);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = parameterPointers.begin();
-      it != parameterPointers.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
     **it = 1.0;
   layer.updatedParameters();
   Eigen::MatrixXd x(1, 3);
@@ -77,15 +75,13 @@ void CompressedTestCase::parallelCompressed()
   info.dimensions.push_back(3);
   Compressed layer(info, 2, 3, false, TANH, "average", 0.05);
 
-  std::vector<double*> parameterPointers;
-  std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
-                                      parameterDerivativePointers);
+  std::vector<double*> pp;
+  std::vector<double*> pdp;
+  OutputInfo info2 = layer.initialize(pp, pdp);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = parameterPointers.begin();
-      it != parameterPointers.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
     **it = 1.0;
   layer.updatedParameters();
   Eigen::MatrixXd x(2, 3);
@@ -102,4 +98,11 @@ void CompressedTestCase::parallelCompressed()
   ASSERT_EQUALS(y->cols(), 2);
   ASSERT_EQUALS_DELTA((*y)(0, 0), tanh(3.5), 1e-10);
   ASSERT_EQUALS_DELTA((*y)(0, 1), tanh(3.5), 1e-10);
+
+  Eigen::MatrixXd* e2;
+  layer.backpropagate(&e, e2);
+  Eigen::VectorXd Wd(8);
+  int i = 0;
+  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); it++)
+    Wd(i++) = **it;
 }
