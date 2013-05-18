@@ -32,6 +32,15 @@ Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
 
 Eigen::VectorXd parameterGradient(int n, Optimizable& opt, const double eps)
 {
+  std::vector<int> indices;
+  indices.push_back(n);
+  return parameterGradient(indices.begin(), indices.end(), opt, eps);
+}
+
+Eigen::VectorXd parameterGradient(std::vector<int>::const_iterator start,
+                                  std::vector<int>::const_iterator end,
+                                  Optimizable& opt, const double eps)
+{
   Eigen::VectorXd gradient(opt.dimension());
   gradient.fill(0.0);
   Eigen::VectorXd params = opt.currentParameters();
@@ -40,17 +49,21 @@ Eigen::VectorXd parameterGradient(int n, Optimizable& opt, const double eps)
   {
     modifiedParams(i) += eps;
     opt.setParameters(modifiedParams);
-    double errorPlusEps = opt.error(n);
+    double errorPlusEps = 0.0;
+    for(std::vector<int>::const_iterator it = start; it != end; it++)
+      errorPlusEps += opt.error(*it);
     modifiedParams = params;
 
     modifiedParams(i) -= eps;
     opt.setParameters(modifiedParams);
-    double errorMinusEps = opt.error(n);
+    double errorMinusEps = 0.0;
+    for(std::vector<int>::const_iterator it = start; it != end; it++)
+      errorMinusEps += opt.error(*it);
     modifiedParams = params;
 
-    gradient(i) = (errorPlusEps - errorMinusEps) / (2.0 * eps);
+    gradient(i) += (errorPlusEps - errorMinusEps) / (2.0 * eps);
+    opt.setParameters(params);
   }
-  opt.setParameters(params);
   return gradient;
 }
 

@@ -2,6 +2,7 @@
 
 #include <OpenANN/Learner.h>
 #include <Eigen/Dense>
+#include <vector>
 
 namespace OpenANN {
 
@@ -50,6 +51,20 @@ Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
  */
 Eigen::VectorXd parameterGradient(int n, Optimizable& opt,
                                   const double eps = 1e-2);
+/**
+ * Approximate the derivatives of the error function of an Optimizable with
+ * respect to the parameters numerically.
+ *
+ * Note that a training set is required.
+ *
+ * @param start iterator over mini-batch indices
+ * @param end iterator over mini-batch indices
+ * @param opt the optimizable
+ * @param eps determines the precision
+ */
+Eigen::VectorXd parameterGradient(std::vector<int>::const_iterator start,
+                                  std::vector<int>::const_iterator end,
+                                  Optimizable& opt, const double eps = 1e-2);
 }
 
 }
