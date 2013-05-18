@@ -44,6 +44,8 @@ void MaxPooling::initializeParameters()
 void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                   bool dropout)
 {
+  const int N = x->rows();
+  this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
 
   OPENANN_CHECK(x->cols() == fm * inRows * inRows);
@@ -51,21 +53,24 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 
   int outputIdx = 0;
   int inputIdx = 0;
-  for(int fmo = 0; fmo < fm; fmo++)
+  for(int n = 0; n < N; n++)
   {
-    for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+    for(int fmo = 0; fmo < fm; fmo++)
     {
-      int rowBase = fmo*fmInSize + ri*inCols;
-      for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
-        double m = -std::numeric_limits<double>::max();
-        for(int kr = 0; kr < kernelRows; kr++)
+        int rowBase = fmo*fmInSize + ri*inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
         {
-          inputIdx = rowBase + ci;
-          for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            m = std::max(m, (*x)(0, inputIdx));
+          double m = -std::numeric_limits<double>::max();
+          for(int kr = 0; kr < kernelRows; kr++)
+          {
+            inputIdx = rowBase + ci;
+            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+              m = std::max(m, (*x)(n, inputIdx));
+          }
+          this->y(n, outputIdx) = m;
         }
-        this->y(0, outputIdx) = m;
       }
     }
   }
@@ -75,31 +80,36 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 
 void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = y.rows();
+  e.conservativeResize(N, Eigen::NoChange);
   deltas = (*ein);
 
   e.fill(0.0);
   int outputIdx = 0;
   int inputIdx = 0;
-  for(int fmo = 0; fmo < fm; fmo++)
+  for(int n = 0; n < N; n++)
   {
-    for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+    for(int fmo = 0; fmo < fm; fmo++)
     {
-      int rowBase = fmo*fmInSize + ri*inCols;
-      for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
-        double m = -std::numeric_limits<double>::max();
-        int idx = -1;
-        for(int kr = 0; kr < kernelRows; kr++)
+        int rowBase = fmo*fmInSize + ri*inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
         {
-          inputIdx = rowBase + ci;
-          for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            if((*x)(0, inputIdx) > m)
-            {
-              m = (*x)(0, inputIdx);
-              idx = inputIdx;
-            }
+          double m = -std::numeric_limits<double>::max();
+          int idx = -1;
+          for(int kr = 0; kr < kernelRows; kr++)
+          {
+            inputIdx = rowBase + ci;
+            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+              if((*x)(n, inputIdx) > m)
+              {
+                m = (*x)(n, inputIdx);
+                idx = inputIdx;
+              }
+          }
+          e(n, idx) = deltas(n, outputIdx);
         }
-        e(0, idx) = deltas(0, outputIdx);
       }
     }
   }

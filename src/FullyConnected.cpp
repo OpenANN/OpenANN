@@ -65,21 +65,23 @@ void FullyConnected::updatedParameters()
 
 void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+  const int N = x->rows();
+  this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
   // Activate neurons
   a = *x * W.transpose();
   if(bias)
     a.rowwise() += b;
   // Compute output
-  this->y.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
 
 void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = a.rows();
+  yd.conservativeResize(N, Eigen::NoChange);
   // Derive activations
-  this->yd.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
   // Weight derivatives

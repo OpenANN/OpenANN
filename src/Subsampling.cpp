@@ -89,6 +89,9 @@ void Subsampling::initializeParameters()
 
 void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+  const int N = x->rows();
+  this->a.conservativeResize(N, Eigen::NoChange);
+  this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
 
   OPENANN_CHECK_EQUALS(x->cols(), fm * inRows * inCols);
@@ -97,21 +100,24 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
   a.fill(0.0);
   int outputIdx = 0;
   int inputIdx = 0;
-  for(int fmo = 0; fmo < fm; fmo++)
+  for(int n = 0; n < N; n++)
   {
-    for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+    for(int fmo = 0; fmo < fm; fmo++)
     {
-      int rowBase = fmo*fmInSize + ri*inCols;
-      for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
-        for(int kr = 0; kr < kernelRows; kr++)
+        int rowBase = fmo*fmInSize + ri*inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
         {
-          inputIdx = rowBase + ci;
-          for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            a(0, outputIdx) += (*x)(0, inputIdx) * W[fmo](ro, co);
+          for(int kr = 0; kr < kernelRows; kr++)
+          {
+            inputIdx = rowBase + ci;
+            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+              a(n, outputIdx) += (*x)(n, inputIdx) * W[fmo](ro, co);
+          }
+          if(bias)
+            a(n, outputIdx) += Wb[fmo](ro, co);
         }
-        if(bias)
-          a(0, outputIdx) += Wb[fmo](ro, co);
       }
     }
   }
@@ -123,6 +129,9 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
 
 void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = a.rows();
+  yd.conservativeResize(N, Eigen::NoChange);
+  e.conservativeResize(N, Eigen::NoChange);
   // Derive activations
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
@@ -130,27 +139,30 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   e.fill(0.0);
   int outputIdx = 0;
   int inputIdx = 0;
-  for(int fmo = 0; fmo < fm; fmo++)
+  for(int n = 0; n < N; n++)
   {
-    Wd[fmo].fill(0.0);
-    if(bias)
-      Wbd[fmo].fill(0.0);
-    for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+    for(int fmo = 0; fmo < fm; fmo++)
     {
-      int rowBase = fmo*fmInSize + ri*inCols;
-      for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+      Wd[fmo].fill(0.0);
+      if(bias)
+        Wbd[fmo].fill(0.0);
+      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
-        for(int kr = 0; kr < kernelRows; kr++)
+        int rowBase = fmo*fmInSize + ri*inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
         {
-          inputIdx = rowBase + ci;
-          for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+          for(int kr = 0; kr < kernelRows; kr++)
           {
-            e(inputIdx) += W[fmo](ro, co)*deltas(outputIdx);
-            Wd[fmo](ro, co) += deltas(outputIdx) * (*x)(inputIdx);
+            inputIdx = rowBase + ci;
+            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+            {
+              e(n, inputIdx) += W[fmo](ro, co)*deltas(n, outputIdx);
+              Wd[fmo](ro, co) += deltas(n, outputIdx) * (*x)(n, inputIdx);
+            }
           }
+          if(bias)
+            Wbd[fmo](ro, co) += deltas(n, outputIdx);
         }
-        if(bias)
-          Wbd[fmo](ro, co) += deltas(outputIdx);
       }
     }
   }

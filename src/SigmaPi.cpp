@@ -62,6 +62,9 @@ void SigmaPi::updatedParameters()
 
 void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+    const int N = x->rows();
+    if(N > 1)
+      throw new OpenANNException("SigmaPi layer does not support batches.");
     int J = nodes.size();
     this->x.leftCols(info.outputs()) = *x;
 
