@@ -21,7 +21,9 @@ To start using %OpenANN it might be helpful to take a look at
   - \ref Install
   - \ref GettingStarted
   - \ref HowtoLearn
+  - \ref Architecture
   - \ref CreateDataSet
+  - \ref Benchmarks
   - \ref OtherLibs
   - \ref Contributing
 

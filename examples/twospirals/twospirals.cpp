@@ -23,7 +23,7 @@
  *
  * \image html TwoSpirals-DataSet.png
  *
- * \section Architecture Network Architecture
+ * \section NetworkArchitecture Network Architecture
  *
  * It is possible to solve this problem with one or two hidden layers. But
  * architectures with two hidden layers need less connections and can learn
