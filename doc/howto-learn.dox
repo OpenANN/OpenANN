@@ -8,7 +8,7 @@ This is a short summary of best practices for applying multilayer neural
 networks to arbitrary supervised learning problems. We will only consider
 \b fully \b connected \b layers.
 
-\section Architecture Network Architecture
+\section NetworkArchitecture Network Architecture
 
 The neural network should be as simple as possible to avoid overfitting.
 Start with a linear network without hidden layers and only add hidden layers
