@@ -1,6 +1,7 @@
 #include "NetTestCase.h"
 #include "FiniteDifferences.h"
 #include <OpenANN/Net.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
 
 void NetTestCase::run()
@@ -9,6 +10,7 @@ void NetTestCase::run()
   RUN(NetTestCase, error);
   RUN(NetTestCase, gradientSSE);
   RUN(NetTestCase, gradientCE);
+  RUN(NetTestCase, multilayerNetwork);
   RUN(NetTestCase, predictMinibatch);
 }
 
@@ -134,6 +136,29 @@ void NetTestCase::gradientCE()
   net.errorGradient(0, error, g0);
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga0(k), g0(k), 1e-2);
+}
+
+void NetTestCase::multilayerNetwork()
+{
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 1*6*6);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 3);
+  OpenANN::DirectStorageDataSet ds(&X, &Y);
+
+  OpenANN::Net net;
+  net.inputLayer(1, 6, 6);
+  net.convolutionalLayer(4, 3, 3, OpenANN::TANH, 0.5);
+  net.localReponseNormalizationLayer(2.0, 3, 0.01, 0.75);
+  net.subsamplingLayer(2, 2, OpenANN::TANH, 0.5);
+  net.fullyConnectedLayer(10, OpenANN::TANH, 0.5);
+  net.extremeLayer(10, OpenANN::TANH, 0.05);
+  net.outputLayer(3, OpenANN::LINEAR, 0.5);
+  net.trainingSet(ds);
+
+  Eigen::VectorXd g = net.gradient();
+  Eigen::VectorXd e = OpenANN::FiniteDifferences::parameterGradient(0, net);
+  double delta = std::max<double>(1e-2, 1e-5*e.norm());
+  for(int j = 0; j < net.dimension(); j++)
+    ASSERT_EQUALS_DELTA(g(j), e(j), delta);
 }
 
 void NetTestCase::predictMinibatch()

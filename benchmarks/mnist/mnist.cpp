@@ -41,12 +41,12 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;                                               // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY)                 //   1 x 28 x 28
-     .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)      //  20 x 24 x 24
+     .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  20 x 24 x 24
      .maxPoolingLayer(2, 2)                                       //  20 x 12 x 12
-     .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)      //  20 x  8 x  8
+     .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)      //  20 x  8 x  8
      .maxPoolingLayer(2, 2)                                       //  20 x  4 x  4
-     .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)          // 150
-     .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05)          // 100
+     .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)          // 150
+     .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)          // 100
      .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
      .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,

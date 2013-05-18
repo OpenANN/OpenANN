@@ -1,0 +1,74 @@
+#include "SubsamplingTestCase.h"
+#include "FiniteDifferences.h"
+#include "LayerAdapter.h"
+#include <OpenANN/layers/Subsampling.h>
+
+using namespace OpenANN;
+
+void SubsamplingTestCase::run()
+{
+  RUN(SubsamplingTestCase, subsampling);
+  RUN(SubsamplingTestCase, subsamplingGradient);
+  RUN(SubsamplingTestCase, subsamplingInputGradient);
+}
+
+void SubsamplingTestCase::subsampling()
+{
+  OutputInfo info;
+  info.dimensions.push_back(2);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  Subsampling layer(info, 2, 2, false, TANH, 0.05);
+  std::vector<double*> parameterPointers;
+  std::vector<double*> parameterDerivativePointers;
+  OutputInfo info2 = layer.initialize(parameterPointers,
+                                      parameterDerivativePointers);
+  ASSERT_EQUALS(info2.dimensions.size(), 3);
+  ASSERT_EQUALS(info2.dimensions[0], 2);
+  ASSERT_EQUALS(info2.dimensions[1], 3);
+  ASSERT_EQUALS(info2.dimensions[2], 3);
+
+  for(std::vector<double*>::iterator it = parameterPointers.begin();
+      it != parameterPointers.end(); it++)
+    **it = 0.1;
+
+  Eigen::MatrixXd x(1, info.outputs());
+  x.fill(1.0);
+  Eigen::MatrixXd* y;
+  layer.forwardPropagate(&x, y, false);
+  for(int i = 0; i < 18; i++)
+    ASSERT_EQUALS_DELTA((*y)(i), tanh(0.4), 1e-5);
+}
+
+void SubsamplingTestCase::subsamplingGradient()
+{
+  OutputInfo info;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  Subsampling layer(info, 3, 3, true, LINEAR, 0.05);
+  LayerAdapter opt(layer, info);
+
+  Eigen::VectorXd gradient = opt.gradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void SubsamplingTestCase::subsamplingInputGradient()
+{
+  OutputInfo info;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(6);
+  info.dimensions.push_back(6);
+  Subsampling layer(info, 3, 3, true, LINEAR, 0.05);
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(1, 3*6*6);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 3*2*2);
+  opt.trainingSet(x, y);
+  Eigen::VectorXd gradient = opt.inputGradient();
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x.transpose(), y.transpose(), opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
