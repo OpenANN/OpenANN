@@ -50,9 +50,10 @@ void SubsamplingTestCase::subsamplingGradient()
   LayerAdapter opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
+      0, opt, 1e-5);
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
 
 void SubsamplingTestCase::subsamplingInputGradient()
@@ -69,7 +70,7 @@ void SubsamplingTestCase::subsamplingInputGradient()
   opt.trainingSet(x, y);
   Eigen::VectorXd gradient = opt.inputGradient();
   Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(
-      x.transpose(), y.transpose(), opt);
+      x.transpose(), y.transpose(), opt, 1e-5);
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }

@@ -19,17 +19,15 @@ void ConvolutionalTestCase::convolutional()
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
   Convolutional layer(info, 2, 3, 3, false, TANH, 0.05);
-  std::vector<double*> parameterPointers;
-  std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
-                                      parameterDerivativePointers);
+  std::vector<double*> pp;
+  std::vector<double*> pdp;
+  OutputInfo info2 = layer.initialize(pp, pdp);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 2);
   ASSERT_EQUALS(info2.dimensions[2], 2);
 
-  for(std::vector<double*>::iterator it = parameterPointers.begin();
-      it != parameterPointers.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
     **it = 0.01;
   layer.updatedParameters();
 
@@ -57,9 +55,10 @@ void ConvolutionalTestCase::convolutionalGradient()
   LayerAdapter opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
+      0, opt, 1e-5);
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-2);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
 
 void ConvolutionalTestCase::convolutionalInputGradient()
@@ -75,7 +74,8 @@ void ConvolutionalTestCase::convolutionalInputGradient()
   Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2*3*3);
   opt.trainingSet(x, y);
   Eigen::VectorXd gradient = opt.inputGradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x.transpose(), y.transpose(), opt);
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(
+      x.transpose(), y.transpose(), opt, 1e-5);
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }

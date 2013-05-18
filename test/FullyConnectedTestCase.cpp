@@ -77,9 +77,10 @@ void FullyConnectedTestCase::inputGradient()
   Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2);
   opt.trainingSet(x, y);
   Eigen::VectorXd gradient = opt.inputGradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x.transpose(), y.transpose(), opt);
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(
+      x.transpose(), y.transpose(), opt, 1e-5);
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
 
 void FullyConnectedTestCase::parallelForward()
