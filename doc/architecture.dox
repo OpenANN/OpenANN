@@ -1,0 +1,35 @@
+namespace OpenANN
+{
+
+/**
+
+\page Architecture
+
+The architecture of %OpenANN is very general because it combines different
+learning approaches. These are
+
+- supervised learning
+- unsupervised learning
+- reinforcement learning
+- evolutionary optimization
+
+The most general concepts in the library are Optimizer and Optimizable.
+Optimizer is the common base class for optimization algorithms like IPOPCMAES,
+CG, LMA, MBSGD. An Optimizable provides at least an error function that has to
+be optimized during the learning process and could additionally provide the
+first and second derivative of the error function with respect to the weights
+to speed up the learning process. Most optimizers even require the first
+derivative. In supervised or unsupervised learning, we usually want to
+optimize a Learner. Each Learner combines a model with a DataSet. The dataset
+is called training set in this context. For each Learner we can compute an
+error and a gradient on the training set and it derives from Optimizable.
+However, we cannot only optimize learners with optimization algorithms but we
+can also optimize e.g. reinforcement learning agents that implement the
+Optimizable interface. The most important Learner in the library is the Net.
+It represents a feedforward multilayer neural network that can be trained
+supervised. Another example is the RBM, which is usually trained unsupervised
+and can be used as a layer of a Net.
+
+*/
+
+}
