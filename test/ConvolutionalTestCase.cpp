@@ -51,8 +51,8 @@ void ConvolutionalTestCase::convolutionalGradient()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  info.dimensions.push_back(15);
-  info.dimensions.push_back(15);
+  info.dimensions.push_back(5);
+  info.dimensions.push_back(5);
   Convolutional layer(info, 2, 3, 3, true, LINEAR, 0.05);
   LayerAdapter opt(layer, info);
 
@@ -66,13 +66,13 @@ void ConvolutionalTestCase::convolutionalInputGradient()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  info.dimensions.push_back(15);
-  info.dimensions.push_back(15);
+  info.dimensions.push_back(5);
+  info.dimensions.push_back(5);
   Convolutional layer(info, 2, 3, 3, true, LINEAR, 0.05);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd x = Eigen::MatrixXd::Random(1, 3*15*15);
-  Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2*13*13);
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(1, 3*5*5);
+  Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2*3*3);
   opt.trainingSet(x, y);
   Eigen::VectorXd gradient = opt.inputGradient();
   Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(x.transpose(), y.transpose(), opt);
