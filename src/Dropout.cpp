@@ -17,14 +17,19 @@ OutputInfo Dropout::initialize(std::vector<double*>& parameterPointers,
 
 void Dropout::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+  const int N = x->rows();
+  dropoutMask.conservativeResize(N, Eigen::NoChange);
   dropoutMask.fill(1.0);
   if(dropout)
   {
     // Sample dropout mask
     RandomNumberGenerator rng;
-    for(int i = 0; i < I; i++)
-      if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
-        dropoutMask(0, i) = 0.0;
+    for(int n = 0; n < N; n++)
+    {
+      for(int i = 0; i < I; i++)
+        if(rng.generate<double>(0.0, 1.0) < dropoutProbability)
+          dropoutMask(n, i) = 0.0;
+    }
   }
   else if(dropoutProbability > 0.0)
   {

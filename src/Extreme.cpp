@@ -36,6 +36,7 @@ void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
   if(bias)
     a += W.rightCols(1).transpose();
   // Compute output
+  this->y.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
@@ -43,6 +44,7 @@ void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
 void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
+  this->yd.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
   // Prepare error signals for previous layer
