@@ -8,7 +8,7 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
                        double stdDev)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
-    W(J, I+bias), Wd(J, I+bias), b(J), bd(J), phi(M, I+1), alpha(J, M), alphad(J, M),
+    W(J, I+bias), Wd(J, I+bias), b(J), phi(M, I+1), alpha(J, M), alphad(J, M),
     x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I+bias)
 {
   CompressionMatrixFactory::Transformation transformation =
@@ -60,25 +60,28 @@ void Compressed::initializeParameters()
 void Compressed::updatedParameters()
 {
   W = alpha * phi.block(0, 0, M, I+bias);
+  b = W.rightCols(1);
 }
 
 void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+  const int N = x->rows();
+  this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
   // Activate neurons
   a = *x * W.leftCols(I).transpose();
   if(bias)
-    a += W.rightCols(1).transpose();
+    a.rowwise() += b;
   // Compute output
-  this->y.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
 
 void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = a.rows();
+  yd.conservativeResize(N, Eigen::NoChange);
   // Derive activations
-  this->yd.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
   // Weight derivatives

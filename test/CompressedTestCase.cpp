@@ -47,9 +47,15 @@ void CompressedTestCase::compressedGradient()
   Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerAdapter opt(layer, info);
 
-  Eigen::VectorXd gradient = opt.gradient();
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
   Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
-      0, opt, 1e-5);
+      indices.begin(), indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
@@ -61,8 +67,8 @@ void CompressedTestCase::compressedInputGradient()
   Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3);
-  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
   Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(
