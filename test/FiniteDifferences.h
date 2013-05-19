@@ -37,7 +37,7 @@ namespace FiniteDifferences
  */
 Eigen::MatrixXd inputGradient(const Eigen::MatrixXd& X,
                               const Eigen::MatrixXd& Y, Learner& learner,
-                              const double eps = 1e-2);
+                              const double eps = 1e-5);
 /**
  * Approximate the derivatives of the error function of an Optimizable with
  * respect to the parameters numerically.
@@ -50,7 +50,7 @@ Eigen::MatrixXd inputGradient(const Eigen::MatrixXd& X,
  * @param eps determines the precision
  */
 Eigen::VectorXd parameterGradient(int n, Optimizable& opt,
-                                  const double eps = 1e-2);
+                                  const double eps = 1e-5);
 /**
  * Approximate the derivatives of the error function of an Optimizable with
  * respect to the parameters numerically.
@@ -64,7 +64,7 @@ Eigen::VectorXd parameterGradient(int n, Optimizable& opt,
  */
 Eigen::VectorXd parameterGradient(std::vector<int>::const_iterator start,
                                   std::vector<int>::const_iterator end,
-                                  Optimizable& opt, const double eps = 1e-2);
+                                  Optimizable& opt, const double eps = 1e-5);
 }
 
 }

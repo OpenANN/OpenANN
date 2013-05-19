@@ -19,6 +19,9 @@ public:
   virtual Eigen::VectorXd currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual double error();
+  virtual double error(unsigned int n);
+  virtual Eigen::VectorXd error(std::vector<int>::const_iterator startN,
+                                std::vector<int>::const_iterator endN);
   virtual Eigen::VectorXd gradient();
   Eigen::MatrixXd inputGradient();
   virtual Eigen::MatrixXd hessian();

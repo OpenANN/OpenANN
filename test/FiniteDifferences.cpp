@@ -54,16 +54,12 @@ Eigen::VectorXd parameterGradient(std::vector<int>::const_iterator start,
   {
     modifiedParams(i) += eps;
     opt.setParameters(modifiedParams);
-    double errorPlusEps = 0.0;
-    for(std::vector<int>::const_iterator it = start; it != end; it++)
-      errorPlusEps += opt.error(*it);
+    double errorPlusEps = opt.error(start, end).sum();
     modifiedParams = params;
 
     modifiedParams(i) -= eps;
     opt.setParameters(modifiedParams);
-    double errorMinusEps = 0.0;
-    for(std::vector<int>::const_iterator it = start; it != end; it++)
-      errorMinusEps += opt.error(*it);
+    double errorMinusEps = opt.error(start, end).sum();
     modifiedParams = params;
 
     gradient(i) += (errorPlusEps - errorMinusEps) / (2.0 * eps);

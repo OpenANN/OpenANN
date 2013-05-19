@@ -1,5 +1,6 @@
 #include "LayerAdapter.h"
 #include <OpenANN/io/DataSet.h>
+#include <OpenANN/util/AssertionMacros.h>
 
 LayerAdapter::LayerAdapter(OpenANN::Layer& layer,
                                    OpenANN::OutputInfo inputs)
@@ -37,7 +38,27 @@ double LayerAdapter::error()
   Eigen::MatrixXd* output;
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = (*output) - desired;
-  return (diff * diff.transpose()).eval()(0, 0) / 2.0;
+  return (diff * diff.transpose()).diagonal().sum() / 2.0;
+}
+
+double LayerAdapter::error(unsigned int n)
+{
+  Eigen::MatrixXd* output;
+  layer.forwardPropagate(&input, output, false);
+  Eigen::MatrixXd diff = ((*output) - desired).row(n);
+  return (diff * diff.transpose()).sum() / 2.0;
+}
+
+Eigen::VectorXd LayerAdapter::error(std::vector<int>::const_iterator startN,
+                                    std::vector<int>::const_iterator endN)
+{
+  // Assumes that we want to comput the gradient of the whole training set
+  OPENANN_CHECK_EQUALS(*startN, 0);
+  OPENANN_CHECK_EQUALS(*(endN-1), input.rows()-1);
+  Eigen::MatrixXd* output;
+  layer.forwardPropagate(&input, output, false);
+  Eigen::MatrixXd diff = ((*output) - desired);
+  return (diff * diff.transpose()).diagonal() / 2.0;
 }
 
 Eigen::VectorXd LayerAdapter::gradient()
@@ -88,8 +109,8 @@ Eigen::MatrixXd LayerAdapter::operator()(const Eigen::MatrixXd& X)
 OpenANN::Learner& LayerAdapter::trainingSet(Eigen::MatrixXd& trainingInput,
                                                 Eigen::MatrixXd& trainingOutput)
 {
-  input = trainingInput.row(0);
-  desired = trainingOutput.row(0);
+  input = trainingInput;
+  desired = trainingOutput;
 }
 
 OpenANN::Learner& LayerAdapter::trainingSet(OpenANN::DataSet& trainingSet)
