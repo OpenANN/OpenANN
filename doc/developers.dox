@@ -2,7 +2,7 @@ namespace OpenANN {
 
 /**
 
-\page Contributing
+\page Contributing Contributing
 
 \b Table \b of \b contents
   - \ref ContributingCode
@@ -15,10 +15,10 @@ namespace OpenANN {
 We use the version control system <a href="http://git-scm.com/" target=_blank>
 git</a> and the repository is available on github:
 
-  <a href="https://github.com/AlexanderFabisch/OpenANN" target=_blank>
-  https://github.com/AlexanderFabisch/OpenANN</a>
+  <a href="https://github.com/OpenANN/OpenANN" target=_blank>
+  https://github.com/OpenANN/OpenANN</a>
 
-Contributing code to OpenANN usually works as follows:
+Contributing code to %OpenANN usually works as follows:
 
 - Fork the repository (you need a github account).
 - Clone the repository:
@@ -33,20 +33,20 @@ git checkout -b <BranchName>
 \code
 git push origin <BranchName>
 \endcode
-- Open a pull request to the main repository. A core developer will merge your
-request.
+- Open a pull request to the main repository. A core developer will review and
+possibly merge your request.
 
 \section Directories
 
-- OpenANN - Header files that are exposed to the user
+- %OpenANN - Header files that are exposed to the user
 - benchmarks - Standard ANN benchmarks
 - cmake - CMake macros
 - doc - Additional doxygen documentation files
-- examples - OpenANN showcase
+- examples - %OpenANN showcase
 - lib - External libraries
 - python - Python language bindings
 - src - Implementation files for libopenann
-- test - Contains the OpenANN test suite
+- test - Contains the %OpenANN test suite
 
 \section ImprovingQuality Improving the code quality
 
@@ -81,7 +81,7 @@ cmake -D CMAKE_BUILD_TYPE:String=Release ../..
 make
 \endcode
 
-- What can I do to contribute to OpenANN?
+- What can I do to contribute to %OpenANN?
 
 There is a list of open issues at our github page:
 <a href="https://github.com/OpenANN/OpenANN/issues?state=open"

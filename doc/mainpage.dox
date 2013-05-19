@@ -3,7 +3,9 @@ namespace OpenANN
 
 /**
 
-\mainpage
+\image html openann-logo.svg
+
+\mainpage %OpenANN
 
 This is the API documentation of %OpenANN.
 
@@ -18,11 +20,16 @@ To start using %OpenANN it might be helpful to take a look at
 
 \section Documentation
 
-  - \ref Install
+\subsection Quickstart
+  - \ref Installation
   - \ref GettingStarted
+
+\subsection Tutorials
+  - \ref CreateDataSet
   - \ref HowtoLearn
   - \ref Architecture
-  - \ref CreateDataSet
+
+\subsection Advanced
   - \ref Benchmarks
   - \ref OtherLibs
   - \ref Contributing

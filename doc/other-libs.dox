@@ -2,7 +2,7 @@ namespace OpenANN {
 
 /**
 
-\page OtherLibs How does OpenANN relate to other neural network libraries?
+\page OtherLibs Comparison with Other Libraries
 
 <table>
 <tr>
@@ -13,23 +13,26 @@ namespace OpenANN {
 <th>Focus</th>
 </tr>
 <tr>
-<th>OpenANN</th>
+<th>%OpenANN</th>
 <td><a href="https://github.com/AlexanderFabisch/OpenANN" target=_blank>Link</a></td>
 <td>C++, Python</td>
 <td>GPL</td>
 <td>
 An easy to use, extend and understand C++ library for artificial neural
-networks with Python bindings.
+networks with Python bindings. It is designed to provide efficient algorithms
+for small neural networks that solve standard machine learning problems as
+well as for deep learning algorithms. It has only a small number of
+dependencies and thus, it is suited to run on limited systems.
 </td>
 </tr>
 <tr>
-<th>FANN</th>
+<th>%FANN</th>
 <td><a href="http://leenissen.dk/fann/" target=_blank>Link</a></td>
 <td>C, C++, Python, Ruby, C#, Java, Perl, Delphi, ... (almost everything)</td>
 <td>LGPL</td>
 <td>
 A well-known and widly used library for feedforward neural networks written in
-C with bindings for almost any languages. FANN has limited functionality but
+C with bindings for almost any languages. %FANN has limited functionality but
 is easy to use and robust. It usually used for small datasets and
 applications.
 </td>
