@@ -16,6 +16,7 @@ class LayerAdapter : public OpenANN::Learner
 public:
   LayerAdapter(OpenANN::Layer& layer, OpenANN::OutputInfo inputs);
   virtual unsigned int dimension();
+  virtual unsigned int examples();
   virtual Eigen::VectorXd currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual double error();
@@ -23,6 +24,9 @@ public:
   virtual Eigen::VectorXd error(std::vector<int>::const_iterator startN,
                                 std::vector<int>::const_iterator endN);
   virtual Eigen::VectorXd gradient();
+  virtual Eigen::VectorXd gradient(unsigned int n);
+  virtual Eigen::VectorXd gradient(std::vector<int>::const_iterator startN,
+                                   std::vector<int>::const_iterator endN);
   Eigen::MatrixXd inputGradient();
   virtual void initialize() {}
   virtual bool providesGradient() { return true; }

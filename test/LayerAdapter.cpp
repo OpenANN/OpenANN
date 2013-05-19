@@ -16,6 +16,11 @@ unsigned int LayerAdapter::dimension()
   return parameters.size();
 }
 
+unsigned int LayerAdapter::examples()
+{
+  return input.rows();
+}
+
 Eigen::VectorXd LayerAdapter::currentParameters()
 {
   Eigen::VectorXd params(dimension());
@@ -54,7 +59,7 @@ Eigen::VectorXd LayerAdapter::error(std::vector<int>::const_iterator startN,
 {
   // Assumes that we want to comput the gradient of the whole training set
   OPENANN_CHECK_EQUALS(*startN, 0);
-  OPENANN_CHECK_EQUALS(*(endN-1), input.rows()-1);
+  OPENANN_CHECK_EQUALS(endN-startN, input.rows());
   Eigen::MatrixXd* output;
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = ((*output) - desired);
@@ -63,6 +68,41 @@ Eigen::VectorXd LayerAdapter::error(std::vector<int>::const_iterator startN,
 
 Eigen::VectorXd LayerAdapter::gradient()
 {
+  Eigen::MatrixXd* output;
+  layer.forwardPropagate(&input, output, false);
+  Eigen::MatrixXd diff = *output - desired;
+  Eigen::MatrixXd* e = &diff;
+  layer.backpropagate(e, e);
+  Eigen::VectorXd derivs(dimension());
+  std::vector<double*>::const_iterator it = derivatives.begin();
+  for(int i = 0; i < dimension(); i++, it++)
+    derivs(i) = **it;
+  return derivs;
+}
+
+Eigen::VectorXd LayerAdapter::gradient(unsigned int n)
+{
+  Eigen::MatrixXd in = input.row(n);
+  Eigen::MatrixXd out = desired.row(n);
+
+  Eigen::MatrixXd* output;
+  layer.forwardPropagate(&in, output, false);
+  Eigen::MatrixXd diff = *output - out;
+  Eigen::MatrixXd* e = &diff;
+  layer.backpropagate(e, e);
+  Eigen::VectorXd derivs(dimension());
+  std::vector<double*>::const_iterator it = derivatives.begin();
+  for(int i = 0; i < dimension(); i++, it++)
+    derivs(i) = **it;
+  return derivs;
+}
+
+Eigen::VectorXd LayerAdapter::gradient(std::vector<int>::const_iterator startN,
+                                       std::vector<int>::const_iterator endN)
+{
+  // Assumes that we want to comput the gradient of the whole training set
+  OPENANN_CHECK_EQUALS(*startN, 0);
+  OPENANN_CHECK_EQUALS(endN-startN, input.rows());
   Eigen::MatrixXd* output;
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = *output - desired;

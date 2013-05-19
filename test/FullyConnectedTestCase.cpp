@@ -60,8 +60,15 @@ void FullyConnectedTestCase::backprop()
   FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
   LayerAdapter opt(layer, info);
 
-  Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
+      indices.begin(), indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }

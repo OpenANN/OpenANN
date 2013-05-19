@@ -96,7 +96,7 @@ public:
     }
   }
   /**
-   * Calculates the error of given training examples.
+   * Calculates the errors of given training examples.
    * @param startN iterator over index vector
    * @param endN iterator over index vector
    * @return each row contains the error for one training example
@@ -109,6 +109,21 @@ public:
     for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
       errors(n) = error(*it);
     return errors;
+  }
+  /**
+   * Calculates the accumulated gradient of given training examples.
+   * @param startN iterator over index vector
+   * @param endN iterator over index vector
+   * @return each row contains the gradient for one training example
+   */
+  virtual Eigen::VectorXd gradient(std::vector<int>::const_iterator startN,
+                                   std::vector<int>::const_iterator endN)
+  {
+    Eigen::VectorXd g(dimension());
+    g.fill(0.0);
+    for(std::vector<int>::const_iterator it = startN; it != endN; it++)
+      g += gradient(*it);
+    return g;
   }
   /**
    * This callback is called after each optimization algorithm iteration.
