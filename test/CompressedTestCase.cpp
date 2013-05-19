@@ -61,14 +61,15 @@ void CompressedTestCase::compressedInputGradient()
   Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd x = Eigen::MatrixXd::Random(1, 3);
-  Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2);
-  opt.trainingSet(x, y);
-  Eigen::VectorXd gradient = opt.inputGradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(
-      x.transpose(), y.transpose(), opt, 1e-5);
-  for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2);
+  opt.trainingSet(X, Y);
+  Eigen::MatrixXd gradient = opt.inputGradient();
+  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(
+      X, Y, opt, 1e-5);
+  for(int j = 0; j < gradient.rows(); j++)
+    for(int i = 0; i < gradient.cols(); i++)
+      ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
 }
 
 void CompressedTestCase::parallelCompressed()

@@ -5,27 +5,32 @@ namespace OpenANN {
 namespace FiniteDifferences
 {
 
-Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
-                              const Eigen::VectorXd& y, Learner& learner,
+Eigen::MatrixXd inputGradient(const Eigen::MatrixXd& X,
+                              const Eigen::MatrixXd& Y, Learner& learner,
                               const double eps)
 {
-  const int D = x.rows();
-  Eigen::VectorXd gradient(D);
+  const int N = X.rows();
+  const int D = X.cols();
+  std::vector<int> indices;
+  for(int n = 0; n < N; n++)
+    indices.push_back(n);
+
+  Eigen::MatrixXd gradient(N, D);
   gradient.fill(0.0);
-  Eigen::MatrixXd in = x.transpose();
-  Eigen::MatrixXd out = y.transpose();
+  Eigen::MatrixXd in = X;
+  Eigen::MatrixXd out = Y;
   for(unsigned i = 0; i < D; i++)
   {
-    in(i) += eps;
+    in.col(i).array() += eps;
     learner.trainingSet(in, out);
-    double errorPlusEps = learner.error(0);
+    Eigen::VectorXd errorPlusEps = learner.error(indices.begin(), indices.end());
 
-    in(i) -= 2*eps;
+    in.col(i).array() -= 2*eps;
     learner.trainingSet(in, out);
-    double errorMinusEps = learner.error(0);
+    Eigen::VectorXd errorMinusEps = learner.error(indices.begin(), indices.end());
 
-    in(i) = x(i);
-    gradient(i) = (errorPlusEps - errorMinusEps) / (2.0 * eps);
+    in.col(i) = X.col(i);
+    gradient.col(i) = (errorPlusEps - errorMinusEps) / (2.0 * eps);
   }
   return gradient;
 }

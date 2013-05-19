@@ -4,8 +4,6 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/util/Random.h>
 
-using namespace OpenANN;
-
 void MaxPoolingTestCase::run()
 {
   RUN(MaxPoolingTestCase, maxPooling);
@@ -14,20 +12,20 @@ void MaxPoolingTestCase::run()
 
 void MaxPoolingTestCase::setUp()
 {
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   rng.seed(0);
 }
 
 void MaxPoolingTestCase::maxPooling()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(2);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  MaxPooling layer(info, 2, 2);
+  OpenANN::MaxPooling layer(info, 2, 2);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
+  OpenANN::OutputInfo info2 = layer.initialize(parameterPointers,
                                       parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
@@ -44,19 +42,20 @@ void MaxPoolingTestCase::maxPooling()
 
 void MaxPoolingTestCase::maxPoolingInputGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  MaxPooling layer(info, 2, 2);
+  OpenANN::MaxPooling layer(info, 2, 2);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd x = Eigen::MatrixXd::Random(1, 2*4*4);
-  Eigen::MatrixXd y = Eigen::MatrixXd::Random(1, 2*2*2);
-  opt.trainingSet(x, y);
-  Eigen::VectorXd gradient = opt.inputGradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::inputGradient(
-      x.transpose(), y.transpose(), opt, 1e-5);
-  for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 2*4*4);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2*2*2);
+  opt.trainingSet(X, Y);
+  Eigen::MatrixXd gradient = opt.inputGradient();
+  Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::inputGradient(
+      X, Y, opt, 1e-5);
+  for(int j = 0; j < gradient.rows(); j++)
+    for(int i = 0; i < gradient.cols(); i++)
+      ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
 }

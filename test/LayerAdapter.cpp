@@ -54,17 +54,14 @@ Eigen::VectorXd LayerAdapter::gradient()
   return derivs;
 }
 
-Eigen::VectorXd LayerAdapter::inputGradient()
+Eigen::MatrixXd LayerAdapter::inputGradient()
 {
   Eigen::MatrixXd* output;
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = *output - desired;
   Eigen::MatrixXd* e = &diff;
   layer.backpropagate(e, e);
-  Eigen::VectorXd derivs(input.cols());
-  for(int i = 0; i < input.cols(); i++)
-    derivs(i) = (*e)(0, i);
-  return derivs;
+  return *e;
 }
 
 Eigen::MatrixXd LayerAdapter::hessian()

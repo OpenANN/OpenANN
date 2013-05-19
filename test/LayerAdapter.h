@@ -20,7 +20,7 @@ public:
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual double error();
   virtual Eigen::VectorXd gradient();
-  Eigen::VectorXd inputGradient();
+  Eigen::MatrixXd inputGradient();
   virtual Eigen::MatrixXd hessian();
   virtual void initialize() {}
   virtual bool providesGradient() { return true; }

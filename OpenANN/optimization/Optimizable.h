@@ -5,6 +5,7 @@
 #endif
 
 #include <Eigen/Dense>
+#include <vector>
 
 namespace OpenANN {
 
@@ -65,7 +66,7 @@ public:
    */
   virtual unsigned examples() { return 1; }
   /**
-   * @return error of the i-th training example
+   * @return error of the n-th training example
    */
   virtual double error(unsigned n) { return error(); }
   /**
@@ -105,6 +106,21 @@ public:
       value += tempValue;
       grad += tempGrad;
     }
+  }
+  /**
+   * Calculates the error of given training examples.
+   * @param startN iterator over index vector
+   * @param endN iterator over index vector
+   * @return each row contains the error for one training example
+   */
+  virtual Eigen::VectorXd error(std::vector<int>::const_iterator startN,
+                                std::vector<int>::const_iterator endN)
+  {
+    Eigen::VectorXd errors(endN-startN);
+    int n = 0;
+    for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+      errors(n) = error(*it);
+    return errors;
   }
   /**
    * This callback is called after each optimization algorithm iteration.

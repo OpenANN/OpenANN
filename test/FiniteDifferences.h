@@ -30,13 +30,13 @@ namespace FiniteDifferences
  *
  * Note that the data set of the learner will be set!
  *
- * @param x inputs
- * @param y desired outputs
+ * @param X inputs
+ * @param Y desired outputs
  * @param learner learner that implements an error function
  * @param eps determines the precision
  */
-Eigen::VectorXd inputGradient(const Eigen::VectorXd& x,
-                              const Eigen::VectorXd& y, Learner& learner,
+Eigen::MatrixXd inputGradient(const Eigen::MatrixXd& X,
+                              const Eigen::MatrixXd& Y, Learner& learner,
                               const double eps = 1e-2);
 /**
  * Approximate the derivatives of the error function of an Optimizable with
