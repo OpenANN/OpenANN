@@ -3,7 +3,7 @@ namespace OpenANN
 
 /**
 
-\page Architecture
+\page Architecture %OpenANN Architecture
 
 The architecture of %OpenANN is very general because it combines different
 learning approaches. These are
