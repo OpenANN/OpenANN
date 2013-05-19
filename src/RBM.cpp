@@ -116,16 +116,6 @@ Eigen::VectorXd RBM::gradient(unsigned int i)
   return -gradient;
 }
 
-bool RBM::providesHessian()
-{
-  return false;
-}
-
-Eigen::MatrixXd RBM::hessian()
-{
-  throw OpenANNException("RBM::hessian() is not implemented!");
-}
-
 Learner& RBM::trainingSet(Eigen::MatrixXd& trainingInput,
                           Eigen::MatrixXd& trainingOutput)
 {

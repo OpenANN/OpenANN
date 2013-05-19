@@ -351,16 +351,6 @@ void Net::errorGradient(double& value, Eigen::VectorXd& grad)
   value = generalErrorGradient(true, grad, -1);
 }
 
-bool Net::providesHessian()
-{
-  return false;
-}
-
-Eigen::MatrixXd Net::hessian()
-{
-  return Eigen::MatrixXd::Identity(dimension(), dimension());
-}
-
 double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
 {
   OPENANN_CHECK_EQUALS(g.rows(), dimension());

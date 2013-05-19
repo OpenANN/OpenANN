@@ -24,10 +24,8 @@ public:
                                 std::vector<int>::const_iterator endN);
   virtual Eigen::VectorXd gradient();
   Eigen::MatrixXd inputGradient();
-  virtual Eigen::MatrixXd hessian();
   virtual void initialize() {}
   virtual bool providesGradient() { return true; }
-  virtual bool providesHessian() { return false; }
   virtual bool providesInitialization() { return true; }
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);

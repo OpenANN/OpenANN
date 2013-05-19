@@ -113,16 +113,6 @@ Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
   return -g; // Allows using gradient descent algorithms
 }
 
-bool IntrinsicPlasticity::providesHessian()
-{
-  return false;
-}
-
-Eigen::MatrixXd IntrinsicPlasticity::hessian()
-{
-  return Eigen::MatrixXd::Identity(2*nodes, 2*nodes);
-}
-
 Learner& IntrinsicPlasticity::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
   if(deleteDataSet)

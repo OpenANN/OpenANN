@@ -54,14 +54,6 @@ public:
    */
   virtual Eigen::VectorXd gradient() = 0;
   /**
-   * @return does the optimizable provide a hessian?
-   */
-  virtual bool providesHessian() = 0;
-  /**
-   * @return hessian of the objective function with respect to parameters
-   */
-  virtual Eigen::MatrixXd hessian() = 0;
-  /**
    * @return number of training examples
    */
   virtual unsigned examples() { return 1; }
@@ -73,10 +65,6 @@ public:
    * @return gradient of the n-th training example
    */
   virtual Eigen::VectorXd gradient(unsigned n) { return gradient(); }
-  /**
-   * @return hessian of the n-th training example
-   */
-  virtual Eigen::VectorXd hessian(unsigned n) { return hessian(); }
   /**
    * Calculates the function value and gradient of a training example.
    * @param n index of training example

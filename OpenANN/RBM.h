@@ -78,8 +78,6 @@ public:
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient();
   virtual Eigen::VectorXd gradient(unsigned int i);
-  virtual bool providesHessian();
-  virtual Eigen::MatrixXd hessian();
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);

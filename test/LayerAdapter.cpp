@@ -85,11 +85,6 @@ Eigen::MatrixXd LayerAdapter::inputGradient()
   return *e;
 }
 
-Eigen::MatrixXd LayerAdapter::hessian()
-{
-  return Eigen::MatrixXd::Random(dimension(), dimension());
-}
-
 Eigen::VectorXd LayerAdapter::operator()(const Eigen::VectorXd& x)
 {
   this->input = x;

@@ -51,15 +51,4 @@ public:
     OPENANN_CHECK(false && "Himmelblau does not provide a gradient.");
     return Eigen::VectorXd();
   }
-
-  virtual bool providesHessian()
-  {
-    return false;
-  }
-
-  virtual Eigen::MatrixXd hessian()
-  {
-    OPENANN_CHECK(false && "Himmelblau does not provide a hessian.");
-    return Eigen::MatrixXd();
-  }
 };

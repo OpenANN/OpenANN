@@ -178,23 +178,12 @@ Eigen::VectorXd NeuroEvolutionAgent::gradient()
   return Eigen::VectorXd();
 }
 
-Eigen::MatrixXd NeuroEvolutionAgent::hessian()
-{
-  OPENANN_CHECK(false);
-  return Eigen::MatrixXd();
-}
-
 void NeuroEvolutionAgent::initialize()
 {
   policy.initialize();
 }
 
 bool NeuroEvolutionAgent::providesGradient()
-{
-  return false;
-}
-
-bool NeuroEvolutionAgent::providesHessian()
 {
   return false;
 }

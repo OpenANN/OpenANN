@@ -7,7 +7,7 @@ class Quadratic : public OpenANN::Optimizable
   Eigen::VectorXd x;
 public:
   Quadratic()
-      : x(N, 1)
+      : x(N)
   {
   }
 
@@ -49,17 +49,5 @@ public:
   virtual Eigen::VectorXd gradient()
   {
     return 2 * x;
-  }
-
-  virtual bool providesHessian()
-  {
-    return true;
-  }
-
-  virtual Eigen::MatrixXd hessian()
-  {
-    Eigen::MatrixXd hessian(N, N);
-    hessian.setIdentity();
-    return hessian * 2;
   }
 };
