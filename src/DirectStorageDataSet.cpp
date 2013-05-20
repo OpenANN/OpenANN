@@ -2,6 +2,7 @@
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/Learner.h>
+#include <Test/Stopwatch.h>
 
 namespace OpenANN {
 
@@ -12,7 +13,7 @@ DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
   : in(in), out(out), N(in->rows()), D(in->cols()),
     F(out ? out->cols() : 0), temporaryInput(in->cols()),
     temporaryOutput(out ? out->cols() : 0), logInfo(logInfo),
-    logger(target, "dataset"), iteration(0)
+    logger(target, "dataset"), iteration(0), sw(new Stopwatch)
 {
   OPENANN_CHECK(in->cols() > 0);
   OPENANN_CHECK(!out || in->rows() == out->rows());
@@ -24,7 +25,12 @@ DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
     else
       logger << "# Unknown problem.\n\n";
   }
-  sw.start();
+  sw->start();
+}
+
+DirectStorageDataSet::~DirectStorageDataSet()
+{
+  delete sw;
 }
 
 Eigen::VectorXd& DirectStorageDataSet::getInstance(int i)
@@ -68,7 +74,7 @@ void DirectStorageDataSet::finishIteration(Learner& learner)
     }
     e /= N;
     logger << e << " " << correct << " " << wrong << " "
-        << sw.stop(Stopwatch::MILLISECOND) << "\n";
+        << sw->stop(Stopwatch::MILLISECOND) << "\n";
   }
 }
 
