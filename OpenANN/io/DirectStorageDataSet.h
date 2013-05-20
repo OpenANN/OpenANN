@@ -5,7 +5,8 @@
 
 #include <OpenANN/io/DataSet.h>
 #include <OpenANN/io/Logger.h>
-#include <Test/Stopwatch.h>
+
+class Stopwatch;
 
 namespace OpenANN {
 
@@ -36,7 +37,7 @@ private:
   LogInfo logInfo;
   Logger logger;
   int iteration;
-  Stopwatch sw;
+  Stopwatch* sw;
 
 public:
   /**
@@ -48,7 +49,7 @@ public:
    */
   DirectStorageDataSet(Eigen::MatrixXd* in, Eigen::MatrixXd* out = 0,
                        LogInfo logInfo = NONE, Logger::Target target = Logger::CONSOLE);
-  virtual ~DirectStorageDataSet() {}
+  virtual ~DirectStorageDataSet();
   virtual int samples() { return N; }
   virtual int inputs() { return D; }
   virtual int outputs() { return F; }

@@ -21,9 +21,7 @@ if __name__ == "__main__":
                               "${PROJECT_SOURCE_DIR}/test/lib/CPP-Test",
                               "${EIGEN3_INCLUDE_DIRS}"],
                 define_macros=[("NDEBUG",)],
-                extra_compile_args=["-g0", "-s", "-O3", "-msse", "-msse2",
-                                    "-msse3", "-mssse3", "-msse4.1",
-                                    "-msse4.2", "-fopenmp"], # TODO configure
+                extra_compile_args=[${OPENANN_PYTHON_COMPILE_ARGS}],
                 language="c++"),
       ],
     cmdclass = {'build_ext': build_ext},

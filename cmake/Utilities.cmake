@@ -14,6 +14,7 @@ endmacro()
 
 macro(compiler_add_flag flag)
   set(OPENANN_OPTIMIZATION_FLAGS "${OPENANN_OPTIMIZATION_FLAGS} ${flag}")
+  set(OPENANN_PYTHON_COMPILE_ARGS "${OPENANN_PYTHON_COMPILE_ARGS} \"${flag}\",")
 endmacro()
 
 macro(compiler_check_add_flag flag)

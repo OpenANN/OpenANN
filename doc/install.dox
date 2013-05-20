@@ -41,12 +41,13 @@ The following programs and libraries are required to use OpenANN:
 - Qt4
 </td>
 <td valign="top">
-- Python
+- Python (header files)
 - NumPy
 - Cython
 </td>
 <td valign="top">
-- ruby
+- Python
+- Ruby
 </td>
 </tr>
 </table>
