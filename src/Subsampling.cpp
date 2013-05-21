@@ -98,10 +98,10 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
   a.fill(0.0);
-  int outputIdx = 0;
-  int inputIdx = 0;
   for(int n = 0; n < N; n++)
   {
+    int outputIdx = 0;
+    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
       for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
@@ -137,15 +137,18 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   deltas = yd.cwiseProduct(*ein);
 
   e.fill(0.0);
-  int outputIdx = 0;
-  int inputIdx = 0;
+  for(int fmo = 0; fmo < fm; fmo++)
+  {
+    Wd[fmo].fill(0.0);
+    if(bias)
+      Wbd[fmo].fill(0.0);
+  }
   for(int n = 0; n < N; n++)
   {
+    int outputIdx = 0;
+    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
-      Wd[fmo].fill(0.0);
-      if(bias)
-        Wbd[fmo].fill(0.0);
       for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
         int rowBase = fmo*fmInSize + ri*inCols;
