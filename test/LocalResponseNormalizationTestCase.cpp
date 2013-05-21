@@ -19,12 +19,13 @@ void LocalResponseNormalizationTestCase::localResponseNormalizationInputGradient
   LocalResponseNormalization layer(info, 1, 3, 1e-5, 0.75);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3*3*3);
-  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 3*3*3);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3*3*3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 3*3*3);
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
-  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(
-      X, Y, opt, 1e-5);
+  ASSERT_EQUALS(gradient.rows(), 2);
+  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(X, Y,
+                                                                       opt);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)
       ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-4);

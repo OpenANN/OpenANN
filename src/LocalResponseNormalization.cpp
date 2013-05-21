@@ -28,6 +28,7 @@ void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x, Eigen::Mat
 {
   const int N = x->rows();
   this->y.conservativeResize(N, Eigen::NoChange);
+  denoms.conservativeResize(N, Eigen::NoChange);
   this->x = x;
   for(int n = 0; n < N; n++)
   {

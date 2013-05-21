@@ -26,14 +26,14 @@ void DropoutTestCase::dropout()
 
   // During training (dropout = true) approximately dropoutProbability neurons
   // should be suppressed
-  Eigen::MatrixXd x(1, samples);
+  Eigen::MatrixXd x(2, samples);
   x.fill(1.0);
   Eigen::MatrixXd* y;
   layer.forwardPropagate(&x, y, true);
   double mean = y->sum() / samples;
-  ASSERT_EQUALS_DELTA(mean, 0.5, 0.01);
+  ASSERT_EQUALS_DELTA(mean/2.0, 0.5, 0.01);
   // After training, the output should be scaled down
   layer.forwardPropagate(&x, y, false);
   mean = y->sum() / samples;
-  ASSERT_EQUALS(mean, 0.5);
+  ASSERT_EQUALS(mean/2.0, 0.5);
 }
