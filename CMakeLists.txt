@@ -31,7 +31,7 @@ if(NOT PARALLEL_CORES)
 endif()
 
 set(OPENANN_VERSION_NUMBER "1.0.0")
-set(OPENANN_URL "https://github.com/AlexanderFabisch/OpenANN")
+set(OPENANN_URL "https://github.com/OpenANN/OpenANN")
 set(OPENANN_BRIEF_DESCRIPTION "An open source library for artificial neural networks.")
 current_time(OPENANN_TIME)
 if(CUDA_FOUND)
