@@ -148,6 +148,9 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   e.conservativeResize(N, Eigen::NoChange);
   e.fill(0.0);
   Wbd.fill(0.0);
+  for(int fmo = 0; fmo < fmout; fmo++)
+    for(int fmi = 0; fmi < fmin; fmi++)
+      Wd[fmo][fmi].fill(0.0);
   for(int n = 0; n < N; n++)
   {
     for(int fmo = 0; fmo < fmout; fmo++)
@@ -155,7 +158,6 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
       int fmInBase = 0;
       for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
       {
-        Wd[fmo][fmi].fill(0.0);
         int outputIdx = fmo * fmOutSize;
         for(int row = 0; row < maxRow; row++)
         {
@@ -169,7 +171,7 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
               {
                 OPENANN_CHECK(outputIdx < deltas.cols());
                 OPENANN_CHECK(inputIdx < x->cols());
-                e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(n, outputIdx);
+                e(n, inputIdx) += W[fmo][fmi](kr, kc)*deltas(n, outputIdx);
                 Wd[fmo][fmi](kr, kc) += deltas(n, outputIdx) * (*x)(n, inputIdx);
               }
             }
