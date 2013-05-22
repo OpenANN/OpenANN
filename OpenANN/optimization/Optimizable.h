@@ -126,6 +126,26 @@ public:
     return g;
   }
   /**
+   * Calculates the accumulated gradient and error of given training examples.
+   * @param startN iterator over index vector
+   * @param endN iterator over index vector
+   * @param value function value
+   * @param grad gradient of the function, lenght must be dimension()
+   * @return each row contains the gradient for one training example
+   */
+  virtual void errorGradient(std::vector<int>::const_iterator startN,
+                             std::vector<int>::const_iterator endN,
+                             double& value, Eigen::VectorXd& grad)
+  {
+    value = 0.0;
+    grad.fill(0.0);
+    for(std::vector<int>::const_iterator it = startN; it != endN; it++)
+    {
+      value += error(*it);
+      grad += gradient(*it);
+    }
+  }
+  /**
    * This callback is called after each optimization algorithm iteration.
    */
   virtual void finishedIteration() {}

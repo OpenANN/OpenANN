@@ -11,4 +11,5 @@ class NetTestCase : public TestCase
   void gradientCE();
   void multilayerNetwork();
   void predictMinibatch();
+  void minibatchErrorGradient();
 };

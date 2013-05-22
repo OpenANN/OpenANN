@@ -351,6 +351,34 @@ void Net::errorGradient(double& value, Eigen::VectorXd& grad)
   value = generalErrorGradient(true, grad, -1);
 }
 
+void Net::errorGradient(std::vector<int>::const_iterator startN,
+                        std::vector<int>::const_iterator endN,
+                        double& value, Eigen::VectorXd& grad)
+{
+  const int N = endN - startN;
+  Eigen::MatrixXd X(N, dataSet->inputs());
+  Eigen::MatrixXd T(N, dataSet->outputs());
+  int n = 0;
+  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+  {
+    X.row(n) = dataSet->getInstance(n);
+    T.row(n) = dataSet->getTarget(n);
+  }
+  tempError = (*this)(X) - T;
+  if(errorFunction == CE)
+    value = -(T.array() * ((tempOutput.array() + 1e-10).log())).sum();
+  else
+    value = (tempError * tempError.transpose()).diagonal().sum() / 2.0;
+
+  Eigen::MatrixXd* e = &tempError;
+  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+      layer != layers.rend(); layer++)
+    (**layer).backpropagate(e, e);
+
+  for(int p = 0; p < P; p++)
+    grad(p) = *derivatives[p];
+}
+
 double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
 {
   OPENANN_CHECK_EQUALS(g.rows(), dimension());

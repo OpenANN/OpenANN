@@ -282,6 +282,9 @@ public:
   virtual Eigen::VectorXd gradient();
   virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad);
   virtual void errorGradient(double& value, Eigen::VectorXd& grad);
+  virtual void errorGradient(std::vector<int>::const_iterator startN,
+                             std::vector<int>::const_iterator endN,
+                             double& value, Eigen::VectorXd& grad);
 private:
   double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };

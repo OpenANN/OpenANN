@@ -84,21 +84,15 @@ bool MBSGD::step()
   accumulatedError = 0.0;
   double currentError;
   rng.generateIndices<std::vector<int> >(N, randomIndices, true);
-  for(int n = 0; n < N; n++)
-    batchAssignment[n % batches].push_back(randomIndices[n]);
+  std::vector<int>::const_iterator startN = randomIndices.begin();
+  std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;
   for(int b = 0; b < batches; b++)
   {
-    gradient.fill(0.0);
-    for(std::list<int>::const_iterator it = batchAssignment[b].begin();
-        it != batchAssignment[b].end(); it++)
-    {
-      opt->errorGradient(*it, currentError, currentGradient);
-      accumulatedError += currentError;
-      gradient += currentGradient;
-    }
+    opt->errorGradient(startN, endN, accumulatedError, gradient);
+    startN += batchSize;
+    endN += batchSize;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (double) batchAssignment[b].size();
-    batchAssignment[b].clear();
+    gradient /= (double) batchSize;
 
     if(useGain)
     {
@@ -180,7 +174,6 @@ void MBSGD::initialize()
   randomIndices.reserve(N);
   randomIndices.clear();
   rng.generateIndices<std::vector<int> >(N, randomIndices);
-  batchAssignment.resize(batches);
   iteration = 0;
 }
 

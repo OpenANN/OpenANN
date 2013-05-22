@@ -12,6 +12,7 @@ void NetTestCase::run()
   RUN(NetTestCase, gradientCE);
   RUN(NetTestCase, multilayerNetwork);
   RUN(NetTestCase, predictMinibatch);
+  RUN(NetTestCase, minibatchErrorGradient);
 }
 
 void NetTestCase::dimension()
@@ -188,4 +189,33 @@ void NetTestCase::predictMinibatch()
     for(int f = 0; f < F; f++)
       ASSERT_EQUALS(Y1(n, f), Y2(n, f));
   }
+}
+
+void NetTestCase::minibatchErrorGradient()
+{
+  const int D = 5;
+  const int F = 2;
+  const int N = 2;
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
+
+  OpenANN::Net net;
+  net.inputLayer(D)
+     .fullyConnectedLayer(2, OpenANN::TANH)
+     .outputLayer(F, OpenANN::LINEAR)
+     .setErrorFunction(OpenANN::CE)
+     .trainingSet(X, T);
+
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  double error1, error2;
+
+  Eigen::VectorXd g1(net.dimension()), g2(net.dimension());
+  net.errorGradient(indices.begin(), indices.end(), error1, g1);
+  net.errorGradient(error2, g2);
+
+  for(int k = 0; k < net.dimension(); k++)
+    ASSERT_EQUALS_DELTA(g1(k), g2(k), 1e-2);
+  ASSERT_EQUALS_DELTA(error1, error2, 1e-2);
 }
