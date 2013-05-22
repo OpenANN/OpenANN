@@ -51,10 +51,10 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   OPENANN_CHECK(x->cols() == fm * inRows * inRows);
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
-  int outputIdx = 0;
-  int inputIdx = 0;
   for(int n = 0; n < N; n++)
   {
+    int outputIdx = 0;
+    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
       for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
@@ -85,10 +85,10 @@ void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   deltas = (*ein);
 
   e.fill(0.0);
-  int outputIdx = 0;
-  int inputIdx = 0;
   for(int n = 0; n < N; n++)
   {
+    int outputIdx = 0;
+    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
       for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
