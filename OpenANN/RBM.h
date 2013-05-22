@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_RBM_H_
+#define OPENANN_RBM_H_
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/layers/Layer.h>
@@ -6,8 +7,10 @@
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/util/Random.h>
 #include <Eigen/Dense>
+#include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class RBM
@@ -88,7 +91,7 @@ public:
                                 bool dropout);
   virtual Eigen::MatrixXd& getOutput();
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
-                                std::vector<double*>& parameterDerivativePointers);
+      std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
 
@@ -105,4 +108,6 @@ public:
   void sampleVgivenH();
 };
 
-}
+} // namespace OpenANN
+
+#endif // OPENANN_RBM_H_
