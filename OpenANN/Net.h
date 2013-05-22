@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_NET_H_
+#define OPENANN_NET_H_
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/ActivationFunctions.h>
@@ -6,7 +7,8 @@
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @enum ErrorFunction
@@ -284,4 +286,7 @@ private:
   double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };
 
-}
+} // namespace OpenANN
+
+#endif // OPENANN_NET_H
+
