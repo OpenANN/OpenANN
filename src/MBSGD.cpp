@@ -91,8 +91,6 @@ bool MBSGD::step()
     double error = 0.0;
     opt->errorGradient(startN, endN, error, gradient);
     accumulatedError += error;
-    startN += batchSize;
-    endN += batchSize;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
     gradient /= (double) batchSize;
 
@@ -124,6 +122,11 @@ bool MBSGD::step()
     eta += etaGain;
     eta = std::min(eta, maxEta);
     OPENANN_CHECK_INF_AND_NAN(eta);
+
+    startN += batchSize;
+    endN += batchSize;
+    if(endN > randomIndices.end())
+      endN = randomIndices.end();
   }
 
   iteration++;
