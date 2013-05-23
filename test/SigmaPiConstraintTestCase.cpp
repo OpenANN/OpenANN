@@ -90,7 +90,7 @@ void SigmaPiConstraintTestCase::triangle()
 
   net.inputLayer(1, 5 ,5);
 
-  OpenANN::TriangleConstraint constraint(5, 5, M_PI/8);
+  OpenANN::TriangleConstraint constraint(5, 5, 1);
   OpenANN::SigmaPi* layer = new OpenANN::SigmaPi(net.getOutputInfo(0), false, OpenANN::LOGISTIC, 0.05);
   layer->thirdOrderNodes(1, constraint);
 
@@ -99,13 +99,13 @@ void SigmaPiConstraintTestCase::triangle()
 
   Eigen::VectorXd c1 = net(T1);
   Eigen::VectorXd c2 = net(T2);
-
-  std::cout << "C1: " << c1 << std::endl;
-  std::cout << "C2: " << c2 << std::endl;
+  Eigen::VectorXd c3 = net(T3);
 
   ASSERT(c1.size() == 1);
   ASSERT(c2.size() == 1);
+  ASSERT(c3.size() == 1);
 
   ASSERT(c2.x() == c1.x());
+  ASSERT(c3.x() == c1.x());
 }
 
