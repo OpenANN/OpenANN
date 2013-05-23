@@ -68,28 +68,37 @@ private:
 };
 
 
+/**
+ * Common constraint for encoding translation, scale and rotation invariance into a SigmaPi layer.
+ */
 struct TriangleConstraint : public SigmaPi::Constraint
 {
+  // Simple AngleTuple for storing in a std::map
   struct AngleTuple {
-
-    AngleTuple(int a, int b, int c) : alpha(a), beta(b), gamma(c)
+    AngleTuple(double a, double b, double c) : alpha(a), beta(b), gamma(c)
     {}
 
     bool operator< (const AngleTuple& tuple) const
     {
-      if(fabs(alpha -tuple.alpha) > 0.001)
+      if(fabs(alpha - tuple.alpha) > 0.001)
         return alpha < tuple.alpha;
       else if(fabs(beta - tuple.beta) > 0.001)
         return beta < tuple.beta;
       else
-        return gamma < tuple.gamma;
+        return fabs(gamma - tuple.gamma) > 0.001 && gamma < tuple.gamma;
     }
 
-    int alpha;
-    int beta;
-    int gamma;
+    double alpha;
+    double beta;
+    double gamma;
   };
 
+  /**
+   * Constructor for TriangleConstraint
+   * @param width width of the pattern
+   * @param height height of the pattern
+   * @param resolution angle tolerance to get shared
+   */
   TriangleConstraint(size_t width, size_t height, double resolution = M_PI/4)
     : width(width), height(height), resolution(resolution)
   {}
@@ -100,26 +109,34 @@ struct TriangleConstraint : public SigmaPi::Constraint
   {
     int nr = partition.size() / 3.0;
 
-    double x1 = p1 % width;
-    double x2 = p2 % width;
-    double x3 = p3 % width;
-    double y1 = p1 / height;
-    double y2 = p2 / height;
-    double y3 = p3 / height;
+    // p1 is always the top left point from the correlation
+    int x1 = p1 % width;
+    int y1 = p1 / width;
 
-    double as = (x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3);
-    double bs = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-    double cs = (x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3);
+    int x2 = p2 % width;
+    int y2 = p2 / width;
 
-    int alpha = std::floor(std::acos((as - bs - cs) / (-2 * std::sqrt(bs * cs))) / resolution);
-    int beta = std::floor(std::acos((bs - cs - as) / (-2 * std::sqrt(cs * as))) / resolution);
-    int gamma = std::floor(std::acos((cs - as - bs) / (-2 * std::sqrt(as * bs))) / resolution);
+    int x3 = p3 % width;
+    int y3 = p3 / width;
+
+    // p2 should be always located at the right side of p1
+    if(x2 < x3) {
+      std::swap(x2, x3);
+      std::swap(y2, y3);
+    }
+
+    int as = (x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3);
+    int bs = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    int cs = (x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3);
+
+    // compute the angles
+    double alpha = std::floor(std::acos((as - bs - cs) / (-2 * std::sqrt(bs * cs))) / resolution);
+    double beta = std::floor(std::acos((bs - cs - as) / (-2 * std::sqrt(cs * as))) / resolution);
+    double gamma = std::floor(std::acos((cs - as - bs) / (-2 * std::sqrt(as * bs))) / resolution);
 
     AngleTuple t1(alpha, beta, gamma);
     AngleTuple t2(beta, gamma, alpha);
     AngleTuple t3(gamma, alpha, beta);
-
-    std::cout << "(" << alpha  << ", " << beta << ", " << gamma << ")" << std::endl;
 
     std::map<AngleTuple, int>::const_iterator it = partition.find(t1);
 
