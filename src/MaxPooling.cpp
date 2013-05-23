@@ -51,6 +51,7 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   OPENANN_CHECK(x->cols() == fm * inRows * inRows);
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
+#pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
@@ -85,6 +86,7 @@ void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   deltas = (*ein);
 
   e.fill(0.0);
+#pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;

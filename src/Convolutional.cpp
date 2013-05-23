@@ -100,6 +100,7 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
   const int N = x->rows();
   a.conservativeResize(N, Eigen::NoChange);
   a.fill(0.0);
+#pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     for(int fmo = 0; fmo < fmout; fmo++)
@@ -148,9 +149,11 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   e.conservativeResize(N, Eigen::NoChange);
   e.fill(0.0);
   Wbd.fill(0.0);
+#pragma omp parallel for
   for(int fmo = 0; fmo < fmout; fmo++)
     for(int fmi = 0; fmi < fmin; fmi++)
       Wd[fmo][fmi].fill(0.0);
+
   for(int n = 0; n < N; n++)
   {
     for(int fmo = 0; fmo < fmout; fmo++)

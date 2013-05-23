@@ -195,7 +195,7 @@ void NetTestCase::minibatchErrorGradient()
 {
   const int D = 5;
   const int F = 2;
-  const int N = 50;
+  const int N = 5;
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
 
