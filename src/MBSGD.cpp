@@ -88,7 +88,9 @@ bool MBSGD::step()
   std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;
   for(int b = 0; b < batches; b++)
   {
-    opt->errorGradient(startN, endN, accumulatedError, gradient);
+    double error = 0.0;
+    opt->errorGradient(startN, endN, error, gradient);
+    accumulatedError += error;
     startN += batchSize;
     endN += batchSize;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
