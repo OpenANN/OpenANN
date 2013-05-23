@@ -361,14 +361,19 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   int n = 0;
   for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
   {
-    X.row(n) = dataSet->getInstance(n);
-    T.row(n) = dataSet->getTarget(n);
+    X.row(n) = dataSet->getInstance(*it);
+    T.row(n) = dataSet->getTarget(*it);
   }
   tempError = (*this)(X) - T;
   if(errorFunction == CE)
     value = -(T.array() * ((tempOutput.array() + 1e-10).log())).sum();
   else
-    value = (tempError * tempError.transpose()).diagonal().sum() / 2.0;
+  {
+    value = 0.0;
+    for(int i = 0; i < tempError.rows(); i++)
+      value += tempError.row(i).squaredNorm();
+    value /= 2.0;
+  }
 
   Eigen::MatrixXd* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();

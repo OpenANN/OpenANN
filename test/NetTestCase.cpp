@@ -195,7 +195,7 @@ void NetTestCase::minibatchErrorGradient()
 {
   const int D = 5;
   const int F = 2;
-  const int N = 2;
+  const int N = 50;
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
 
@@ -203,12 +203,11 @@ void NetTestCase::minibatchErrorGradient()
   net.inputLayer(D)
      .fullyConnectedLayer(2, OpenANN::TANH)
      .outputLayer(F, OpenANN::LINEAR)
-     .setErrorFunction(OpenANN::CE)
      .trainingSet(X, T);
 
   std::vector<int> indices;
-  indices.push_back(0);
-  indices.push_back(1);
+  for(int n = 0; n < N; n++)
+    indices.push_back(n);
   double error1, error2;
 
   Eigen::VectorXd g1(net.dimension()), g2(net.dimension());
