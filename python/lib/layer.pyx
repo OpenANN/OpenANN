@@ -1,96 +1,62 @@
-class Constraint:
-  NONE = 0
-  DISTANCE = 1
-  SLOPE = 2
-  TRIANGLE = 3
-
 cdef class Layer:
-  cdef openann.Layer* construct(self, openann.OutputInfo& info):
+  cdef openann.Layer* construct(self):
     return NULL
 
 
 cdef class SigmaPiLayer(Layer):
-  cdef double std_dev
-  cdef int bias
   cdef int width
   cdef int height
-  cdef openann.ActivationFunction act
-  cdef object nodes
+
   cdef openann.Constraint* distance
   cdef openann.Constraint* slope
   cdef openann.Constraint* triangle
+    
+  cdef openann.SigmaPi* layer
 
-  def __cinit__(self, width, height, activation, std_dev =0.05, bias=False):
-    self.std_dev = std_dev
-    self.bias = bias
-    self.act = activation
-    self.nodes = { 2: [], 3: [], 4: []}
+  def __cinit__(self, net, activation, std_dev =0.05, bias=False):
+    cdef openann.OutputInfo info = (<Net?>net).last_output_info()
+    self.layer = new openann.SigmaPi(info, bias, activation, std_dev)
 
-    self.width = width
-    self.height = height
-    self.distance = new openann.DistanceConstraint(width, height)
-    self.slope = new openann.SlopeConstraint(width, height)
-    self.triangle = new openann.TriangleConstraint(width, height)
-
-  def set_triangle_resolution(angle_resolution):
-      del self.triangle
-      self.triangle = new openann.TriangleConstraint(self.width, self.height, angle_resolution)
+    self.width = info.dimensions[1]
+    self.height = info.dimensions[2]
+    self.distance = NULL
+    self.slope = NULL
+    self.triangle = NULL
 
   def __dealloc__(self):
-    del self.distance
-    del self.slope
+    if self.distance != NULL:
+      del self.distance
+    if self.slope != NULL:
+      del self.slope
+    if self.triangle != NULL:
+      del self.triangle
 
-  def add_second_order_nodes(self, numbers, constraint=Constraint.NONE):
-    self.nodes[2].append( (numbers,constraint) )
+  def distance_2nd_order_nodes(self, numbers):
+    if self.distance == NULL:
+      self.distance = new openann.DistanceConstraint(self.width, self.height)
+    self.layer.secondOrderNodes(numbers, deref(self.distance))
     return self
 
-  def add_third_order_nodes(self, numbers, constraint=Constraint.NONE):
-    self.nodes[3].append((numbers, constraint)) 
+  def slope_2nd_order_nodes(self, numbers):
+    if self.slope == NULL:
+      self.slope = new openann.SlopeConstraint(self.width, self.height)
+    self.layer.secondOrderNodes(numbers, deref(self.slope))
     return self
 
-  def add_fourth_order_nodes(self, numbers, constraint=Constraint.NONE):
-    self.nodes[4].append((numbers, constraint)) 
+  def triangle_3rd_order_nodes(self, numbers, resolution):
+    if self.triangle == NULL:
+      self.triangle = new openann.TriangleConstraint(self.width, self.height, resolution)
+    self.layer.thirdOrderNodes(numbers, deref(self.triangle))
     return self
 
+  def second_order_nodes(self, numbers):
+    self.layer.secondOrderNodes(numbers)
+    return self
 
-  cdef openann.Layer* construct(self, openann.OutputInfo& info):
-    cdef openann.SigmaPi* layer = new openann.SigmaPi(info, self.bias, self.act, self.std_dev)
+  def third_order_nodes(self, numbers):
+    self.layer.thirdOrderNodes(numbers)
+    return self
 
-    for lst in self.nodes[2]:
-      if lst[1] == Constraint.DISTANCE:
-        layer.secondOrderNodes(lst[0], deref(self.distance))
-      elif lst[1] == Constraint.SLOPE:
-        layer.secondOrderNodes(lst[0], deref(self.slope))
-      else:
-        layer.secondOrderNodes(lst[0])
-
-    for lst in self.nodes[3]:
-      if lst[1] == Constraint.DISTANCE:
-        layer.thirdOrderNodes(lst[0], deref(self.distance))
-      elif lst[1] == Constraint.SLOPE:
-        layer.thirdOrderNodes(lst[0], deref(self.slope))
-      else:
-        layer.thirdOrderNodes(lst[0])
-
-    for lst in self.nodes[4]:
-      if lst[1] == Constraint.DISTANCE:
-        layer.fourthOrderNodes(lst[0], deref(self.distance))
-      elif lst[1] == Constraint.SLOPE:
-        layer.fourthOrderNodes(lst[0], deref(self.slope))
-      else:
-        layer.fourthOrderNodes(lst[0])
-
-    return layer
-
-
-
-
-
-
-
-
-    
-
-
-
+  cdef openann.Layer* construct(self):
+    return self.layer
 
