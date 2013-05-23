@@ -2,6 +2,7 @@
 #include "FiniteDifferences.h"
 #include "LayerAdapter.h"
 #include <OpenANN/layers/Convolutional.h>
+#include <OpenANN/util/Random.h>
 
 using namespace OpenANN;
 
@@ -10,6 +11,12 @@ void ConvolutionalTestCase::run()
   RUN(ConvolutionalTestCase, convolutional);
   RUN(ConvolutionalTestCase, convolutionalGradient);
   RUN(ConvolutionalTestCase, convolutionalInputGradient);
+}
+
+void ConvolutionalTestCase::setUp()
+{
+  RandomNumberGenerator rng;
+  rng.seed(0);
 }
 
 void ConvolutionalTestCase::convolutional()
@@ -54,11 +61,11 @@ void ConvolutionalTestCase::convolutionalGradient()
   Convolutional layer(info, 2, 3, 3, true, LINEAR, 0.05);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3*5*5);
-  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2*3*3);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3*5*5);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2*3*3);
   std::vector<int> indices;
   indices.push_back(0);
-  //indices.push_back(1);
+  indices.push_back(1);
   opt.trainingSet(X, Y);
   Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
   Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
