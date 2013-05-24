@@ -63,29 +63,33 @@ void SigmaPi::updatedParameters()
 void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
     const int N = x->rows();
-    if(N > 1)
-      throw new OpenANNException("SigmaPi layer does not support batches.");
     int J = nodes.size();
+    this->x.conservativeResize(N, Eigen::NoChange);
+    a.conservativeResize(N, Eigen::NoChange);
+    this->x.rightCols(1).fill(0.0);
+    this->y.conservativeResize(N, Eigen::NoChange);
     this->x.leftCols(info.outputs()) = *x;
 
-    int i = 0;
-
-    for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
-        double sum = 0.0;
+    for(int instance = 0; instance < N; instance++)
+    {
+      int i = 0;
+      for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
+          double sum = 0.0;
 
 #pragma omp parallel for reduction(+:sum)
-        for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
+          for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
 
-            double korrelation = 1.0;
+              double korrelation = 1.0;
 
-            for(int k = 0; k < u->position.size(); ++k) {
-               korrelation *= (*x)(0, u->position.at(k));
-            }
+              for(int k = 0; k < u->position.size(); ++k) {
+                korrelation *= (*x)(instance, u->position.at(k));
+              }
 
-           sum = sum + w[u->weight] * korrelation;
-        }
+            sum = sum + w[u->weight] * korrelation;
+          }
 
-        a(0, i++) = sum;
+          a(instance, i++) = sum;
+      }
     }
 
     activationFunction(act, a, this->y);
@@ -96,6 +100,10 @@ void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
 
 void SigmaPi::backpropagate(Eigen::MatrixXd* error_in, Eigen::MatrixXd*& error_out)
 {
+    const int N = a.rows();
+    e.conservativeResize(N, Eigen::NoChange);
+    deltas.conservativeResize(N, Eigen::NoChange);
+    yd.conservativeResize(N, Eigen::NoChange);
     e.fill(0.0);
 
     for(int i = 0; i < wd.size(); ++i)
@@ -103,25 +111,27 @@ void SigmaPi::backpropagate(Eigen::MatrixXd* error_in, Eigen::MatrixXd*& error_o
 
     activationFunctionDerivative(act, y, yd);
 
-    int i = 0;
+    for(int instance = 0; instance < N; instance++)
+    {
+      int i = 0;
+      for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
+          double sum = 0.0;
+          deltas(instance, i) = (*error_in)(instance, i) * yd(instance, i);
 
-    for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
-        double sum = 0.0;
-        deltas(0, i) = (*error_in)(0, i) * yd(0, i);
+          for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
+              double korrelation = 1.0;
 
-        for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
-            double korrelation = 1.0;
+              for(int k = 0; k < u->position.size(); ++k) {
+                int index = u->position.at(k);
+                korrelation *= x(instance, index);
+                e(instance, index) += w[u->weight] * deltas(instance, i);
+              }
 
-            for(int k = 0; k < u->position.size(); ++k) {
-              int index = u->position.at(k);
-              korrelation *= x(0, index);
-              e(index) += w[u->weight] * deltas(0, i);
-            }
-
-            wd[u->weight] += deltas(0, i) * korrelation;
-        }
-       
-        ++i;
+              wd[u->weight] += deltas(instance, i) * korrelation;
+          }
+        
+          ++i;
+      }
     }
 
     error_out = &e;

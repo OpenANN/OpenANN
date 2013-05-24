@@ -4,8 +4,6 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/layers/SigmaPi.h>
 
-using namespace OpenANN;
-
 void SigmaPiTestCase::run()
 {
   RUN(SigmaPiTestCase, sigmaPiNoConstraintGradient);
@@ -14,16 +12,23 @@ void SigmaPiTestCase::run()
 
 void SigmaPiTestCase::sigmaPiNoConstraintGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(5);
   info.dimensions.push_back(5);
-  SigmaPi layer(info, false, TANH, 0.05);
+  OpenANN::SigmaPi layer(info, false, OpenANN::TANH, 0.05);
   layer.secondOrderNodes(2);
 
   LayerAdapter opt(layer, info);
 
-  Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 5*5);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::
+      parameterGradient(indices.begin(), indices.end(), opt);
 
   for(int i = 0; i < gradient.rows(); i++)
       ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
@@ -44,17 +49,17 @@ struct TestConstraint : public OpenANN::SigmaPi::Constraint
 
 void SigmaPiTestCase::sigmaPiWithConstraintGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(5);
   info.dimensions.push_back(5);
   TestConstraint constraint;
-  SigmaPi layer(info, false, TANH, 0.05);
+  OpenANN::SigmaPi layer(info, false, OpenANN::TANH, 0.05);
   layer.secondOrderNodes(2, constraint);
 
   LayerAdapter opt(layer, info);
 
   Eigen::VectorXd gradient = opt.gradient();
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::parameterGradient(0, opt);
 
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-2);
