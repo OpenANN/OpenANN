@@ -71,14 +71,12 @@ cdef class Net:
 
   def add_layer(self, layer):
     cdef int layers = self.thisptr.numberOflayers()
-    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
-    self.thisptr.addLayer((<Layer?>layer).construct(info))
+    self.thisptr.addLayer((<Layer?>layer).construct())
     self.layers.append(layer)
 
   def add_output_layer(self, layer):
     cdef int layers = self.thisptr.numberOflayers()
-    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
-    self.thisptr.addOutputLayer((<Layer?>layer).construct(info))
+    self.thisptr.addOutputLayer((<Layer?>layer).construct())
     self.layers.append(layer)
 
   def compressed_output_layer(self, units, params, act, compression, std_dev=0.05):
@@ -98,3 +96,10 @@ cdef class Net:
     cdef openann.VectorXd y_eigen = self.thisptr.predict(deref(x_eigen))
     del x_eigen
     return __vector_eigen_to_numpy__(&y_eigen)
+
+  cdef openann.OutputInfo last_output_info(self):
+    cdef int layers = self.thisptr.numberOflayers()
+    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
+    return info
+
+

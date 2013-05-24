@@ -68,25 +68,24 @@ void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
     int J = nodes.size();
     this->x.leftCols(info.outputs()) = *x;
 
-    for(int i = 0; i < nodes.size(); ++i) {
-        HigherOrderNeuron& neuron = nodes[i];
+    int i = 0;
 
+    for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
         double sum = 0.0;
 
 #pragma omp parallel for reduction(+:sum)
-        for(int j = 0; j < neuron.size(); ++j) {
-            HigherOrderUnit& unit = neuron[j];
+        for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
 
             double korrelation = 1.0;
 
-            for(int k = 0; k < unit.position.size(); ++k) {
-               korrelation *= (*x)(0, unit.position.at(k));
+            for(int k = 0; k < u->position.size(); ++k) {
+               korrelation *= (*x)(0, u->position.at(k));
             }
 
-            sum = sum + w[unit.weight] * korrelation;
+           sum = sum + w[u->weight] * korrelation;
         }
 
-        a(0, i) = sum;
+        a(0, i++) = sum;
     }
 
     activationFunction(act, a, this->y);
@@ -104,25 +103,25 @@ void SigmaPi::backpropagate(Eigen::MatrixXd* error_in, Eigen::MatrixXd*& error_o
 
     activationFunctionDerivative(act, y, yd);
 
-    for(int i = 0; i < nodes.size(); ++i) {
-        HigherOrderNeuron& neuron = nodes.at(i);
+    int i = 0;
 
+    for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
         double sum = 0.0;
         deltas(0, i) = (*error_in)(0, i) * yd(0, i);
 
-        for(int j = 0; j < neuron.size(); ++j) {
-            HigherOrderUnit& unit = neuron.at(j);
-
+        for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
             double korrelation = 1.0;
 
-            for(int k = 0; k < unit.position.size(); ++k) {
-              int index = unit.position.at(k);
+            for(int k = 0; k < u->position.size(); ++k) {
+              int index = u->position.at(k);
               korrelation *= x(0, index);
-              e(0, index) += w[unit.weight] * deltas(0, i);
+              e(index) += w[u->weight] * deltas(0, i);
             }
 
-            wd[unit.weight] += deltas(0, i) * korrelation;
+            wd[u->weight] += deltas(0, i) * korrelation;
         }
+       
+        ++i;
     }
 
     error_out = &e;

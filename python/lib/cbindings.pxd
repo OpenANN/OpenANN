@@ -62,7 +62,7 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass OutputInfo:
     bool bias
-    vector[int] dimension
+    vector[int] dimensions
     int outputs()
 
   cdef cppclass Layer:
@@ -95,6 +95,9 @@ cdef extern from "OpenANN/layers/SigmaPiConstraints.h" namespace "OpenANN":
     DistanceConstraint(long width, long height)
   cdef cppclass SlopeConstraint(Constraint):
     SlopeConstraint(long width, long height)
+  cdef cppclass TriangleConstraint(Constraint):
+    TriangleConstraint(long width, long height, double resolution)
+
 
 cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
   cdef cppclass DataSet:
