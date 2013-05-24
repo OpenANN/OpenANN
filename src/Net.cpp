@@ -235,25 +235,14 @@ void Net::finishedIteration()
 Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
 {
   tempInput = x.transpose();
-  Eigen::MatrixXd* y = &tempInput;
-  for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); layer++)
-    (**layer).forwardPropagate(y, y, dropout);
-  tempOutput = *y;
-  OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
-  if(errorFunction == CE)
-    OpenANN::softmax(tempOutput);
+  forwardPropagate();
   return tempOutput.transpose();
 }
 
 Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
 {
   tempInput = x;
-  Eigen::MatrixXd* y = &tempInput;
-  for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); layer++)
-    (**layer).forwardPropagate(y, y, dropout);
-  tempOutput = *y;
+  forwardPropagate();
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
@@ -356,15 +345,16 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
                         double& value, Eigen::VectorXd& grad)
 {
   const int N = endN - startN;
-  Eigen::MatrixXd X(N, dataSet->inputs());
+  tempInput.conservativeResize(N, dataSet->inputs());
   Eigen::MatrixXd T(N, dataSet->outputs());
   int n = 0;
   for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
   {
-    X.row(n) = dataSet->getInstance(*it);
+    tempInput.row(n) = dataSet->getInstance(*it);
     T.row(n) = dataSet->getTarget(*it);
   }
-  tempError = (*this)(X) - T;
+  forwardPropagate();
+  tempError = tempOutput - T;
   if(errorFunction == CE)
     value = -(T.array() * ((tempOutput.array() + 1e-10).log())).sum();
   else
@@ -382,6 +372,18 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
 
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
+}
+
+void Net::forwardPropagate()
+{
+  Eigen::MatrixXd* y = &tempInput;
+  for(std::vector<Layer*>::iterator layer = layers.begin();
+      layer != layers.end(); layer++)
+    (**layer).forwardPropagate(y, y, dropout);
+  tempOutput = *y;
+  OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
+  if(errorFunction == CE)
+    OpenANN::softmax(tempOutput);
 }
 
 double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)

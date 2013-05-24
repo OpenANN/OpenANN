@@ -286,6 +286,7 @@ public:
                              std::vector<int>::const_iterator endN,
                              double& value, Eigen::VectorXd& grad);
 private:
+  void forwardPropagate();
   double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };
 
