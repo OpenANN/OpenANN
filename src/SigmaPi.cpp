@@ -70,13 +70,13 @@ void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
     this->y.conservativeResize(N, Eigen::NoChange);
     this->x.leftCols(info.outputs()) = *x;
 
+#pragma omp parallel for
     for(int instance = 0; instance < N; instance++)
     {
       int i = 0;
       for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
           double sum = 0.0;
 
-#pragma omp parallel for reduction(+:sum)
           for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
 
               double korrelation = 1.0;

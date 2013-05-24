@@ -30,6 +30,8 @@ void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x, Eigen::Mat
   this->y.conservativeResize(N, Eigen::NoChange);
   denoms.conservativeResize(N, Eigen::NoChange);
   this->x = x;
+
+#pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     for(int fmOut=0, outputIdx=0; fmOut < fm; fmOut++)
@@ -63,6 +65,7 @@ void LocalResponseNormalization::backpropagate(Eigen::MatrixXd* ein, Eigen::Matr
   etmp = (*ein).cwiseProduct(y).cwiseProduct(denoms.cwiseInverse()).array() *
       (-2.0*alpha*beta);
 
+#pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     for(int fmOut=0, outputIdx=0; fmOut < fm; fmOut++)

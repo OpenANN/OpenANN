@@ -98,6 +98,7 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
   a.fill(0.0);
+#pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
