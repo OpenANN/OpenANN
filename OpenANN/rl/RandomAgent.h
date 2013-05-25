@@ -5,6 +5,11 @@
 namespace OpenANN
 {
 
+/**
+ * @class RandomAgent
+ *
+ * Choses actions randomly.
+ */
 class RandomAgent : public Agent
 {
   Environment* environment;
