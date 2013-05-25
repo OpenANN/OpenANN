@@ -29,43 +29,6 @@ enum ErrorFunction
  * Feedforward multilayer neural network. You can specify many different types
  * of layers and choose the architecture almost arbitrary. But there are no
  * shortcut connections allowed!
- *
- * So far the following types of layers are implemented:
- *
- * - Input layer: adds a bias to the network's input. This layer must be
- *   present in the network.
- * - Output layer: this has to be the last layer and must be present in every
- *   network. It is fully connected.
- * - Compressed output layer: this is an alternative to the output layer. It
- *   is a fully connected output layer.
- * - FullyConnected layer: each neuron is connected to each neuron of the
- *   previous layer.
- * - RBM layer: a restricted boltzmann machine that can be pretrained.
- * - Compressed layer: fully connected layer. The I incoming weights of a
- *   neuron are represented by M (usually M < I) parameters.
- * - Extreme layer: fully connected layer with fixed random weights.
- * - Convolutional layer: consists of a number of 2-dimensional feature maps.
- *   Each feature map is connected to each feature map of the previous layer.
- *   The activations are computed by applying a parametrizable convolution,
- *   i. e. this kind of layer uses weight sharing and sparse connections to
- *   reduce the number of weights in comparison to fully connected layers.
- * - Subsampling layer: these will be used to quickly reduce the number of
- *   nodes after a convolution and obtain little translation invarianc. A
- *   non-overlapping group of nodes is summed up, multiplied with a weight and
- *   added to a learnable bias to obtain the activation of a neuron. This is
- *   sometimes called average pooling.
- * - MaxPooling layer: this is an alternative to subsampling layers and works
- *   usually better. Instead of the sum it computes the maximum of a group and
- *   has no learnable weights or biases.
- * - LocalResponseNormalization layer: lateral inhibition of neurons at the
- *   same positions in adjacent feature maps.
- * - AlphaBetaFilter layer: this is a recurrent layer that estimates the
- *   position and velocity of the inputs from the noisy observation of the
- *   positions. Usually we need this layer for partially observable markov
- *   decision processes in reinforcement learning.
- * - Dropout layer: a technique to increase the generalization of a neural
- *   network. Neurons are randomly dropped out during training so that they
- *   do not rely on each other.
  */
 class Net : public Learner
 {
@@ -90,6 +53,11 @@ public:
   Net();
   virtual ~Net();
 
+  /**
+   * @name Architecture Definition
+   * These functions must be called to define the architecture of the network.
+   */
+  ///@{
   /**
    * Add an input layer.
    * @param dim1 first dimension of the input, e. g. number of color channels
@@ -246,7 +214,6 @@ public:
    * @return this for chaining
    */
   Net& addLayer(Layer* layer);
-
   /** 
    * Add a new output layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
@@ -255,29 +222,75 @@ public:
    * @return this for chaining
    */
   Net& addOutputLayer(Layer* layer);
+  ///@}
 
-
+  /**
+   * @name Access Internal Structure
+   */
+  ///@{
+  /**
+   * Request number of layers.
+   * @return number of layers in this neural network
+   */
   unsigned int numberOflayers();
+  /**
+   * Access layer.
+   * @param l index of layer
+   * @return l-th layer
+   */
   Layer& getLayer(unsigned int l);
+  /**
+   * Request information about output of a given layer.
+   * @param l index of the layer
+   * @return output information
+   */
   OutputInfo getOutputInfo(unsigned int l);
+  ///@}
+
+  /**
+   * @name Optimization Contol
+   */
+  ///@{
+  /**
+   * Set the error function.
+   * @param errorFunction error function
+   * @return this for chaining
+   */
   Net& setErrorFunction(ErrorFunction errorFunction);
+  /**
+   * Toggle dropout.
+   * @param activate turn dropout on or off
+   * @return this for chaining
+   */
   Net& useDropout(bool activate = true);
+  /**
+   * Set test set.
+   * @param testInput input vectors, each instance should be in a row
+   * @param testOutput output vectors, each instance should be in a row
+   */
+  Net& testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput);
+  /**
+   * Set test set.
+   * @param testDataSet test set
+   */
+  Net& testSet(DataSet& testDataSet);
+  ///@}
+
+  /**
+   * @name Inherited Functions
+   */
+  ///@{
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
-  virtual Net& testSet(Eigen::MatrixXd& testInput,
-                       Eigen::MatrixXd& testOutput);
-  virtual Net& testSet(DataSet& testDataSet);
-
-  virtual void finishedIteration();
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();
-  virtual unsigned int examples();
   virtual Eigen::VectorXd currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesInitialization();
   virtual void initialize();
+  virtual unsigned int examples();
   virtual double error(unsigned int i);
   virtual double error();
   virtual bool providesGradient();
@@ -288,6 +301,8 @@ public:
   virtual void errorGradient(std::vector<int>::const_iterator startN,
                              std::vector<int>::const_iterator endN,
                              double& value, Eigen::VectorXd& grad);
+  virtual void finishedIteration();
+  ///@}
 private:
   void forwardPropagate();
   void backpropagate();

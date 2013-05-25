@@ -5,8 +5,8 @@ namespace OpenANN {
 \page HowtoLearn Applying Neural Networks
 
 This is a short summary of best practices for applying multilayer neural
-networks to arbitrary supervised learning problems. We will only consider
-\b fully \b connected \b layers.
+networks to arbitrary supervised learning problems and the capabilities of
+%OpenANN.
 
 \section NetworkArchitecture Network Architecture
 
@@ -21,6 +21,47 @@ number of hidden nodes is usually not sufficient to fit the training set good
 enough. However, if the number of hidden nodes is to high, the generalization
 is not good enough, i.e. the neural net overfits the training data. Tuning the
 network architecture is not simple.
+
+\section Layers Types of Layers
+
+A neural network can contain many types of layers. In %OpenANN, the multilayer
+neural network class is called Net. To initialize a Net you have to define
+its layers which is done by calling member functions of Net. The most
+important layers are the input layer and the output layer. These are required
+to specify the input and output dimensions of the network. If there are no
+hidden layers we are only able to approximate linear functions. To represent
+more complex functions we can add various types of layers. Here is an
+incomplete list of available types of hidden layers.
+
+- FullyConnected: each neuron is connected to each neuron of the previous
+  layer.
+- RBM: a restricted boltzmann machine that can be pretrained with
+  unlabeled data.
+- Compressed: fully connected layer. The I incoming weights of a neuron are
+  represented by M (usually M < I) parameters.
+- Extreme: fully connected layer with fixed random weights.
+- Convolutional: consists of a number of 2-dimensional feature maps. Each
+  feature map is connected to each feature map of the previous layer. The
+  activations are computed by applying a parametrizable convolution, i. e.
+  this kind of layer uses weight sharing and sparse connections to reduce the
+  number of weights in comparison to fully connected layers.
+- Subsampling: these will be used to quickly reduce the number of nodes after
+  a convolution and obtain little translation invarianc. A non-overlapping
+  group of nodes is summed up, multiplied with a weight and added to a
+  learnable bias to obtain the activation of a neuron. This is sometimes
+  called average pooling.
+- MaxPooling: this is an alternative to subsampling layers and works usually
+  better. Instead of the sum it computes the maximum of a group and has no
+  learnable weights or biases.
+- LocalResponseNormalization: lateral inhibition of neurons at the same
+  positions in adjacent feature maps.
+- AlphaBetaFilter: this is a recurrent layer that estimates the position and
+  velocity of the inputs from the noisy observation of the positions. Usually
+  we need this layer for partially observable markov decision processes in
+  reinforcement learning.
+- Dropout layer: a technique to increase the generalization of a neural
+  network. Neurons are randomly dropped out during training so that they
+  do not rely on each other.
 
 \section Functions Activation Functions and Error Functions
 

@@ -13,16 +13,15 @@ class Learner : public Optimizable
 {
 public:
   /**
-   * Set the current training set.
-   * @param trainingInput input vectors, each instance should be in a new column
-   * @param trainingOutput output vectors, each instance should be in a new
-   *                       column
+   * Set training set.
+   * @param trainingInput input vectors, each instance should be in a row
+   * @param trainingOutput output vectors, each instance should be in a row
    */
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput) = 0;
   /**
-   * Set the current training set.
-   * @param trainingSet custom training set
+   * Set training set.
+   * @param trainingSet training set
    */
   virtual Learner& trainingSet(DataSet& trainingSet) = 0;
   /**
