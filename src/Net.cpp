@@ -243,7 +243,6 @@ Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
 {
   tempInput = x;
   forwardPropagate();
-  OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
   return tempOutput;
