@@ -63,9 +63,10 @@ Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
 }
 
 Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
-                                          bool backprop)
+                                          double l2Penalty, bool backprop)
 {
-  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev, backprop));
+  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev, l2Penalty,
+                          backprop));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,

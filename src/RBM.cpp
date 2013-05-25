@@ -6,13 +6,14 @@
 
 namespace OpenANN {
 
-RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop)
+RBM::RBM(int D, int H, int cdN, double stdDev, double l2Penalty, bool backprop)
   : D(D), H(H), cdN(cdN), stdDev(stdDev),
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
     pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D*H + D + H),
-    deltas(1, H), e(1, D), params(K), grad(K), backprop(backprop)
+    deltas(1, H), e(1, D), params(K), grad(K), l2Penalty(l2Penalty),
+    backprop(backprop)
 {
   initialize();
 }
@@ -121,6 +122,10 @@ void RBM::errorGradient(std::vector<int>::const_iterator startN,
   daydream();
   fillGradient();
   grad = this->grad;
+  n = 0;
+  value = 0.0;
+  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+    value += (trainSet->getInstance(*it)-pv.row(n).transpose()).squaredNorm();
 }
 
 Learner& RBM::trainingSet(Eigen::MatrixXd& trainingInput,
@@ -168,16 +173,18 @@ void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout
 
 void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = ph.rows();
+  phd.conservativeResize(N, Eigen::NoChange);
   // Derive activations
   activationFunctionDerivative(LOGISTIC, ph, phd);
   deltas = phd.cwiseProduct(*ein);
   if(backprop)
   {
     Wd = deltas.transpose() * v;
-    bhd = deltas.transpose();
+    bhd = deltas.colwise().sum().transpose();
   }
   // Prepare error signals for previous layer
-  e = W.transpose() * deltas;
+  e = deltas * W;
   eout = &e;
 }
 
@@ -251,8 +258,8 @@ void RBM::reality()
   sampleHgivenV();
 
   posGradW = ph.transpose() * v;
-  posGradBv = v.transpose();
-  posGradBh = ph.transpose();
+  posGradBv = v.colwise().sum().transpose();
+  posGradBh = ph.colwise().sum().transpose();
 }
 
 void RBM::daydream()
@@ -264,8 +271,8 @@ void RBM::daydream()
   }
 
   negGradW = ph.transpose() * pv;
-  negGradBv = pv.transpose();
-  negGradBh = ph.transpose();
+  negGradBv = pv.colwise().sum().transpose();
+  negGradBh = ph.colwise().sum().transpose();
 }
 
 void RBM::fillGradient()
@@ -278,6 +285,13 @@ void RBM::fillGradient()
     grad(idx++) = posGradBv(i) - negGradBv(i);
   for(int j = 0; j < H; j++)
     grad(idx++) = posGradBh(j) - negGradBh(j);
+  if(l2Penalty > 0)
+  {
+    idx = 0;
+    for(int j = 0; j < H; j++)
+      for(int i = 0; i < D; i++)
+        grad(idx++) -= l2Penalty * W(j, i);
+  }
   grad *= -1.0;
 }
 

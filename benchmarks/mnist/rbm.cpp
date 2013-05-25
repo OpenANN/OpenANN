@@ -225,7 +225,7 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY)
-     .restrictedBoltzmannMachineLayer(50, 1, 0.01, false)
+     .restrictedBoltzmannMachineLayer(50, 1, 0.01, 0.01, true)
      .outputLayer(10, OpenANN::LINEAR)
      .setErrorFunction(OpenANN::CE)
      .trainingSet(trainSet);
@@ -233,9 +233,9 @@ int main(int argc, char** argv)
   OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
   rbm.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.01, 0.5, 10, 0.01);
+  OpenANN::MBSGD optimizer(0.01, 0.5, 16);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 2;
+  stop.maximalIterations = 5;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();
@@ -246,8 +246,8 @@ int main(int argc, char** argv)
   net.testSet(testSet);
 
   OpenANN::StoppingCriteria stopNet;
-  stopNet.maximalIterations = 2;
-  OpenANN::MBSGD netOptimizer(0.01, 0.5, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  stopNet.maximalIterations = 5;
+  OpenANN::MBSGD netOptimizer(0.001, 0.5, 16, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
   netOptimizer.setStopCriteria(stopNet);
   netOptimizer.optimize();
