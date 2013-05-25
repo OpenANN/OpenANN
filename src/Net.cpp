@@ -364,10 +364,7 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
     value /= 2.0;
   }
 
-  Eigen::MatrixXd* e = &tempError;
-  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-      layer != layers.rend(); layer++)
-    (**layer).backpropagate(e, e);
+  backpropagate();
 
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
@@ -383,6 +380,14 @@ void Net::forwardPropagate()
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
+}
+
+void Net::backpropagate()
+{
+  Eigen::MatrixXd* e = &tempError;
+  for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
+      layer != layers.rend(); layer++)
+    (**layer).backpropagate(e, e);
 }
 
 double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
@@ -411,10 +416,7 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
         error += tempError.squaredNorm() / 2.0;
     }
 
-    Eigen::MatrixXd* e = &tempError;
-    for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-        layer != layers.rend(); layer++)
-      (**layer).backpropagate(e, e);
+    backpropagate();
 
     if(singleGradient)
     {

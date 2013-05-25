@@ -287,6 +287,7 @@ public:
                              double& value, Eigen::VectorXd& grad);
 private:
   void forwardPropagate();
+  void backpropagate();
   double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };
 

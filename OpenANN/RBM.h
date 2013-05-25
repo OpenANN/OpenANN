@@ -50,7 +50,7 @@ class RBM : public Learner, public Layer
   Eigen::MatrixXd pv, v, ph, h, phd;
   Eigen::MatrixXd deltas, e;
   int K;
-  Eigen::VectorXd params;
+  Eigen::VectorXd params, grad;
   DataSet* trainSet;
   bool backprop;
 
@@ -80,7 +80,10 @@ public:
   virtual double error(unsigned int n);
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient();
-  virtual Eigen::VectorXd gradient(unsigned int i);
+  virtual Eigen::VectorXd gradient(unsigned int n);
+  virtual void errorGradient(std::vector<int>::const_iterator startN,
+                             std::vector<int>::const_iterator endN,
+                             double& value, Eigen::VectorXd& grad);
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(DataSet& trainingSet);
@@ -102,10 +105,12 @@ public:
   const Eigen::MatrixXd& getVisibleProbs();
   const Eigen::MatrixXd& getVisibleSample();
   Eigen::MatrixXd reconstructProb(int n, int steps);
-  void reality(int n);
-  void daydream();
   void sampleHgivenV();
   void sampleVgivenH();
+private:
+  void reality();
+  void daydream();
+  void fillGradient();
 };
 
 } // namespace OpenANN
