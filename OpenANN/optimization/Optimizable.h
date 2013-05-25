@@ -12,26 +12,41 @@ namespace OpenANN {
 /**
  * @class Optimizable
  *
- * Represents an optimizable object. E. g. objective function, neural network,
- * etc.
+ * Represents an optimizable object.
+ *
+ * An optimizable object can be arbitrary as long as it provides some
+ * objective function. The objective function in this context is called error
+ * function and will be minimized. This could be e.g. the sum of squared error
+ * between predictions and targets for a neural network. But the idea behind
+ * this is more general. We can e.g. optimize the reward in a reinforcement
+ * learning problem or the energy of an unsupervised model like an RBM.
  */
 class Optimizable
 {
 public:
   virtual ~Optimizable() {}
+
   /**
+   * @name Batch Methods
+   * Functions that must be implemented in every Optimizable.
+   */
+  ///@{
+  /**
+   * Check if the object knows how to initialize its parameters.
    * @return does the optimizable object provide a parameter initialization?
    */
   virtual bool providesInitialization() = 0;
   /**
-   * Initialize the object's parameters.
+   * Initialize the optimizable parameters.
    */
   virtual void initialize() = 0;
   /**
+   * Request the number of optimizable parameters.
    * @return number of optimizable parameters
    */
   virtual unsigned dimension() = 0;
   /**
+   * Request the current parameters.
    * @return current parameters
    */
   virtual Eigen::VectorXd currentParameters() = 0;
@@ -46,22 +61,38 @@ public:
    */
   virtual double error() = 0;
   /**
+   * Check if the object provides a gradient of the error function with
+   * respect to its parameters.
    * @return does the optimizable provide a gradient?
    */
   virtual bool providesGradient() = 0;
   /**
-   * @return gradient of the objective function with respect to parameters
+   * Compute gradient of the error function with respect to the parameters.
+   * @return gradient
    */
   virtual Eigen::VectorXd gradient() = 0;
+  ///@}
+
   /**
+   * @name Mini-batch Methods
+   * Functions that should be implemented to speed up optimization and are
+   * required by some optimization algorithms.
+   */
+  ///@{
+  /**
+   * Request number of training examples.
    * @return number of training examples
    */
   virtual unsigned examples() { return 1; }
   /**
+   * Compute error of a given training example.
+   * @param n index of the training example in the dataset
    * @return error of the n-th training example
    */
   virtual double error(unsigned n) { return error(); }
   /**
+   * Compute gradient of a given training example.
+   * @param n index of the training example in the dataset
    * @return gradient of the n-th training example
    */
   virtual Eigen::VectorXd gradient(unsigned n) { return gradient(); }
@@ -145,6 +176,8 @@ public:
       grad += gradient(*it);
     }
   }
+  ///@}
+
   /**
    * This callback is called after each optimization algorithm iteration.
    */
