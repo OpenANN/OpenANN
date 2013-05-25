@@ -1,4 +1,6 @@
 #include "RBMTestCase.h"
+#include "LayerAdapter.h"
+#include "FiniteDifferences.h"
 #include <OpenANN/RBM.h>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
@@ -9,6 +11,8 @@ using namespace OpenANN;
 void RBMTestCase::run()
 {
   RUN(RBMTestCase, learnSimpleExample);
+  RUN(RBMTestCase, parameterGradient);
+  RUN(RBMTestCase, inputGradient);
 }
 
 void RBMTestCase::setUp()
@@ -67,4 +71,44 @@ void RBMTestCase::learnSimpleExample()
     ASSERT(H(i, 0) < 0.5);
     ASSERT(H(i, 1) > 0.5);
   }
+}
+
+void RBMTestCase::parameterGradient()
+{
+  OutputInfo info;
+  info.dimensions.push_back(3);
+  RBM layer(3, 2, 1, 0.01, 0.0, true);
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
+      indices.begin(), indices.end(), opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
+}
+
+void RBMTestCase::inputGradient()
+{
+  OutputInfo info;
+  info.dimensions.push_back(3);
+  RBM layer(3, 2, 1, 0.01, 0.0, true);
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
+  opt.trainingSet(X, Y);
+  Eigen::MatrixXd gradient = opt.inputGradient();
+  ASSERT_EQUALS(gradient.rows(), 2);
+  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(X, Y,
+                                                                       opt);
+  ASSERT_EQUALS(estimatedGradient.rows(), 2);
+  for(int j = 0; j < gradient.rows(); j++)
+    for(int i = 0; i < gradient.cols(); i++)
+      ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
 }
