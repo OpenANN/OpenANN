@@ -270,7 +270,7 @@ public:
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();
-  virtual Eigen::VectorXd currentParameters();
+  virtual const Eigen::VectorXd& currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesInitialization();
   virtual void initialize();

@@ -68,7 +68,7 @@ void RBM::setParameters(const Eigen::VectorXd& parameters)
   OPENANN_CHECK_MATRIX_BROKEN(parameters);
 }
 
-Eigen::VectorXd RBM::currentParameters()
+const Eigen::VectorXd& RBM::currentParameters()
 {
   return params;
 }

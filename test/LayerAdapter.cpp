@@ -21,9 +21,9 @@ unsigned int LayerAdapter::examples()
   return input.rows();
 }
 
-Eigen::VectorXd LayerAdapter::currentParameters()
+const Eigen::VectorXd& LayerAdapter::currentParameters()
 {
-  Eigen::VectorXd params(dimension());
+  params.conservativeResize(dimension());
   std::vector<double*>::const_iterator it = parameters.begin();
   for(int i = 0; i < dimension(); i++, it++)
     params(i) = **it;

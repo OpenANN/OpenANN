@@ -49,7 +49,7 @@ public:
    * Request the current parameters.
    * @return current parameters
    */
-  virtual Eigen::VectorXd currentParameters() = 0;
+  virtual const Eigen::VectorXd& currentParameters() = 0;
   /**
    * Set new parameters.
    * @param parameters new parameters

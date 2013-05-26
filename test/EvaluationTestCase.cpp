@@ -12,7 +12,7 @@ public:
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X) { return X; }
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput) {}
   virtual Learner& trainingSet(OpenANN::DataSet& trainingSet) {}
-  virtual Eigen::VectorXd currentParameters() {}
+  virtual const Eigen::VectorXd& currentParameters() {}
   virtual unsigned int dimension() {}
   virtual double error() {}
   virtual Eigen::VectorXd gradient() {}

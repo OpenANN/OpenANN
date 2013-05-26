@@ -77,7 +77,7 @@ public:
   virtual unsigned int examples();
   virtual unsigned int dimension();
   virtual void setParameters(const Eigen::VectorXd& parameters);
-  virtual Eigen::VectorXd currentParameters();
+  virtual const Eigen::VectorXd& currentParameters();
   virtual double error();
   virtual double error(unsigned int n);
   virtual bool providesGradient();

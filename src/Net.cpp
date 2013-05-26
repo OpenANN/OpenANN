@@ -214,7 +214,7 @@ unsigned int Net::examples()
   return N;
 }
 
-Eigen::VectorXd Net::currentParameters()
+const Eigen::VectorXd& Net::currentParameters()
 {
   return parameterVector;
 }

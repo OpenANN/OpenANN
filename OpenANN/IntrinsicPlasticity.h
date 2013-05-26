@@ -51,7 +51,7 @@ public:
   virtual void initialize();
   virtual double error();
   virtual double error(unsigned int n);
-  virtual Eigen::VectorXd currentParameters();
+  virtual const Eigen::VectorXd& currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient();

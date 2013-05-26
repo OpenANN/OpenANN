@@ -49,7 +49,7 @@ public:
   virtual void chooseAction();
   virtual void chooseOptimalAction();
 
-  virtual Eigen::VectorXd currentParameters();
+  virtual const Eigen::VectorXd& currentParameters();
   virtual unsigned int dimension();
   virtual double error();
   virtual Eigen::VectorXd gradient();

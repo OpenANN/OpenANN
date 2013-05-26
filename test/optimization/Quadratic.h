@@ -26,7 +26,7 @@ public:
     return N;
   }
 
-  virtual Eigen::VectorXd currentParameters()
+  virtual const Eigen::VectorXd& currentParameters()
   {
     return x;
   }

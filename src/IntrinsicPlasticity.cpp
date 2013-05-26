@@ -63,7 +63,7 @@ double IntrinsicPlasticity::error(unsigned int n)
   return e;
 }
 
-Eigen::VectorXd IntrinsicPlasticity::currentParameters()
+const Eigen::VectorXd& IntrinsicPlasticity::currentParameters()
 {
   int i = 0;
   for(; i < nodes; i++)

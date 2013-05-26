@@ -156,7 +156,7 @@ void NeuroEvolutionAgent::chooseOptimalAction()
   environment->stateTransition(action);
 }
 
-Eigen::VectorXd NeuroEvolutionAgent::currentParameters()
+const Eigen::VectorXd& NeuroEvolutionAgent::currentParameters()
 {
   return policy.currentParameters();
 }

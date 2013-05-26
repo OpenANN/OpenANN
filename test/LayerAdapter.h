@@ -13,11 +13,12 @@ class LayerAdapter : public OpenANN::Learner
   OpenANN::OutputInfo info;
   Eigen::MatrixXd input;
   Eigen::MatrixXd desired;
+  Eigen::VectorXd params;
 public:
   LayerAdapter(OpenANN::Layer& layer, OpenANN::OutputInfo inputs);
   virtual unsigned int dimension();
   virtual unsigned int examples();
-  virtual Eigen::VectorXd currentParameters();
+  virtual const Eigen::VectorXd& currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual double error();
   virtual double error(unsigned int n);
