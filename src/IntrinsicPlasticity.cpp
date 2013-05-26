@@ -2,6 +2,7 @@
 #include <OpenANN/util/Random.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/EigenWrapper.h>
+#include <OpenANN/ActivationFunctions.h>
 
 namespace OpenANN
 {
@@ -47,7 +48,7 @@ double IntrinsicPlasticity::error()
 double IntrinsicPlasticity::error(unsigned int n)
 {
   double e = 0.0;
-  (*this)(trainSet->getInstance(n));
+  y = (*this)(trainSet->getInstance(n));
   for(int i = 0; i < nodes; i++)
   {
     const double ei = y(i) - mu;
@@ -108,36 +109,16 @@ Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
 
 Eigen::VectorXd IntrinsicPlasticity::operator()(const Eigen::VectorXd& a)
 {
-  for(int i = 0; i < nodes; i++)
-  {
-    const double input = s(i) * a(i) + b(i);
-    if(input > 45.0)
-      y(i) = 1.0;
-    else if(input < -45.0)
-      y(i) = 0.0;
-    else
-      y(i) = 1.0 / (1.0 + exp(-input));
-  }
-  return y;
+  Eigen::MatrixXd A = a.transpose();
+  return (*this)(A).transpose();
 }
 
 Eigen::MatrixXd IntrinsicPlasticity::operator()(const Eigen::MatrixXd& A)
 {
-  // TODO vectorize implementation
   Eigen::MatrixXd Y(A.rows(), A.cols());
   for(int n = 0; n < A.rows(); n++)
-  {
-    for(int i = 0; i < nodes; i++)
-    {
-      const double input = s(i) * A(n, i) + b(i);
-      if(input > 45.0)
-        Y(n, i) = 1.0;
-      else if(input < -45.0)
-        Y(n, i) = 0.0;
-      else
-        Y(n, i) = 1.0 / (1.0 + exp(-input));
-    }
-  }
+    Y.row(n) = A.row(n).cwiseProduct(s.transpose()) + b.transpose();
+  activationFunction(LOGISTIC, Y, Y);
   return Y;
 }
 
