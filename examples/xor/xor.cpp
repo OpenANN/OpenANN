@@ -17,31 +17,11 @@ using namespace OpenANN;
  *
  * The data set is simple:
  * <table>
- * <tr>
- * <td>\f$ x_1 \f$</td>
- * <td>\f$ x_2 \f$</td>
- * <td>\f$ y_1 \f$</td>
- * </tr>
- * <tr>
- * <td>0</td>
- * <td>1</td>
- * <td>1</td>
- * </tr>
- * <tr>
- * <td>0</td>
- * <td>0</td>
- * <td>0</td>
- * </tr>
- * <tr>
- * <td>1</td>
- * <td>1</td>
- * <td>0</td>
- * </tr>
- * <tr>
- * <td>1</td>
- * <td>0</td>
- * <td>1</td>
- * </tr>
+ * <tr><td>\f$ x_1 \f$</td><td>\f$ x_2 \f$</td><td>\f$ y_1 \f$</td></tr>
+ * <tr><td>0</td><td>1</td><td>1</td></tr>
+ * <tr><td>0</td><td>0</td><td>0</td></tr>
+ * <tr><td>1</td><td>1</td><td>0</td></tr>
+ * <tr><td>1</td><td>0</td><td>1</td></tr>
  * </table>
  *
  * That means \f$ y_1 \f$ is on whenever \f$ x_1 \neq x_2 \f$. The problem is
