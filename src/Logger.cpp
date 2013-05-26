@@ -14,7 +14,6 @@ const char* LevelToString[] = {
 
 bool Logger::deactivate = false;
 
-
 Logger::Logger(Target target, std::string name)
   : target(target), name(name)
 {
@@ -24,12 +23,12 @@ Logger::Logger(Target target, std::string name)
   }
   else if(target == FILE)
   {
-    time_t rawtime;
-    struct tm* timeinfo;
-    std::time(&rawtime);
-    timeinfo = std::localtime(&rawtime);
-    file.open((name + "-" + std::string(std::asctime(timeinfo)).substr(0, 24) +
-        ".log").c_str());
+    time_t now;
+    std::time(&now);
+    struct tm* current = std::localtime(&now);
+    char current_time[32];
+    std::strftime(current_time, sizeof(current_time), "%F %X", current);
+    file.open((name + "-" + std::string(current_time) + ".log").c_str());
     OPENANN_CHECK(file.is_open());
   }
   else if(target == APPEND_FILE)
@@ -39,25 +38,16 @@ Logger::Logger(Target target, std::string name)
   }
 }
 
-
 Logger::~Logger()
 {
   if(file.is_open())
     file.close();
 }
 
-
 bool Logger::isActive()
 {
-  return target != NONE;
+  return target != NONE && !deactivate;
 }
-
-
-FloatingPointFormatter::FloatingPointFormatter(double value, int precision)
-  : value(value), precision(precision)
-{
-}
-
 
 Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
 {
@@ -77,17 +67,14 @@ Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
   return logger;
 }
 
-
 Log::Log()
 {
 }
-
 
 Log::~Log()
 {
   getStream() << message.str() << std::endl; 
 }
-
 
 std::ostream& Log::get(LogLevel level, const char* name_space)
 {
@@ -111,13 +98,11 @@ std::ostream& Log::get(LogLevel level, const char* name_space)
   return message;
 }
 
-
 std::ostream& Log::getStream()
 {
   static std::ostream& gStream = std::cout;
   return gStream;
 }
-
 
 Log::LogLevel& Log::getLevel()
 {
@@ -131,6 +116,5 @@ std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t)
         << std::resetiosflags(std::ios_base::fixed);
     return os;
 }
-
 
 }

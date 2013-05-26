@@ -71,7 +71,49 @@ An example is the output of the Optimizer LMA:
  DEBUG  2013-05-26 13:33:44  LMA: Iteration #49, training error = 3.0143
 \endverbatim
 
+This logger is based on the following article:
+<a href="http://www.drdobbs.com/cpp/logging-in-c/201804215" target=_blank>
+Logging in C++</a>.
+
 \section LogObjects Logger Objects
+
+You can also log information on a local level, i.e. you can specify different
+targets for different logger objects. You can do this by creating an instance
+of Logger:
+
+\code
+OpenANN::Logger logger(OpenANN::Logger::APPEND_FILE, "name");
+logger << "This is a number: " << i << ".\n";
+\endcode
+
+There is no special formatting like in the global logger. The contant will be
+passed directly to the encapsulated output stream. This is very useful when
+you want to log e.g. parameters of a model and restore them afterwards.
+
+Each logger requires a Logger::Target. The output can be redirected to stdout,
+to a new file or it can be appended to a file. If the target is
+OpenANN::Logger::APPEND_FILE, the name of the logger will be used to determine
+the logfile. For example, the logfile "name.log" will be used for a logger
+that has the name "name". If the target was OpenANN::Logger::FILE, the
+corresponding logfile would be "name-time.log" where time is the current time.
+
+The output of all Logger objects can be deactivated:
+
+\code
+OpenANN::Logger::deactivate = true;
+\endcode
+
+\section Formatting
+
+Both loggers allow to specify the format for floating point numbers by passing
+a FloatingPointFormatter:
+
+\code
+double myValue = 5.0;
+OPENANN_DEBUG << FloatingPointFormatter(myValue, 2);
+\endcode
+
+This will print "5.00".
 
 */
 
