@@ -13,8 +13,9 @@
 
 namespace OpenANN {
 
-MBSGD::MBSGD(double learningRate, double momentum, int batchSize, double gamma,
-             double learningRateDecay, double minimalLearningRate, double momentumGain,
+MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
+             double gamma, double learningRateDecay,
+             double minimalLearningRate, double momentumGain,
              double maximalMomentum, double minGain, double maxGain)
   : alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
@@ -176,8 +177,8 @@ void MBSGD::initialize()
   parameters = opt->currentParameters();
   momentum.resize(P);
   momentum.fill(0.0);
-  randomIndices.reserve(N);
   randomIndices.clear();
+  randomIndices.reserve(N);
   rng.generateIndices<std::vector<int> >(N, randomIndices);
   iteration = 0;
 }

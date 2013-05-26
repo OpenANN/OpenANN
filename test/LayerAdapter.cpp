@@ -142,7 +142,7 @@ Eigen::MatrixXd LayerAdapter::operator()(const Eigen::MatrixXd& X)
 }
 
 OpenANN::Learner& LayerAdapter::trainingSet(Eigen::MatrixXd& trainingInput,
-                                                Eigen::MatrixXd& trainingOutput)
+                                            Eigen::MatrixXd& trainingOutput)
 {
   input = trainingInput;
   desired = trainingOutput;

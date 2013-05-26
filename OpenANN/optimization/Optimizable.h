@@ -172,6 +172,7 @@ public:
     grad.fill(0.0);
     for(std::vector<int>::const_iterator it = startN; it != endN; it++)
     {
+      OPENANN_CHECK_WITHIN(*it, 0, examples());
       value += error(*it);
       grad += gradient(*it);
     }
