@@ -128,17 +128,6 @@ void RBM::errorGradient(std::vector<int>::const_iterator startN,
     value += (trainSet->getInstance(*it)-pv.row(n).transpose()).squaredNorm();
 }
 
-Learner& RBM::trainingSet(Eigen::MatrixXd& trainingInput,
-                          Eigen::MatrixXd& trainingOutput)
-{
-  throw OpenANNException("RBM::trainingSet(input, output) is not implemented!");
-}
-
-Learner& RBM::trainingSet(DataSet& trainingSet)
-{
-  trainSet = &trainingSet;
-}
-
 OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
                            std::vector<double*>& parameterDerivativePointers)
 {

@@ -203,7 +203,7 @@ int main(int argc, char** argv)
     file >> weights(i);
   net.setParameters(weights);
 
-  net.testSet(testSet);
+  net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
       << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";

@@ -51,7 +51,6 @@ class RBM : public Learner, public Layer
   Eigen::MatrixXd deltas, e;
   int K;
   Eigen::VectorXd params, grad;
-  DataSet* trainSet;
   double l2Penalty;
   bool backprop;
 
@@ -87,9 +86,6 @@ public:
   virtual void errorGradient(std::vector<int>::const_iterator startN,
                              std::vector<int>::const_iterator endN,
                              double& value, Eigen::VectorXd& grad);
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
-                               Eigen::MatrixXd& trainingOutput);
-  virtual Learner& trainingSet(DataSet& trainingSet);
 
   // Layer interface
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);

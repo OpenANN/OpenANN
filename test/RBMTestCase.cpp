@@ -6,8 +6,6 @@
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
 
-using namespace OpenANN;
-
 void RBMTestCase::run()
 {
   RUN(RBMTestCase, learnSimpleExample);
@@ -31,12 +29,12 @@ void RBMTestCase::learnSimpleExample()
   X.row(4) << 0, 0, 1, 1, 0, 0;
   X.row(5) << 0, 0, 1, 1, 1, 0;
 
-  RBM rbm(6, 2, 1, 0.1);
-  DirectStorageDataSet ds(&X);
+  OpenANN::RBM rbm(6, 2, 1, 0.1);
+  OpenANN::DirectStorageDataSet ds(&X);
   rbm.trainingSet(ds);
   rbm.initialize();
-  MBSGD opt(0.1, 0.0, 2);
-  StoppingCriteria stop;
+  OpenANN::MBSGD opt(0.1, 0.0, 2);
+  OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 2000;
   opt.setOptimizable(rbm);
   opt.setStopCriteria(stop);
@@ -75,9 +73,9 @@ void RBMTestCase::learnSimpleExample()
 
 void RBMTestCase::parameterGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  RBM layer(3, 2, 1, 0.01, 0.0, true);
+  OpenANN::RBM layer(3, 2, 1, 0.01, 0.0, true);
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
@@ -87,17 +85,17 @@ void RBMTestCase::parameterGradient()
   indices.push_back(1);
   opt.trainingSet(X, Y);
   Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
-      indices.begin(), indices.end(), opt);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::
+      parameterGradient(indices.begin(), indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
 
 void RBMTestCase::inputGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  RBM layer(3, 2, 1, 0.01, 0.0, true);
+  OpenANN::RBM layer(3, 2, 1, 0.01, 0.0, true);
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
@@ -105,8 +103,8 @@ void RBMTestCase::inputGradient()
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);
-  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(X, Y,
-                                                                       opt);
+  Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::
+      inputGradient(X, Y, opt);
   ASSERT_EQUALS(estimatedGradient.rows(), 2);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)

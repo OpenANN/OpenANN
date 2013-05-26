@@ -26,9 +26,10 @@ enum ErrorFunction
 /**
  * @class Net
  *
- * Feedforward multilayer neural network. You can specify many different types
- * of layers and choose the architecture almost arbitrary. But there are no
- * shortcut connections allowed!
+ * Feedforward multilayer neural network.
+ *
+ * You can specify many different types of layers and choose the architecture
+ * almost arbitrary.
  */
 class Net : public Learner
 {
@@ -36,14 +37,11 @@ class Net : public Learner
   std::vector<Layer*> layers;
   std::vector<double*> parameters;
   std::vector<double*> derivatives;
-  DataSet* dataSet;
-  DataSet* testDataSet;
-  bool deleteDataSet, deleteTestSet;
   ErrorFunction errorFunction;
   bool dropout;
 
   bool initialized;
-  int P, N, L;
+  int P, L;
   Eigen::VectorXd parameterVector, tempGradient;
   Eigen::MatrixXd tempInput, tempOutput, tempError;
 
@@ -263,26 +261,12 @@ public:
    * @return this for chaining
    */
   Net& useDropout(bool activate = true);
-  /**
-   * Set test set.
-   * @param testInput input vectors, each instance should be in a row
-   * @param testOutput output vectors, each instance should be in a row
-   */
-  Net& testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput);
-  /**
-   * Set test set.
-   * @param testDataSet test set
-   */
-  Net& testSet(DataSet& testDataSet);
   ///@}
 
   /**
    * @name Inherited Functions
    */
   ///@{
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
-                               Eigen::MatrixXd& trainingOutput);
-  virtual Learner& trainingSet(DataSet& trainingSet);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();

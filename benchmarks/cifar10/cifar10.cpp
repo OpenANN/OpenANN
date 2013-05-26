@@ -142,7 +142,7 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
-  net.testSet(testSet);
+  net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   OPENANN_INFO << "Created MLP.";
   OPENANN_INFO << "D = " << loader.D << ", F = " << loader.F << ", N = "

@@ -18,8 +18,7 @@
 namespace OpenANN {
 
 Net::Net()
-  : dataSet(0), testDataSet(0), deleteDataSet(false), deleteTestSet(false),
-    errorFunction(SSE), dropout(false), initialized(false), N(0), L(0)
+  : errorFunction(SSE), dropout(false), initialized(false), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -27,16 +26,6 @@ Net::Net()
 
 Net::~Net()
 {
-  if(deleteDataSet)
-  {
-    delete dataSet;
-    dataSet = 0;
-  }
-  if(deleteTestSet)
-  {
-    delete testDataSet;
-    testDataSet = 0;
-  }
   for(int i = 0; i < layers.size(); i++)
   {
     delete layers[i];
@@ -183,40 +172,6 @@ Net& Net::useDropout(bool activate)
   dropout = activate;
 }
 
-Learner& Net::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
-{
-  dataSet = new DirectStorageDataSet(&trainingInput, &trainingOutput);
-  deleteDataSet = true;
-  N = dataSet->samples();
-  return *this;
-}
-
-Learner& Net::trainingSet(DataSet& trainingSet)
-{
-  if(deleteDataSet)
-    delete dataSet;
-  dataSet = &trainingSet;
-  deleteDataSet = false;
-  N = dataSet->samples();
-  return *this;
-}
-
-Net& Net::testSet(Eigen::MatrixXd& testInput, Eigen::MatrixXd& testOutput)
-{
-  if(deleteTestSet)
-    delete testDataSet;
-  testDataSet = new DirectStorageDataSet(&testInput, &testOutput);
-  deleteTestSet = true;
-  return *this;
-}
-
-Net& Net::testSet(DataSet& testSet)
-{
-  testDataSet = &testSet;
-  deleteTestSet = false;
-  return *this;
-}
-
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
 {
   this->errorFunction = errorFunction;
@@ -226,10 +181,10 @@ void Net::finishedIteration()
 {
   bool dropout = this->dropout;
   this->dropout = false;
-  if(dataSet)
-    dataSet->finishIteration(*this);
-  if(testDataSet)
-    testDataSet->finishIteration(*this);
+  if(trainSet)
+    trainSet->finishIteration(*this);
+  if(validSet)
+    validSet->finishIteration(*this);
   this->dropout = dropout;
 }
 
@@ -292,11 +247,11 @@ void Net::initialize()
 double Net::error(unsigned int i)
 {
   if(errorFunction == CE)
-    return -(dataSet->getTarget(i).array() *
-        (((*this)(dataSet->getInstance(i)).array() + 1e-10).log())).sum();
+    return -(trainSet->getTarget(i).array() *
+        (((*this)(trainSet->getInstance(i)).array() + 1e-10).log())).sum();
   else
-    return ((*this)(dataSet->getInstance(i)) -
-        dataSet->getTarget(i)).squaredNorm() / 2.0;
+    return ((*this)(trainSet->getInstance(i)) -
+        trainSet->getTarget(i)).squaredNorm() / 2.0;
 }
 
 double Net::error()
@@ -345,13 +300,13 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
                         double& value, Eigen::VectorXd& grad)
 {
   const int N = endN - startN;
-  tempInput.conservativeResize(N, dataSet->inputs());
-  Eigen::MatrixXd T(N, dataSet->outputs());
+  tempInput.conservativeResize(N, trainSet->inputs());
+  Eigen::MatrixXd T(N, trainSet->outputs());
   int n = 0;
   for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
   {
-    tempInput.row(n) = dataSet->getInstance(*it);
-    T.row(n) = dataSet->getTarget(*it);
+    tempInput.row(n) = trainSet->getInstance(*it);
+    T.row(n) = trainSet->getTarget(*it);
   }
   forwardPropagate();
   tempError = tempOutput - T;
@@ -405,13 +360,13 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
   double error = 0.0;
   for(int i = start; i < end; i++)
   {
-    tempError = ((*this)(dataSet->getInstance(i)) -
-        dataSet->getTarget(i)).transpose();
+    tempError = ((*this)(trainSet->getInstance(i)) -
+        trainSet->getTarget(i)).transpose();
 
     if(computeError)
     {
       if(errorFunction == CE)
-        error += -(dataSet->getTarget(i).array() *
+        error += -(trainSet->getTarget(i).array() *
             ((tempOutput.transpose().array() + 1e-10).log())).sum();
       else
         error += tempError.squaredNorm() / 2.0;

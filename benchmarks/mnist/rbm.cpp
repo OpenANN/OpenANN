@@ -243,7 +243,7 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
-  net.testSet(testSet);
+  net.validationSet(testSet);
 
   OpenANN::StoppingCriteria stopNet;
   stopNet.maximalIterations = 10;
