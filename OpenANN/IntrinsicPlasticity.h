@@ -38,12 +38,9 @@ class IntrinsicPlasticity : public Learner
   Eigen::VectorXd b;
   Eigen::VectorXd parameters;
   Eigen::VectorXd g;
-  DataSet* dataSet;
-  bool deleteDataSet;
   Eigen::VectorXd y;
 public:
   IntrinsicPlasticity(int nodes, double mu, double stdDev = 1.0);
-  virtual ~IntrinsicPlasticity();
 
   virtual unsigned int examples();
   virtual unsigned int dimension();
@@ -56,9 +53,6 @@ public:
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient();
   virtual Eigen::VectorXd gradient(unsigned int n);
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
-                               Eigen::MatrixXd& trainingOutput);
-  virtual Learner& trainingSet(DataSet& trainingSet);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& a);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& A);
 };

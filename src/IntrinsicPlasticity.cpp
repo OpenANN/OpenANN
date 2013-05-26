@@ -8,20 +8,13 @@ namespace OpenANN
 
 IntrinsicPlasticity::IntrinsicPlasticity(int nodes, double mu, double stdDev)
     : nodes(nodes), mu(mu), stdDev(stdDev), s(nodes), b(nodes),
-      parameters(2*nodes), g(2*nodes), dataSet(0), deleteDataSet(false),
-      y(nodes)
+      parameters(2*nodes), g(2*nodes), y(nodes)
 {
-}
-
-IntrinsicPlasticity::~IntrinsicPlasticity()
-{
-  if(deleteDataSet)
-    delete dataSet;
 }
 
 unsigned int IntrinsicPlasticity::examples()
 {
-  return dataSet->samples();
+  return trainSet->samples();
 }
 
 unsigned int IntrinsicPlasticity::dimension()
@@ -45,7 +38,7 @@ void IntrinsicPlasticity::initialize()
 double IntrinsicPlasticity::error()
 {
   double e = 0.0;
-  const double N = dataSet->samples();
+  const double N = trainSet->samples();
   for(int n = 0; n < N; n++)
     e += error(n);
   return e;
@@ -54,7 +47,7 @@ double IntrinsicPlasticity::error()
 double IntrinsicPlasticity::error(unsigned int n)
 {
   double e = 0.0;
-  (*this)(dataSet->getInstance(n));
+  (*this)(trainSet->getInstance(n));
   for(int i = 0; i < nodes; i++)
   {
     const double ei = y(i) - mu;
@@ -90,14 +83,14 @@ bool IntrinsicPlasticity::providesGradient()
 Eigen::VectorXd IntrinsicPlasticity::gradient()
 {
   g.fill(0.0);
-  for(int n = 0; n < dataSet->samples(); n++)
+  for(int n = 0; n < trainSet->samples(); n++)
     g += gradient(n);
   return g;
 }
 
 Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
 {
-  Eigen::VectorXd a = dataSet->getInstance(n);
+  Eigen::VectorXd a = trainSet->getInstance(n);
   OPENANN_CHECK_MATRIX_BROKEN(a);
   Eigen::VectorXd y = (*this)(a);
   OPENANN_CHECK_MATRIX_BROKEN(y);
@@ -111,22 +104,6 @@ Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
   for(int j = 0; j < nodes; j++, i++)
     g(i) = 1.0 - tmp*y(j) + y(j)*y(j)/mu;
   return -g; // Allows using gradient descent algorithms
-}
-
-Learner& IntrinsicPlasticity::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
-{
-  if(deleteDataSet)
-    delete dataSet;
-  dataSet = new DirectStorageDataSet(&trainingInput, &trainingOutput);
-  deleteDataSet = true;
-}
-
-Learner& IntrinsicPlasticity::trainingSet(DataSet& trainingSet)
-{
-  if(deleteDataSet)
-    delete dataSet;
-  dataSet = &trainingSet;
-  deleteDataSet = false;
 }
 
 Eigen::VectorXd IntrinsicPlasticity::operator()(const Eigen::VectorXd& a)
