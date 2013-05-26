@@ -87,6 +87,8 @@ bool MBSGD::step()
   rng.generateIndices<std::vector<int> >(N, randomIndices, true);
   std::vector<int>::const_iterator startN = randomIndices.begin();
   std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;
+  if(endN > randomIndices.end())
+    endN = randomIndices.end();
   for(int b = 0; b < batches; b++)
   {
     double error = 0.0;
