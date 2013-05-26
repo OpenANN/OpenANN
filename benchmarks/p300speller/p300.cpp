@@ -116,7 +116,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
   OpenANN::Net net;
   net.inputLayer(csDimension > 0 ? csDimension : trainingSet.inputs())
     .outputLayer(trainingSet.outputs(), OpenANN::TANH)
-    .testSet(testSet)
+    .validationSet(testSet)
     .trainingSet(trainingSet);
 
   OpenANN::Logger progressLogger(OpenANN::Logger::CONSOLE);

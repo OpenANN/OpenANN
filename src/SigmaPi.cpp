@@ -40,7 +40,7 @@ struct NoConstraint : public OpenANN::SigmaPi::Constraint
 
 SigmaPi::SigmaPi(OutputInfo info, bool bias, ActivationFunction act, double stdDev)
     : info(info), bias(bias), act(act), stdDev(stdDev),
-      x(info.outputs() + bias), e(info.outputs())
+      x(1, info.outputs() + bias), e(1, info.outputs())
 {
   if(bias)
     x(info.outputs()) = 1.0;
@@ -60,29 +60,36 @@ void SigmaPi::updatedParameters()
 {
 }
 
-void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+    const int N = x->rows();
     int J = nodes.size();
-    this->x.head(info.outputs()) = *x;
+    this->x.conservativeResize(N, Eigen::NoChange);
+    a.conservativeResize(N, Eigen::NoChange);
+    this->x.rightCols(1).fill(0.0);
+    this->y.conservativeResize(N, Eigen::NoChange);
+    this->x.leftCols(info.outputs()) = *x;
 
-    int i = 0;
+#pragma omp parallel for
+    for(int instance = 0; instance < N; instance++)
+    {
+      int i = 0;
+      for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
+          double sum = 0.0;
 
-    for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
-        double sum = 0.0;
+          for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
 
-#pragma omp parallel for reduction(+:sum)
-        for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
+              double korrelation = 1.0;
 
-            double korrelation = 1.0;
+              for(int k = 0; k < u->position.size(); ++k) {
+                korrelation *= (*x)(instance, u->position.at(k));
+              }
 
-            for(int k = 0; k < u->position.size(); ++k) {
-               korrelation *= (*x)(u->position.at(k));
-            }
+            sum = sum + w[u->weight] * korrelation;
+          }
 
-           sum = sum + w[u->weight] * korrelation;
-        }
-
-        a(i++) = sum;
+          a(instance, i++) = sum;
+      }
     }
 
     activationFunction(act, a, this->y);
@@ -91,8 +98,12 @@ void SigmaPi::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dro
 }
 
 
-void SigmaPi::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_out)
+void SigmaPi::backpropagate(Eigen::MatrixXd* error_in, Eigen::MatrixXd*& error_out)
 {
+    const int N = a.rows();
+    e.conservativeResize(N, Eigen::NoChange);
+    deltas.conservativeResize(N, Eigen::NoChange);
+    yd.conservativeResize(N, Eigen::NoChange);
     e.fill(0.0);
 
     for(int i = 0; i < wd.size(); ++i)
@@ -100,32 +111,34 @@ void SigmaPi::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_o
 
     activationFunctionDerivative(act, y, yd);
 
-    int i = 0;
+    for(int instance = 0; instance < N; instance++)
+    {
+      int i = 0;
+      for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
+          double sum = 0.0;
+          deltas(instance, i) = (*error_in)(instance, i) * yd(instance, i);
 
-    for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n) {
-        double sum = 0.0;
-        deltas(i) = (*error_in)(i) * yd(i);
+          for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
+              double korrelation = 1.0;
 
-        for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u) {
-            double korrelation = 1.0;
+              for(int k = 0; k < u->position.size(); ++k) {
+                int index = u->position.at(k);
+                korrelation *= x(instance, index);
+                e(instance, index) += w[u->weight] * deltas(instance, i);
+              }
 
-            for(int k = 0; k < u->position.size(); ++k) {
-              int index = u->position.at(k);
-              korrelation *= x(index);
-              e(index) += w[u->weight] * deltas(i);
-            }
-
-            wd[u->weight] += deltas(i) * korrelation;
-        }
-       
-        ++i;
+              wd[u->weight] += deltas(instance, i) * korrelation;
+          }
+        
+          ++i;
+      }
     }
 
     error_out = &e;
 }
 
 
-Eigen::VectorXd& SigmaPi::getOutput()
+Eigen::MatrixXd& SigmaPi::getOutput()
 {
     return y;
 }
@@ -139,10 +152,10 @@ OutputInfo SigmaPi::initialize(std::vector<double*>& parameterPointers, std::vec
         parameterDerivativePointers.push_back(&(wd[i]));
     }
 
-    y.resize(J + bias);
-    yd.resize(J);
-    deltas.resize(J);
-    a.resize(J);
+    y.resize(1, J + bias);
+    yd.resize(1, J);
+    deltas.resize(1, J);
+    a.resize(1, J);
 
     initializeParameters();
 

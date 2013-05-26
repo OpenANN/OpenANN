@@ -53,10 +53,8 @@ public:
   virtual unsigned int dimension();
   virtual double error();
   virtual Eigen::VectorXd gradient();
-  virtual Eigen::MatrixXd hessian();
   virtual void initialize();
   virtual bool providesGradient();
-  virtual bool providesHessian();
   virtual bool providesInitialization();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   void setSigma0(double sigma0);

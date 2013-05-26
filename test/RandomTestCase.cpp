@@ -99,6 +99,8 @@ void RandomTestCase::generateIndices()
   std::vector<bool> found(N, false);
   for(int n = 0; n < N; n++)
     found[indices[n]] = true;
+  bool foundAll = true;
   for(int n = 0; n < N; n++)
-    ASSERT(found[n]);
+    foundAll = foundAll && found[n];
+  ASSERT(foundAll);
 }

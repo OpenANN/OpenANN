@@ -13,8 +13,9 @@
 
 namespace OpenANN {
 
-MBSGD::MBSGD(double learningRate, double momentum, int batchSize, double gamma,
-             double learningRateDecay, double minimalLearningRate, double momentumGain,
+MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
+             double gamma, double learningRateDecay,
+             double minimalLearningRate, double momentumGain,
              double maximalMomentum, double minGain, double maxGain)
   : alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
@@ -84,21 +85,17 @@ bool MBSGD::step()
   accumulatedError = 0.0;
   double currentError;
   rng.generateIndices<std::vector<int> >(N, randomIndices, true);
-  for(int n = 0; n < N; n++)
-    batchAssignment[n % batches].push_back(randomIndices[n]);
+  std::vector<int>::const_iterator startN = randomIndices.begin();
+  std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;
+  if(endN > randomIndices.end())
+    endN = randomIndices.end();
   for(int b = 0; b < batches; b++)
   {
-    gradient.fill(0.0);
-    for(std::list<int>::const_iterator it = batchAssignment[b].begin();
-        it != batchAssignment[b].end(); it++)
-    {
-      opt->errorGradient(*it, currentError, currentGradient);
-      accumulatedError += currentError;
-      gradient += currentGradient;
-    }
+    double error = 0.0;
+    opt->errorGradient(startN, endN, error, gradient);
+    accumulatedError += error;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (double) batchAssignment[b].size();
-    batchAssignment[b].clear();
+    gradient /= (double) (endN - startN);
 
     if(useGain)
     {
@@ -128,6 +125,11 @@ bool MBSGD::step()
     eta += etaGain;
     eta = std::min(eta, maxEta);
     OPENANN_CHECK_INF_AND_NAN(eta);
+
+    startN += batchSize;
+    endN += batchSize;
+    if(endN > randomIndices.end())
+      endN = randomIndices.end();
   }
 
   iteration++;
@@ -177,10 +179,9 @@ void MBSGD::initialize()
   parameters = opt->currentParameters();
   momentum.resize(P);
   momentum.fill(0.0);
-  randomIndices.reserve(N);
   randomIndices.clear();
+  randomIndices.reserve(N);
   rng.generateIndices<std::vector<int> >(N, randomIndices);
-  batchAssignment.resize(batches);
   iteration = 0;
 }
 

@@ -15,18 +15,20 @@ class AlphaBetaFilter : public Layer
   Eigen::VectorXd alpha;
   Eigen::VectorXd beta;
   bool first;
-  Eigen::VectorXd* x;
-  Eigen::VectorXd y;
+  Eigen::MatrixXd* x;
+  Eigen::MatrixXd y;
 
 public:
   AlphaBetaFilter(OutputInfo info, double deltaT, double stdDev);
-  virtual OutputInfo initialize(std::vector<double*>& parameterPointers, std::vector<double*>& parameterDerivativePointers);
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters();
   virtual void reset();
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                bool dropout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }

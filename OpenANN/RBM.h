@@ -47,11 +47,11 @@ class RBM : public Learner, public Layer
   double stdDev;
   Eigen::MatrixXd W, posGradW, negGradW, Wd;
   Eigen::VectorXd bv, posGradBv, negGradBv, bh, posGradBh, negGradBh, bhd;
-  Eigen::VectorXd pv, v, ph, h, phd;
-  Eigen::VectorXd deltas, e;
+  Eigen::MatrixXd pv, v, ph, h, phd;
+  Eigen::MatrixXd deltas, e;
   int K;
-  Eigen::VectorXd params;
-  DataSet* trainSet;
+  Eigen::VectorXd params, grad;
+  double l2Penalty;
   bool backprop;
 
 public:
@@ -62,13 +62,16 @@ public:
    * @param H number of hidden nodes
    * @param cdN number of contrastive divergence steps
    * @param stdDev standard deviation of initial weights
+   * @param l2Penalty L2 regularization coefficient
    * @param backprop weights can be finetuned with backprop
    */
-  RBM(int D, int H, int cdN = 1, double stdDev = 0.01, bool backprop = true);
+  RBM(int D, int H, int cdN = 1, double stdDev = 0.01, double l2Penalty = 0.0,
+      bool backprop = true);
   virtual ~RBM() {}
 
   // Learner interface
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual bool providesInitialization();
   virtual void initialize();
   virtual unsigned int examples();
@@ -79,18 +82,16 @@ public:
   virtual double error(unsigned int n);
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient();
-  virtual Eigen::VectorXd gradient(unsigned int i);
-  virtual bool providesHessian();
-  virtual Eigen::MatrixXd hessian();
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
-                               Eigen::MatrixXd& trainingOutput);
-  virtual Learner& trainingSet(DataSet& trainingSet);
+  virtual Eigen::VectorXd gradient(unsigned int n);
+  virtual void errorGradient(std::vector<int>::const_iterator startN,
+                             std::vector<int>::const_iterator endN,
+                             double& value, Eigen::VectorXd& grad);
 
   // Layer interface
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y,
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                 bool dropout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual Eigen::MatrixXd& getOutput();
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
       std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
@@ -100,14 +101,15 @@ public:
   int visibleUnits();
   int hiddenUnits();
   const Eigen::MatrixXd& getWeights();
-  const Eigen::VectorXd& getVisibleProbs();
-  const Eigen::VectorXd& getVisibleSample();
-  Eigen::VectorXd reconstructProb(int n, int steps);
-  Eigen::VectorXd reconstruct(int n, int steps);
-  void reality(int n);
-  void daydream();
+  const Eigen::MatrixXd& getVisibleProbs();
+  const Eigen::MatrixXd& getVisibleSample();
+  Eigen::MatrixXd reconstructProb(int n, int steps);
   void sampleHgivenV();
   void sampleVgivenH();
+private:
+  void reality();
+  void daydream();
+  void fillGradient();
 };
 
 } // namespace OpenANN

@@ -6,6 +6,14 @@
 namespace OpenANN
 {
 
+/**
+ * @class StateSpace
+ *
+ * Represents the state space \f$ S \f$ in a reinforcement learning problem.
+ *
+ * The state space contains all possible states of the agent and the
+ * environment.
+ */
 class StateSpace
 {
 public:

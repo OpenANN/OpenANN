@@ -29,18 +29,18 @@ class Subsampling : public Layer
   bool bias;
   ActivationFunction act;
   double stdDev;
-  Eigen::VectorXd* x;
+  Eigen::MatrixXd* x;
   //! feature maps X output rows X output cols
   std::vector<Eigen::MatrixXd> W;
   std::vector<Eigen::MatrixXd> Wd;
   //! feature maps X output rows X output cols
   std::vector<Eigen::MatrixXd> Wb;
   std::vector<Eigen::MatrixXd> Wbd;
-  Eigen::VectorXd a;
-  Eigen::VectorXd y;
-  Eigen::VectorXd yd;
-  Eigen::VectorXd deltas;
-  Eigen::VectorXd e;
+  Eigen::MatrixXd a;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd yd;
+  Eigen::MatrixXd deltas;
+  Eigen::MatrixXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
@@ -50,10 +50,10 @@ public:
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y,
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                 bool dropout);
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }

@@ -24,18 +24,18 @@ class Dropout : public Layer
   OutputInfo info;
   int I;
   double dropoutProbability;
-  Eigen::VectorXd dropoutMask;
-  Eigen::VectorXd y;
-  Eigen::VectorXd e;
+  Eigen::MatrixXd dropoutMask;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd e;
 public:
   Dropout(OutputInfo info, double dropoutProbability);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }

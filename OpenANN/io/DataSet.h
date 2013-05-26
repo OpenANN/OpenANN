@@ -39,16 +39,16 @@ public:
   virtual int outputs() = 0;
   /**
    * Get the input of the ith instance.
-   * @param i number of instance
+   * @param n number of instance
    * @return input
    */
-  virtual Eigen::VectorXd& getInstance(int i) = 0;
+  virtual Eigen::VectorXd& getInstance(int n) = 0;
   /**
    * Get the output of the ith instance.
-   * @param i number of instance
+   * @param n number of instance
    * @return output
    */
-  virtual Eigen::VectorXd& getTarget(int i) = 0;
+  virtual Eigen::VectorXd& getTarget(int n) = 0;
   /**
    * This function is called after an iteration of the optimization algorithm.
    * It could log results, modify or extend the data set or whatever.

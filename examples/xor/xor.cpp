@@ -1,5 +1,6 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -16,31 +17,11 @@ using namespace OpenANN;
  *
  * The data set is simple:
  * <table>
- * <tr>
- * <td>\f$ x_1 \f$</td>
- * <td>\f$ x_2 \f$</td>
- * <td>\f$ y_1 \f$</td>
- * </tr>
- * <tr>
- * <td>0</td>
- * <td>1</td>
- * <td>1</td>
- * </tr>
- * <tr>
- * <td>0</td>
- * <td>0</td>
- * <td>0</td>
- * </tr>
- * <tr>
- * <td>1</td>
- * <td>1</td>
- * <td>0</td>
- * </tr>
- * <tr>
- * <td>1</td>
- * <td>0</td>
- * <td>1</td>
- * </tr>
+ * <tr><td>\f$ x_1 \f$</td><td>\f$ x_2 \f$</td><td>\f$ y_1 \f$</td></tr>
+ * <tr><td>0</td><td>1</td><td>1</td></tr>
+ * <tr><td>0</td><td>0</td><td>0</td></tr>
+ * <tr><td>1</td><td>1</td><td>0</td></tr>
+ * <tr><td>1</td><td>0</td><td>1</td></tr>
  * </table>
  *
  * That means \f$ y_1 \f$ is on whenever \f$ x_1 \neq x_2 \f$. The problem is
@@ -57,13 +38,14 @@ int main()
   const int D = 2; // number of inputs
   const int F = 1; // number of outputs
   const int N = 4; // size of training set
-  Eigen::MatrixXd x(N, D); // inputs
-  Eigen::MatrixXd t(N, F); // outputs
+  Eigen::MatrixXd X(N, D); // inputs
+  Eigen::MatrixXd T(N, F); // outputs
   // Each row represents an input
-  x.row(0) << 0.0, 1.0; t.row(0) << 1.0;
-  x.row(1) << 0.0, 0.0; t.row(1) << 0.0;
-  x.row(2) << 1.0, 1.0; t.row(2) << 0.0;
-  x.row(3) << 1.0, 0.0; t.row(3) << 1.0;
+  X.row(0) << 0.0, 1.0; T.row(0) << 1.0;
+  X.row(1) << 0.0, 0.0; T.row(1) << 0.0;
+  X.row(2) << 1.0, 1.0; T.row(2) << 0.0;
+  X.row(3) << 1.0, 0.0; T.row(3) << 1.0;
+  DirectStorageDataSet dataSet(&X, &T);
 
   // Create network
   Net net;
@@ -75,7 +57,7 @@ int main()
   // Add an output layer with F outputs and logistic activation function
      .outputLayer(F, LOGISTIC)
   // Add training set
-     .trainingSet(x, t);
+     .trainingSet(dataSet);
 
   // Set stopping conditions
   StoppingCriteria stop;
@@ -88,7 +70,7 @@ int main()
   // Use network to predict labels of the training data
   for(int n = 0; n < N; n++)
   {
-    Eigen::VectorXd y = net(x.row(n));
+    Eigen::VectorXd y = net(dataSet.getInstance(n));
     std::cout << y << std::endl;
   }
 

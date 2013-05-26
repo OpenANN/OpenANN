@@ -24,18 +24,18 @@ void Input::initializeParameters()
   // Do nothing.
 }
 
-void Input::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void Input::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   this->x = x;
   y = this->x;
 }
 
-void Input::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void Input::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Do nothing.
 }
 
-Eigen::VectorXd& Input::getOutput()
+Eigen::MatrixXd& Input::getOutput()
 {
   return *x;
 }

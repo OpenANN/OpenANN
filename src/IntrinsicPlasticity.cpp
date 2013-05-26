@@ -113,16 +113,6 @@ Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
   return -g; // Allows using gradient descent algorithms
 }
 
-bool IntrinsicPlasticity::providesHessian()
-{
-  return false;
-}
-
-Eigen::MatrixXd IntrinsicPlasticity::hessian()
-{
-  return Eigen::MatrixXd::Identity(2*nodes, 2*nodes);
-}
-
 Learner& IntrinsicPlasticity::trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput)
 {
   if(deleteDataSet)
@@ -152,6 +142,26 @@ Eigen::VectorXd IntrinsicPlasticity::operator()(const Eigen::VectorXd& a)
       y(i) = 1.0 / (1.0 + exp(-input));
   }
   return y;
+}
+
+Eigen::MatrixXd IntrinsicPlasticity::operator()(const Eigen::MatrixXd& A)
+{
+  // TODO vectorize implementation
+  Eigen::MatrixXd Y(A.rows(), A.cols());
+  for(int n = 0; n < A.rows(); n++)
+  {
+    for(int i = 0; i < nodes; i++)
+    {
+      const double input = s(i) * A(n, i) + b(i);
+      if(input > 45.0)
+        Y(n, i) = 1.0;
+      else if(input < -45.0)
+        Y(n, i) = 0.0;
+      else
+        Y(n, i) = 1.0 / (1.0 + exp(-input));
+    }
+  }
+  return Y;
 }
 
 }

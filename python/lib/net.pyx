@@ -84,6 +84,13 @@ cdef class Net:
     self.thisptr.compressedOutputLayer(units, params, act, string(comp), std_dev)
     return self
 
+  def set_error_function(self, err):
+    self.thisptr.setErrorFunction(err)
+    return self
+
+  def use_dropout(self, activate):
+    self.thisptr.useDropout(activate)
+
   def predict(self, x_numpy):
     cdef openann.VectorXd* x_eigen = __vector_numpy_to_eigen__(x_numpy)
     cdef openann.VectorXd y_eigen = self.thisptr.predict(deref(x_eigen))

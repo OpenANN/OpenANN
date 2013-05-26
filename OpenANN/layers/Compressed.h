@@ -31,15 +31,16 @@ class Compressed : public Layer
   double stdDev;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
+  Eigen::VectorXd b;
   Eigen::MatrixXd phi;
   Eigen::MatrixXd alpha;
   Eigen::MatrixXd alphad;
-  Eigen::VectorXd* x;
-  Eigen::VectorXd a;
-  Eigen::VectorXd y;
-  Eigen::VectorXd yd;
-  Eigen::VectorXd deltas;
-  Eigen::VectorXd e;
+  Eigen::MatrixXd* x;
+  Eigen::MatrixXd a;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd yd;
+  Eigen::MatrixXd deltas;
+  Eigen::MatrixXd e;
 
 public:
   Compressed(OutputInfo info, int J, int M, bool bias, ActivationFunction act,
@@ -48,9 +49,9 @@ public:
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters();
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }

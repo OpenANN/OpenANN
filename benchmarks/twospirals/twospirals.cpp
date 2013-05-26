@@ -166,9 +166,11 @@ Result evaluate(OpenANN::Net& net, const Eigen::MatrixXd& testInput, const Eigen
                 EvaluatableDataset& ds)
 {
   Result result;
+  Eigen::VectorXd input(testInput.cols());
   for(int n = 0; n < testInput.rows(); n++)
   {
-    double y = net(testInput.row(n))(0);
+    input = testInput.row(n);
+    double y = net(input)(0);
     double t = testOutput(n, 0);
     if(y > 0.0 && t > 0.0)
       result.tp++;

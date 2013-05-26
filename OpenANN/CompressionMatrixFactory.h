@@ -6,6 +6,14 @@
 namespace OpenANN
 {
 
+/**
+ * @class CompressionMatrixFactory
+ *
+ * Creates several types of matrices for compression.
+ *
+ * A compression matrix \f$ \Phi \f$ can either be used to compress a data
+ * vector or the parameters of a Learner.
+ */
 class CompressionMatrixFactory
 {
 public:

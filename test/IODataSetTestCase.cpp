@@ -26,7 +26,7 @@ void IODataSetTestCase::loadLibSVM()
   ASSERT(OpenANN::LibSVM::load(input, output, str) > 0);
 
   Eigen::MatrixXd X(3, 3);
-  X << 2.5, 2.1, 0.0, 
+  X << 2.5, 2.1, 0.0,
        0.0, 3.1, 0.5,
        0.1, 0.2, 0.4;
 

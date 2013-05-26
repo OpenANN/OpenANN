@@ -5,7 +5,7 @@ namespace OpenANN {
 
 AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, double deltaT, double stdDev)
   : I(info.outputs()), J(2*I), deltaT(deltaT), stdDev(stdDev), gamma(I),
-    gammad(I), alpha(I), beta(I), first(true), x(0), y(J)
+    gammad(I), alpha(I), beta(I), first(true), x(0), y(1, J)
 {
 }
 
@@ -56,33 +56,33 @@ void AlphaBetaFilter::reset()
   y.fill(0.0);
 }
 
-void AlphaBetaFilter::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void AlphaBetaFilter::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   this->x = x;
 
   if(first)
   {
     for(int i = 0, j = 0; i < I; i++, j+=2)
-      this->y(j) = (*x)(i);
+      this->y(0, j) = (*x)(0, i);
     first = false;
   }
 
   for(int i = 0, j = 0; i < I; i++, j+=2)
   {
-    const double diff = (*x)(i) - this->y(j);
-    this->y(j+1) += beta(i) / deltaT * diff;
-    this->y(j) += alpha(i) * diff + deltaT * this->y(j+1);
+    const double diff = (*x)(0, i) - this->y(0, j);
+    this->y(0, j+1) += beta(i) / deltaT * diff;
+    this->y(0, j) += alpha(i) * diff + deltaT * this->y(0, j+1);
   }
 
   y = &(this->y);
 }
 
-void AlphaBetaFilter::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void AlphaBetaFilter::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Do nothing.
 }
 
-Eigen::VectorXd& AlphaBetaFilter::getOutput()
+Eigen::MatrixXd& AlphaBetaFilter::getOutput()
 {
   return y;
 }
