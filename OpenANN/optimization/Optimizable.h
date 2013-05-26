@@ -102,30 +102,13 @@ public:
    * @param value function value
    * @param grad gradient of the function, lenght must be dimension()
    */
-  virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad)
-  {
-    value = error(n);
-    grad = gradient(n);
-  }
+  virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad);
   /**
    * Calculates the function value and gradient of all training examples.
    * @param value function value
    * @param grad gradient of the function, lenght must be dimension()
    */
-  virtual void errorGradient(double& value, Eigen::VectorXd& grad)
-  {
-    const int N = examples();
-    double tempValue;
-    Eigen::VectorXd tempGrad(dimension());
-    value = 0.0;
-    grad.fill(0.0);
-    for(int n = 0; n < N; n++)
-    {
-      errorGradient(n, tempValue, tempGrad);
-      value += tempValue;
-      grad += tempGrad;
-    }
-  }
+  virtual void errorGradient(double& value, Eigen::VectorXd& grad);
   /**
    * Calculates the errors of given training examples.
    * @param startN iterator over index vector
@@ -133,14 +116,7 @@ public:
    * @return each row contains the error for one training example
    */
   virtual Eigen::VectorXd error(std::vector<int>::const_iterator startN,
-                                std::vector<int>::const_iterator endN)
-  {
-    Eigen::VectorXd errors(endN-startN);
-    int n = 0;
-    for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
-      errors(n) = error(*it);
-    return errors;
-  }
+                                std::vector<int>::const_iterator endN);
   /**
    * Calculates the accumulated gradient of given training examples.
    * @param startN iterator over index vector
@@ -148,14 +124,7 @@ public:
    * @return each row contains the gradient for one training example
    */
   virtual Eigen::VectorXd gradient(std::vector<int>::const_iterator startN,
-                                   std::vector<int>::const_iterator endN)
-  {
-    Eigen::VectorXd g(dimension());
-    g.fill(0.0);
-    for(std::vector<int>::const_iterator it = startN; it != endN; it++)
-      g += gradient(*it);
-    return g;
-  }
+                                   std::vector<int>::const_iterator endN);
   /**
    * Calculates the accumulated gradient and error of given training examples.
    * @param startN iterator over index vector
@@ -166,17 +135,7 @@ public:
    */
   virtual void errorGradient(std::vector<int>::const_iterator startN,
                              std::vector<int>::const_iterator endN,
-                             double& value, Eigen::VectorXd& grad)
-  {
-    value = 0.0;
-    grad.fill(0.0);
-    for(std::vector<int>::const_iterator it = startN; it != endN; it++)
-    {
-      OPENANN_CHECK_WITHIN(*it, 0, examples());
-      value += error(*it);
-      grad += gradient(*it);
-    }
-  }
+                             double& value, Eigen::VectorXd& grad);
   ///@}
 
   /**
