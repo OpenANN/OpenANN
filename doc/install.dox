@@ -6,9 +6,8 @@ namespace OpenANN {
 
 \section Requirements
 
-Supported operating systems and compilers
-
-- Linux / GCC
+At the moment we support only the operating systems Linux and MacOS and the
+compilers GCC and Clang.
 
 The following programs and libraries are required to use OpenANN:
 
