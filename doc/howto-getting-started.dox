@@ -11,9 +11,9 @@ namespace OpenANN {
 Compile it with pkg-config and g++ (and really make sure that pkg-config is
 installed otherwise you might got misleading errors):
 
-\code
+\verbatim
 g++ main.cpp -o openann `pkg-config --cflags --libs openann`
-\endcode
+\endverbatim
 
 \section Python A simple example in Python
 

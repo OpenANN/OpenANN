@@ -5,7 +5,7 @@
 namespace OpenANN
 {
 
-void activationFunction(ActivationFunction act, const Eigen::VectorXd& a, Eigen::VectorXd& z)
+void activationFunction(ActivationFunction act, const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
   switch(act)
   {
@@ -28,7 +28,7 @@ void activationFunction(ActivationFunction act, const Eigen::VectorXd& a, Eigen:
   }
 }
 
-void activationFunctionDerivative(ActivationFunction act, const Eigen::VectorXd& z, Eigen::VectorXd& gd)
+void activationFunctionDerivative(ActivationFunction act, const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
   switch(act)
   {
@@ -51,76 +51,102 @@ void activationFunctionDerivative(ActivationFunction act, const Eigen::VectorXd&
   }
 }
 
-void softmax(Eigen::VectorXd& y)
+void softmax(Eigen::MatrixXd& y)
 {
-  const int F = y.rows();
+  const int N = y.rows();
   const double max = y.maxCoeff();
-  for(int f = 0; f < F; f++)
-    y(f) = std::exp(y(f) - max);
-  y /= y.sum();
-}
-
-void logistic(const Eigen::VectorXd& a, Eigen::VectorXd& z)
-{
-  for(int j = 0; j < a.rows(); j++)
+  for(int n = 0; n < N; n++)
   {
-    if(a(j) < -45.0)
-      z(j) = 0.0;
-    else if(a(j) > 45.0)
-      z(j) = 1.0;
-    else
-      z(j) = 1.0 / (1.0+std::exp(-a(j)));
+    y.row(n) = (y.row(n).array() - max).exp();
+    y.row(n) /= y.row(n).sum();
   }
 }
 
-void logisticDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
+void logistic(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
-  for(int j = 0; j < gd.rows(); j++)
-    gd(j) = z(j)*(1.0 - z(j));
+  double const* aPtr = a.data();
+  double* zPtr = z.data();
+  double const* aEnd = aPtr + a.rows()*a.cols();
+  for(; aPtr < aEnd; aPtr++, zPtr++)
+  {
+    if(*aPtr < -45.0)
+      *zPtr = 0.0;
+    else if(*aPtr > 45.0)
+      *zPtr = 1.0;
+    else
+      *zPtr = 1.0 / (1.0+std::exp(-*aPtr));
+  }
 }
 
-void normaltanh(const Eigen::VectorXd& a, Eigen::VectorXd& z)
+void logisticDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
-  for(int j = 0; j < a.rows(); j++)
-    z(j) = std::tanh(a(j));
+  double const* zPtr = z.data();
+  double* gdPtr = gd.data();
+  double const* zEnd = zPtr + z.rows()*z.cols();
+  for(; zPtr < zEnd; zPtr++, gdPtr++)
+    *gdPtr = *zPtr*(1.0 - *zPtr);
 }
 
-void normaltanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
+void normaltanh(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
-  for(int j = 0; j < gd.rows(); j++)
-    gd(j) = 1.0 - z(j)*z(j);
+  double const* aPtr = a.data();
+  double* zPtr = z.data();
+  double const* aEnd = aPtr + a.rows()*a.cols();
+  for(; aPtr < aEnd; aPtr++, zPtr++)
+    *zPtr = std::tanh(*aPtr);
 }
 
-void scaledtanh(const Eigen::VectorXd& a, Eigen::VectorXd& z)
+void normaltanhDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
-  for(int j = 0; j < a.rows(); j++)
-    z(j) = 1.7159*std::tanh(0.66666667*a(j));
+  double const* zPtr = z.data();
+  double* gdPtr = gd.data();
+  double const* zEnd = zPtr + z.rows()*z.cols();
+  for(; zPtr < zEnd; zPtr++, gdPtr++)
+    *gdPtr = 1.0 - *zPtr * *zPtr;
 }
 
-void scaledtanhDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
+void scaledtanh(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
-  for(int j = 0; j < gd.rows(); j++)
-    gd(j) = 0.66666667/1.7159*(1.7159+z(j))*(1.7159-z(j));
+  double const* aPtr = a.data();
+  double* zPtr = z.data();
+  double const* aEnd = aPtr + a.rows()*a.cols();
+  for(; aPtr < aEnd; aPtr++, zPtr++)
+    *zPtr = 1.7159*std::tanh(0.66666667 * *aPtr);
 }
 
-void rectifier(const Eigen::VectorXd& a, Eigen::VectorXd& z)
+void scaledtanhDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
-  for(int j = 0; j < a.rows(); j++)
-    z(j) = std::max<double>(0.0, a(j));
+  double const* zPtr = z.data();
+  double* gdPtr = gd.data();
+  double const* zEnd = zPtr + z.rows()*z.cols();
+  for(; zPtr < zEnd; zPtr++, gdPtr++)
+    *gdPtr = 0.66666667/1.7159*(1.7159+*zPtr)*(1.7159-*zPtr);
 }
 
-void rectifierDerivative(const Eigen::VectorXd& z, Eigen::VectorXd& gd)
+void rectifier(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
-  for(int j = 0; j < gd.rows(); j++)
-    gd(j) = z(j) == 0.0 ? 0.0 : 1.0;
+  double const* aPtr = a.data();
+  double* zPtr = z.data();
+  double const* aEnd = aPtr + a.rows()*a.cols();
+  for(; aPtr < aEnd; aPtr++, zPtr++)
+    *zPtr = std::max<double>(0.0, *aPtr);
 }
 
-void linear(const Eigen::VectorXd& a, Eigen::VectorXd& z)
+void rectifierDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
-  z.middleRows(0, a.rows()) = a;
+  double const* zPtr = z.data();
+  double* gdPtr = gd.data();
+  double const* zEnd = zPtr + z.rows()*z.cols();
+  for(; zPtr < zEnd; zPtr++, gdPtr++)
+    *gdPtr = (double) (*zPtr > 0.0) * 1.0;
 }
 
-void linearDerivative(Eigen::VectorXd& gd)
+void linear(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
+{
+  z = a;
+}
+
+void linearDerivative(Eigen::MatrixXd& gd)
 {
   gd.fill(1.0);
 }

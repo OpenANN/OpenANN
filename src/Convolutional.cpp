@@ -1,6 +1,7 @@
 #include <OpenANN/layers/Convolutional.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
 
 namespace OpenANN {
 
@@ -10,7 +11,7 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act),
-    stdDev(stdDev), x(0), e(I)
+    stdDev(stdDev), x(0), e(1, I)
 {
 }
 
@@ -61,11 +62,15 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
 
   initializeParameters();
 
-  a.resize(info.outputs());
-  y.resize(info.outputs());
-  yd.resize(info.outputs());
-  deltas.resize(info.outputs());
+  a.resize(1, info.outputs());
+  y.resize(1, info.outputs());
+  yd.resize(1, info.outputs());
+  deltas.resize(1, info.outputs());
 
+  if(info.outputs() < 1)
+    throw OpenANNException("Number of outputs in convolutional layer is below"
+                           " 1. You should either choose a smaller filter"
+                           " size or generate a bigger input.");
   return info;
 }
 
@@ -85,81 +90,97 @@ void Convolutional::initializeParameters()
   }
 }
 
-void Convolutional::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->rows(), fmin * inRows * inRows);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fmout * outRows * outCols);
+  OPENANN_CHECK_EQUALS(x->cols(), fmin * inRows * inRows);
+  OPENANN_CHECK_EQUALS(this->y.cols(), fmout * outRows * outCols);
 
-  this->a.fill(0.0);
-  for(int fmo = 0; fmo < fmout; fmo++)
+  const int N = x->rows();
+  a.conservativeResize(N, Eigen::NoChange);
+  a.fill(0.0);
+#pragma omp parallel for
+  for(int n = 0; n < N; n++)
   {
-    int fmInBase = 0;
-    for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
+    for(int fmo = 0; fmo < fmout; fmo++)
     {
-      int outputIdx = fmo * fmOutSize;
-      for(int row = 0; row < maxRow; row++)
+      int fmInBase = 0;
+      for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
       {
-        for(int col = 0; col < maxCol; col++, outputIdx++)
+        int outputIdx = fmo * fmOutSize;
+        for(int row = 0; row < maxRow; row++)
         {
-          int rowBase = fmInBase+row*inCols;
-          for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
+          for(int col = 0; col < maxCol; col++, outputIdx++)
           {
-            int inputIdx = rowBase+col;
-            for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+            int rowBase = fmInBase+row*inCols;
+            for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
             {
-              OPENANN_CHECK(outputIdx < a.rows());
-              OPENANN_CHECK(inputIdx < x->rows());
-              a(outputIdx) += W[fmo][fmi](kr, kc)*(*x)(inputIdx);
+              int inputIdx = rowBase+col;
+              for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+              {
+                OPENANN_CHECK(outputIdx < a.cols());
+                OPENANN_CHECK(inputIdx < x->cols());
+                a(n, outputIdx) += W[fmo][fmi](kr, kc)*(*x)(n, inputIdx);
+              }
             }
+            if(bias && fmi == 0)
+              a(n, outputIdx) += Wb(fmo, fmi);
           }
-          if(bias && fmi == 0)
-            a(outputIdx) += Wb(fmo, fmi);
         }
       }
     }
   }
 
+  this->y.conservativeResize(N, Eigen::NoChange);
   activationFunction(act, a, this->y);
 
   y = &(this->y);
 }
 
-void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = a.rows();
   // Derive activations
+  this->yd.conservativeResize(N, Eigen::NoChange);
   activationFunctionDerivative(act, y, yd);
-  for(int j = 0; j < deltas.rows(); j++)
-    deltas(j) = yd(j) * (*ein)(j);
+  deltas = yd.cwiseProduct(*ein);
 
+  e.conservativeResize(N, Eigen::NoChange);
   e.fill(0.0);
   Wbd.fill(0.0);
+#pragma omp parallel for
   for(int fmo = 0; fmo < fmout; fmo++)
-  {
-    int fmInBase = 0;
-    for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
-    {
+    for(int fmi = 0; fmi < fmin; fmi++)
       Wd[fmo][fmi].fill(0.0);
-      int outputIdx = fmo * fmOutSize;
-      for(int row = 0; row < maxRow; row++)
+
+  for(int n = 0; n < N; n++)
+  {
+    for(int fmo = 0; fmo < fmout; fmo++)
+    {
+      int fmInBase = 0;
+      for(int fmi = 0; fmi < fmin; fmi++, fmInBase+=fmInSize)
       {
-        for(int col = 0; col < maxCol; col++, outputIdx++)
+        int outputIdx = fmo * fmOutSize;
+        for(int row = 0; row < maxRow; row++)
         {
-          int rowBase = fmInBase+row*inCols;
-          for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
+          for(int col = 0; col < maxCol; col++, outputIdx++)
           {
-            int inputIdx = rowBase+col;
-            for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+            int rowBase = fmInBase+row*inCols;
+            for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase+=inCols)
             {
-              OPENANN_CHECK(outputIdx < a.rows());
-              OPENANN_CHECK(inputIdx < x->rows());
-              e(inputIdx) += W[fmo][fmi](kr, kc)*deltas(outputIdx);
-              Wd[fmo][fmi](kr, kc) += deltas(outputIdx) * (*x)(inputIdx);
+              int inputIdx = rowBase+col;
+              for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+              {
+                OPENANN_CHECK(outputIdx < deltas.cols());
+                OPENANN_CHECK(inputIdx < x->cols());
+                e(n, inputIdx) += W[fmo][fmi](kr, kc)*deltas(n, outputIdx);
+                Wd[fmo][fmi](kr, kc) += deltas(n, outputIdx) * (*x)(n, inputIdx);
+              }
             }
+            if(bias && fmi == 0)
+              Wbd(fmo, fmi) += deltas(n, outputIdx);
           }
-          if(bias && fmi == 0)
-            Wbd(fmo, fmi) += deltas(outputIdx);
         }
       }
     }
@@ -168,7 +189,7 @@ void Convolutional::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-Eigen::VectorXd& Convolutional::getOutput()
+Eigen::MatrixXd& Convolutional::getOutput()
 {
   return y;
 }

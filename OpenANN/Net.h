@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_NET_H_
+#define OPENANN_NET_H_
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/ActivationFunctions.h>
@@ -6,7 +7,8 @@
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @enum ErrorFunction
@@ -24,46 +26,10 @@ enum ErrorFunction
 /**
  * @class Net
  *
- * Feedforward multilayer neural network. You can specify many different types
- * of layers and choose the architecture almost arbitrary. But there are no
- * shortcut connections allowed!
+ * Feedforward multilayer neural network.
  *
- * So far the following types of layers are implemented:
- *
- * - Input layer: adds a bias to the network's input. This layer must be
- *   present in the network.
- * - Output layer: this has to be the last layer and must be present in every
- *   network. It is fully connected.
- * - Compressed output layer: this is an alternative to the output layer. It
- *   is a fully connected output layer.
- * - FullyConnected layer: each neuron is connected to each neuron of the
- *   previous layer.
- * - RBM layer: a restricted boltzmann machine that can be pretrained.
- * - Compressed layer: fully connected layer. The I incoming weights of a
- *   neuron are represented by M (usually M < I) parameters.
- * - Extreme layer: fully connected layer with fixed random weights.
- * - Convolutional layer: consists of a number of 2-dimensional feature maps.
- *   Each feature map is connected to each feature map of the previous layer.
- *   The activations are computed by applying a parametrizable convolution,
- *   i. e. this kind of layer uses weight sharing and sparse connections to
- *   reduce the number of weights in comparison to fully connected layers.
- * - Subsampling layer: these will be used to quickly reduce the number of
- *   nodes after a convolution and obtain little translation invarianc. A
- *   non-overlapping group of nodes is summed up, multiplied with a weight and
- *   added to a learnable bias to obtain the activation of a neuron. This is
- *   sometimes called average pooling.
- * - MaxPooling layer: this is an alternative to subsampling layers and works
- *   usually better. Instead of the sum it computes the maximum of a group and
- *   has no learnable weights or biases.
- * - LocalResponseNormalization layer: lateral inhibition of neurons at the
- *   same positions in adjacent feature maps.
- * - AlphaBetaFilter layer: this is a recurrent layer that estimates the
- *   position and velocity of the inputs from the noisy observation of the
- *   positions. Usually we need this layer for partially observable markov
- *   decision processes in reinforcement learning.
- * - Dropout layer: a technique to increase the generalization of a neural
- *   network. Neurons are randomly dropped out during training so that they
- *   do not rely on each other.
+ * You can specify many different types of layers and choose the architecture
+ * almost arbitrary.
  */
 class Net : public Learner
 {
@@ -71,16 +37,13 @@ class Net : public Learner
   std::vector<Layer*> layers;
   std::vector<double*> parameters;
   std::vector<double*> derivatives;
-  DataSet* dataSet;
-  DataSet* testDataSet;
-  bool deleteDataSet, deleteTestSet;
   ErrorFunction errorFunction;
   bool dropout;
 
   bool initialized;
-  int P, N, L;
-  Eigen::VectorXd parameterVector;
-  Eigen::VectorXd tempInput, tempOutput, tempError, tempGradient;
+  int P, L;
+  Eigen::VectorXd parameterVector, tempGradient;
+  Eigen::MatrixXd tempInput, tempOutput, tempError;
 
   void initializeNetwork();
 
@@ -88,6 +51,11 @@ public:
   Net();
   virtual ~Net();
 
+  /**
+   * @name Architecture Definition
+   * These functions must be called to define the architecture of the network.
+   */
+  ///@{
   /**
    * Add an input layer.
    * @param dim1 first dimension of the input, e. g. number of color channels
@@ -125,10 +93,13 @@ public:
    * @param cdN number of gibbs sampling steps for pretraining
    * @param stdDev standard deviation of the Gaussian distributed initial
    *               weights
+   * @param l2Penalty L2 regularization coefficient
    * @param backprop finetune weights with backpropagation
    * @return this for chaining
    */
-  Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1, double stdDev = 0.01,
+  Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1,
+                                       double stdDev = 0.01,
+                                       double l2Penalty = 0.0,
                                        bool backprop = true);
   /**
    * Add a compressed fully connected hidden layer.
@@ -241,7 +212,6 @@ public:
    * @return this for chaining
    */
   Net& addLayer(Layer* layer);
-
   /** 
    * Add a new output layer to this deep neural network. 
    * Never free/delete the added layer outside of this class. 
@@ -250,37 +220,80 @@ public:
    * @return this for chaining
    */
   Net& addOutputLayer(Layer* layer);
+  ///@}
 
-
+  /**
+   * @name Access Internal Structure
+   */
+  ///@{
+  /**
+   * Request number of layers.
+   * @return number of layers in this neural network
+   */
   unsigned int numberOflayers();
+  /**
+   * Access layer.
+   * @param l index of layer
+   * @return l-th layer
+   */
   Layer& getLayer(unsigned int l);
+  /**
+   * Request information about output of a given layer.
+   * @param l index of the layer
+   * @return output information
+   */
   OutputInfo getOutputInfo(unsigned int l);
-  Net& setErrorFunction(ErrorFunction errorFunction);
-  Net& useDropout(bool activate = true);
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
-                               Eigen::MatrixXd& trainingOutput);
-  virtual Learner& trainingSet(DataSet& trainingSet);
-  virtual Net& testSet(Eigen::MatrixXd& testInput,
-                       Eigen::MatrixXd& testOutput);
-  virtual Net& testSet(DataSet& testDataSet);
+  ///@}
 
-  virtual void finishedIteration();
+  /**
+   * @name Optimization Contol
+   */
+  ///@{
+  /**
+   * Set the error function.
+   * @param errorFunction error function
+   * @return this for chaining
+   */
+  Net& setErrorFunction(ErrorFunction errorFunction);
+  /**
+   * Toggle dropout.
+   * @param activate turn dropout on or off
+   * @return this for chaining
+   */
+  Net& useDropout(bool activate = true);
+  ///@}
+
+  /**
+   * @name Inherited Functions
+   */
+  ///@{
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();
-  virtual unsigned int examples();
   virtual Eigen::VectorXd currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesInitialization();
   virtual void initialize();
+  virtual unsigned int examples();
   virtual double error(unsigned int i);
   virtual double error();
-  virtual double errorFromDataSet(DataSet& dataset);
   virtual bool providesGradient();
-  virtual Eigen::VectorXd gradient(unsigned int i);
+  virtual Eigen::VectorXd gradient(unsigned int n);
   virtual Eigen::VectorXd gradient();
   virtual void errorGradient(int n, double& value, Eigen::VectorXd& grad);
-  virtual bool providesHessian();
-  virtual Eigen::MatrixXd hessian();
+  virtual void errorGradient(double& value, Eigen::VectorXd& grad);
+  virtual void errorGradient(std::vector<int>::const_iterator startN,
+                             std::vector<int>::const_iterator endN,
+                             double& value, Eigen::VectorXd& grad);
+  virtual void finishedIteration();
+  ///@}
+private:
+  void forwardPropagate();
+  void backpropagate();
+  double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };
 
-}
+} // namespace OpenANN
+
+#endif // OPENANN_NET_H
+

@@ -156,7 +156,7 @@ void CG::reset()
 
   OPENANN_DEBUG << "CG terminated";
   OPENANN_DEBUG << report.iterationscount << " iterations";
-  OPENANN_DEBUG << report.nfev << " function evaluations= ";
+  OPENANN_DEBUG << report.nfev << " function evaluations";
   OPENANN_DEBUG << "reason: ";
   switch(report.terminationtype)
   {

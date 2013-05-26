@@ -6,20 +6,28 @@
 
 namespace OpenANN {
 
-RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop)
+RBM::RBM(int D, int H, int cdN, double stdDev, double l2Penalty, bool backprop)
   : D(D), H(H), cdN(cdN), stdDev(stdDev),
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
-    pv(D), v(D), ph(H), h(H), phd(H), K(D*H + D + H), params(K),
-    deltas(H), e(D), backprop(backprop)
+    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D*H + D + H),
+    deltas(1, H), e(1, D), params(K), grad(K), l2Penalty(l2Penalty),
+    backprop(backprop)
 {
   initialize();
 }
 
 Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
 {
-  v = x;
+  v = x.transpose();
+  sampleHgivenV();
+  return ph.transpose();
+}
+
+Eigen::MatrixXd RBM::operator()(const Eigen::MatrixXd& X)
+{
+  v = X;
   sampleHgivenV();
   return ph;
 }
@@ -75,7 +83,7 @@ double RBM::error()
 
 double RBM::error(unsigned int n)
 {
-  return (reconstructProb(n, 1) - trainSet->getInstance(n)).squaredNorm();
+  return (reconstructProb(n, 1) - trainSet->getInstance(n).transpose()).squaredNorm();
 }
 
 bool RBM::providesGradient()
@@ -85,49 +93,39 @@ bool RBM::providesGradient()
 
 Eigen::VectorXd RBM::gradient()
 {
-  Eigen::VectorXd grad(dimension());
+  Eigen::VectorXd grad(K);
   grad.fill(0.0);
   for(int n = 0; n < trainSet->samples(); n++)
     grad += gradient(n);
   return grad;
 }
 
-Eigen::VectorXd RBM::gradient(unsigned int i)
+Eigen::VectorXd RBM::gradient(unsigned int n)
 {
-  reality(i);
+  v = trainSet->getInstance(n).transpose();
+  reality();
   daydream();
-
-  Eigen::VectorXd gradient(dimension());
-  int idx = 0;
-  for(int j = 0; j < H; j++)
-    for(int i = 0; i < D; i++)
-      gradient(idx++) = posGradW(j, i) - negGradW(j, i);
-  for(int i = 0; i < D; i++)
-    gradient(idx++) = posGradBv(i) - negGradBv(i);
-  for(int j = 0; j < H; j++)
-    gradient(idx++) = posGradBh(j) - negGradBh(j);
-  return -gradient;
+  fillGradient();
+  return grad;
 }
 
-bool RBM::providesHessian()
+void RBM::errorGradient(std::vector<int>::const_iterator startN,
+                        std::vector<int>::const_iterator endN,
+                        double& value, Eigen::VectorXd& grad)
 {
-  return false;
-}
-
-Eigen::MatrixXd RBM::hessian()
-{
-  throw OpenANNException("RBM::hessian() is not implemented!");
-}
-
-Learner& RBM::trainingSet(Eigen::MatrixXd& trainingInput,
-                          Eigen::MatrixXd& trainingOutput)
-{
-  throw OpenANNException("RBM::trainingSet(input, output) is not implemented!");
-}
-
-Learner& RBM::trainingSet(DataSet& trainingSet)
-{
-  trainSet = &trainingSet;
+  const int N = endN - startN;
+  v.conservativeResize(N, trainSet->inputs());
+  int n = 0;
+  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+    v.row(n) = trainSet->getInstance(*it);
+  reality();
+  daydream();
+  fillGradient();
+  grad = this->grad;
+  n = 0;
+  value = 0.0;
+  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+    value += (trainSet->getInstance(*it)-pv.row(n).transpose()).squaredNorm();
 }
 
 OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
@@ -155,31 +153,31 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
   return info;
 }
 
-void RBM::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
-{
-  // Derive activations
-  activationFunctionDerivative(LOGISTIC, ph, phd);
-  for(int j = 0; j < H; j++)
-    deltas(j) = phd(j) * (*ein)(j);
-  // Weight derivatives
-  if(backprop)
-  {
-    Wd = deltas * v.transpose();
-    bhd = deltas;
-  }
-  // Prepare error signals for previous layer
-  e = W.transpose() * deltas;
-  eout = &e;
-}
-
-void RBM::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   v = *x;
   sampleHgivenV();
   y = &ph;
 }
 
-Eigen::VectorXd& RBM::getOutput()
+void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+{
+  const int N = ph.rows();
+  phd.conservativeResize(N, Eigen::NoChange);
+  // Derive activations
+  activationFunctionDerivative(LOGISTIC, ph, phd);
+  deltas = phd.cwiseProduct(*ein);
+  if(backprop)
+  {
+    Wd = deltas.transpose() * v;
+    bhd = deltas.colwise().sum().transpose();
+  }
+  // Prepare error signals for previous layer
+  e = deltas * W;
+  eout = &e;
+}
+
+Eigen::MatrixXd& RBM::getOutput()
 {
   return ph;
 }
@@ -199,19 +197,19 @@ const Eigen::MatrixXd& RBM::getWeights()
   return W;
 }
 
-const Eigen::VectorXd& RBM::getVisibleProbs()
+const Eigen::MatrixXd& RBM::getVisibleProbs()
 {
   return pv;
 }
 
-const Eigen::VectorXd& RBM::getVisibleSample()
+const Eigen::MatrixXd& RBM::getVisibleSample()
 {
   return v;
 }
 
-Eigen::VectorXd RBM::reconstructProb(int n, int steps)
+Eigen::MatrixXd RBM::reconstructProb(int n, int steps)
 {
-  v = trainSet->getInstance(n);
+  v = trainSet->getInstance(n).transpose();
   pv = v;
   for(int i = 0; i < steps; i++)
   {
@@ -221,26 +219,36 @@ Eigen::VectorXd RBM::reconstructProb(int n, int steps)
   return pv;
 }
 
-Eigen::VectorXd RBM::reconstruct(int n, int steps)
+void RBM::sampleHgivenV()
 {
-  v = trainSet->getInstance(n);
-  for(int i = 0; i < steps; i++)
-  {
-    sampleHgivenV();
-    sampleVgivenH();
-  }
-  return v;
+  const int N = v.rows();
+  h.conservativeResize(N, Eigen::NoChange);
+  ph = v * W.transpose();
+  ph.rowwise() += bh.transpose();
+  activationFunction(LOGISTIC, ph, ph);
+  for(int n = 0; n < N; n++)
+    for(int j = 0; j < H; j++)
+      h(n, j) = (double) (ph(n, j) > rng.generate<double>(0.0, 1.0));
 }
 
-void RBM::reality(int n)
+void RBM::sampleVgivenH()
 {
-  v = trainSet->getInstance(n);
+  const int N = h.rows();
+  pv = h * W;
+  pv.rowwise() += bv.transpose();
+  activationFunction(LOGISTIC, pv, pv);
+  for(int n = 0; n < N; n++)
+    for(int i = 0; i < D; i++)
+      v(n, i) = (double) (pv(n, i) > rng.generate<double>(0.0, 1.0));
+}
 
+void RBM::reality()
+{
   sampleHgivenV();
 
-  posGradW = ph * v.transpose();
-  posGradBv = v;
-  posGradBh = ph;
+  posGradW = ph.transpose() * v;
+  posGradBv = v.colwise().sum().transpose();
+  posGradBh = ph.colwise().sum().transpose();
 }
 
 void RBM::daydream()
@@ -251,25 +259,29 @@ void RBM::daydream()
     sampleHgivenV();
   }
 
-  negGradW = ph * pv.transpose();
-  negGradBv = pv;
-  negGradBh = ph;
+  negGradW = ph.transpose() * pv;
+  negGradBv = pv.colwise().sum().transpose();
+  negGradBh = ph.colwise().sum().transpose();
 }
 
-void RBM::sampleHgivenV()
+void RBM::fillGradient()
 {
-  ph = W * v + bh;
-  activationFunction(LOGISTIC, ph, ph);
+  int idx = 0;
   for(int j = 0; j < H; j++)
-    h(j) = (double) (ph(j) > rng.generate<double>(0.0, 1.0));
-}
-
-void RBM::sampleVgivenH()
-{
-  pv = W.transpose() * h + bv;
-  activationFunction(LOGISTIC, pv, pv);
+    for(int i = 0; i < D; i++)
+      grad(idx++) = posGradW(j, i) - negGradW(j, i);
   for(int i = 0; i < D; i++)
-    v(i) = (double) (pv(i) > rng.generate<double>(0.0, 1.0));
+    grad(idx++) = posGradBv(i) - negGradBv(i);
+  for(int j = 0; j < H; j++)
+    grad(idx++) = posGradBh(j) - negGradBh(j);
+  if(l2Penalty > 0)
+  {
+    idx = 0;
+    for(int j = 0; j < H; j++)
+      for(int i = 0; i < D; i++)
+        grad(idx++) -= l2Penalty * W(j, i);
+  }
+  grad *= -1.0;
 }
 
 }

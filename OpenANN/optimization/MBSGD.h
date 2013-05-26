@@ -140,7 +140,6 @@ class MBSGD : public Optimizer
   Eigen::VectorXd gradient, gains, parameters, momentum, currentGradient;
   double accumulatedError;
   std::vector<int> randomIndices;
-  std::vector<std::list<int> > batchAssignment;
 public:
   /**
    * Create mini-batch stochastic gradient descent optimizer.

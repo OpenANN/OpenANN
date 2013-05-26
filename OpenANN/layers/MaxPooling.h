@@ -23,10 +23,10 @@ namespace OpenANN {
 class MaxPooling : public Layer
 {
   int I, fm, inRows, inCols, kernelRows, kernelCols;
-  Eigen::VectorXd* x;
-  Eigen::VectorXd y;
-  Eigen::VectorXd deltas;
-  Eigen::VectorXd e;
+  Eigen::MatrixXd* x;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd deltas;
+  Eigen::MatrixXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
 public:
@@ -35,9 +35,9 @@ public:
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
   virtual void updatedParameters() {}
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout);
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-  virtual Eigen::VectorXd& getOutput();
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }

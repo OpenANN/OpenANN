@@ -8,8 +8,8 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
                        double stdDev)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
-    W(J, I+bias), Wd(J, I+bias), phi(M, I+1), alpha(J, M), alphad(J, M),
-    x(0), a(J), y(J), yd(J), deltas(J), e(I+bias)
+    W(J, I+bias), Wd(J, I+bias), b(J), phi(M, I+1), alpha(J, M), alphad(J, M),
+    x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I+bias)
 {
   CompressionMatrixFactory::Transformation transformation =
       CompressionMatrixFactory::SPARSE_RANDOM;
@@ -60,37 +60,44 @@ void Compressed::initializeParameters()
 void Compressed::updatedParameters()
 {
   W = alpha * phi.block(0, 0, M, I+bias);
+  b = W.rightCols(1);
 }
 
-void Compressed::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
+  const int N = x->rows();
+  this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
   // Activate neurons
-  a = W.leftCols(I) * *x;
+  a = *x * W.leftCols(I).transpose();
   if(bias)
-    a += W.rightCols(1);
+    a.rowwise() += b;
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
 }
 
-void Compressed::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
+  const int N = a.rows();
+  yd.conservativeResize(N, Eigen::NoChange);
   // Derive activations
   activationFunctionDerivative(act, y, yd);
-  for(int j = 0; j < J; j++)
-    deltas(j) = yd(j) * (*ein)(j);
+  deltas = yd.cwiseProduct(*ein);
   // Weight derivatives
-  Wd.leftCols(I) = deltas * x->transpose();
+  Wd.leftCols(I) = deltas.transpose() * *x;
+  alphad = Wd.leftCols(I) * phi.block(0, 0, M, I).transpose();
   if(bias)
-    Wd.rightCols(1) = deltas;
-  alphad = Wd * phi.block(0, 0, M, I+bias).transpose();
+  {
+    Wd.rightCols(1) = deltas.colwise().sum().transpose();
+    alphad += Wd.rightCols(1) * phi.rightCols(1).transpose();
+  }
   // Prepare error signals for previous layer
-  e = W.leftCols(I).transpose() * deltas;
+  e = deltas * W.leftCols(I);
   eout = &e;
 }
 
-Eigen::VectorXd& Compressed::getOutput()
+Eigen::MatrixXd& Compressed::getOutput()
 {
   return y;
 }

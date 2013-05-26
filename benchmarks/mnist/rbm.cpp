@@ -82,8 +82,6 @@ public:
     int zoom = -200;
     glTranslatef(xOffset, yOffset, zoom);
 
-    Eigen::VectorXd x = dataSet.getInstance(instance);
-
     glColor3f(0.0f, 0.0f, 0.0f);
     glLineWidth(5.0);
 
@@ -136,7 +134,7 @@ public:
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
               int idx = yIdx*28+xIdx;
-              float c = rbm.getVisibleProbs()(idx);
+              float c = rbm.getVisibleProbs()(0, idx);
               float x = xIdx*scale + col*29.0f*scale - 30.0f;
               float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
               glColor3f(c, c, c);
@@ -227,17 +225,17 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY)
-     .restrictedBoltzmannMachineLayer(50, 1, 0.01, false)
-     .outputLayer(10, OpenANN::LINEAR)
+     .restrictedBoltzmannMachineLayer(50, 1, 0.01, 0.01, false)
+     .outputLayer(loader.F, OpenANN::LINEAR)
      .setErrorFunction(OpenANN::CE)
      .trainingSet(trainSet);
 
   OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
   rbm.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.01, 0.5, 10, 0.01);
+  OpenANN::MBSGD optimizer(0.01, 0.5, 16);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 2;
+  stop.maximalIterations = 5;
   optimizer.setOptimizable(rbm);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();
@@ -245,11 +243,11 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
-  net.testSet(testSet);
+  net.validationSet(testSet);
 
   OpenANN::StoppingCriteria stopNet;
-  stopNet.maximalIterations = 20;
-  OpenANN::MBSGD netOptimizer(0.01, 0.5, 10, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  stopNet.maximalIterations = 10;
+  OpenANN::MBSGD netOptimizer(0.01, 0.5, 16, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
   netOptimizer.setStopCriteria(stopNet);
   netOptimizer.optimize();

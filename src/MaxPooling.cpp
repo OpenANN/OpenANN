@@ -1,5 +1,6 @@
 #include <OpenANN/layers/MaxPooling.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <limits>
 #include <algorithm>
 
@@ -8,7 +9,7 @@ namespace OpenANN {
 MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
   : I(info.outputs()), fm(info.dimensions[0]),
     inRows(info.dimensions[1]), inCols(info.dimensions[2]),
-    kernelRows(kernelRows), kernelCols(kernelCols), x(0), e(I)
+    kernelRows(kernelRows), kernelCols(kernelCols), x(0), e(1, I)
 {
 }
 
@@ -26,9 +27,13 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
   maxRow = inRows-kernelRows+1;
   maxCol = inCols-kernelCols+1;
 
-  y.resize(info.outputs());
-  deltas.resize(info.outputs());
+  y.resize(1, info.outputs());
+  deltas.resize(1, info.outputs());
 
+  if(info.outputs() < 1)
+    throw OpenANNException("Number of outputs in max-pooling layer is below"
+                           " 1. You should either choose a smaller filter"
+                           " size or generate a bigger input.");
   return info;
 }
 
@@ -36,31 +41,37 @@ void MaxPooling::initializeParameters()
 {
 }
 
-void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
+void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                  bool dropout)
 {
+  const int N = x->rows();
+  this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
 
-  OPENANN_CHECK(x->rows() == fm * inRows * inRows
-      || x->rows() == fm * inRows * inRows + 1);
-  OPENANN_CHECK_EQUALS(this->y.rows(), fm * outRows * outCols);
+  OPENANN_CHECK(x->cols() == fm * inRows * inRows);
+  OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
-  int outputIdx = 0;
-  int inputIdx = 0;
-  for(int fmo = 0; fmo < fm; fmo++)
+#pragma omp parallel for
+  for(int n = 0; n < N; n++)
   {
-    for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+    int outputIdx = 0;
+    int inputIdx = 0;
+    for(int fmo = 0; fmo < fm; fmo++)
     {
-      int rowBase = fmo*fmInSize + ri*inCols;
-      for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
-        double m = -std::numeric_limits<double>::max();
-        for(int kr = 0; kr < kernelRows; kr++)
+        int rowBase = fmo*fmInSize + ri*inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
         {
-          inputIdx = rowBase + ci;
-          for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            m = std::max(m, (*x)(inputIdx));
+          double m = -std::numeric_limits<double>::max();
+          for(int kr = 0; kr < kernelRows; kr++)
+          {
+            inputIdx = rowBase + ci;
+            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+              m = std::max(m, (*x)(n, inputIdx));
+          }
+          this->y(n, outputIdx) = m;
         }
-        this->y(outputIdx) = m;
       }
     }
   }
@@ -68,34 +79,39 @@ void MaxPooling::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool 
   y = &(this->y);
 }
 
-void MaxPooling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
+void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
-  for(int j = 0; j < deltas.rows(); j++)
-    deltas(j) = (*ein)(j);
+  const int N = y.rows();
+  e.conservativeResize(N, Eigen::NoChange);
+  deltas = (*ein);
 
   e.fill(0.0);
-  int outputIdx = 0;
-  int inputIdx = 0;
-  for(int fmo = 0; fmo < fm; fmo++)
+#pragma omp parallel for
+  for(int n = 0; n < N; n++)
   {
-    for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+    int outputIdx = 0;
+    int inputIdx = 0;
+    for(int fmo = 0; fmo < fm; fmo++)
     {
-      int rowBase = fmo*fmInSize + ri*inCols;
-      for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
       {
-        double m = -std::numeric_limits<double>::max();
-        int idx = -1;
-        for(int kr = 0; kr < kernelRows; kr++)
+        int rowBase = fmo*fmInSize + ri*inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
         {
-          inputIdx = rowBase + ci;
-          for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-            if((*x)(inputIdx) > m)
-            {
-              m = (*x)(inputIdx);
-              idx = inputIdx;
-            }
+          double m = -std::numeric_limits<double>::max();
+          int idx = -1;
+          for(int kr = 0; kr < kernelRows; kr++)
+          {
+            inputIdx = rowBase + ci;
+            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+              if((*x)(n, inputIdx) > m)
+              {
+                m = (*x)(n, inputIdx);
+                idx = inputIdx;
+              }
+          }
+          e(n, idx) = deltas(n, outputIdx);
         }
-        e(idx) = deltas(outputIdx);
       }
     }
   }
@@ -103,7 +119,7 @@ void MaxPooling::backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout)
   eout = &e;
 }
 
-Eigen::VectorXd& MaxPooling::getOutput()
+Eigen::MatrixXd& MaxPooling::getOutput()
 {
   return y;
 }

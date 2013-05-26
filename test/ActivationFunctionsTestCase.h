@@ -9,4 +9,5 @@ class ActivationFunctionsTestCase : public TestCase
   void logistic();
   void normaltanh();
   void linear();
+  void rectifier();
 };

@@ -39,12 +39,12 @@ protected:
   ActivationFunction act;
   double stdDev;
 
-  Eigen::VectorXd x;
-  Eigen::VectorXd a;
-  Eigen::VectorXd y;
-  Eigen::VectorXd yd;
-  Eigen::VectorXd deltas;
-  Eigen::VectorXd e;
+  Eigen::MatrixXd x;
+  Eigen::MatrixXd a;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd yd;
+  Eigen::MatrixXd deltas;
+  Eigen::MatrixXd e;
 
   std::vector<double> w;
   std::vector<double> wd;
@@ -145,34 +145,14 @@ protected:
    * @return return a reference of this instance for convient layer construction
    */
   virtual SigmaPi& fourthOrderNodes(int numbers, const Constraint& constrain);
-
   virtual size_t nodenumber() const { return nodes.size(); };
   virtual size_t parameter() const { return w.size(); };
-  
-  /**
-   * See OpenANN::Layer::initializeParameters()
-   */
   virtual void initializeParameters();
-
-  /**
-   * See OpenANN::Layer::updatedParameters()
-   */
   virtual void updatedParameters();
-
-  /**
-   * See OpenANN::Layer::forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout)
-   */
-  virtual void forwardPropagate(Eigen::VectorXd* x, Eigen::VectorXd*& y, bool dropout = false);
-
-  /**
-   * See OpenANN::Layer::backpropagate(Eigen::VectorXd* error_in, Eigen::VectorXd*& error_out)
-   */
-  virtual void backpropagate(Eigen::VectorXd* ein, Eigen::VectorXd*& eout);
-
-  /**
-   * See OpenANN::Layer::getOutput()
-   */
-  virtual Eigen::VectorXd& getOutput();
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                bool dropout = false);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 

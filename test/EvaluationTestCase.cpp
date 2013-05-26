@@ -9,16 +9,15 @@ class ReturnInput : public OpenANN::Learner
 public:
   ReturnInput() {}
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) { return x; }
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X) { return X; }
   virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput) {}
   virtual Learner& trainingSet(OpenANN::DataSet& trainingSet) {}
   virtual Eigen::VectorXd currentParameters() {}
   virtual unsigned int dimension() {}
   virtual double error() {}
   virtual Eigen::VectorXd gradient() {}
-  virtual Eigen::MatrixXd hessian() {}
   virtual void initialize() {}
   virtual bool providesGradient() {}
-  virtual bool providesHessian() {}
   virtual bool providesInitialization() {}
   virtual void setParameters(const Eigen::VectorXd& parameters) {}
 };
