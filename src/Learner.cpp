@@ -39,6 +39,14 @@ Learner& Learner::trainingSet(DataSet& trainingSet)
   return *this;
 }
 
+Learner& Learner::removeTrainingSet()
+{
+  if(deleteTrainSet && trainSet)
+    delete trainSet;
+  deleteTrainSet = false;
+  trainSet = 0;
+}
+
 Learner& Learner::validationSet(Eigen::MatrixXd& input,
                                 Eigen::MatrixXd& output)
 {
@@ -56,6 +64,14 @@ Learner& Learner::validationSet(DataSet& validationSet)
   validSet = &validationSet;
   deleteValidSet = false;
   return *this;
+}
+
+Learner& Learner::removeValidationSet()
+{
+  if(deleteValidSet && validSet)
+    delete validSet;
+  deleteValidSet = false;
+  validSet = 0;
 }
 
 }

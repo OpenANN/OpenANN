@@ -50,6 +50,11 @@ public:
    */
   virtual Learner& trainingSet(DataSet& trainingSet);
   /**
+   * Remove the training set from the learner.
+   * @return this for chaining
+   */
+  virtual Learner& removeTrainingSet();
+  /**
    * Set validation set.
    * @param input input vectors, each instance should be in a row
    * @param output output vectors, each instance should be in a row
@@ -63,6 +68,11 @@ public:
    * @return this for chaining
    */
   virtual Learner& validationSet(DataSet& validationSet);
+  /**
+   * Remove the validation set from the learner.
+   * @return this for chaining
+   */
+  virtual Learner& removeValidationSet();
 };
 
 }
