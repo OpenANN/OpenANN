@@ -1,5 +1,6 @@
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <iomanip>
 #include <ctime>
 
 namespace OpenANN
