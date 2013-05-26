@@ -5,6 +5,17 @@
 
 namespace OpenANN {
 
+/**
+ * @class AlphaBetaFilter
+ *
+ * A recurrent layer that can be used to smooth the input and estimate its
+ * derivative.
+ *
+ * In a partially observable Markov decision process (POMDP), we can use an
+ * \f$ \alpha-\beta \f$ filter to smooth noisy observations and estimate the
+ * derivatives. We can e.g. estimate the velocities from the positions of an
+ * object.
+ */
 class AlphaBetaFilter : public Layer
 {
   int I, J;

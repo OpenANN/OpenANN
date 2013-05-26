@@ -5,6 +5,11 @@
 namespace OpenANN
 {
 
+/**
+ * @class Agent
+ *
+ * A (learning) agent in a reinforcement learning problem.
+ */
 class Agent
 {
 public:

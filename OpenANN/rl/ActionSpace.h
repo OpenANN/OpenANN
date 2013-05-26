@@ -6,6 +6,13 @@
 namespace OpenANN
 {
 
+/**
+ * @class ActionSpace
+ *
+ * Represents the action space \f$ A \f$ in a reinforcement learning problem.
+ *
+ * The action space contains all possible actions that the agent can take.
+ */
 class ActionSpace
 {
 public:
