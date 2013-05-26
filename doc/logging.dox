@@ -1,0 +1,78 @@
+namespace OpenANN
+{
+
+/**
+
+\page Logging Logging
+
+There are several logging mechanisms in %OpenANN that are usually used for
+the internal logging functionality of %OpenANN.
+
+However, you can also use these mechanisms for your own programs. All classes
+and functions that are related to logging are located in the header
+OpenANN/io/Logger.h. We can distinuish two logging approaches in %OpenANN:
+the global logger and local logger objects.
+
+\section GlobalLogging Global Logger
+
+You can use the global logger with macros:
+
+\sa OPENANN_DEBUG, OPENANN_INFO, OPENANN_ERROR
+
+These will only output if the current log level is active. You can control the
+log level by setting the macro OPENANN_LOGLEVEL during compilation to one of
+
+- Log::DISABLED
+- Log::ERROR
+- Log::INFO
+- Log::DEBUG
+
+Note that once you disabled a log level during compilation you cannot turn it
+on again. However, you can turn log levels off during runtime with
+
+\code
+OpenANN::Log::getLevel() = OpenANN::Log::INFO;
+\endcode
+
+You can also change the logging target to any std::ostream at runtime with
+
+\code
+OpenANN::Log::getStream() = std::cerr;
+\endcode
+
+To log something you just have to use the stream operator <<:
+
+\code
+OPENANN_DEBUG << "This is a number: " << i << ".";
+\endcode
+
+The output will have the form
+
+\verbatim
+<LEVEL> <DATE> <MSG>
+\endverbatim
+
+You can set a namespace for each implementation file by setting the macro
+OPENANN_LOG_NAMESPACE, e.g.
+
+\code
+#define OPENANN_LOG_NAMESPACE "MyNamespace"
+\endcode
+
+so that the logger will output
+
+\verbatim
+<LEVEL> <DATE> <NAMESPACE>: <MSG>
+\endverbatim
+
+An example is the output of the Optimizer LMA:
+
+\verbatim
+ DEBUG  2013-05-26 13:33:44  LMA: Iteration #49, training error = 3.0143
+\endverbatim
+
+\section LogObjects Logger Objects
+
+*/
+
+}
