@@ -10,7 +10,7 @@ stop  = {
 net = Net()
 lma = LMA(stop)
 
-net.input_layer(1, 1)
+net.input_layer(1)
 net.fully_connected_layer(10, Activation.LOGISTIC)
 net.fully_connected_layer(10, Activation.LOGISTIC)
 net.output_layer(1, Activation.LINEAR)

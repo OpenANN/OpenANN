@@ -24,8 +24,8 @@ cdef class Net:
   def parameter_size(self):
     return self.thisptr.dimension()
 
-  def input_layer(self, width, height, dim=1):
-    self.thisptr.inputLayer(width, height, dim)
+  def input_layer(self, dim1, dim2=1, dim3=1):
+    self.thisptr.inputLayer(dim1, dim2, dim3)
     return self
 
   def alpha_beta_filter_layer(self, delta_t, std_dev=0.05):

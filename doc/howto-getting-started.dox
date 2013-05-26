@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
   # Create network
   net = Net()
-  net.input_layer(D, 1)
+  net.input_layer(D)
   net.fully_connected_layer(3, Activation.LOGISTIC)
   net.output_layer(F, Activation.LOGISTIC)
 
