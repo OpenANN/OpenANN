@@ -10,6 +10,7 @@
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/Dropout.h>
 #include <OpenANN/RBM.h>
+#include <OpenANN/IntrinsicPlasticity.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -70,6 +71,12 @@ Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
                        bool bias)
 {
   return addLayer(new Extreme(infos.back(), units, bias, act, stdDev));
+}
+
+Net& Net::intrinsicPlasticityLayer(double targetMean, double stdDev)
+{
+  return addLayer(new IntrinsicPlasticity(infos.back().outputs(), targetMean,
+                                          stdDev));
 }
 
 Net& Net::convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
@@ -152,6 +159,26 @@ OutputInfo Net::getOutputInfo(unsigned int l)
 {
   OPENANN_CHECK(l >= 0 && l < L);
   return infos[l];
+}
+
+DataSet* Net::propagateDataSet(DataSet& dataSet, int l)
+{
+  Eigen::MatrixXd X(dataSet.samples(), dataSet.inputs());
+  Eigen::MatrixXd T(dataSet.samples(), dataSet.outputs());
+  for(int n = 0; n < dataSet.samples(); n++)
+  {
+    tempInput = dataSet.getInstance(n).transpose();
+    Eigen::MatrixXd* y = &tempInput;
+    int i = 0;
+    for(std::vector<Layer*>::iterator layer = layers.begin();
+        layer != layers.end() && i < l; layer++)
+      (**layer).forwardPropagate(y, y, dropout);
+    tempOutput = *y;
+    X.row(n) = tempOutput;
+    T.row(n) = dataSet.getTarget(n).transpose();
+  }
+  DirectStorageDataSet* transformedDataSet = new DirectStorageDataSet(&X, &T);
+  return transformedDataSet;
 }
 
 void Net::initializeNetwork()

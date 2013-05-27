@@ -7,4 +7,5 @@ class IntrinsicPlasticityTestCase : public TestCase
   virtual void run();
   virtual void setUp();
   void learn();
+  void backprop();
 };

@@ -1,4 +1,6 @@
 #include "IntrinsicPlasticityTestCase.h"
+#include "LayerAdapter.h"
+#include "FiniteDifferences.h"
 #include <OpenANN/IntrinsicPlasticity.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/optimization/MBSGD.h>
@@ -7,6 +9,7 @@
 void IntrinsicPlasticityTestCase::run()
 {
   RUN(IntrinsicPlasticityTestCase, learn);
+  RUN(IntrinsicPlasticityTestCase, backprop);
 }
 
 void IntrinsicPlasticityTestCase::setUp()
@@ -34,7 +37,6 @@ void IntrinsicPlasticityTestCase::learn()
   OpenANN::DirectStorageDataSet ds(&X, &Y);
   ip.trainingSet(ds);
 
-  ip.initialize();
   Eigen::VectorXd p = ip.currentParameters();
   ASSERT_EQUALS_DELTA(p(0), 1.0, 1e-3);
   ASSERT_EQUALS_DELTA(p(1), 1.0, 1e-3);
@@ -72,4 +74,24 @@ void IntrinsicPlasticityTestCase::learn()
   ASSERT_EQUALS_DELTA(mean(0), 0.2, 2e-2);
   ASSERT_EQUALS_DELTA(mean(1), 0.2, 2e-2);
   ASSERT(e > ip.error());
+}
+
+void IntrinsicPlasticityTestCase::backprop()
+{
+  OpenANN::OutputInfo info;
+  info.dimensions.push_back(5);
+  OpenANN::IntrinsicPlasticity layer(5, 0.2);
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 5);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 5);
+  opt.trainingSet(X, Y);
+  Eigen::MatrixXd gradient = opt.inputGradient();
+  ASSERT_EQUALS(gradient.rows(), 2);
+  Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::
+      inputGradient(X, Y, opt);
+  ASSERT_EQUALS(estimatedGradient.rows(), 2);
+  for(int j = 0; j < gradient.rows(); j++)
+    for(int i = 0; i < gradient.cols(); i++)
+      ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
 }

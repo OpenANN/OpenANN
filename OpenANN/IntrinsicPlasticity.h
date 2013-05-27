@@ -1,8 +1,8 @@
 #pragma once
 
 #include <OpenANN/Learner.h>
+#include <OpenANN/layers/Layer.h>
 #include <OpenANN/io/DataSet.h>
-#include <OpenANN/optimization/Optimizable.h>
 #include <Eigen/Dense>
 
 namespace OpenANN
@@ -29,7 +29,7 @@ namespace OpenANN
  * Synergies between intrinsic and synaptic plasticity mechanisms,
  * Neural Computation 19, pp. 885-909, 2007.
  */
-class IntrinsicPlasticity : public Learner
+class IntrinsicPlasticity : public Learner, public Layer
 {
   const int nodes;
   const double mu;
@@ -39,6 +39,9 @@ class IntrinsicPlasticity : public Learner
   Eigen::VectorXd parameters;
   Eigen::VectorXd g;
   Eigen::VectorXd y;
+  Eigen::MatrixXd Y;
+  Eigen::MatrixXd Yd;
+  Eigen::MatrixXd e;
 public:
   IntrinsicPlasticity(int nodes, double mu, double stdDev = 1.0);
 
@@ -55,6 +58,15 @@ public:
   virtual Eigen::VectorXd gradient(unsigned int n);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& a);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& A);
+
+  virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
+                                std::vector<double*>& parameterDerivativePointers);
+  virtual void initializeParameters() {}
+  virtual void updatedParameters() {}
+  virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                bool dropout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual Eigen::MatrixXd& getOutput();
 };
 
 }
