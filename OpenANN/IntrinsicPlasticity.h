@@ -39,8 +39,9 @@ class IntrinsicPlasticity : public Learner, public Layer
   Eigen::VectorXd parameters;
   Eigen::VectorXd g;
   Eigen::VectorXd y;
-  Eigen::MatrixXd* x;
   Eigen::MatrixXd Y;
+  Eigen::MatrixXd Yd;
+  Eigen::MatrixXd e;
 public:
   IntrinsicPlasticity(int nodes, double mu, double stdDev = 1.0);
 
