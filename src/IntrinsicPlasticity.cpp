@@ -9,7 +9,7 @@ namespace OpenANN
 
 IntrinsicPlasticity::IntrinsicPlasticity(int nodes, double mu, double stdDev)
     : nodes(nodes), mu(mu), stdDev(stdDev), s(nodes), b(nodes),
-      parameters(2*nodes), g(2*nodes), y(nodes)
+      parameters(2*nodes), g(2*nodes), y(nodes), x(0)
 {
 }
 
@@ -115,10 +115,37 @@ Eigen::VectorXd IntrinsicPlasticity::operator()(const Eigen::VectorXd& a)
 
 Eigen::MatrixXd IntrinsicPlasticity::operator()(const Eigen::MatrixXd& A)
 {
-  Eigen::MatrixXd Y(A.rows(), A.cols());
+  Y.conservativeResize(A.rows(), A.cols());
   for(int n = 0; n < A.rows(); n++)
     Y.row(n) = A.row(n).cwiseProduct(s.transpose()) + b.transpose();
   activationFunction(LOGISTIC, Y, Y);
+  return Y;
+}
+
+OutputInfo IntrinsicPlasticity::initialize(std::vector<double*>& parameterPointers,
+                                           std::vector<double*>& parameterDerivativePointers)
+{
+  OutputInfo info;
+  info.dimensions.push_back(nodes);
+  return info;
+}
+
+void IntrinsicPlasticity::forwardPropagate(Eigen::MatrixXd* x,
+                                           Eigen::MatrixXd*& y, bool dropout)
+{
+  this->x = x;
+  (*this)(*x);
+  y = &Y;
+}
+
+void IntrinsicPlasticity::backpropagate(Eigen::MatrixXd* ein,
+                                        Eigen::MatrixXd*& eout)
+{
+  // TODO implement
+}
+
+Eigen::MatrixXd& IntrinsicPlasticity::getOutput()
+{
   return Y;
 }
 
