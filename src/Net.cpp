@@ -10,6 +10,7 @@
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/Dropout.h>
 #include <OpenANN/RBM.h>
+#include <OpenANN/IntrinsicPlasticity.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -70,6 +71,12 @@ Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
                        bool bias)
 {
   return addLayer(new Extreme(infos.back(), units, bias, act, stdDev));
+}
+
+Net& Net::intrinsicPlasticityLayer(double targetMean, double stdDev)
+{
+  return addLayer(new IntrinsicPlasticity(infos.back().outputs(), targetMean,
+                                          stdDev));
 }
 
 Net& Net::convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,

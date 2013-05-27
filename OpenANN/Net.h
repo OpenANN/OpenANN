@@ -127,6 +127,16 @@ public:
   Net& extremeLayer(int units, ActivationFunction act, double stdDev = 5.0,
                     bool bias = true);
   /**
+   * Add an intrinsic plasticity layer that is able to learn the parameters of
+   * a logistic activation function.
+   * @param targetMean desired mean of the output distribution, must be within
+   *                   [0, 1], e.g. 0.2
+   * @param stdDev standard deviation of the Gaussian distributed initial
+   *               biases
+   * @return this for chaining
+   */
+  Net& intrinsicPlasticityLayer(double targetMean, double stdDev = 1.0);
+  /**
    * Add a convolutional layer.
    * @param featureMaps number of feature maps
    * @param kernelRows number of kernel rows
