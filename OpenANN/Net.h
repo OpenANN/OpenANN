@@ -253,6 +253,13 @@ public:
    * @return output information
    */
   OutputInfo getOutputInfo(unsigned int l);
+  /**
+   * Propagate data set through the first l layers.
+   * @param dataSet original dataset
+   * @param l index of the layer
+   * @return transformed data set (has to be deleted manually)
+   */
+  DataSet* propagateDataSet(DataSet& dataSet, int l);
   ///@}
 
   /**

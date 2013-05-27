@@ -161,6 +161,26 @@ OutputInfo Net::getOutputInfo(unsigned int l)
   return infos[l];
 }
 
+DataSet* Net::propagateDataSet(DataSet& dataSet, int l)
+{
+  Eigen::MatrixXd X(dataSet.samples(), dataSet.inputs());
+  Eigen::MatrixXd T(dataSet.samples(), dataSet.outputs());
+  for(int n = 0; n < dataSet.samples(); n++)
+  {
+    tempInput = dataSet.getInstance(n).transpose();
+    Eigen::MatrixXd* y = &tempInput;
+    int i = 0;
+    for(std::vector<Layer*>::iterator layer = layers.begin();
+        layer != layers.end() && i < l; layer++)
+      (**layer).forwardPropagate(y, y, dropout);
+    tempOutput = *y;
+    X.row(n) = tempOutput;
+    T.row(n) = dataSet.getTarget(n).transpose();
+  }
+  DirectStorageDataSet* transformedDataSet = new DirectStorageDataSet(&X, &T);
+  return transformedDataSet;
+}
+
 void Net::initializeNetwork()
 {
   P = parameters.size();
