@@ -197,11 +197,13 @@ void Net::initializeNetwork()
 Net& Net::useDropout(bool activate)
 {
   dropout = activate;
+  return *this;
 }
 
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
 {
   this->errorFunction = errorFunction;
+  return *this;
 }
 
 void Net::finishedIteration()

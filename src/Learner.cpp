@@ -45,6 +45,7 @@ Learner& Learner::removeTrainingSet()
     delete trainSet;
   deleteTrainSet = false;
   trainSet = 0;
+  return *this;
 }
 
 Learner& Learner::validationSet(Eigen::MatrixXd& input,
@@ -72,6 +73,7 @@ Learner& Learner::removeValidationSet()
     delete validSet;
   deleteValidSet = false;
   validSet = 0;
+  return *this;
 }
 
 }

@@ -146,6 +146,7 @@ OpenANN::Learner& LayerAdapter::trainingSet(Eigen::MatrixXd& trainingInput,
 {
   input = trainingInput;
   desired = trainingOutput;
+  return *this;
 }
 
 OpenANN::Learner& LayerAdapter::trainingSet(OpenANN::DataSet& trainingSet)
