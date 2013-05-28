@@ -13,8 +13,9 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake -D CMAKE_BUILD_TYPE:String=Debug ..
   - make
+  - test/TestSuite
 notifications:
   recipients:
     - afabisch@informatik.uni-bremen.de
