@@ -33,9 +33,6 @@ if [ -d "${TARGET_ALGLIB}" ]; then
   echo "Removing current ALGLIB library."
   rm -r ${TARGET_ALGLIB}
 fi
-echo "This setup script will download ALGLIB for you. Note that ALGLIB is"
-echo "licensed under GPL license and thus we cannot directly include it to"
-echo "OpenANN."
 echo "Downloading ALGLIB."
 if wget http://www.alglib.net/translator/re/alglib-3.5.0.cpp.zip; then
   echo "Success."
