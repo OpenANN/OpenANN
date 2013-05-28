@@ -4,7 +4,7 @@ compiler:
   - gcc
 before_script:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libeigen3-dev cython python-numpy libqt4-dev libxmu-dev freeglut3 libqt4-opengl-dev
+  - sudo apt-get install -qq libeigen3-dev cython python-numpy libqt4-dev libxmu-dev freeglut3-dev libqt4-opengl-dev
 script:
   - mkdir build
   - cd build
