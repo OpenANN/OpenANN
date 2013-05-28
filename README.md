@@ -3,6 +3,8 @@ OpenANN
 
 An open source library for artificial neural networks.
 
+[![Build Status](https://travis-ci.org/OpenANN/OpenANN.png?branch=master)](https://travis-ci.org/OpenANN/OpenANN)
+
 License
 -------
 
