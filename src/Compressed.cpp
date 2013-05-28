@@ -71,7 +71,7 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool 
   // Activate neurons
   a = *x * W.leftCols(I).transpose();
   if(bias)
-    a.rowwise() += b;
+    a.rowwise() += b.transpose();
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
