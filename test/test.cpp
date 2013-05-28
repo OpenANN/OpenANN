@@ -86,7 +86,7 @@ int main(int argc, char** argv)
   {
 #ifdef USE_QT
     QtTestRunner qtr(argc, argv);
-    qtr.run(ts);
+    return qtr.run(ts);
 #else
     std::cerr << "Qt is not available." << std::endl;
     return EXIT_FAILURE;
@@ -95,8 +95,6 @@ int main(int argc, char** argv)
   else
   {
     TextTestRunner ttr(verbose);
-    ttr.run(ts);
+    return ttr.run(ts);
   }
-
-  return EXIT_SUCCESS;
 }
