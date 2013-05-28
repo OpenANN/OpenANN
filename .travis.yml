@@ -1,6 +1,7 @@
 compiler:
   - clang
   - gcc
+before_script: sudo apt-get install libeigen3-dev
 script:
   - mkdir build
   - cd build
