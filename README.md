@@ -30,15 +30,3 @@ Linux
     sudo make install
     sudo ldconfig
 
-Directory Structure
--------------------
-
-* OpenANN - Header files that are exposed to the user
-* benchmarks - Standard ANN benchmarks
-* cmake - CMake macros
-* doc - Additional doxygen documentation files
-* examples - OpenANN showcase
-* lib - External libraries
-* python - Python language bindings
-* src - Implementation files for libopenann
-* test - Contains the OpenANN test suite
