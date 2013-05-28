@@ -71,7 +71,7 @@ void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, b
   // Activate neurons
   a = *x * W.transpose();
   if(bias)
-    a.rowwise() += b;
+    a.rowwise() += b.transpose();
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
