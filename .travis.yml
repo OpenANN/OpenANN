@@ -1,7 +1,7 @@
 compiler:
   - clang
   - gcc
-before_script: sudo apt-get install libeigen3-dev
+before_script: sudo apt-get install libeigen3-dev cython python-numpy
 script:
   - mkdir build
   - cd build
