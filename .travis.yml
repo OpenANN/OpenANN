@@ -1,0 +1,14 @@
+compiler:
+  - clang
+  - gcc
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+notifications:
+  recipients:
+    - afabisch@informatik.uni-bremen.de
+  email:
+    on_success: change
+    on_failure: always
