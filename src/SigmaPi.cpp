@@ -1,7 +1,6 @@
 #include <OpenANN/layers/SigmaPi.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/OpenANNException.h>
-#include <omp.h>
 
 namespace OpenANN {
 
