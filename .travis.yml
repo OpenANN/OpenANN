@@ -1,21 +1,19 @@
+language: cpp
 compiler:
   - clang
   - gcc
 before_script:
-  - sudo apt-get update
-  - sudo apt-get install libeigen3-dev
-  - sudo apt-get install cython
-  - sudo apt-get install python-numpy
-  - sudo apt-get install libqt4-dev
-  - sudo apt-get install libxmu-dev
-  - sudo apt-get install freeglut3
-  - sudo apt-get install libqt4-opengl-dev
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libeigen3-dev cython python-numpy libqt4-dev libxmu-dev freeglut3 libqt4-opengl-dev
 script:
   - mkdir build
   - cd build
   - cmake -D CMAKE_BUILD_TYPE:String=Debug ..
   - make
   - test/TestSuite
+branches:
+  only:
+    - master
 notifications:
   recipients:
     - afabisch@informatik.uni-bremen.de
