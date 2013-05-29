@@ -1,4 +1,6 @@
-# astyle --options=.astylerc --recursive ../OpenANN/*.h ../src/.cpp ../test/*.h ../test/*.cpp
+# Artistic Style configuration
+#   URL: http://astyle.sourceforge.net
+# astyle --options=cmake/.astylerc --recursive "OpenANN/*.h" "src/*.cpp" "test/*.h" "test/*.cpp"
 
 mode=c
 style=ansi
@@ -10,7 +12,6 @@ max-instatement-indent=60
 pad-oper
 unpad-paren
 align-pointer=type
-break-elseifs
+keep-one-line-blocks
 convert-tabs
 #max-code-length=80
-
