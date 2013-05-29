@@ -4,7 +4,8 @@
 #include <limits>
 #include <algorithm>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
   : I(info.outputs()), fm(info.dimensions[0]),
@@ -14,18 +15,18 @@ MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
 }
 
 OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
-                                   std::vector<double*>& parameterDerivativePointers)
+                                  std::vector<double*>& parameterDerivativePointers)
 {
   OutputInfo info;
   info.dimensions.push_back(fm);
-  outRows = inRows/kernelRows;
-  outCols = inCols/kernelCols;
+  outRows = inRows / kernelRows;
+  outCols = inCols / kernelCols;
   fmOutSize = outRows * outCols;
   info.dimensions.push_back(outRows);
   info.dimensions.push_back(outCols);
   fmInSize = inRows * inCols;
-  maxRow = inRows-kernelRows+1;
-  maxCol = inCols-kernelCols+1;
+  maxRow = inRows - kernelRows + 1;
+  maxCol = inCols - kernelCols + 1;
 
   y.resize(1, info.outputs());
   deltas.resize(1, info.outputs());
@@ -51,17 +52,17 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   OPENANN_CHECK(x->cols() == fm * inRows * inRows);
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
-#pragma omp parallel for
+  #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
     int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
-      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
       {
-        int rowBase = fmo*fmInSize + ri*inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+        int rowBase = fmo * fmInSize + ri * inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
         {
           double m = -std::numeric_limits<double>::max();
           for(int kr = 0; kr < kernelRows; kr++)
@@ -86,17 +87,17 @@ void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   deltas = (*ein);
 
   e.fill(0.0);
-#pragma omp parallel for
+  #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
     int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
-      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
       {
-        int rowBase = fmo*fmInSize + ri*inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+        int rowBase = fmo * fmInSize + ri * inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
         {
           double m = -std::numeric_limits<double>::max();
           int idx = -1;

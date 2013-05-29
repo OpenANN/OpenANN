@@ -8,7 +8,8 @@
 #include <cmath>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 double sse(Learner& learner, DataSet& dataSet)
 {
@@ -35,7 +36,7 @@ double ce(Learner& learner, DataSet& dataSet)
   double ce = 0.0;
   for(int n = 0; n < N; n++)
     ce -= (dataSet.getTarget(n).array() *
-        (learner(dataSet.getInstance(n)).array() + 1e-10).log()).sum();
+           (learner(dataSet.getInstance(n)).array() + 1e-10).log()).sum();
   return ce;
 }
 
@@ -45,8 +46,8 @@ double accuracy(Learner& learner, DataSet& dataSet)
   const int N = dataSet.samples();
   double accuracy = 0.0;
   for(int n = 0; n < N; n++)
-    accuracy += (double) (oneOfCDecoding(learner(dataSet.getInstance(n)))
-        == oneOfCDecoding(dataSet.getTarget(n)));
+    accuracy += (double)(oneOfCDecoding(learner(dataSet.getInstance(n)))
+                         == oneOfCDecoding(dataSet.getTarget(n)));
   return accuracy / (double) N;
 }
 
@@ -73,16 +74,20 @@ int classificationHits(Learner& learner, DataSet& dataSet)
 {
   int hits = 0;
 
-  for(int i = 0; i < dataSet.samples(); ++i) {
+  for(int i = 0; i < dataSet.samples(); ++i)
+  {
     Eigen::VectorXd& output = dataSet.getTarget(i);
     Eigen::VectorXd& input = dataSet.getInstance(i);
 
     int klass, result;
 
-    if(dataSet.outputs() > 2) {
+    if(dataSet.outputs() > 2)
+    {
       klass = output.maxCoeff();
       result = learner(input).maxCoeff();
-    } else {
+    }
+    else
+    {
       klass = std::floor(output.x() + 0.5);
       result = std::floor(learner(input).x() + 0.5);
     }
@@ -103,7 +108,8 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
 
   OPENANN_INFO << "Run " << folds << "-fold cross-validation";
 
-  for(int i = 0; i < folds; ++i) {
+  for(int i = 0; i < folds; ++i)
+  {
     // generate training set from splits (remove validation set)
     std::vector<DataSetView> training_splits = splits;
     training_splits.erase(training_splits.begin() + i);
@@ -112,7 +118,7 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     DataSetView& test = splits.at(i);
     DataSetView training(dataSet);
     merge(training, training_splits);
-  
+
     learner.trainingSet(training);
     learner.initialize();
 
@@ -124,9 +130,10 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     int training_hits = 0;
     int test_hits = 0;
 
-    while(opt.step() && !interrupt.isSignaled()) {
+    while(opt.step() && !interrupt.isSignaled())
+    {
       std::stringstream ss;
-      
+
       training_hits = classificationHits(learner, training);
       test_hits = classificationHits(learner, test);
 
@@ -139,13 +146,13 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     }
 
     OPENANN_INFO
-      << "Fold [" << i + 1 << "] "
-      << "training result = " 
-      << OpenANN::FloatingPointFormatter(100.0 * ((double) training_hits / training.samples()), 2) 
-      << "% (" << training_hits << "/" << training.samples() << "), "
-      << "test result = " 
-      << OpenANN::FloatingPointFormatter(100.0 * ((double) test_hits / test.samples()), 2) 
-      << "% (" << test_hits << "/" << test.samples() << ")  [classification]";
+        << "Fold [" << i + 1 << "] "
+        << "training result = "
+        << OpenANN::FloatingPointFormatter(100.0 * ((double) training_hits / training.samples()), 2)
+        << "% (" << training_hits << "/" << training.samples() << "), "
+        << "test result = "
+        << OpenANN::FloatingPointFormatter(100.0 * ((double) test_hits / test.samples()), 2)
+        << "% (" << test_hits << "/" << test.samples() << ")  [classification]";
   }
 }
 

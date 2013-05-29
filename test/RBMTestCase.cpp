@@ -86,7 +86,7 @@ void RBMTestCase::parameterGradient()
   opt.trainingSet(X, Y);
   Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
   Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::
-      parameterGradient(indices.begin(), indices.end(), opt);
+                                      parameterGradient(indices.begin(), indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
@@ -104,7 +104,7 @@ void RBMTestCase::inputGradient()
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);
   Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::
-      inputGradient(X, Y, opt);
+                                      inputGradient(X, Y, opt);
   ASSERT_EQUALS(estimatedGradient.rows(), 2);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)

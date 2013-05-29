@@ -89,7 +89,7 @@ void IntrinsicPlasticityTestCase::backprop()
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);
   Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::
-      inputGradient(X, Y, opt);
+                                      inputGradient(X, Y, opt);
   ASSERT_EQUALS(estimatedGradient.rows(), 2);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)

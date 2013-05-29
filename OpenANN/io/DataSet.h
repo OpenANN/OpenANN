@@ -2,7 +2,8 @@
 
 #include <Eigen/Dense>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 class Learner;
 

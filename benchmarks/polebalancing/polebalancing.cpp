@@ -170,8 +170,8 @@ Result benchmarkSingleRun(OpenANN::Environment& environment, OpenANN::Agent& age
 }
 
 Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
-    bool alphaBetaFilter, bool doubleExponentialSmoothing, int parameters,
-    int runs, double sigma0)
+                               bool alphaBetaFilter, bool doubleExponentialSmoothing, int parameters,
+                               int runs, double sigma0)
 {
   OpenANN::Environment* env;
   if(doublePole)
@@ -187,7 +187,7 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
   for(int run = 0; run < runs; run++)
   {
     NeuroEvolutionAgent agent(0, false, "linear", parameters > 0, parameters,
-        fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
+                              fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
     agent.setSigma0(sigma0);
     Result result = benchmarkSingleRun(*env, agent);
     if(run % 10 == 0)
@@ -201,10 +201,10 @@ Results benchmarkConfiguration(bool doublePole, bool fullyObservable,
   progressLogger << "\n";
   results.mean /= (double) runs;
   results.time /= (double) runs;
-  results.min = (int) *std::min_element(episodes.begin(), episodes.end());
-  results.max = (int) *std::max_element(episodes.begin(), episodes.end());
+  results.min = (int) * std::min_element(episodes.begin(), episodes.end());
+  results.max = (int) * std::max_element(episodes.begin(), episodes.end());
   std::sort(episodes.begin(), episodes.end());
-  results.median = (int) episodes[episodes.size()/2];
+  results.median = (int) episodes[episodes.size() / 2];
   for(int run = 0; run < runs; run++)
   {
     episodes[run] -= results.mean;
@@ -221,10 +221,10 @@ void printResults(const Results& results)
   typedef OpenANN::FloatingPointFormatter fmt;
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   resultLogger << results.failures << "/" << results.runs
-      << " failed\nepisodes:\t" << fmt(results.mean, 3) << "+-"
-      << fmt(results.stdDev, 4) << "\nrange:\t\t[" << results.min << ","
-      << results.max << "]\nmedian:\t\t" << results.median << "\ntime:\t\t"
-      << results.time << " ms\n\n";
+               << " failed\nepisodes:\t" << fmt(results.mean, 3) << "+-"
+               << fmt(results.stdDev, 4) << "\nrange:\t\t[" << results.min << ","
+               << results.max << "]\nmedian:\t\t" << results.median << "\ntime:\t\t"
+               << results.time << " ms\n\n";
 }
 
 int main(int argc, char** argv)

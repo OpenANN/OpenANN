@@ -19,18 +19,18 @@
 #endif // NDEBUG
 
 #ifndef OPENANN_LOG_NAMESPACE
-  /**
-   * Namespace for global logging.
-   */
-  #define OPENANN_LOG_NAMESPACE NULL
+/**
+ * Namespace for global logging.
+ */
+#define OPENANN_LOG_NAMESPACE NULL
 #endif // OPENANN_LOG_NAMESPACE
 
 #ifndef OPENANN_LOGLEVEL
-  /**
-   * Log level for global logging.
-   * \sa OpenANN::Log::LogLevel
-   */
-  #define OPENANN_LOGLEVEL OpenANN::Log::DEBUG
+/**
+ * Log level for global logging.
+ * \sa OpenANN::Log::LogLevel
+ */
+#define OPENANN_LOGLEVEL OpenANN::Log::DEBUG
 #endif // OPENANN_LOGLEVEL
 
 /**
@@ -38,9 +38,9 @@
  * @param level log level
  */
 #define OPENANN_LOG(level) \
-    if(level > OPENANN_LOGLEVEL) ; \
-    else if(level > OpenANN::Log::getLevel()) ; \
-    else OpenANN::Log().get(level, OPENANN_LOG_NAMESPACE)
+  if(level > OPENANN_LOGLEVEL) ; \
+  else if(level > OpenANN::Log::getLevel()) ; \
+  else OpenANN::Log().get(level, OPENANN_LOG_NAMESPACE)
 
 /**
  * Log a debug message.
@@ -75,7 +75,7 @@ struct FloatingPointFormatter
   int precision;
 
   FloatingPointFormatter(double value, int precision)
-      : value(value), precision(precision)
+    : value(value), precision(precision)
   {}
 };
 
@@ -84,14 +84,15 @@ struct FloatingPointFormatter
  *
  * Global logger.
  */
-class Log 
+class Log
 {
 public:
-  enum LogLevel {
-      DISABLED = 0, //!< Disable logging completely.
-      ERROR,        //!< Only errors will be logged.
-      INFO,         //!< Interesting runtime events.
-      DEBUG         //!< Detailed information.
+  enum LogLevel
+  {
+    DISABLED = 0, //!< Disable logging completely.
+    ERROR,        //!< Only errors will be logged.
+    INFO,         //!< Interesting runtime events.
+    DEBUG         //!< Detailed information.
   };
 
   Log();
@@ -151,15 +152,15 @@ Logger& operator<<(Logger& logger, const T& t)
 {
   switch(logger.target)
   {
-    case Logger::CONSOLE:
-      std::cout << t << std::flush;
-      break;
-    case Logger::APPEND_FILE:
-    case Logger::FILE:
-      logger.file << t << std::flush;
-      break;
-    default: // do not log
-      break;
+  case Logger::CONSOLE:
+    std::cout << t << std::flush;
+    break;
+  case Logger::APPEND_FILE:
+  case Logger::FILE:
+    logger.file << t << std::flush;
+    break;
+  default: // do not log
+    break;
   }
   return logger;
 }

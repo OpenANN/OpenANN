@@ -1,7 +1,8 @@
 #include <OpenANN/layers/FullyConnected.h>
 #include <OpenANN/util/Random.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, double stdDev,
@@ -15,8 +16,8 @@ FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
 OutputInfo FullyConnected::initialize(std::vector<double*>& parameterPointers,
                                       std::vector<double*>& parameterDerivativePointers)
 {
-  parameterPointers.reserve(parameterPointers.size() + J*(I+bias));
-  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*(I+bias));
+  parameterPointers.reserve(parameterPointers.size() + J * (I + bias));
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J * (I + bias));
   for(int j = 0; j < J; j++)
   {
     for(int i = 0; i < I; i++)

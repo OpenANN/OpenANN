@@ -11,7 +11,8 @@
 #include <Test/Stopwatch.h>
 #include <numeric>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
              double gamma, double learningRateDecay,
@@ -95,7 +96,7 @@ bool MBSGD::step()
     opt->errorGradient(startN, endN, error, gradient);
     accumulatedError += error;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (double) (endN - startN);
+    gradient /= (double)(endN - startN);
 
     if(useGain)
     {
@@ -137,11 +138,11 @@ bool MBSGD::step()
   opt->finishedIteration();
 
   const bool run = (stop.maximalIterations == // Maximum iterations reached?
-      StoppingCriteria::defaultValue.maximalIterations ||
-      iteration < stop.maximalIterations) &&
-      (stop.minimalSearchSpaceStep == // Gradient too small?
-      StoppingCriteria::defaultValue.minimalSearchSpaceStep ||
-      momentum.norm() >= stop.minimalSearchSpaceStep);
+                    StoppingCriteria::defaultValue.maximalIterations ||
+                    iteration < stop.maximalIterations) &&
+                   (stop.minimalSearchSpaceStep == // Gradient too small?
+                    StoppingCriteria::defaultValue.minimalSearchSpaceStep ||
+                    momentum.norm() >= stop.minimalSearchSpaceStep);
   if(!run)
     iteration = -1;
   return run;
@@ -157,11 +158,11 @@ std::string MBSGD::name()
   std::stringstream ss;
 
   ss << "Mini-Batch Stochastic Gradient Descent ";
-  ss << "(learning rate = " << alpha 
-    << ", momentum = " << eta 
-    << ", batch_size " << batchSize 
-    << ", gamma = " << gamma 
-    << ")";
+  ss << "(learning rate = " << alpha
+     << ", momentum = " << eta
+     << ", batch_size " << batchSize
+     << ", gamma = " << gamma
+     << ")";
 
   return ss.str();
 }

@@ -7,7 +7,7 @@ class Rosenbrock : public OpenANN::Optimizable
   Eigen::VectorXd x;
 public:
   Rosenbrock()
-      : x(N, 1)
+    : x(N, 1)
   {
     for(int i = 0; i < N; i++)
       x(i) = 0;
@@ -38,14 +38,14 @@ public:
     x = parameters;
   }
 
-  double SQR(double t) { return t*t; }
+  double SQR(double t) { return t * t; }
 
   virtual double error()
   {
     double res(0);
-    for(int i = 0; i < N-1; i++)
+    for(int i = 0; i < N - 1; i++)
     {
-      res += SQR(1.0-x(i)) + 100.0*SQR(x(i+1)-SQR(x(i)));
+      res += SQR(1.0 - x(i)) + 100.0 * SQR(x(i + 1) - SQR(x(i)));
     }
     return res;
   }

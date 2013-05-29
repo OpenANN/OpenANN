@@ -8,7 +8,8 @@
 
 class Stopwatch;
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class DirectStorageDataSet

@@ -77,7 +77,7 @@ void ActivationFunctionsTestCase::rectifier()
   Eigen::MatrixXd gd = Eigen::MatrixXd::Zero(1, N);
   Eigen::MatrixXd expected = Eigen::MatrixXd::Ones(1, N);
   for(int i = 0; i < N; i++)
-    expected(i) *= (double) (z(i) > 0.0);
+    expected(i) *= (double)(z(i) > 0.0);
   OpenANN::rectifierDerivative(z, gd);
   ASSERT_EQUALS(gd.sum(), expected.sum());
 }

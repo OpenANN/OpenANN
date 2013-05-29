@@ -1,7 +1,8 @@
 #include <OpenANN/layers/Dropout.h>
 #include <OpenANN/util/Random.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 Dropout::Dropout(OutputInfo info, double dropoutProbability)
   : info(info), I(info.outputs()),

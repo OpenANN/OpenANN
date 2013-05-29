@@ -2,7 +2,8 @@
 
 #include <Eigen/Dense>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * Scale all values to the interval [min, max].

@@ -3,7 +3,8 @@
 #include <Eigen/Dense>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class OutputInfo

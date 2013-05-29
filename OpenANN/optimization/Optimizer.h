@@ -4,7 +4,8 @@
 #include <Eigen/Dense>
 #include <string>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 class Optimizable;
 class StoppingCriteria;

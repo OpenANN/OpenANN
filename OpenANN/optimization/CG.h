@@ -5,7 +5,8 @@
 #include <Eigen/Dense>
 #include <optimization.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class CG

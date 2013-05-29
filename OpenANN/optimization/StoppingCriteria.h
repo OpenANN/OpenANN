@@ -1,7 +1,8 @@
 #ifndef STOPPINGCRITERIA_H
 #define STOPPINGCRITERIA_H
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class StoppingCriteria

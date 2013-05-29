@@ -67,7 +67,7 @@ int parameters;
 double bestReturn;
 Eigen::VectorXd bestParameters;
 
-int agent_init(int num_state_variables, int num_action_variables, int argc, const char *agent_param[])
+int agent_init(int num_state_variables, int num_action_variables, int argc, const char* agent_param[])
 {
   num_states = num_state_variables;
   num_actions = num_action_variables;
@@ -83,7 +83,7 @@ int agent_init(int num_state_variables, int num_action_variables, int argc, cons
   if(parameters > 0)
   {
     net.compressedLayer(hiddenUnits, parameters, TANH, "dct");
-    net.compressedOutputLayer(num_actions, hiddenUnits+1, LOGISTIC, "dct");
+    net.compressedOutputLayer(num_actions, hiddenUnits + 1, LOGISTIC, "dct");
   }
   else
   {
@@ -101,7 +101,7 @@ int agent_init(int num_state_variables, int num_action_variables, int argc, cons
   opt.restart();
 
   logger << net.dimension() << " parameters, " << num_states
-      << " state components, " << num_actions << " action components\n";
+         << " state components, " << num_actions << " action components\n";
   return 0;
 }
 
@@ -156,7 +156,8 @@ int agent_step(double state_data[], double reward, double out_action[])
   return  0;
 }
 
-int agent_end(double reward) {
+int agent_end(double reward)
+{
   episodeReturn += reward;
   logger << "agend end, return = " << episodeReturn << "\n";
   if(episodeReturn > bestReturn)
@@ -165,7 +166,7 @@ int agent_end(double reward) {
     bestParameters = net.currentParameters();
   }
   RandomNumberGenerator rng;
-  opt.setError(-episodeReturn+0.1*episodeReturn*rng.sampleNormalDistribution<double>());
+  opt.setError(-episodeReturn + 0.1 * episodeReturn * rng.sampleNormalDistribution<double>());
   if(opt.terminated())
     opt.restart();
   return 0;

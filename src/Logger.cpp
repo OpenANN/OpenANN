@@ -6,7 +6,8 @@
 namespace OpenANN
 {
 
-const char* LevelToString[] = {
+const char* LevelToString[] =
+{
   "DISABLED",
   "ERROR",
   "INFO",
@@ -54,16 +55,16 @@ Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
 {
   switch(logger.target)
   {
-    case Logger::CONSOLE:
-      std::cout << std::fixed << std::setprecision(t.precision) << t.value
-          << std::resetiosflags(std::ios_base::fixed) << std::flush;
-      break;
-    case Logger::APPEND_FILE:
-    case Logger::FILE:
-      logger.file << std::fixed << std::setprecision(t.precision) << t.value << std::flush;
-      break;
-    default: // do not log
-      break;
+  case Logger::CONSOLE:
+    std::cout << std::fixed << std::setprecision(t.precision) << t.value
+              << std::resetiosflags(std::ios_base::fixed) << std::flush;
+    break;
+  case Logger::APPEND_FILE:
+  case Logger::FILE:
+    logger.file << std::fixed << std::setprecision(t.precision) << t.value << std::flush;
+    break;
+  default: // do not log
+    break;
   }
   return logger;
 }
@@ -74,7 +75,7 @@ Log::Log()
 
 Log::~Log()
 {
-  getStream() << message.str() << std::endl; 
+  getStream() << message.str() << std::endl;
 }
 
 std::ostream& Log::get(LogLevel level, const char* name_space)
@@ -90,10 +91,10 @@ std::ostream& Log::get(LogLevel level, const char* name_space)
 
   std::strftime(current_time, sizeof(current_time), "%F %X", current);
 
-  message << std::setw(6) << LevelToString[level] << "  " 
+  message << std::setw(6) << LevelToString[level] << "  "
           << current_time << "  ";
 
-  if(name_space != NULL) 
+  if(name_space != NULL)
     message << name_space << ": ";
 
   return message;
@@ -113,9 +114,9 @@ Log::LogLevel& Log::getLevel()
 
 std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t)
 {
-    os << std::fixed << std::setprecision(t.precision) << t.value
-        << std::resetiosflags(std::ios_base::fixed);
-    return os;
+  os << std::fixed << std::setprecision(t.precision) << t.value
+     << std::resetiosflags(std::ios_base::fixed);
+  return os;
 }
 
 }

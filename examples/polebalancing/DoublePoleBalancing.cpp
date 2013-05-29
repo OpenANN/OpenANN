@@ -44,8 +44,8 @@ DoublePoleBalancing::DoublePoleBalancing(bool fullyObservable)
   }
   stateNormalizationVector.resize(6);
   stateNormalizationVector << 1.0 / maxCartPosition, 1.0 / maxForce,
-                              1.0 / maxPoleAngularPosition1, 1.0 / 5.0,
-                              1.0 / maxPoleAngularPosition2, 1.0 / 5.0;
+                           1.0 / maxPoleAngularPosition1, 1.0 / 5.0,
+                           1.0 / maxPoleAngularPosition2, 1.0 / 5.0;
 
   action = actionSpaceLo;
   state.resize(6);
@@ -149,7 +149,7 @@ void DoublePoleBalancing::stateTransition(const Action& action)
   step++;
 
   this->action = action;
-  double force = action(0,0);
+  double force = action(0, 0);
   if(fabs(force) > maxForce)
     force = force / fabs(force) * maxForce;
 
@@ -176,8 +176,8 @@ bool DoublePoleBalancing::successful() const
 bool DoublePoleBalancing::terminalState() const
 {
   return successful() || std::fabs(state(0)) > maxCartPosition
-      || std::fabs(state(2)) > maxPoleAngularPosition1
-      || std::fabs(state(4)) > maxPoleAngularPosition2;
+         || std::fabs(state(2)) > maxPoleAngularPosition1
+         || std::fabs(state(4)) > maxPoleAngularPosition2;
 }
 
 OpenANN::Environment::State DoublePoleBalancing::derivative(const State& s, double force)
@@ -193,15 +193,15 @@ OpenANN::Environment::State DoublePoleBalancing::derivative(const State& s, doub
   double temp2 = mup * s(5) / massLength2;
 
   double fi1 = massLength1 * std::pow(s(3), 2.0) * sintheta1
-      + 0.75 * pole1Mass * costheta1 * (temp1+gsintheta1);
+               + 0.75 * pole1Mass * costheta1 * (temp1 + gsintheta1);
   double fi2 = massLength2 * std::pow(s(5), 2.0) * sintheta2
-      + 0.75 * pole2Mass * costheta2 * (temp2+gsintheta2);
+               + 0.75 * pole2Mass * costheta2 * (temp2 + gsintheta2);
 
   double mi1 = pole1Mass * (1.0 - 0.75 * costheta1 * gsintheta1);
   double mi2 = pole2Mass * (1.0 - 0.75 * costheta2 * gsintheta2);
 
   double cartVelocityDot = (force - muc * (s(1) == 0.0 ? 0.0 : s(1) / std::fabs(s(1))) + fi1 + fi2)
-      / (mi1 + mi2 + cartMass);
+                           / (mi1 + mi2 + cartMass);
   double poleAngularVelocity1Dot = -0.75 * (cartVelocityDot * costheta1 + gsintheta1 + temp1) / pole1Length;
   double poleAngularVelocity2Dot = -0.75 * (cartVelocityDot * costheta2 + gsintheta2 + temp2) / pole2Length;
 

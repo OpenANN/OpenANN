@@ -1,12 +1,13 @@
 #include <OpenANN/layers/Extreme.h>
 #include <OpenANN/util/Random.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 Extreme::Extreme(OutputInfo info, int J, bool bias, ActivationFunction act,
                  double stdDev)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
-    W(J, I+bias), x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I)
+    W(J, I + bias), x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I)
 {
 }
 
@@ -24,7 +25,7 @@ void Extreme::initializeParameters()
 {
   RandomNumberGenerator rng;
   for(int j = 0; j < J; j++)
-    for(int i = 0; i < I+bias; i++)
+    for(int i = 0; i < I + bias; i++)
       W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
 }
 

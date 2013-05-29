@@ -35,7 +35,8 @@ public:
 
   std::string directory;
   std::string subject;
-  enum DataType {
+  enum DataType
+  {
     TRAINING, TEST, DEMO
   } dataType;
 
@@ -70,7 +71,7 @@ public:
   BCIDataCache cache;
 
   BCIDataSet(const std::string directory, const std::string& subject,
-      const std::string dataType, bool loadNow = true);
+             const std::string dataType, bool loadNow = true);
   virtual ~BCIDataSet() {}
   void load();
   void determineDimension();

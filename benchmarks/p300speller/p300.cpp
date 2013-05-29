@@ -44,7 +44,7 @@
  *
  * - http://www.bbci.de/competition/iii/results/albany/true_labels_a.txt
  * - http://www.bbci.de/competition/iii/results/albany/true_labels_b.txt
- * 
+ *
  * You can generate the files
  *
  * - Subject_A_Test_StimulusType.txt
@@ -110,14 +110,14 @@ struct Result
 };
 
 void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
-    int runs, OpenANN::StoppingCriteria stop, int csDimension, bool filter,
-    int subsamplingFactor = 1)
+             int runs, OpenANN::StoppingCriteria stop, int csDimension, bool filter,
+             int subsamplingFactor = 1)
 {
   OpenANN::Net net;
   net.inputLayer(csDimension > 0 ? csDimension : trainingSet.inputs())
-    .outputLayer(trainingSet.outputs(), OpenANN::TANH)
-    .validationSet(testSet)
-    .trainingSet(trainingSet);
+  .outputLayer(trainingSet.outputs(), OpenANN::TANH)
+  .validationSet(testSet)
+  .trainingSet(trainingSet);
 
   OpenANN::Logger progressLogger(OpenANN::Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
@@ -133,7 +133,7 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     {
       Eigen::MatrixXd compressionMatrix;
       OpenANN::CompressionMatrixFactory cmf(trainingSet.inputs(), csDimension,
-          OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
+                                            OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
       cmf.createCompressionMatrix(compressionMatrix);
       trainingSet.compress(compressionMatrix);
       testSet.compress(compressionMatrix);
@@ -155,9 +155,9 @@ void printResult(Result& result, int runs)
   typedef OpenANN::FloatingPointFormatter fmt;
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   resultLogger << fmt(result.iterations / (double) runs, 2) << "\t"
-      << fmt(result.duration / (double) runs, 2) << "\t"
-      << fmt(result.correct5 / (double) runs, 2) << "\t\t"
-      << fmt(result.correct15 / (double) runs, 2) << "\n";
+               << fmt(result.duration / (double) runs, 2) << "\t"
+               << fmt(result.correct5 / (double) runs, 2) << "\t\t"
+               << fmt(result.correct15 / (double) runs, 2) << "\n";
   result.reset();
 }
 
@@ -198,19 +198,19 @@ int main(int argc, char** argv)
   interfaceLogger << "decimation, 1344 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, -1, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, -1, true, 11);
-  printResult(result, 2*runs);
+  printResult(result, 2 * runs);
   interfaceLogger << "decimation, compression, 800 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 800, true, 11);
   runTest(result, trainingSetB, testSetB, runs, stop, 800, true, 11);
-  printResult(result, 2*runs);
+  printResult(result, 2 * runs);
   interfaceLogger << "lowpass filter, compression, 800 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 800, true, 1);
   runTest(result, trainingSetB, testSetB, runs, stop, 800, true, 1);
-  printResult(result, 2*runs);
+  printResult(result, 2 * runs);
   interfaceLogger << "compression, 1200 parameters\n";
   runTest(result, trainingSetA, testSetA, runs, stop, 1200, false);
   runTest(result, trainingSetB, testSetB, runs, stop, 1200, false);
-  printResult(result, 2*runs);
+  printResult(result, 2 * runs);
 
   return EXIT_SUCCESS;
 }

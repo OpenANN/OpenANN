@@ -7,25 +7,25 @@
 SigmaPiConstraintTestCase::SigmaPiConstraintTestCase() : TestCase(), T1(25, 1), T2(25, 1), T3(25, 1)
 {
   T1 <<
-    1, 1, 1, 0, 0, 
-    0, 1, 0, 0, 0,
-    0, 1, 0, 0, 0,
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0;
+     1, 1, 1, 0, 0,
+        0, 1, 0, 0, 0,
+        0, 1, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0;
 
-  T2 << 
-    0, 0, 0, 0, 0,
-    0, 0, 0, 1, 0,
-    0, 1, 1, 1, 0,
-    0, 0, 0, 1, 0,
-    0, 0, 0, 0, 0;
+  T2 <<
+     0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0,
+        0, 1, 1, 1, 0,
+        0, 0, 0, 1, 0,
+        0, 0, 0, 0, 0;
 
-  T3 << 
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0,
-    0, 0, 1, 1, 1,
-    0, 0, 0, 1, 0,
-    0, 0, 0, 1, 0;
+  T3 <<
+     0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 1, 1, 1,
+        0, 0, 0, 1, 0,
+        0, 0, 0, 1, 0;
 }
 
 void SigmaPiConstraintTestCase::run()
@@ -39,14 +39,14 @@ void SigmaPiConstraintTestCase::distance()
 {
   OpenANN::Net net;
 
-  net.inputLayer(1, 5 ,5);
+  net.inputLayer(1, 5 , 5);
 
   OpenANN::DistanceConstraint constraint(5, 5);
   OpenANN::SigmaPi* layer = new OpenANN::SigmaPi(net.getOutputInfo(0), false, OpenANN::LOGISTIC, 0.05);
   layer->secondOrderNodes(1, constraint);
 
   net.addOutputLayer(layer);
-  net.initialize();  
+  net.initialize();
 
   Eigen::VectorXd c1 = net(T1);
   Eigen::VectorXd c2 = net(T2);
@@ -66,14 +66,14 @@ void SigmaPiConstraintTestCase::slope()
 {
   OpenANN::Net net;
 
-  net.inputLayer(1, 5 ,5);
+  net.inputLayer(1, 5 , 5);
 
   OpenANN::SlopeConstraint constraint(5, 5);
   OpenANN::SigmaPi* layer = new OpenANN::SigmaPi(net.getOutputInfo(0), false, OpenANN::LOGISTIC, 0.05);
   layer->secondOrderNodes(1, constraint);
 
   net.addOutputLayer(layer);
-  net.initialize();  
+  net.initialize();
 
   Eigen::VectorXd c1 = net(T1);
   Eigen::VectorXd c3 = net(T3);
@@ -88,14 +88,14 @@ void SigmaPiConstraintTestCase::triangle()
 {
   OpenANN::Net net;
 
-  net.inputLayer(1, 5 ,5);
+  net.inputLayer(1, 5 , 5);
 
   OpenANN::TriangleConstraint constraint(5, 5, 1);
   OpenANN::SigmaPi* layer = new OpenANN::SigmaPi(net.getOutputInfo(0), false, OpenANN::LOGISTIC, 0.05);
   layer->thirdOrderNodes(1, constraint);
 
   net.addOutputLayer(layer);
-  net.initialize();  
+  net.initialize();
 
   Eigen::VectorXd c1 = net(T1);
   Eigen::VectorXd c2 = net(T2);

@@ -42,7 +42,7 @@ class TwoSpiralsVisualization : public QGLWidget
 
 public:
   TwoSpiralsVisualization(const Eigen::MatrixXd& trainingInput, const Eigen::MatrixXd& trainingOutput,
-      const Eigen::MatrixXd& testInput, const Eigen::MatrixXd& testOutput);
+                          const Eigen::MatrixXd& testInput, const Eigen::MatrixXd& testOutput);
   virtual ~TwoSpiralsVisualization();
   void predictClass(int x, int y, double predictedClass);
 

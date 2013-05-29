@@ -23,8 +23,8 @@ public:
                      int rows, int cols,
                      QWidget* parent = 0, const QGLWidget* shareWidget = 0,
                      Qt::WindowFlags f = 0)
-      : net(net), dataSet(dataSet), rows(rows), cols(cols), width(800),
-        height(600), instance(0), debugLogger(OpenANN::Logger::CONSOLE)
+    : net(net), dataSet(dataSet), rows(rows), cols(cols), width(800),
+      height(600), instance(0), debugLogger(OpenANN::Logger::CONSOLE)
   {
   }
 
@@ -65,7 +65,7 @@ public:
     int xOffset = -70;
     int yOffset = -50;
     int zoom = -200;
-    glTranslatef(xOffset,yOffset,zoom);
+    glTranslatef(xOffset, yOffset, zoom);
 
     Eigen::VectorXd x = dataSet.getInstance(instance);
     Eigen::VectorXd y = net(x);
@@ -76,7 +76,7 @@ public:
     int label = 0;
     yt.maxCoeff(&label);
 
-    glColor3f(0.0f,0.0f,0.0f);
+    glColor3f(0.0f, 0.0f, 0.0f);
     glLineWidth(5.0);
 
     float scale = 0;
@@ -106,41 +106,41 @@ public:
       {
         cols = info.dimensions[0];
       }
-      glColor3f(0.0f,0.0f,0.0f);
-      renderText(10, 35*(net.numberOflayers()-l+1), QString::number(featureMaps)
-          + "x" + QString::number(rows) + "x" + QString::number(cols),
+      glColor3f(0.0f, 0.0f, 0.0f);
+      renderText(10, 35 * (net.numberOflayers() - l + 1), QString::number(featureMaps)
+                 + "x" + QString::number(rows) + "x" + QString::number(cols),
                  QFont("Helvetica", 20));
       glBegin(GL_QUADS);
       scale = 1.0;
       if(featureMaps > 1 || rows == 1)
-        scale = 120.0f / (featureMaps * cols + featureMaps-1);
+        scale = 120.0f / (featureMaps * cols + featureMaps - 1);
       else
         translateX += 60.0f - cols / 2.0f;
-      for(int fm = 0; fm < featureMaps; fm++, translateX += (cols+1)*scale)
+      for(int fm = 0; fm < featureMaps; fm++, translateX += (cols + 1) * scale)
       {
         for(int row = 0; row < rows; row++)
         {
           for(int col = 0; col < cols; col++)
           {
-            float c = (layerOutput(0, fm*rows*cols+row*cols+col) - mi) / (ma-mi);
+            float c = (layerOutput(0, fm * rows * cols + row * cols + col) - mi) / (ma - mi);
             float x = translateX + col * scale;
             float y = translateY + (rows - row) * scale;
             glColor3f(c, c, c);
             glVertex2f((float) x, (float) y);
-            glVertex2f((float) x+scale, (float) y);
-            glVertex2f((float) x+scale, (float) y+scale);
-            glVertex2f((float) x, (float) y+scale);
+            glVertex2f((float) x + scale, (float) y);
+            glVertex2f((float) x + scale, (float) y + scale);
+            glVertex2f((float) x, (float) y + scale);
           }
         }
       }
       glEnd();
-      translateY += (rows+1) * scale;
+      translateY += (rows + 1) * scale;
     }
 
-    glColor3f(0.0f,0.0f,0.0f);
-    renderText(20, 30, QString("Instance #") + QString::number(instance+1)
-        + QString(", label: ") + QString::number(label) + ", prediction: "
-        + QString::number(prediction), QFont("Helvetica", 20));
+    glColor3f(0.0f, 0.0f, 0.0f);
+    renderText(20, 30, QString("Instance #") + QString::number(instance + 1)
+               + QString(", label: ") + QString::number(label) + ", prediction: "
+               + QString::number(prediction), QFont("Helvetica", 20));
 
     glFlush();
   }
@@ -149,21 +149,21 @@ public:
   {
     switch(keyEvent->key())
     {
-      case Qt::Key_Up:
-        instance++;
-        if(instance >= dataSet.samples())
-          instance = dataSet.samples()-1;
-        update();
-        break;
-      case Qt::Key_Down:
-        instance--;
-        if(instance < 0)
-          instance = 0;
-        update();
-        break;
-      default:
-        QGLWidget::keyPressEvent(keyEvent);
-        break;
+    case Qt::Key_Up:
+      instance++;
+      if(instance >= dataSet.samples())
+        instance = dataSet.samples() - 1;
+      update();
+      break;
+    case Qt::Key_Down:
+      instance--;
+      if(instance < 0)
+        instance = 0;
+      update();
+      break;
+    default:
+      QGLWidget::keyPressEvent(keyEvent);
+      break;
     }
   }
 };
@@ -183,14 +183,14 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY)
-     .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-     .maxPoolingLayer(2, 2)
-     .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-     .maxPoolingLayer(2, 2)
-     .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
-     .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05)
-     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)
-     .trainingSet(loader.trainingInput, loader.trainingOutput);
+  .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+  .maxPoolingLayer(2, 2)
+  .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+  .maxPoolingLayer(2, 2)
+  .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
+  .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05)
+  .outputLayer(loader.F, OpenANN::LINEAR, 0.05)
+  .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         OpenANN::DirectStorageDataSet::MULTICLASS,
                                         OpenANN::Logger::FILE);
@@ -206,7 +206,7 @@ int main(int argc, char** argv)
   net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
-      << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
+                  << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
 
   QApplication app(argc, argv);
   MNISTVisualization visual(net, testSet, loader.padToX, loader.padToY);

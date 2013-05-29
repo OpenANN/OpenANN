@@ -25,7 +25,7 @@ void DataSetTestCase::directStorageDataSets()
 
   ASSERT_EQUALS(dataset.samples(), 5);
   ASSERT_EQUALS(dataset.inputs(), 1);
-  ASSERT_EQUALS(dataset.outputs() ,1);
+  ASSERT_EQUALS(dataset.outputs() , 1);
 
   ASSERT_EQUALS(dataset.getInstance(0).x(), 1);
   ASSERT_EQUALS(dataset.getInstance(1).x(), 2);
@@ -53,7 +53,7 @@ void DataSetTestCase::dataSetViews()
 
   ASSERT_EQUALS(view.samples(), 0);
   ASSERT_EQUALS(view.inputs(), 1);
-  ASSERT_EQUALS(view.outputs() ,1);
+  ASSERT_EQUALS(view.outputs() , 1);
 }
 
 
@@ -65,7 +65,7 @@ void DataSetTestCase::dataSetSplitsFromGroups()
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
-  
+
   std::vector<int> X;
   std::vector<int> Y;
   std::vector<DataSetView> groups;
@@ -74,8 +74,10 @@ void DataSetTestCase::dataSetSplitsFromGroups()
 
   ASSERT_EQUALS(groups.size(), 3);
 
-  for(int i = 0; i < groups.size(); ++i) {
-    for(int j = 0; j < groups.at(i).samples(); ++j) {
+  for(int i = 0; i < groups.size(); ++i)
+  {
+    for(int j = 0; j < groups.at(i).samples(); ++j)
+    {
       X.push_back(groups.at(i).getInstance(j).x());
       Y.push_back(groups.at(i).getTarget(j).x());
     }
@@ -91,8 +93,9 @@ void DataSetTestCase::dataSetSplitsFromGroups()
 
   std::reverse(Y.begin(), Y.end());
 
-  
-  for(int i = 0; i < dataset.samples(); ++i) {
+
+  for(int i = 0; i < dataset.samples(); ++i)
+  {
     ASSERT_EQUALS(X.at(i), dataset.getInstance(i).x());
     ASSERT_EQUALS(Y.at(i), dataset.getTarget(i).x());
   }
@@ -106,7 +109,7 @@ void DataSetTestCase::dataSetSplitsFromRatio()
   in << 1, 2, 3, 4, 5;
   out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
-  
+
   std::vector<int> X;
   std::vector<int> Y;
   std::vector<DataSetView> groups;
@@ -120,8 +123,10 @@ void DataSetTestCase::dataSetSplitsFromRatio()
 
   ASSERT(groups.front().samples() < groups.back().samples());
 
-  for(int i = 0; i < groups.size(); ++i) {
-    for(int j = 0; j < groups.at(i).samples(); ++j) {
+  for(int i = 0; i < groups.size(); ++i)
+  {
+    for(int j = 0; j < groups.at(i).samples(); ++j)
+    {
       X.push_back(groups.at(i).getInstance(j).x());
       Y.push_back(groups.at(i).getTarget(j).x());
     }
@@ -136,8 +141,9 @@ void DataSetTestCase::dataSetSplitsFromRatio()
   std::sort(Y.begin(), Y.end());
 
   std::reverse(Y.begin(), Y.end());
-  
-  for(int i = 0; i < dataset.samples(); ++i) {
+
+  for(int i = 0; i < dataset.samples(); ++i)
+  {
     ASSERT_EQUALS(X.at(i), dataset.getInstance(i).x());
     ASSERT_EQUALS(Y.at(i), dataset.getTarget(i).x());
   }
@@ -152,7 +158,7 @@ void DataSetTestCase::dataSetMerge()
   out << 5, 4, 3, 2, 1;
   DirectStorageDataSet dataset(&in, &out);
   DataSetView overall(dataset);
- 
+
   std::vector<int> X;
   std::vector<int> Y;
   std::vector<DataSetView> groups;
@@ -165,7 +171,8 @@ void DataSetTestCase::dataSetMerge()
 
   ASSERT_EQUALS(overall.samples(), dataset.samples());
 
-  for (int i = 0; i < overall.samples(); ++i) {
+  for(int i = 0; i < overall.samples(); ++i)
+  {
     X.push_back(overall.getInstance(i).x());
     Y.push_back(overall.getTarget(i).x());
   }
@@ -179,8 +186,9 @@ void DataSetTestCase::dataSetMerge()
   std::sort(Y.begin(), Y.end());
 
   std::reverse(Y.begin(), Y.end());
-  
-  for(int i = 0; i < dataset.samples(); ++i) {
+
+  for(int i = 0; i < dataset.samples(); ++i)
+  {
     ASSERT_EQUALS(X.at(i), dataset.getInstance(i).x());
     ASSERT_EQUALS(Y.at(i), dataset.getTarget(i).x());
   }

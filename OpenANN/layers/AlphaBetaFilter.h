@@ -3,7 +3,8 @@
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class AlphaBetaFilter

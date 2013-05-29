@@ -29,9 +29,9 @@ public:
     load(true, loadTraininN);
     load(false, loadTestN);
     debugLogger << "Loaded MNIST data set.\n"
-        << "trainingN = " << trainingN << "\n"
-        << "testN = " << testN << "\n"
-        << "D = " << D << ", F = " << F << "\n";
+                << "trainingN = " << trainingN << "\n"
+                << "testN = " << testN << "\n"
+                << "D = " << D << ", F = " << F << "\n";
   }
 
   void load(bool train, int maxN)
@@ -42,8 +42,8 @@ public:
     unsigned char tmp = 0;
 
     std::string fileName = train ?
-            directory + "/" + std::string("train-images-idx3-ubyte") :
-            directory + "/" + std::string("t10k-images-idx3-ubyte");
+                           directory + "/" + std::string("train-images-idx3-ubyte") :
+                           directory + "/" + std::string("t10k-images-idx3-ubyte");
     std::fstream inputFile(fileName.c_str(), std::ios::in | std::ios::binary);
     if(!inputFile.is_open())
     {
@@ -64,7 +64,7 @@ public:
     read(inputFile, images);
     read(inputFile, cols);
     read(inputFile, rows);
-    D = (int) (rows * cols);
+    D = (int)(rows * cols);
     N = (int) images;
     if(maxN > 0)
       N = maxN;
@@ -83,27 +83,27 @@ public:
         {
           read(inputFile, tmp);
           double value = (double) tmp;
-          input(n, r*colNumber+c) = 1.0-value/255.0; // scale to [0:1]
+          input(n, r * colNumber + c) = 1.0 - value / 255.0; // scale to [0:1]
         }
-        int lastC = c-1;
+        int lastC = c - 1;
         for(; c < padToX; c++)
         {
-          input(n, r*colNumber+c) = input(n, r*colNumber+lastC);
+          input(n, r * colNumber + c) = input(n, r * colNumber + lastC);
         }
       }
-      int lastR = r-1;
+      int lastR = r - 1;
       for(; r < padToY; r++)
       {
         for(int c = 0; c < padToX; c++)
         {
-          input(n, r*colNumber+c) = input(n, lastR*colNumber+c);
+          input(n, r * colNumber + c) = input(n, lastR * colNumber + c);
         }
       }
     }
 
     std::string labelFileName = train ?
-            directory + "/" + std::string("train-labels-idx1-ubyte") :
-            directory + "/" + std::string("t10k-labels-idx1-ubyte");
+                                directory + "/" + std::string("train-labels-idx1-ubyte") :
+                                directory + "/" + std::string("t10k-labels-idx1-ubyte");
     std::fstream labelFile(labelFileName.c_str(), std::ios::in | std::ios::binary);
     if(!labelFile.is_open())
     {
@@ -134,7 +134,7 @@ public:
 
   void distort(int multiplier = 10)
   {
-    debugLogger << "Start creating " << (multiplier-1) << " distortions.\n";
+    debugLogger << "Start creating " << (multiplier - 1) << " distortions.\n";
     int originalN = trainingN;
     trainingN *= multiplier;
     Eigen::MatrixXd originalInput = trainingInput;
@@ -149,13 +149,13 @@ public:
     {
       Distorter distorter;
       distorter.createDistortionMap(padToX, padToY);
-      for(int n = distortion*originalN; n < (distortion+1)*originalN; n++)
+      for(int n = distortion * originalN; n < (distortion + 1)*originalN; n++)
       {
         instance = originalInput.col(n % originalN);
         distorter.applyDistortion(instance);
         trainingInput.col(n) = instance;
       }
-      trainingOutput.block(0, distortion*originalN, F, originalN) = originalOutput;
+      trainingOutput.block(0, distortion * originalN, F, originalN) = originalOutput;
       debugLogger << "Finished distortion " << distortion << ".\n";
     }
   }

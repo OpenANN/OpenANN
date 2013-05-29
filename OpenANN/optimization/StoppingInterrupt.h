@@ -1,6 +1,7 @@
-#pragma once 
+#pragma once
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 
 /**
@@ -20,12 +21,12 @@ class StoppingInterrupt
   static int observers;
   static bool stoppingInterruptSignal;
 public:
-  /** 
+  /**
    * Register the current interrupt handlers to catch OS-specific signals.
    */
   StoppingInterrupt();
 
-  /** 
+  /**
    * Automatically remove interrupt handlers to restore old OS-specific
    * default state.
    */
@@ -39,4 +40,4 @@ private:
 
 
 
-} 
+}

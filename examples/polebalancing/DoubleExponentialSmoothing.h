@@ -56,8 +56,8 @@ public:
     }
     else
     {
-      sn = alpha * xn + (1.0-alpha)*(sc + bc);
-      bn = beta * (sn - sc) + (1.0-beta) * bc;
+      sn = alpha * xn + (1.0 - alpha) * (sc + bc);
+      bn = beta * (sn - sc) + (1.0 - beta) * bc;
     }
     t++;
     Eigen::VectorXd out(2);

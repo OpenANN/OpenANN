@@ -4,7 +4,8 @@
 #include <OpenANN/Learner.h>
 #include <Test/Stopwatch.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
                                            Eigen::MatrixXd* out,
@@ -35,7 +36,7 @@ DirectStorageDataSet::~DirectStorageDataSet()
 
 Eigen::VectorXd& DirectStorageDataSet::getInstance(int i)
 {
-  OPENANN_CHECK_WITHIN(i, 0, in->rows()-1);
+  OPENANN_CHECK_WITHIN(i, 0, in->rows() - 1);
   temporaryInput = in->row(i);
   return temporaryInput;
 }
@@ -43,7 +44,7 @@ Eigen::VectorXd& DirectStorageDataSet::getInstance(int i)
 Eigen::VectorXd& DirectStorageDataSet::getTarget(int i)
 {
   OPENANN_CHECK(out != 0);
-  OPENANN_CHECK_WITHIN(i, 0, out->rows()-1);
+  OPENANN_CHECK_WITHIN(i, 0, out->rows() - 1);
   temporaryOutput = out->row(i);
   return temporaryOutput;
 }
@@ -74,7 +75,7 @@ void DirectStorageDataSet::finishIteration(Learner& learner)
     }
     e /= N;
     logger << e << " " << correct << " " << wrong << " "
-        << sw->stop(Stopwatch::MILLISECOND) << "\n";
+           << sw->stop(Stopwatch::MILLISECOND) << "\n";
   }
 }
 

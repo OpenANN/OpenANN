@@ -3,7 +3,8 @@
 #include <OpenANN/Net.h>
 #include <string>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * Train a feedforward neural network supervised.

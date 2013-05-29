@@ -25,9 +25,9 @@ void NetTestCase::dimension()
 
   OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, OpenANN::TANH)
-     .outputLayer(F, OpenANN::LINEAR)
-     .trainingSet(X, T);
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
 
   const int expectedDimension = 18;
   ASSERT_EQUALS(net.dimension(), expectedDimension);
@@ -51,9 +51,9 @@ void NetTestCase::error()
 
   OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, OpenANN::TANH)
-     .outputLayer(F, OpenANN::LINEAR)
-     .trainingSet(X, T);
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
 
   double error0 = net.error(0);
   double error1 = net.error(1);
@@ -71,9 +71,9 @@ void NetTestCase::gradientSSE()
 
   OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, OpenANN::TANH)
-     .outputLayer(F, OpenANN::LINEAR)
-     .trainingSet(X, T);
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
   Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
@@ -112,10 +112,10 @@ void NetTestCase::gradientCE()
 
   OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, OpenANN::TANH)
-     .outputLayer(F, OpenANN::LINEAR)
-     .setErrorFunction(OpenANN::CE)
-     .trainingSet(X, T);
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .setErrorFunction(OpenANN::CE)
+  .trainingSet(X, T);
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
   Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
@@ -141,7 +141,7 @@ void NetTestCase::gradientCE()
 
 void NetTestCase::multilayerNetwork()
 {
-  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 1*6*6);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 1 * 6 * 6);
   Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 3);
   OpenANN::DirectStorageDataSet ds(&X, &Y);
 
@@ -157,7 +157,7 @@ void NetTestCase::multilayerNetwork()
 
   Eigen::VectorXd g = net.gradient();
   Eigen::VectorXd e = OpenANN::FiniteDifferences::parameterGradient(0, net);
-  double delta = std::max<double>(1e-2, 1e-5*e.norm());
+  double delta = std::max<double>(1e-2, 1e-5 * e.norm());
   for(int j = 0; j < net.dimension(); j++)
     ASSERT_EQUALS_DELTA(g(j), e(j), delta);
 }
@@ -172,9 +172,9 @@ void NetTestCase::predictMinibatch()
 
   OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, OpenANN::TANH)
-     .outputLayer(F, OpenANN::LINEAR)
-     .trainingSet(X, T);
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
 
   Eigen::MatrixXd Y1(N, F);
   Eigen::VectorXd x(D);
@@ -201,9 +201,9 @@ void NetTestCase::minibatchErrorGradient()
 
   OpenANN::Net net;
   net.inputLayer(D)
-     .fullyConnectedLayer(2, OpenANN::TANH)
-     .outputLayer(F, OpenANN::LINEAR)
-     .trainingSet(X, T);
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
 
   std::vector<int> indices;
   for(int n = 0; n < N; n++)

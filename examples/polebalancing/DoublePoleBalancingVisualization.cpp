@@ -18,15 +18,15 @@
 #include <unistd.h>
 
 DoublePoleBalancingVisualization::DoublePoleBalancingVisualization(
-    bool singlePole, bool fullyObservable, bool alphaBetaFilter,
-    bool doubleExponentialSmoothing, QWidget* parent,
-    const QGLWidget* shareWidget, Qt::WindowFlags f)
-    : QGLWidget(parent, shareWidget, f),
-      width(800), height(400), singlePole(singlePole),
-      fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
-      doubleExponentialSmoothing(doubleExponentialSmoothing),
-      position(0.0), angle1(4.0*M_PI/180.0), angle2(0.0), force(0.0),
-      pause(1000)
+  bool singlePole, bool fullyObservable, bool alphaBetaFilter,
+  bool doubleExponentialSmoothing, QWidget* parent,
+  const QGLWidget* shareWidget, Qt::WindowFlags f)
+  : QGLWidget(parent, shareWidget, f),
+    width(800), height(400), singlePole(singlePole),
+    fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
+    doubleExponentialSmoothing(doubleExponentialSmoothing),
+    position(0.0), angle1(4.0 * M_PI / 180.0), angle2(0.0), force(0.0),
+    pause(1000)
 {
 }
 
@@ -66,19 +66,19 @@ void DoublePoleBalancingVisualization::paintGL()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  glTranslatef(0.0f,-0.5f,-3.0f);
+  glTranslatef(0.0f, -0.5f, -3.0f);
 
-  glColor3f(0.0f,0.0f,0.0f);
+  glColor3f(0.0f, 0.0f, 0.0f);
   glLineWidth(1.0);
   glBegin(GL_LINES);
-    glVertex2f(-2.4f, 0.0f);
-    glVertex2f(2.4f, 0.0f);
+  glVertex2f(-2.4f, 0.0f);
+  glVertex2f(2.4f, 0.0f);
   glEnd();
   for(float tic = -2.4f; tic <= 2.4f; tic += 0.6f)
   {
     glBegin(GL_LINES);
-      glVertex2f(tic, -0.1f);
-      glVertex2f(tic, 0.0f);
+    glVertex2f(tic, -0.1f);
+    glVertex2f(tic, 0.0f);
     glEnd();
   }
 
@@ -86,36 +86,36 @@ void DoublePoleBalancingVisualization::paintGL()
 
   // force
   glBegin(GL_LINES);
-    glVertex2f(position, 1.5f);
-    glVertex2f(position+force/10.0, 1.5f);
+  glVertex2f(position, 1.5f);
+  glVertex2f(position + force / 10.0, 1.5f);
   glEnd();
 
   // cart
   glBegin(GL_LINE_STRIP);
-    for(float angle = 0.0f; angle < 360.0f; angle += 5.0f)
-      glVertex2f(position-0.5f + wheelRadius + sin(angle*M_PI/180.0)
-          * wheelRadius, wheelRadius + cos(angle*M_PI/180.0) * wheelRadius);
+  for(float angle = 0.0f; angle < 360.0f; angle += 5.0f)
+    glVertex2f(position - 0.5f + wheelRadius + sin(angle * M_PI / 180.0)
+               * wheelRadius, wheelRadius + cos(angle * M_PI / 180.0) * wheelRadius);
   glEnd();
   glBegin(GL_LINE_STRIP);
-    for(float angle = 0.0f; angle < 360.0f; angle += 5.0f)
-      glVertex2f(position-0.5f + 1.0 - wheelRadius + sin(angle*M_PI/180.0)
-          * wheelRadius, wheelRadius + cos(angle*M_PI/180.0) * wheelRadius);
+  for(float angle = 0.0f; angle < 360.0f; angle += 5.0f)
+    glVertex2f(position - 0.5f + 1.0 - wheelRadius + sin(angle * M_PI / 180.0)
+               * wheelRadius, wheelRadius + cos(angle * M_PI / 180.0) * wheelRadius);
   glEnd();
-  glRectf(position-0.5f, 2.0f*wheelRadius, position-0.5f+1.0f, cartHeight);
+  glRectf(position - 0.5f, 2.0f * wheelRadius, position - 0.5f + 1.0f, cartHeight);
 
   // poles
-  glColor3f(1.0f,0.0f,0.0f);
-  float pole1height = sin(angle1+M_PI/2.0f) * pole1Length;
-  float pole1displacement = -cos(angle1+M_PI/2.0f) * pole1Length;
+  glColor3f(1.0f, 0.0f, 0.0f);
+  float pole1height = sin(angle1 + M_PI / 2.0f) * pole1Length;
+  float pole1displacement = -cos(angle1 + M_PI / 2.0f) * pole1Length;
   glBegin(GL_LINES);
-    glVertex2f(position-0.5f+0.45f, cartHeight);
-    glVertex2f(position-0.5f+0.45f+pole1displacement, cartHeight+pole1height);
+  glVertex2f(position - 0.5f + 0.45f, cartHeight);
+  glVertex2f(position - 0.5f + 0.45f + pole1displacement, cartHeight + pole1height);
   glEnd();
-  float pole2height = sin(angle2+M_PI/2.0f) * pole2Length;
-  float pole2displacement = -cos(angle2+M_PI/2.0f) * pole2Length;
+  float pole2height = sin(angle2 + M_PI / 2.0f) * pole2Length;
+  float pole2displacement = -cos(angle2 + M_PI / 2.0f) * pole2Length;
   glBegin(GL_LINES);
-    glVertex2f(position-0.5f+0.55f, cartHeight);
-    glVertex2f(position-0.5f+0.55f+pole2displacement, cartHeight+pole2height);
+  glVertex2f(position - 0.5f + 0.55f, cartHeight);
+  glVertex2f(position - 0.5f + 0.55f + pole2displacement, cartHeight + pole2height);
   glEnd();
 
   glFlush();
@@ -125,21 +125,21 @@ void DoublePoleBalancingVisualization::keyPressEvent(QKeyEvent* keyEvent)
 {
   switch(keyEvent->key())
   {
-    case Qt::Key_R:
-      run();
-      break;
-    case Qt::Key_Plus:
-      pause = (int) ((double) pause * 0.9);
-      break;
-    case Qt::Key_Minus:
-      pause = (int) ((double) pause * 1.1);
-      break;
-    case Qt::Key_Escape:
-      QApplication::exit();
-      break;
-    default:
-      QGLWidget::keyPressEvent(keyEvent);
-      break;
+  case Qt::Key_R:
+    run();
+    break;
+  case Qt::Key_Plus:
+    pause = (int)((double) pause * 0.9);
+    break;
+  case Qt::Key_Minus:
+    pause = (int)((double) pause * 1.1);
+    break;
+  case Qt::Key_Escape:
+    QApplication::exit();
+    break;
+  default:
+    QGLWidget::keyPressEvent(keyEvent);
+    break;
   }
 }
 
@@ -151,8 +151,8 @@ void DoublePoleBalancingVisualization::run()
   else
     env = new DoublePoleBalancing(fullyObservable);
   Environment& environment = *env;
-  NeuroEvolutionAgent agent(0, false, "linear", true, singlePole? 1 : 5,
-      fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
+  NeuroEvolutionAgent agent(0, false, "linear", true, singlePole ? 1 : 5,
+                            fullyObservable, alphaBetaFilter, doubleExponentialSmoothing);
   agent.abandoneIn(environment);
   int best = -1;
   for(int i = 0; i < 100000; i++)
@@ -171,7 +171,7 @@ void DoublePoleBalancingVisualization::run()
       QCoreApplication::processEvents();
       usleep(pause);
     }
-    OPENANN_INFO << "Episode " << (i+1) << ", "
+    OPENANN_INFO << "Episode " << (i + 1) << ", "
                  << environment.stepsInEpisode() << " steps";
     if(environment.stepsInEpisode() >= 100000)
     {

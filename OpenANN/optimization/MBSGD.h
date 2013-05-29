@@ -7,7 +7,8 @@
 #include <vector>
 #include <list>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class MBSGD

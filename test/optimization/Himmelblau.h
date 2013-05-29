@@ -6,7 +6,7 @@ class Himmelblau : public OpenANN::Optimizable
   Eigen::VectorXd x;
 public:
   Himmelblau()
-      : x(2)
+    : x(2)
   {
   }
 
@@ -38,7 +38,7 @@ public:
 
   virtual double error()
   {
-    return pow(x(0)*x(0)+x(1)-11., 2) + pow(x(0)+x(1)*x(1) - 7., 2);
+    return pow(x(0) * x(0) + x(1) - 11., 2) + pow(x(0) + x(1) * x(1) - 7., 2);
   }
 
   virtual bool providesGradient()

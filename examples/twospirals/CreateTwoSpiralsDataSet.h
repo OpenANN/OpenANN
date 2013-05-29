@@ -25,10 +25,10 @@ void createTwoSpiralsDataSet(int density, double maxDiameter,
   // Number of interior data points per spiral to generate
   const int points = 96 * density;
 
-  Xtr.resize(points+1, 2);
-  Ytr.resize(points+1, 1);
-  Xte.resize(points+1, 2);
-  Yte.resize(points+1, 1);
+  Xtr.resize(points + 1, 2);
+  Ytr.resize(points + 1, 1);
+  Xte.resize(points + 1, 2);
+  Yte.resize(points + 1, 1);
   int trIdx = 0;
   int teIdx = 0;
 
@@ -54,8 +54,8 @@ void createTwoSpiralsDataSet(int density, double maxDiameter,
       OPENANN_CHECK_WITHIN(trIdx, 0, points);
       Xtr.row(trIdx) << x, y;
       Ytr.row(trIdx) << 1.0;
-      Xtr.row(trIdx+1) << -x, -y;
-      Ytr.row(trIdx+1) << -1.0;
+      Xtr.row(trIdx + 1) << -x, -y;
+      Ytr.row(trIdx + 1) << -1.0;
       trIdx += 2;
     }
     else
@@ -63,8 +63,8 @@ void createTwoSpiralsDataSet(int density, double maxDiameter,
       OPENANN_CHECK_WITHIN(teIdx, 0, points);
       Xte.row(teIdx) << x, y;
       Yte.row(teIdx) << 1.0;
-      Xte.row(teIdx+1) << -x, -y;
-      Yte.row(teIdx+1) << -1.0;
+      Xte.row(teIdx + 1) << -x, -y;
+      Yte.row(teIdx + 1) << -1.0;
       teIdx += 2;
     }
   }

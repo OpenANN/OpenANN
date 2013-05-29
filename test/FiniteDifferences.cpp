@@ -1,6 +1,7 @@
 #include "FiniteDifferences.h"
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 namespace FiniteDifferences
 {
@@ -25,7 +26,7 @@ Eigen::MatrixXd inputGradient(const Eigen::MatrixXd& X,
     learner.trainingSet(in, out);
     Eigen::VectorXd errorPlusEps = learner.error(indices.begin(), indices.end());
 
-    in.col(i).array() -= 2*eps;
+    in.col(i).array() -= 2 * eps;
     learner.trainingSet(in, out);
     Eigen::VectorXd errorMinusEps = learner.error(indices.begin(), indices.end());
 

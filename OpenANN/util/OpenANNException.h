@@ -2,7 +2,8 @@
 
 #include <stdexcept>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class OpenANNException

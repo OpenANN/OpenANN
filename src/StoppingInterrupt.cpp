@@ -2,7 +2,8 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <csignal>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 
 bool StoppingInterrupt::stoppingInterruptSignal = false;
@@ -13,7 +14,7 @@ StoppingInterrupt::StoppingInterrupt()
 {
   OPENANN_CHECK(!stoppingInterruptSignal);
 
-  if(observers == 0) 
+  if(observers == 0)
     std::signal(SIGINT, StoppingInterrupt::setStoppingInterruptSignal);
 
   ++observers;

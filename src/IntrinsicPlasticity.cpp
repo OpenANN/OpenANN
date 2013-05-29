@@ -8,8 +8,8 @@ namespace OpenANN
 {
 
 IntrinsicPlasticity::IntrinsicPlasticity(int nodes, double mu, double stdDev)
-    : nodes(nodes), mu(mu), stdDev(stdDev), s(nodes), b(nodes),
-      parameters(2*nodes), g(2*nodes), y(nodes)
+  : nodes(nodes), mu(mu), stdDev(stdDev), s(nodes), b(nodes),
+    parameters(2 * nodes), g(2 * nodes), y(nodes)
 {
   initialize();
 }
@@ -21,7 +21,7 @@ unsigned int IntrinsicPlasticity::examples()
 
 unsigned int IntrinsicPlasticity::dimension()
 {
-  return 2*nodes;
+  return 2 * nodes;
 }
 
 bool IntrinsicPlasticity::providesInitialization()
@@ -53,7 +53,7 @@ double IntrinsicPlasticity::error(unsigned int n)
   for(int i = 0; i < nodes; i++)
   {
     const double ei = y(i) - mu;
-    e += ei*ei;
+    e += ei * ei;
   }
   return e;
 }
@@ -97,14 +97,14 @@ Eigen::VectorXd IntrinsicPlasticity::gradient(unsigned int n)
   Eigen::VectorXd y = (*this)(a);
   OPENANN_CHECK_MATRIX_BROKEN(y);
 
-  Eigen::VectorXd g(2*nodes);
+  Eigen::VectorXd g(2 * nodes);
   int i = 0;
-  const double tmp = 2.0 + 1.0/mu;
+  const double tmp = 2.0 + 1.0 / mu;
   OPENANN_CHECK_NOT_EQUALS(s(i), (double) 0.0);
   for(; i < nodes; i++)
-    g(i) = 1.0/s(i) + a(i) - tmp*a(i)*y(i) + a(i)*y(i)*y(i)/mu;
+    g(i) = 1.0 / s(i) + a(i) - tmp * a(i) * y(i) + a(i) * y(i) * y(i) / mu;
   for(int j = 0; j < nodes; j++, i++)
-    g(i) = 1.0 - tmp*y(j) + y(j)*y(j)/mu;
+    g(i) = 1.0 - tmp * y(j) + y(j) * y(j) / mu;
   return -g; // Allows using gradient descent algorithms
 }
 

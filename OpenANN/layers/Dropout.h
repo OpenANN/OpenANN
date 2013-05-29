@@ -2,7 +2,8 @@
 
 #include <OpenANN/layers/Layer.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class Dropout

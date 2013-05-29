@@ -17,24 +17,27 @@
 /* Do all of the socket initialization, bind the local address
  * connect to the server address, etc...
  */
-int initSocket(const char* serverAddress, int serverPort, int* sd) {
+int initSocket(const char* serverAddress, int serverPort, int* sd)
+{
   int rc;
   struct sockaddr_in localAddr, servAddr;
-  struct hostent *h;
+  struct hostent* h;
 
   h = gethostbyname(serverAddress);
-  if(h==NULL) {
-    printf("Unknown host '%s'\n",serverAddress);
+  if(h == NULL)
+  {
+    printf("Unknown host '%s'\n", serverAddress);
     return -1;
   }
 
   servAddr.sin_family = h->h_addrtype;
-  memcpy((char *) &servAddr.sin_addr.s_addr, h->h_addr_list[0], h->h_length);
+  memcpy((char*) &servAddr.sin_addr.s_addr, h->h_addr_list[0], h->h_length);
   servAddr.sin_port = htons(serverPort);
 
   /* create socket */
   *sd = socket(AF_INET, SOCK_STREAM, 0);
-  if(*sd<0) {
+  if(*sd < 0)
+  {
     perror("cannot open socket ");
     return -2;
   }
@@ -44,17 +47,19 @@ int initSocket(const char* serverAddress, int serverPort, int* sd) {
   localAddr.sin_addr.s_addr = htonl(INADDR_ANY);
   localAddr.sin_port = htons(0);
 
-  rc = bind(*sd, (struct sockaddr *) &localAddr, sizeof(localAddr));
-  if(rc<0) {
-    printf("Cannot bind port TCP %u\n",serverPort);
+  rc = bind(*sd, (struct sockaddr*) &localAddr, sizeof(localAddr));
+  if(rc < 0)
+  {
+    printf("Cannot bind port TCP %u\n", serverPort);
     perror("error ");
     close(*sd);
     return -3;
   }
 
   /* connect to server */
-  rc = connect(*sd, (struct sockaddr *) &servAddr, sizeof(servAddr));
-  if(rc<0) {
+  rc = connect(*sd, (struct sockaddr*) &servAddr, sizeof(servAddr));
+  if(rc < 0)
+  {
     perror("cannot connect ");
     close(*sd);
     return -4;
@@ -62,45 +67,55 @@ int initSocket(const char* serverAddress, int serverPort, int* sd) {
   return 0;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
 
   int sd, rc;
   unsigned int port = 0;
   unsigned int episode = 0;
 
   /* Check arguments, assign port and episode values */
-  if(argc < 4) { 
-    printf("usage: %s <server> <port> <episode> [<agent-specific parameters>]\n",argv[0]);
+  if(argc < 4)
+  {
+    printf("usage: %s <server> <port> <episode> [<agent-specific parameters>]\n", argv[0]);
     return 1;
-  } else if((port = atoi(argv[2])) == 0 ) {
+  }
+  else if((port = atoi(argv[2])) == 0)
+  {
     printf("The port number is invalid\n");
     return 1;
-  } else if((episode = atoi(argv[3])) == 0 ) {
+  }
+  else if((episode = atoi(argv[3])) == 0)
+  {
     printf("The episode number is invalid\n");
     return 1;
   }
 
   rc = initSocket(argv[1], port, &sd);
-  if(rc<0) {
+  if(rc < 0)
+  {
     printf("could not initialize socket ");
     return 1;
 
   }
 
-	// Now start to send the data
-  rc = performInit(sd, argc-4, (const char**)&argv[4]);
-  if(rc<0) {
+  // Now start to send the data
+  rc = performInit(sd, argc - 4, (const char**)&argv[4]);
+  if(rc < 0)
+  {
     perror("failed intialization of the agent");
     return 1;
   }
-  for(unsigned int i = 0; i < episode; ++i) {
+  for(unsigned int i = 0; i < episode; ++i)
+  {
     rc = performEpisode(sd);
-    if(rc<0) break;
+    if(rc < 0) break;
   }
   performCleanup();
   close(sd);
 
-  if(rc >= 0) {
+  if(rc >= 0)
+  {
     return 0;
   }
   return rc;

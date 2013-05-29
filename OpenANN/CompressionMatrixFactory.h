@@ -18,7 +18,8 @@ class CompressionMatrixFactory
 {
 public:
   bool compress;
-  enum Transformation {
+  enum Transformation
+  {
     DCT, GAUSSIAN, SPARSE_RANDOM, AVERAGE, EDGE
   } transformation;
   int inputDim;
@@ -26,7 +27,7 @@ public:
 
   CompressionMatrixFactory();
   CompressionMatrixFactory(int inputDim, int paramDim,
-      Transformation transformation = DCT);
+                           Transformation transformation = DCT);
   void createCompressionMatrix(Eigen::MatrixXd& cm);
 
 private:

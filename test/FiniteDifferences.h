@@ -4,7 +4,8 @@
 #include <Eigen/Dense>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @namespace FiniteDifferences

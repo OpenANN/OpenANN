@@ -1,10 +1,11 @@
 #include <OpenANN/layers/Input.h>
 #include <OpenANN/util/Random.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 Input::Input(int dim1, int dim2, int dim3)
-  : J(dim1*dim2*dim3), dim1(dim1), dim2(dim2), dim3(dim3), x(0)
+  : J(dim1* dim2* dim3), dim1(dim1), dim2(dim2), dim3(dim3), x(0)
 {
 }
 

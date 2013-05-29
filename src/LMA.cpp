@@ -9,10 +9,11 @@
 #include <OpenANN/io/Logger.h>
 #include <limits>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 LMA::LMA()
-    : opt(0), iteration(-1)
+  : opt(0), iteration(-1)
 {
 }
 
@@ -38,7 +39,7 @@ void LMA::optimize()
 
   while(step() && !interrupt.isSignaled())
   {
-    OPENANN_DEBUG << "Iteration #" << iteration 
+    OPENANN_DEBUG << "Iteration #" << iteration
                   << ", training error = "
                   << FloatingPointFormatter(errorValues.sum(), 4);
   }
@@ -48,7 +49,7 @@ bool LMA::step()
 {
   OPENANN_CHECK(opt);
   if(iteration < 0)
-      initialize();
+    initialize();
 
   try
   {
@@ -98,7 +99,7 @@ bool LMA::step()
       if(state.xupdated)
         continue;
       throw alglib::ap_error("ALGLIB: error in 'minlmoptimize' (some "
-          "derivatives were not provided?)");
+                             "derivatives were not provided?)");
     }
     alglib_impl::ae_state_clear(&envState);
   }
@@ -146,16 +147,16 @@ void LMA::initialize()
 
   // Set convergence criteria
   double minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
-      StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
-      stop.minimalSearchSpaceStep : 0.0;
+                                  StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
+                                  stop.minimalSearchSpaceStep : 0.0;
   double minimalValueDifferences = stop.minimalValueDifferences !=
-      StoppingCriteria::defaultValue.minimalValueDifferences ?
-      stop.minimalValueDifferences : 0.0;
+                                   StoppingCriteria::defaultValue.minimalValueDifferences ?
+                                   stop.minimalValueDifferences : 0.0;
   int maximalIterations = stop.maximalIterations !=
-      StoppingCriteria::defaultValue.maximalIterations ?
-      stop.maximalIterations : 0;
+                          StoppingCriteria::defaultValue.maximalIterations ?
+                          stop.maximalIterations : 0;
   alglib::minlmsetcond(state, minimalSearchSpaceStep, minimalValueDifferences,
-      0.0, maximalIterations);
+                       0.0, maximalIterations);
 
   // Initialize optimizer state
   alglib_impl::ae_state_init(&envState);
@@ -195,7 +196,7 @@ void LMA::reset()
     break;
   case 7:
     OPENANN_DEBUG << "Stopping conditions are too stringent, "
-                << "further improvement is impossible.";
+                  << "further improvement is impossible.";
     break;
   default:
     OPENANN_DEBUG << "Unknown.";

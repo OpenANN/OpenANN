@@ -13,7 +13,7 @@ void IODataSetTestCase::run()
 
 void IODataSetTestCase::loadLibSVM()
 {
-  std::string data = 
+  std::string data =
     "1 1:2.5 2:2.1\n"
     "0 2:3.1 3:0.5\n"
     "1 1:0.1 2:0.2 3:0.4\n";
@@ -27,8 +27,8 @@ void IODataSetTestCase::loadLibSVM()
 
   Eigen::MatrixXd X(3, 3);
   X << 2.5, 2.1, 0.0,
-       0.0, 3.1, 0.5,
-       0.1, 0.2, 0.4;
+    0.0, 3.1, 0.5,
+    0.1, 0.2, 0.4;
 
   Eigen::MatrixXd Y(3, 1);
   Y << 1.0, 0.0, 1.0;
@@ -48,13 +48,13 @@ void IODataSetTestCase::saveLibSVM()
 
   OpenANN::LibSVM::save(input, output, str);
 
-  ASSERT_EQUALS(str.str(), 
-      "1 1:1.5\n0 2:1.5\n");
+  ASSERT_EQUALS(str.str(),
+                "1 1:1.5\n0 2:1.5\n");
 }
 
 void IODataSetTestCase::loadFANN()
 {
-  std::string data = 
+  std::string data =
     "3 3 1\n"
     "2.5 2.1 0.0\n"
     "1\n"
@@ -71,9 +71,9 @@ void IODataSetTestCase::loadFANN()
   ASSERT(OpenANN::FANN::load(input, output, str) > 0);
 
   Eigen::MatrixXd X(3, 3);
-  X << 2.5, 2.1, 0.0, 
-       0.0, 3.1, 0.5,
-       0.1, 0.2, 0.4;
+  X << 2.5, 2.1, 0.0,
+    0.0, 3.1, 0.5,
+    0.1, 0.2, 0.4;
 
   Eigen::MatrixXd Y(3, 1);
   Y << 1.0, 0.0, 1.0;
@@ -93,10 +93,10 @@ void IODataSetTestCase::saveFANN()
 
   OpenANN::FANN::save(input, output, str);
 
-  ASSERT_EQUALS(str.str(), 
-      "2 2 1\n"
-      "1.5 0\n"
-      "1\n"
-      "  0 1.5\n"
-      "0\n");
+  ASSERT_EQUALS(str.str(),
+                "2 2 1\n"
+                "1.5 0\n"
+                "1\n"
+                "  0 1.5\n"
+                "0\n");
 }

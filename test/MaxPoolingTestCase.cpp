@@ -26,7 +26,7 @@ void MaxPoolingTestCase::maxPooling()
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
   OpenANN::OutputInfo info2 = layer.initialize(parameterPointers,
-                                      parameterDerivativePointers);
+                                               parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
   ASSERT_EQUALS(info2.dimensions[1], 3);
@@ -49,8 +49,8 @@ void MaxPoolingTestCase::maxPoolingInputGradient()
   OpenANN::MaxPooling layer(info, 2, 2);
   LayerAdapter opt(layer, info);
 
-  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*4*4);
-  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2*2*2);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2 * 4 * 4);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2 * 2 * 2);
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);

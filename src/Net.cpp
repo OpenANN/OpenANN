@@ -16,7 +16,8 @@
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/MBSGD.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 Net::Net()
   : errorFunction(SSE), dropout(false), initialized(false), L(0)
@@ -64,7 +65,7 @@ Net& Net::compressedLayer(int units, int params, ActivationFunction act,
                           bool bias)
 {
   return addLayer(new Compressed(infos.back(), units, params, bias, act,
-                                compression, stdDev));
+                                 compression, stdDev));
 }
 
 Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
@@ -83,7 +84,7 @@ Net& Net::convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
                              ActivationFunction act, double stdDev, bool bias)
 {
   return addLayer(new Convolutional(infos.back(), featureMaps, kernelRows,
-                                   kernelCols, bias, act, stdDev));
+                                    kernelCols, bias, act, stdDev));
 }
 
 Net& Net::subsamplingLayer(int kernelRows, int kernelCols,
@@ -111,20 +112,20 @@ Net& Net::dropoutLayer(double dropoutProbability)
 
 Net& Net::addLayer(Layer* layer)
 {
-    OPENANN_CHECK(layer != 0);
+  OPENANN_CHECK(layer != 0);
 
-    OutputInfo info = layer->initialize(parameters, derivatives);
-    layers.push_back(layer);
-    infos.push_back(info);
-    L++;
-    return *this;
+  OutputInfo info = layer->initialize(parameters, derivatives);
+  layers.push_back(layer);
+  infos.push_back(info);
+  L++;
+  return *this;
 }
 
 Net& Net::addOutputLayer(Layer* layer)
 {
-    addLayer(layer);
-    initializeNetwork();
-    return *this;
+  addLayer(layer);
+  initializeNetwork();
+  return *this;
 }
 
 
@@ -277,10 +278,10 @@ double Net::error(unsigned int i)
 {
   if(errorFunction == CE)
     return -(trainSet->getTarget(i).array() *
-        (((*this)(trainSet->getInstance(i)).array() + 1e-10).log())).sum();
+             (((*this)(trainSet->getInstance(i)).array() + 1e-10).log())).sum();
   else
     return ((*this)(trainSet->getInstance(i)) -
-        trainSet->getTarget(i)).squaredNorm() / 2.0;
+            trainSet->getTarget(i)).squaredNorm() / 2.0;
 }
 
 double Net::error()
@@ -384,19 +385,19 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
     g.fill(0.0);
 
   const int start = singleGradient * n;
-  const int end = singleGradient ? n+1 : examples();
+  const int end = singleGradient ? n + 1 : examples();
 
   double error = 0.0;
   for(int i = start; i < end; i++)
   {
     tempError = ((*this)(trainSet->getInstance(i)) -
-        trainSet->getTarget(i)).transpose();
+                 trainSet->getTarget(i)).transpose();
 
     if(computeError)
     {
       if(errorFunction == CE)
         error += -(trainSet->getTarget(i).array() *
-            ((tempOutput.transpose().array() + 1e-10).log())).sum();
+                   ((tempOutput.transpose().array() + 1e-10).log())).sum();
       else
         error += tempError.squaredNorm() / 2.0;
     }

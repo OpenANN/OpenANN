@@ -37,9 +37,9 @@ public:
                    int neuronRows, int neuronCols, int width, int height,
                    QWidget* parent = 0, const QGLWidget* shareWidget = 0,
                    Qt::WindowFlags f = 0)
-      : rbm(rbm), dataSet(dataSet), neuronRows(neuronRows),
-        neuronCols(neuronCols), width(width), height(height), instance(0),
-        offset(0), fantasy(0), showFilters(false)
+    : rbm(rbm), dataSet(dataSet), neuronRows(neuronRows),
+      neuronCols(neuronCols), width(width), height(height), instance(0),
+      offset(0), fantasy(0), showFilters(false)
   {
   }
 
@@ -91,7 +91,7 @@ public:
     {
       double mi = rbm.getWeights().minCoeff();
       double ma = rbm.getWeights().maxCoeff();
-      double range = ma-mi;
+      double range = ma - mi;
       for(int row = 0, filter = 0; row < neuronRows; row++)
       {
         for(int col = 0; col < neuronCols; col++, filter++)
@@ -101,20 +101,20 @@ public:
           {
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
-              int h = filter+offset;
+              int h = filter + offset;
               if(h >= rbm.getWeights().rows())
                 throw OpenANN::OpenANNException("Illegal index for hidden unit");
-              int idx = yIdx*28+xIdx;
+              int idx = yIdx * 28 + xIdx;
               if(idx >= rbm.getWeights().cols())
                 throw OpenANN::OpenANNException("Illegal index for pixel");
               float c = (rbm.getWeights()(h, idx) - mi) / range;
-              float x = xIdx*scale + col*29.0f*scale - 30.0f;
-              float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
+              float x = xIdx * scale + col * 29.0f * scale - 30.0f;
+              float y = (28.0f - yIdx) * scale - row * scale * 29.0f + 90.0f;
               glColor3f(c, c, c);
               glVertex2f(x, y);
-              glVertex2f(x+scale, y);
-              glVertex2f(x+scale, y+scale);
-              glVertex2f(x, y+scale);
+              glVertex2f(x + scale, y);
+              glVertex2f(x + scale, y + scale);
+              glVertex2f(x, y + scale);
             }
           }
           glEnd();
@@ -133,15 +133,15 @@ public:
           {
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
-              int idx = yIdx*28+xIdx;
+              int idx = yIdx * 28 + xIdx;
               float c = rbm.getVisibleProbs()(0, idx);
-              float x = xIdx*scale + col*29.0f*scale - 30.0f;
-              float y = (28.0f-yIdx)*scale - row*scale*29.0f + 90.0f;
+              float x = xIdx * scale + col * 29.0f * scale - 30.0f;
+              float y = (28.0f - yIdx) * scale - row * scale * 29.0f + 90.0f;
               glColor3f(c, c, c);
               glVertex2f(x, y);
-              glVertex2f(x+scale, y);
-              glVertex2f(x+scale, y+scale);
-              glVertex2f(x, y+scale);
+              glVertex2f(x + scale, y);
+              glVertex2f(x + scale, y + scale);
+              glVertex2f(x, y + scale);
             }
           }
           glEnd();
@@ -151,7 +151,7 @@ public:
       }
     }
 
-    glColor3f(0.0f,0.0f,0.0f);
+    glColor3f(0.0f, 0.0f, 0.0f);
     renderText(10, 35, "MNIST data set", QFont("Helvetica", 20));
 
     glFlush();
@@ -161,50 +161,50 @@ public:
   {
     switch(keyEvent->key())
     {
-      case Qt::Key_Up:
-        instance++;
-        if(instance >= dataSet.samples())
-          instance = dataSet.samples()-1;
-        update();
-        break;
-      case Qt::Key_Down:
-        instance--;
-        if(instance < 0)
-          instance = 0;
-        update();
-        break;
-      case Qt::Key_Left:
-        offset--;
-        if(offset < 0)
-          offset = 0;
-        update();
-        break;
-      case Qt::Key_Right:
-      {
-        offset++;
-        int tooHi = offset + neuronRows*neuronCols - rbm.hiddenUnits();
-        if(tooHi > 0)
-          offset -= tooHi;
-        update();
-        break;
-      }
-      case Qt::Key_Minus:
-        fantasy--;
-        if(fantasy < 0)
-          fantasy = 0;
-        update();
-        break;
-      case Qt::Key_Plus:
-        fantasy++;
-        update();
-        break;
-      case Qt::Key_S:
-        showFilters = !showFilters;
-        update();
-        break;
-      default:
-        QGLWidget::keyPressEvent(keyEvent);
-        break;
+    case Qt::Key_Up:
+      instance++;
+      if(instance >= dataSet.samples())
+        instance = dataSet.samples() - 1;
+      update();
+      break;
+    case Qt::Key_Down:
+      instance--;
+      if(instance < 0)
+        instance = 0;
+      update();
+      break;
+    case Qt::Key_Left:
+      offset--;
+      if(offset < 0)
+        offset = 0;
+      update();
+      break;
+    case Qt::Key_Right:
+    {
+      offset++;
+      int tooHi = offset + neuronRows * neuronCols - rbm.hiddenUnits();
+      if(tooHi > 0)
+        offset -= tooHi;
+      update();
+      break;
+    }
+    case Qt::Key_Minus:
+      fantasy--;
+      if(fantasy < 0)
+        fantasy = 0;
+      update();
+      break;
+    case Qt::Key_Plus:
+      fantasy++;
+      update();
+      break;
+    case Qt::Key_S:
+      showFilters = !showFilters;
+      update();
+      break;
+    default:
+      QGLWidget::keyPressEvent(keyEvent);
+      break;
     }
   }
 };
@@ -225,10 +225,10 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY)
-     .restrictedBoltzmannMachineLayer(50, 1, 0.01, 0.01, false)
-     .outputLayer(loader.F, OpenANN::LINEAR)
-     .setErrorFunction(OpenANN::CE)
-     .trainingSet(trainSet);
+  .restrictedBoltzmannMachineLayer(50, 1, 0.01, 0.01, false)
+  .outputLayer(loader.F, OpenANN::LINEAR)
+  .setErrorFunction(OpenANN::CE)
+  .trainingSet(trainSet);
 
   OpenANN::RBM& rbm = (OpenANN::RBM&) net.getLayer(1);
   rbm.trainingSet(trainSet);

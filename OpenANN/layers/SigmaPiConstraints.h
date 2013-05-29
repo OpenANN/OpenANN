@@ -5,7 +5,8 @@
 #include <iostream>
 #include <map>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * Common constraint for encoding translation invariances into a SigmaPi layer.
@@ -13,12 +14,12 @@ namespace OpenANN {
 struct DistanceConstraint : public SigmaPi::Constraint
 {
   DistanceConstraint(size_t width, size_t height)
-      : width(width), height(height)
+    : width(width), height(height)
   {}
 
   virtual ~DistanceConstraint() {}
 
-  virtual double operator() (int p1, int p2) const
+  virtual double operator()(int p1, int p2) const
   {
     double x1 = p1 % width;
     double y1 = p1 / width;
@@ -43,13 +44,13 @@ private:
 struct SlopeConstraint : public SigmaPi::Constraint
 {
   SlopeConstraint(size_t width, size_t height)
-      : width(width), height(height)
+    : width(width), height(height)
   {
   }
 
   virtual ~SlopeConstraint() {}
 
-  virtual double operator() (int p1, int p2) const
+  virtual double operator()(int p1, int p2) const
   {
     double x1 = p1 % width;
     double y1 = p1 / width;
@@ -74,7 +75,8 @@ private:
 struct TriangleConstraint : public SigmaPi::Constraint
 {
   // Simple AngleTuple for storing in a std::map
-  struct AngleTuple {
+  struct AngleTuple
+  {
     AngleTuple(double a, double b, double c) : alpha(a), beta(b), gamma(c)
     {}
 
@@ -99,13 +101,13 @@ struct TriangleConstraint : public SigmaPi::Constraint
    * @param height height of the pattern
    * @param resolution angle tolerance to get shared
    */
-  TriangleConstraint(size_t width, size_t height, double resolution = M_PI/4)
+  TriangleConstraint(size_t width, size_t height, double resolution = M_PI / 4)
     : width(width), height(height), resolution(resolution)
   {}
 
   virtual ~TriangleConstraint() {}
 
-  virtual double operator() (int p1, int p2, int p3) const
+  virtual double operator()(int p1, int p2, int p3) const
   {
     int nr = partition.size() / 3.0;
 
@@ -120,7 +122,8 @@ struct TriangleConstraint : public SigmaPi::Constraint
     int y3 = p3 / width;
 
     // p2 should be always located at the right side of p1
-    if(x2 < x3) {
+    if(x2 < x3)
+    {
       std::swap(x2, x3);
       std::swap(y2, y3);
     }
@@ -142,11 +145,14 @@ struct TriangleConstraint : public SigmaPi::Constraint
 
     std::map<AngleTuple, int>& p = const_cast<std::map<AngleTuple, int>&>(partition);
 
-    if(it == partition.end()) {
+    if(it == partition.end())
+    {
       p[t1] = nr;
       p[t2] = nr;
-      p[t3] = nr;      
-    } else {
+      p[t3] = nr;
+    }
+    else
+    {
       return it->second;
     }
 

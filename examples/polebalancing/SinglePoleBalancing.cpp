@@ -33,7 +33,7 @@ SinglePoleBalancing::SinglePoleBalancing(bool fullyObservable)
   StateSpaceHi << 1.0, 0.1, 1.0, 0.5;
   stateNormalizationVector.resize(4);
   stateNormalizationVector << 1.0 / maxCartPosition, 1.0 / maxForce,
-                              1.0 / maxPoleAngularPosition1, 1.0 / 5.0;
+                           1.0 / maxPoleAngularPosition1, 1.0 / 5.0;
 
   action = actionSpaceLo;
 }
@@ -134,7 +134,7 @@ void SinglePoleBalancing::stateTransition(const Action& action)
   step++;
 
   this->action = action;
-  double force = action(0,0);
+  double force = action(0, 0);
   if(fabs(force) > maxForce)
     force = force / fabs(force) * maxForce;
 
@@ -161,7 +161,7 @@ bool SinglePoleBalancing::successful() const
 bool SinglePoleBalancing::terminalState() const
 {
   return successful() || std::fabs(state(0)) > maxCartPosition
-      || std::fabs(state(2)) > maxPoleAngularPosition1;
+         || std::fabs(state(2)) > maxPoleAngularPosition1;
 }
 
 OpenANN::Environment::State SinglePoleBalancing::derivative(const State& s, double force)
@@ -173,12 +173,12 @@ OpenANN::Environment::State SinglePoleBalancing::derivative(const State& s, doub
   double temp1 = mup * s(3) / massLength1;
 
   double fi1 = massLength1 * std::pow(s(3), 2.0) * sintheta1
-      + 0.75 * pole1Mass * costheta1 * (temp1+gsintheta1);
+               + 0.75 * pole1Mass * costheta1 * (temp1 + gsintheta1);
 
   double mi1 = pole1Mass * (1.0 - 0.75 * costheta1 * gsintheta1);
 
   double cartVelocityDot = (force - muc * (s(1) == 0.0 ? 0.0 : s(1) / std::fabs(s(1))) + fi1)
-      / (mi1 + cartMass);
+                           / (mi1 + cartMass);
   double poleAngularVelocity1Dot = -0.75 * (cartVelocityDot * costheta1 + gsintheta1 + temp1) / pole1Length;
 
   State derivative(4);

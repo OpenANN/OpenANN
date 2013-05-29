@@ -1,10 +1,11 @@
 #include <OpenANN/layers/AlphaBetaFilter.h>
 #include <OpenANN/util/Random.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 AlphaBetaFilter::AlphaBetaFilter(OutputInfo info, double deltaT, double stdDev)
-  : I(info.outputs()), J(2*I), deltaT(deltaT), stdDev(stdDev), gamma(I),
+  : I(info.outputs()), J(2 * I), deltaT(deltaT), stdDev(stdDev), gamma(I),
     gammad(I), alpha(I), beta(I), first(true), x(0), y(1, J)
 {
 }
@@ -43,7 +44,7 @@ void AlphaBetaFilter::updatedParameters()
   {
     gamma(i) = fabs(gamma(i));
     const double r = (4.0 + gamma(i) - sqrt(8.0 * gamma(i) + gamma(i) * gamma(i))) / 4.0;
-    alpha(i) = 1.0 - r*r;
+    alpha(i) = 1.0 - r * r;
     const double rr = 1.0 - r;
     beta(i) = 2.0 * rr * rr;
   }
@@ -62,16 +63,16 @@ void AlphaBetaFilter::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, 
 
   if(first)
   {
-    for(int i = 0, j = 0; i < I; i++, j+=2)
+    for(int i = 0, j = 0; i < I; i++, j += 2)
       this->y(0, j) = (*x)(0, i);
     first = false;
   }
 
-  for(int i = 0, j = 0; i < I; i++, j+=2)
+  for(int i = 0, j = 0; i < I; i++, j += 2)
   {
     const double diff = (*x)(0, i) - this->y(0, j);
-    this->y(0, j+1) += beta(i) / deltaT * diff;
-    this->y(0, j) += alpha(i) * diff + deltaT * this->y(0, j+1);
+    this->y(0, j + 1) += beta(i) / deltaT * diff;
+    this->y(0, j) += alpha(i) * diff + deltaT * this->y(0, j + 1);
   }
 
   y = &(this->y);

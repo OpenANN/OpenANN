@@ -31,12 +31,12 @@ public:
   Distorter(double sigma = 5.0, double alpha = 0.5, double beta = 15.0, double gammaX = 15.0, double gammaY = 15.0)
     : sigma(sigma), alpha(alpha), beta(beta), gammaX(gammaX), gammaY(gammaY), gaussianKernelSize(21), gaussianKernel(gaussianKernelSize, gaussianKernelSize)
   {
-    double twoSigmaSquared = sigma*sigma/2.0;
-    double twoPiSigma = sqrt(2.0*M_PI)/sigma;
-    int center = gaussianKernelSize/2;
+    double twoSigmaSquared = sigma * sigma / 2.0;
+    double twoPiSigma = sqrt(2.0 * M_PI) / sigma;
+    int center = gaussianKernelSize / 2;
     for(int row = 0; row < gaussianKernelSize; row++)
       for(int col = 0; col < gaussianKernelSize; col++)
-        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared*(std::pow((double) (row-center), 2.0) + std::pow((double) (col-center), 2.0)));
+        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared * (std::pow((double)(row - center), 2.0) + std::pow((double)(col - center), 2.0)));
     OPENANN_CHECK_MATRIX_BROKEN(gaussianKernel);
   }
 
@@ -58,7 +58,7 @@ public:
     distortionH.resize(rows, cols), distortionV.resize(rows, cols);
     distortionH.fill(0.0);
     distortionV.fill(0.0);
-    int kernelCenter = gaussianKernelSize/2;
+    int kernelCenter = gaussianKernelSize / 2;
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)
@@ -86,14 +86,14 @@ public:
     // image scaling
     double horizontalScaling = rng.generate<double>(-1.0, 2.0) * gammaX / 100.0;
     double verticalScaling = rng.generate<double>(-1.0, 2.0) * gammaY / 100.0;
-    int imageCenter = rows/2;
+    int imageCenter = rows / 2;
     OPENANN_CHECK_EQUALS(cols, rows); // could be generalized but YAGNI
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)
       {
-        distortionH(r, c) += horizontalScaling * (double) (c-imageCenter);
-        distortionV(r, c) -= verticalScaling * (double) (imageCenter-r); // negative because of top-down bitmap
+        distortionH(r, c) += horizontalScaling * (double)(c - imageCenter);
+        distortionV(r, c) -= verticalScaling * (double)(imageCenter - r); // negative because of top-down bitmap
       }
     }
     OPENANN_CHECK_MATRIX_BROKEN(distortionH);
@@ -108,8 +108,8 @@ public:
     {
       for(int c = 0; c < cols; c++)
       {
-        distortionH(r, c) += (c-imageCenter) * (cosAngle-1.0) - (imageCenter-r) * sinAngle;
-        distortionV(r, c) -= (imageCenter-r) * (cosAngle-1.0) - (c-imageCenter) * sinAngle;
+        distortionH(r, c) += (c - imageCenter) * (cosAngle - 1.0) - (imageCenter - r) * sinAngle;
+        distortionV(r, c) -= (imageCenter - r) * (cosAngle - 1.0) - (c - imageCenter) * sinAngle;
       }
     }
     OPENANN_CHECK_MATRIX_BROKEN(distortionH);
@@ -133,16 +133,16 @@ public:
         double w3 = rowFraction * (1.0 - colFraction);
         double w4 = rowFraction * colFraction;
 
-        if(!(sourceRow+1 >= rows || sourceRow < 0 || sourceCol+1 > cols || sourceCol < 0))
+        if(!(sourceRow + 1 >= rows || sourceRow < 0 || sourceCol + 1 > cols || sourceCol < 0))
         {
           int sr = (int) sourceRow, sc = (int) sourceCol;
-          int srn = sr+1, scn = sc+1;
+          int srn = sr + 1, scn = sc + 1;
           while(srn >= rows) srn -= rows;
           while(srn < 0) srn += rows;
           while(scn >= cols) scn -= cols;
           while(scn < 0) scn += cols;
-          instance(r*cols+c) = w1*input(sr*cols+sc) + w2*input(sr*cols+scn)
-              + w3*input(srn*cols+sc) + w4*input(srn*cols+scn);
+          instance(r * cols + c) = w1 * input(sr * cols + sc) + w2 * input(sr * cols + scn)
+                                   + w3 * input(srn * cols + sc) + w4 * input(srn * cols + scn);
         }
       }
     }

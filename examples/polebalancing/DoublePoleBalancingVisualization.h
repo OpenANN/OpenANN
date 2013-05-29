@@ -13,9 +13,9 @@ class DoublePoleBalancingVisualization : public QGLWidget
 
 public:
   DoublePoleBalancingVisualization(bool singlePole, bool fullyObservable,
-      bool alphaBetaFilter, bool doubleExponentialSmoothing,
-      QWidget* parent = 0, const QGLWidget* shareWidget = 0,
-      Qt::WindowFlags f = 0);
+                                   bool alphaBetaFilter, bool doubleExponentialSmoothing,
+                                   QWidget* parent = 0, const QGLWidget* shareWidget = 0,
+                                   Qt::WindowFlags f = 0);
 
 protected:
   virtual void initializeGL();

@@ -8,7 +8,8 @@
 template<typename T> class CMAES;
 template<typename T> class Parameters;
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class IPOPCMAES

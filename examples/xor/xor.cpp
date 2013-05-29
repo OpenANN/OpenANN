@@ -41,10 +41,14 @@ int main()
   Eigen::MatrixXd X(N, D); // inputs
   Eigen::MatrixXd T(N, F); // outputs
   // Each row represents an input
-  X.row(0) << 0.0, 1.0; T.row(0) << 1.0;
-  X.row(1) << 0.0, 0.0; T.row(1) << 0.0;
-  X.row(2) << 1.0, 1.0; T.row(2) << 0.0;
-  X.row(3) << 1.0, 0.0; T.row(3) << 1.0;
+  X.row(0) << 0.0, 1.0;
+  T.row(0) << 1.0;
+  X.row(1) << 0.0, 0.0;
+  T.row(1) << 0.0;
+  X.row(2) << 1.0, 1.0;
+  T.row(2) << 0.0;
+  X.row(3) << 1.0, 0.0;
+  T.row(3) << 1.0;
   DirectStorageDataSet dataSet(&X, &T);
 
   // Create network
@@ -53,11 +57,11 @@ int main()
   net.inputLayer(D)
   // Add a fully connected hidden layer with 2 nodes and logistic activation
   // function
-     .fullyConnectedLayer(2, LOGISTIC)
+  .fullyConnectedLayer(2, LOGISTIC)
   // Add an output layer with F outputs and logistic activation function
-     .outputLayer(F, LOGISTIC)
+  .outputLayer(F, LOGISTIC)
   // Add training set
-     .trainingSet(dataSet);
+  .trainingSet(dataSet);
 
   // Set stopping conditions
   StoppingCriteria stop;

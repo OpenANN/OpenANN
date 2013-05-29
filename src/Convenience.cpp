@@ -6,7 +6,8 @@
 #include <OpenANN/optimization/CG.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
            StoppingCriteria stop, bool reinitialize, bool dropout)
