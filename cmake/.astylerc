@@ -1,4 +1,6 @@
-# astyle --options=.astylerc --recursive ../OpenANN/*.h ../src/.cpp ../test/*.h ../test/*.cpp
+# Configuration file for Artistic Style
+#   URL: http://astyle.sourceforge.net
+# astyle --options=.astylerc --recursive "../OpenANN/*.h" "../src/*.cpp" "../test/*.h" "../test/*.cpp"
 
 mode=c
 style=ansi
@@ -12,5 +14,6 @@ unpad-paren
 align-pointer=type
 break-elseifs
 convert-tabs
+keep-one-line-statements
 #max-code-length=80
 
