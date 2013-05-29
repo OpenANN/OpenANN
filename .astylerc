@@ -1,6 +1,6 @@
 # Artistic Style configuration
 #   URL: http://astyle.sourceforge.net
-# astyle --options=cmake/.astylerc --recursive "OpenANN/*.h" "src/*.cpp" "examples/*.h" "examples/*.cpp" "benchmarks/*.h" "benchmarks/*.cpp" "test/*.h" "test/*.cpp"
+# astyle --options=.astylerc --recursive "OpenANN/*.h" "src/*.cpp" "examples/*.h" "examples/*.cpp" "benchmarks/*.h" "benchmarks/*.cpp" "test/*.h" "test/*.cpp"
 
 mode=c
 style=ansi

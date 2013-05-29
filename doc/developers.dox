@@ -64,6 +64,17 @@ performance of the code)
 Those tasks are great entry points to contribute to the library and we are
 glad to receive any improvements.
 
+\section CodingStyle Coding Style
+
+We have a <a href="https://github.com/OpenANN/OpenANN/wiki/Coding-Style"
+target=_blank>coding style</a>. To apply that style automatically, you can
+use the tool <a href="http://astyle.sourceforge.net" target=_blank>Artistic
+Style</a>. You can run the following command in the %OpenANN main directory:
+
+\verbatim
+astyle --options=.astylerc --recursive "OpenANN/*.h" "src/*.cpp" "examples/*.h" "examples/*.cpp" "benchmarks/*.h" "benchmarks/*.cpp" "test/*.h" "test/*.cpp"
+\endverbatim
+
 \section FAQ
 
 - How can I minimize the time that is required to switch between different
