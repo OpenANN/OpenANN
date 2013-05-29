@@ -1,0 +1,16 @@
+# astyle --options=.astylerc --recursive ../OpenANN/*.h ../src/.cpp ../test/*.h ../test/*.cpp
+
+mode=c
+style=ansi
+indent=spaces=2
+indent-labels
+indent-preprocessor
+min-conditional-indent=1
+max-instatement-indent=60
+pad-oper
+unpad-paren
+align-pointer=type
+break-elseifs
+convert-tabs
+#max-code-length=80
+
