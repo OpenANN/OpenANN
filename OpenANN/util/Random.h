@@ -3,8 +3,8 @@
  * Random number generator.
  */
 
-#ifndef OPENANN_RANDOM_H
-#define OPENANN_RANDOM_H
+#ifndef OPENANN_UTIL_RANDOM_H_
+#define OPENANN_UTIL_RANDOM_H_
 
 #include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
@@ -113,4 +113,4 @@ public:
 
 }
 
-#endif // OPENANN_RANDOM_H
+#endif // OPENANN_UTIL_RANDOM_H_

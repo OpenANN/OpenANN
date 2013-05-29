@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_TEST_FULLY_CONNECTED_TEST_CASE_H_
+#define OPENANN_TEST_FULLY_CONNECTED_TEST_CASE_H_
 
 #include <Test/TestCase.h>
 
@@ -10,3 +11,5 @@ class FullyConnectedTestCase : public TestCase
   void inputGradient();
   void parallelForward();
 };
+
+#endif // OPENANN_TEST_FULLY_CONNECTED_TEST_CASE_H_

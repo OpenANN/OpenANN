@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_LEARNER_H_
+#define OPENANN_LEARNER_H_
 
 #include <OpenANN/io/DataSet.h>
 #include <OpenANN/optimization/Optimizable.h>
@@ -77,3 +78,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LEARNER_H_

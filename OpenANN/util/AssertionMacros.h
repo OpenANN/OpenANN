@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_UTIL_ASSERTION_MACROS_H_
+#define OPENANN_UTIL_ASSERTION_MACROS_H_
 
 #ifndef NDEBUG
 
@@ -78,3 +79,5 @@ bool isInf(T value)
 #define OPENANN_CHECK_INF(value)
 #define OPENANN_CHECK_INF_AND_NAN(value)
 #endif // NDEBUG
+
+#endif // OPENANN_UTIL_ASSERTION_MACROS_H_

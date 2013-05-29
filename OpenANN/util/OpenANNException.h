@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_UTIL_OPENANN_EXCEPTION_H_
+#define OPENANN_UTIL_OPENANN_EXCEPTION_H_
 
 #include <stdexcept>
 
@@ -18,3 +19,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_UTIL_OPENANN_EXCEPTION_H_

@@ -1,8 +1,8 @@
-#pragma once
+#ifndef OPENANN_OPTIMIZATION_STOPPING_INTERRIPT_H_
+#define OPENANN_OPTIMIZATION_STOPPING_INTERRIPT_H_
 
 namespace OpenANN
 {
-
 
 /**
  * @class StoppingInterrupt
@@ -38,6 +38,6 @@ private:
   static void setStoppingInterruptSignal(int param);
 };
 
-
-
 }
+
+#endif // OPENANN_OPTIMIZATION_STOPPING_INTERRIPT_H_

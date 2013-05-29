@@ -1,5 +1,5 @@
-#ifndef DECIMATOR_H
-#define DECIMATOR_H
+#ifndef DECIMATOR_H_
+#define DECIMATOR_H_
 
 #include <OpenANN/Preprocessing.h>
 #include <Eigen/Dense>
@@ -44,4 +44,4 @@ public:
   }
 };
 
-#endif // DECIMATOR_H
+#endif // DECIMATOR_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CREATE_TWO_SPIRALS_DATA_SET_H_
+#define CREATE_TWO_SPIRALS_DATA_SET_H_
 
 #include <Eigen/Dense>
 #include <OpenANN/util/AssertionMacros.h>
@@ -72,3 +73,5 @@ void createTwoSpiralsDataSet(int density, double maxDiameter,
   OpenANN::scaleData(Xte, 0.0, 1.0);
   OpenANN::scaleData(Xtr, 0.0, 1.0);
 }
+
+#endif // CREATE_TWO_SPIRALS_DATA_SET_H_

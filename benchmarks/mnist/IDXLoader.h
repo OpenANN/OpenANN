@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IDX_LOADER_H_
+#define IDX_LOADER_H_
 
 #include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Dense>
@@ -171,3 +172,5 @@ private:
       t = 255 - t;
   }
 };
+
+#endif // IDX_LOADER_H_

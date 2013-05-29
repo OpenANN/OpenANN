@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_LAYERS_SUBSAMPLING_H_
+#define OPENANN_LAYERS_SUBSAMPLING_H_
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
@@ -58,3 +59,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_SUBSAMPLING_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_CONVENIENCE_H_
+#define OPENANN_CONVENIENCE_H_
 
 #include <OpenANN/Net.h>
 #include <string>
@@ -22,3 +23,5 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
            bool dropout = false);
 
 }
+
+#endif // OPENANN_CONVENIENCE_H_

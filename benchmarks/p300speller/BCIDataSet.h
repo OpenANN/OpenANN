@@ -1,5 +1,5 @@
-#ifndef BCIDATASET_H
-#define BCIDATASET_H
+#ifndef BCIDATASET_H_
+#define BCIDATASET_H_
 
 #include <OpenANN/Compressor.h>
 #include <OpenANN/io/DataSet.h>
@@ -100,4 +100,4 @@ public:
   int evaluate(OpenANN::Learner& mlp, int trials);
 };
 
-#endif // BCIDATASET_H
+#endif // BCIDATASET_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_LAYERS_SIGMA_PI_CONSTRAINTS_H_
+#define OPENANN_LAYERS_SIGMA_PI_CONSTRAINTS_H_
 
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/layers/SigmaPi.h>
@@ -167,5 +168,6 @@ private:
   double resolution;
 };
 
-
 }
+
+#endif // OPENANN_LAYERS_SIGMA_PI_CONSTRAINTS_H_

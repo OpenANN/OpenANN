@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SINGLE_POLE_BALANCING_H_
+#define SINGLE_POLE_BALANCING_H_
 
 #include <OpenANN/rl/Environment.h>
 #include <Eigen/Dense>
@@ -84,3 +85,5 @@ private:
   State derivative(const State& state, double force);
   State rk4(const State& state, double force, const State& derivative);
 };
+
+#endif // SINGLE_POLE_BALANCING_H_

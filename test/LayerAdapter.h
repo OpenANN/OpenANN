@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_TEST_LAYER_ADAPTER_H_
+#define OPENANN_TEST_LAYER_ADAPTER_H_
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/util/OpenANNException.h>
@@ -38,3 +39,5 @@ public:
                                Eigen::MatrixXd& trainingOutput);
   virtual Learner& trainingSet(OpenANN::DataSet& trainingSet);
 };
+
+#endif // OPENANN_TEST_LAYER_ADAPTER_H_

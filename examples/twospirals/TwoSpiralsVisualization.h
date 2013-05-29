@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TWO_SPIRALS_VISUALIZATION_H_
+#define TWO_SPIRALS_VISUALIZATION_H_
 
 #include <OpenANN/OpenANN>
 #include <OpenANN/io/DirectStorageDataSet.h>
@@ -57,3 +58,5 @@ protected:
 signals:
   void updatedData();
 };
+
+#endif // TWO_SPIRALS_VISUALIZATION_H_

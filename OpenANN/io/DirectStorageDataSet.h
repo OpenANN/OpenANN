@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_IO_DIRECT_STORAGE_DATA_SET_H_
+#define OPENANN_IO_DIRECT_STORAGE_DATA_SET_H_
 #if __GNUC__ >= 4
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
@@ -60,3 +61,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_IO_DIRECT_STORAGE_DATA_SET_H_

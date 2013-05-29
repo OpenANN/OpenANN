@@ -1,4 +1,5 @@
-#pragma
+#ifndef OPENANN_TEST_MAX_POOLING_TEST_CASE_H_
+#define OPENANN_TEST_MAX_POOLING_TEST_CASE_H_
 
 #include <Test/TestCase.h>
 
@@ -10,3 +11,5 @@ class MaxPoolingTestCase : public TestCase
   void maxPoolingGradient();
   void maxPoolingInputGradient();
 };
+
+#endif // OPENANN_TEST_MAX_POOLING_TEST_CASE_H_

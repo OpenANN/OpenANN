@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_UTIL_EIGEN_WRAPPER_H_
+#define OPENANN_UTIL_EIGEN_WRAPPER_H_
 
 #include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Dense>
@@ -52,3 +53,5 @@ bool isMatrixBroken(const Eigen::Matrix<T, M, N> m)
 {
   return isMatrixNan(m) || isMatrixInf(m);
 }
+
+#endif // OPENANN_UTIL_EIGEN_WRAPPER_H_

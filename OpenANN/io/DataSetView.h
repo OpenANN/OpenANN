@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_IO_DATA_SET_VIEW_H_
+#define OPENANN_IO_DATA_SET_VIEW_H_
 
 #include <Eigen/Dense>
 #include <vector>
@@ -22,7 +23,6 @@ class Learner;
  *
  * No manually memory de- and allocation is needed to handle internal pointers.
  */
-
 class DataSetView : public DataSet
 {
 public:
@@ -96,7 +96,6 @@ public:
    */
   virtual DataSetView& shuffle();
 
-
 private:
   // indices from the original dataset that are related to this subview.
   std::vector<int> indices;
@@ -147,7 +146,6 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset,
  */
 void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 
-
-
-
 } // namespace OpenANN
+
+#endif // OPENANN_IO_DATA_SET_VIEW_H_

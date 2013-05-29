@@ -1,5 +1,5 @@
-#ifndef OPTIMIZABLE_H
-#define OPTIMIZABLE_H
+#ifndef OPENANN_OPTIMIZATION_OPTIMIZABLE_H_
+#define OPENANN_OPTIMIZATION_OPTIMIZABLE_H_
 #if __GNUC__ >= 4
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
@@ -147,4 +147,4 @@ public:
 
 }
 
-#endif // OPTIMIZABLE_H
+#endif // OPENANN_OPTIMIZATION_OPTIMIZABLE_H_

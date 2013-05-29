@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_LAYERS_SIGMA_PI_H_
+#define OPENANN_LAYERS_SIGMA_PI_H_
 
 #include <Eigen/Dense>
 #include <vector>
@@ -156,6 +157,7 @@ public:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-
-
 } // namespace OpenANN
+
+
+#endif // OPENANN_LAYERS_SIGMA_PI_H_

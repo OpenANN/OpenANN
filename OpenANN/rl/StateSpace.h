@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_RL_STATE_SPACE_H_
+#define OPENANN_RL_STATE_SPACE_H_
 
 #include <Eigen/Dense>
 #include <vector>
@@ -29,3 +30,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_RL_STATE_SPACE_H_

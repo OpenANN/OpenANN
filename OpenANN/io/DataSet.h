@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_IO_DATA_SET_H_
+#define OPENANN_IO_DATA_SET_H_
 
 #include <Eigen/Dense>
 
@@ -59,3 +60,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_IO_DATA_SET_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_OPTIMIZATION_IPOPCMAES_H_
+#define OPENANN_OPTIMIZATION_IPOPCMAES_H_
 
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
@@ -103,3 +104,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_OPTIMIZATION_IPOPCMAES_H_

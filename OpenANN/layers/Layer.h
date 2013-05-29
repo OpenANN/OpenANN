@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_LAYERS_LAYER_H_
+#define OPENANN_LAYERS_LAYER_H_
 
 #include <Eigen/Dense>
 #include <vector>
@@ -74,3 +75,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_LAYER_H_

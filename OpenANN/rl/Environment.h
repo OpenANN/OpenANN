@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_RL_ENVIRONMENT_H_
+#define OPENANN_RL_ENVIRONMENT_H_
 
 #include <OpenANN/rl/ActionSpace.h>
 #include <OpenANN/rl/StateSpace.h>
@@ -23,3 +24,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_RL_ENVIRONMENT_H_

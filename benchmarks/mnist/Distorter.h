@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DISTORTER_H_
+#define DISTORTER_H_
 
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/AssertionMacros.h>
@@ -148,3 +149,5 @@ public:
     }
   }
 };
+
+#endif // DISTORTER_H_

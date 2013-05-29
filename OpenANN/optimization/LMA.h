@@ -1,5 +1,5 @@
-#ifndef OPENANN_LMA_H
-#define OPENANN_LMA_H
+#ifndef OPENANN_OPTIMIZATION_LMA_H_
+#define OPENANN_OPTIMIZATION_LMA_H_
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
@@ -70,4 +70,4 @@ private:
 
 }
 
-#endif // OPENANN_LMA_H
+#endif // OPENANN_OPTIMIZATION_LMA_H_

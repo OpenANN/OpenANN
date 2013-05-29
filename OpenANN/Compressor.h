@@ -1,5 +1,5 @@
-#ifndef COMPRESSOR_H
-#define COMPRESSOR_H
+#ifndef OPENANN_COMPRESSOR_H_
+#define OPENANN_COMPRESSOR_H_
 
 #include <Eigen/Dense>
 
@@ -48,4 +48,4 @@ public:
 
 }
 
-#endif // COMPRESSOR_H
+#endif // OPENANN_COMPRESSOR_H_

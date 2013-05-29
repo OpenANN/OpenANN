@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NEURO_EVOLUTION_AGENT_H_
+#define NEURO_EVOLUTION_AGENT_H_
 
 #include <OpenANN/rl/Agent.h>
 #include <OpenANN/OpenANN>
@@ -59,3 +60,5 @@ public:
   virtual void setParameters(const Eigen::VectorXd& parameters);
   void setSigma0(double sigma0);
 };
+
+#endif // NEURO_EVOLUTION_AGENT_H_

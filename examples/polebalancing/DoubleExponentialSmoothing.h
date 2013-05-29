@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DOUBLE_EXPONENTIAL_SMOOTHING_H_
+#define DOUBLE_EXPONENTIAL_SMOOTHING_H_
 
 #include <Eigen/Dense>
 #include <OpenANN/io/Logger.h>
@@ -65,3 +66,5 @@ public:
     return out;
   }
 };
+
+#endif // DOUBLE_EXPONENTIAL_SMOOTHING_H_

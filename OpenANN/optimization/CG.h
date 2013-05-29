@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_OPTIMIZATION_H_
+#define OPENANN_OPTIMIZATION_H_
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
@@ -41,3 +42,5 @@ private:
 };
 
 }
+
+#endif // OPENANN_OPTIMIZATION_H_

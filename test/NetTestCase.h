@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_TEST_NET_TEST_CASE_H_
+#define OPENANN_TEST_NET_TEST_CASE_H_
 
 #include <Test/TestCase.h>
 
@@ -13,3 +14,5 @@ class NetTestCase : public TestCase
   void predictMinibatch();
   void minibatchErrorGradient();
 };
+
+#endif // OPENANN_TEST_NET_TEST_CASE_H_

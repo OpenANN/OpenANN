@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_IO_LIB_SVM_H_
+#define OPENANN_IO_LIB_SVM_H_
 
 #include <Eigen/Dense>
 #include <iostream>
@@ -62,3 +63,5 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out,
 }
 
 }
+
+#endif // OPENANN_IO_LIB_SVM_H_

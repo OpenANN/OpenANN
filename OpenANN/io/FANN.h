@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_IO_FANN_H_
+#define OPENANN_IO_FANN_H_
 
 #include <Eigen/Dense>
 #include <iostream>
@@ -57,3 +58,5 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& s
 }
 
 }
+
+#endif // OPENANN_IO_FANN_H_
