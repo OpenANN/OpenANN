@@ -2,6 +2,7 @@
 #include "IDXLoader.h"
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/io/Logger.h>
+#include <OpenANN/Evaluator.h>
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QApplication>
@@ -191,9 +192,9 @@ int main(int argc, char** argv)
   .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05)
   .outputLayer(loader.F, OpenANN::LINEAR, 0.05)
   .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
-                                        OpenANN::DirectStorageDataSet::MULTICLASS,
-                                        OpenANN::Logger::FILE);
+                                        &evaluator);
   net.initialize();
 
   // Load parameters

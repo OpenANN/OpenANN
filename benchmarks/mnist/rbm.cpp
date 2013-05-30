@@ -2,6 +2,7 @@
 #include <OpenANN/RBM.h>
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/Evaluator.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
@@ -240,9 +241,9 @@ int main(int argc, char** argv)
   optimizer.setStopCriteria(stop);
   optimizer.optimize();
 
+  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
-                                        OpenANN::DirectStorageDataSet::MULTICLASS,
-                                        OpenANN::Logger::FILE);
+                                        &evaluator);
   net.validationSet(testSet);
 
   OpenANN::StoppingCriteria stopNet;

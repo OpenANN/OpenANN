@@ -2,6 +2,7 @@
 #include <OpenANN/optimization/MBSGD.h>
 #include "IDXLoader.h"
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/Evaluator.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -49,9 +50,9 @@ int main(int argc, char** argv)
   .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)      // 100
   .outputLayer(loader.F, OpenANN::LINEAR, 0.05)           //  10
   .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
-                                        OpenANN::DirectStorageDataSet::MULTICLASS,
-                                        OpenANN::Logger::FILE);
+                                        &evaluator);
   net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   OPENANN_INFO << "Created MLP.";
