@@ -10,7 +10,7 @@ namespace OpenANN
 MulticlassEvaluator::MulticlassEvaluator(Logger::Target target)
   : logger(new Logger(target, "evaluation")), stopwatch(new Stopwatch), iteration(0)
 {
-  *logger << "# Multiclass problem";
+  *logger << "# Multiclass problem\n\n";
   stopwatch->start();
 }
 
