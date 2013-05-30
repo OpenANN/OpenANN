@@ -17,8 +17,8 @@
  * directory "mnist" in your working directory, move the data set to this
  * directory and execute the benchmark or pass the directory of the MNIST
  * data set as argument to the program. Some information about the
- * classification of the test set will be logged in the file "dataset-*.log",
- * where '*' is the starting time.
+ * classification of the test set will be logged in the file
+ * "evaluation-*.log", where '*' is the starting time.
  *
  * To execute the benchmark you can run the Python script:
 \code
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   optimizer.optimize();
 
   OPENANN_INFO << "Error = " << net.error();
-  OPENANN_INFO << "Wrote data to dataset-*.log.";
+  OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
   OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
   resultLogger << optimizer.result();

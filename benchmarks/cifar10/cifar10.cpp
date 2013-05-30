@@ -157,7 +157,7 @@ int main(int argc, char** argv)
   optimizer.optimize();
 
   OPENANN_INFO << "Error = " << net.error();
-  OPENANN_INFO << "Wrote data to dataset-*.log.";
+  OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
   return EXIT_SUCCESS;
 }
