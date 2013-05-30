@@ -12,6 +12,8 @@ class Stopwatch;
 namespace OpenANN
 {
 
+class Evaluator;
+
 /**
  * @class DirectStorageDataSet
  *
@@ -21,13 +23,6 @@ namespace OpenANN
  */
 class DirectStorageDataSet : public DataSet
 {
-public:
-  enum LogInfo
-  {
-    NONE,
-    MULTICLASS
-  };
-
 private:
   Eigen::MatrixXd* in;
   Eigen::MatrixXd* out;
@@ -36,22 +31,17 @@ private:
   const int F;
   Eigen::VectorXd temporaryInput;
   Eigen::VectorXd temporaryOutput;
-  LogInfo logInfo;
-  Logger logger;
-  int iteration;
-  Stopwatch* sw;
+  Evaluator* evaluator; //!< Do not delete the evaluator!
 
 public:
   /**
    * Create an instance of DirectStorageDataSet.
    * @param in contains an instance in each row
    * @param out cointains a target in each row
-   * @param logInfo activate evaluation of the model during optimization
-   * @param target target of evaluation logger
+   * @param evaluator monitors optimization progress
    */
   DirectStorageDataSet(Eigen::MatrixXd* in, Eigen::MatrixXd* out = 0,
-                       LogInfo logInfo = NONE, Logger::Target target = Logger::CONSOLE);
-  virtual ~DirectStorageDataSet();
+                       Evaluator* evaluator = 0);
   virtual int samples() { return N; }
   virtual int inputs() { return D; }
   virtual int outputs() { return F; }
