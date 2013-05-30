@@ -51,7 +51,7 @@ def evaluate_mnist(plot_axes):
     axes = ["Epoch", "MSE", "Correct", "Errors", "Time"]
 
     log = []
-    for f in glob.iglob("dataset-*.log"):
+    for f in glob.iglob("evaluation-*.log"):
         run = []
         for l in open(f, "r").readlines():
             l = l.strip()

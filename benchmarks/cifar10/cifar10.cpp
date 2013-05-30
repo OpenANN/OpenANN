@@ -1,6 +1,7 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/Evaluator.h>
 #include <OpenANN/util/OpenANNException.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
@@ -113,11 +114,11 @@ int main(int argc, char** argv)
 
   CIFARLoader loader(directory);
 
-  OpenANN::Net net;                                                      // Nodes per layer:
-  net.inputLayer(loader.C, loader.X, loader.Y);                          //   3 x 32 x 32
+  OpenANN::Net net;                                                  // Nodes per layer:
+  net.inputLayer(loader.C, loader.X, loader.Y);                      //   3 x 32 x 32
   if(bigNet)
   {
-    net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)         // 200 x 28 x 28
+    net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)      // 200 x 28 x 28
     .maxPoolingLayer(2, 2)                                           // 200 x 14 x 14
     .convolutionalLayer(150, 3, 3, OpenANN::RECTIFIER, 0.05)         // 150 x 12 x 12
     .maxPoolingLayer(2, 2)                                           // 150 x  6 x  6
@@ -128,7 +129,7 @@ int main(int argc, char** argv)
   }
   else
   {
-    net.convolutionalLayer(50, 5, 5, OpenANN::RECTIFIER, 0.05)          //  50 x 28 x 28
+    net.convolutionalLayer(50, 5, 5, OpenANN::RECTIFIER, 0.05)       //  50 x 28 x 28
     .maxPoolingLayer(2, 2)                                           //  50 x 14 x 14
     .convolutionalLayer(30, 3, 3, OpenANN::RECTIFIER, 0.05)          //  30 x 12 x 12
     .maxPoolingLayer(2, 2)                                           //  30 x  6 x  6
@@ -137,11 +138,11 @@ int main(int argc, char** argv)
     .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 100
     .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true, 15.0);  //  50
   }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                       //  10
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                   //  10
   .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
-                                        OpenANN::DirectStorageDataSet::MULTICLASS,
-                                        OpenANN::Logger::FILE);
+                                        &evaluator);
   net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   OPENANN_INFO << "Created MLP.";
@@ -156,7 +157,7 @@ int main(int argc, char** argv)
   optimizer.optimize();
 
   OPENANN_INFO << "Error = " << net.error();
-  OPENANN_INFO << "Wrote data to dataset-*.log.";
+  OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
   return EXIT_SUCCESS;
 }
