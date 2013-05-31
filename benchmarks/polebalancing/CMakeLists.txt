@@ -1,5 +1,6 @@
 project(PoleBalancingBenchmark)
 
+file(COPY benchmark.py DESTINATION .)
 set(src_files
   ${CMAKE_SOURCE_DIR}/examples/polebalancing/SinglePoleBalancing.cpp
   ${CMAKE_SOURCE_DIR}/examples/polebalancing/DoublePoleBalancing.cpp
