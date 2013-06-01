@@ -8,6 +8,16 @@
 #include <cmath>
 
 /**
+ * @class Distorter
+ *
+ * Creates distorted images.
+ *
+ * Available distortions are:
+ *
+ * - rotation
+ * - horizontal and vertical scaling
+ * - elastic distortions
+ *
  * Source: http://www.codeproject.com/Articles/16650/Neural-Network-for-Recognition-of-Handwritten-Digi
  */
 class Distorter
@@ -125,19 +135,19 @@ public:
 
   void applyDistortions(Eigen::MatrixXd& instances, int rows, int cols)
   {
+    Eigen::VectorXd instance;
     for(int n = 0; n < instances.cols(); n++)
     {
-      Eigen::VectorXd instance = instances.col(n); // TODO do not copy
-      createDistortionMap(rows, cols);
-      applyDistortion(instance);
+      instance = instances.col(n);
+      applyDistortion(instance, rows, cols);
       instances.col(n) = instance;
     }
   }
 
-  void applyDistortion(Eigen::VectorXd& instance)
+  void applyDistortion(Eigen::VectorXd& instance, int rows, int cols)
   {
+    createDistortionMap(rows, cols);
     Eigen::VectorXd input = instance;
-    int rows = distortionH.rows(), cols = distortionH.cols();
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)
@@ -159,8 +169,10 @@ public:
           while(srn < 0) srn += rows;
           while(scn >= cols) scn -= cols;
           while(scn < 0) scn += cols;
-          instance(r * cols + c) = w1 * input(sr * cols + sc) + w2 * input(sr * cols + scn)
-                                   + w3 * input(srn * cols + sc) + w4 * input(srn * cols + scn);
+          instance(r * cols + c) = w1 * input(sr * cols + sc)
+                                 + w2 * input(sr * cols + scn)
+                                 + w3 * input(srn * cols + sc)
+                                 + w4 * input(srn * cols + scn);
         }
       }
     }
