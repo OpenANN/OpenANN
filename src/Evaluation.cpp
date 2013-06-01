@@ -55,7 +55,7 @@ Eigen::MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
 {
   const int N = dataSet.samples();
   Eigen::MatrixXi confusionMatrix(dataSet.outputs(), dataSet.outputs());
-  confusionMatrix.fill(0);
+  confusionMatrix.setZero();
   for(int n = 0; n < N; n++)
     confusionMatrix(oneOfCDecoding(dataSet.getTarget(n)),
                     oneOfCDecoding(learner(dataSet.getInstance(n))))++;

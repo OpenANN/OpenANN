@@ -95,7 +95,7 @@ bool RBM::providesGradient()
 Eigen::VectorXd RBM::gradient()
 {
   Eigen::VectorXd grad(K);
-  grad.fill(0.0);
+  grad.setZero();
   for(int n = 0; n < trainSet->samples(); n++)
     grad += gradient(n);
   return grad;

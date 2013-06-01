@@ -98,7 +98,7 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
   OPENANN_CHECK_EQUALS(x->cols(), fm * inRows * inCols);
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
-  a.fill(0.0);
+  a.setZero();
   #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
@@ -138,12 +138,12 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
 
-  e.fill(0.0);
+  e.setZero();
   for(int fmo = 0; fmo < fm; fmo++)
   {
-    Wd[fmo].fill(0.0);
+    Wd[fmo].setZero();
     if(bias)
-      Wbd[fmo].fill(0.0);
+      Wbd[fmo].setZero();
   }
   for(int n = 0; n < N; n++)
   {

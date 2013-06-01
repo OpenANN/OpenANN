@@ -17,7 +17,7 @@ Eigen::MatrixXd inputGradient(const Eigen::MatrixXd& X,
     indices.push_back(n);
 
   Eigen::MatrixXd gradient(N, D);
-  gradient.fill(0.0);
+  gradient.setZero();
   Eigen::MatrixXd in = X;
   Eigen::MatrixXd out = Y;
   for(unsigned i = 0; i < D; i++)
@@ -48,7 +48,7 @@ Eigen::VectorXd parameterGradient(std::vector<int>::const_iterator start,
                                   Optimizable& opt, const double eps)
 {
   Eigen::VectorXd gradient(opt.dimension());
-  gradient.fill(0.0);
+  gradient.setZero();
   Eigen::VectorXd params = opt.currentParameters();
   Eigen::VectorXd modifiedParams = params;
   for(unsigned i = 0; i < opt.dimension(); i++)

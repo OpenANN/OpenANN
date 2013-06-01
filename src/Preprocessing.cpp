@@ -18,7 +18,7 @@ void scaleData(Eigen::MatrixXd& data, double min, double max)
 
 void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd& b, const Eigen::MatrixXd& a)
 {
-  y.fill(0.0);
+  y.setZero();
 
   for(int c = 0; c < x.rows(); c++)
   {

@@ -86,7 +86,7 @@ void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   e.conservativeResize(N, Eigen::NoChange);
   deltas = (*ein);
 
-  e.fill(0.0);
+  e.setZero();
   #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {

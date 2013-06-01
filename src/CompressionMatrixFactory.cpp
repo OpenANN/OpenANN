@@ -28,7 +28,7 @@ void CompressionMatrixFactory::createCompressionMatrix(Eigen::MatrixXd& cm)
     cm.resize(paramDim, inputDim);
   if(compress)
   {
-    cm.fill(0.0);
+    cm.setZero();
     fillCompressionMatrix(cm);
   }
   else

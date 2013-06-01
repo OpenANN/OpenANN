@@ -65,7 +65,7 @@ public:
         file.read(values, D + 1);
         if(values[0] < 0 || values[0] >= F)
           throw OpenANN::OpenANNException("Unknown class detected.");
-        outputs.row(instance).fill(0.0);
+        outputs.row(instance).setZero();
         outputs.row(instance)(*reinterpret_cast<unsigned char*>(&values[0])) = 1.0;
 
         int idx = 0;

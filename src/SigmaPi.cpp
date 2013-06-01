@@ -68,7 +68,7 @@ void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
   int J = nodes.size();
   this->x.conservativeResize(N, Eigen::NoChange);
   a.conservativeResize(N, Eigen::NoChange);
-  this->x.rightCols(1).fill(0.0);
+  this->x.rightCols(1).setZero();
   this->y.conservativeResize(N, Eigen::NoChange);
   this->x.leftCols(info.outputs()) = *x;
 
@@ -109,7 +109,7 @@ void SigmaPi::backpropagate(Eigen::MatrixXd* error_in, Eigen::MatrixXd*& error_o
   e.conservativeResize(N, Eigen::NoChange);
   deltas.conservativeResize(N, Eigen::NoChange);
   yd.conservativeResize(N, Eigen::NoChange);
-  e.fill(0.0);
+  e.setZero();
 
   for(int i = 0; i < wd.size(); ++i)
     wd[i] = 0.0;

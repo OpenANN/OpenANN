@@ -13,7 +13,7 @@
 class Distorter
 {
 public:
-  // elastic distortion
+  //! elastic distortion
   double sigma;
   //! elastic scaling
   double alpha;
@@ -57,8 +57,8 @@ public:
 
     // gaussian filter
     distortionH.resize(rows, cols), distortionV.resize(rows, cols);
-    distortionH.fill(0.0);
-    distortionV.fill(0.0);
+    distortionH.setZero();
+    distortionV.setZero();
     int kernelCenter = gaussianKernelSize / 2;
     for(int r = 0; r < rows; r++)
     {

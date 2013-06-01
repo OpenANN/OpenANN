@@ -173,13 +173,13 @@ void MBSGD::initialize()
   N = opt->examples();
   batches = std::max(N / batchSize, 1);
   gradient.resize(P);
-  gradient.fill(0.0);
+  gradient.setZero();
   currentGradient.resize(P);
   gains.resize(P);
   gains.fill(1.0);
   parameters = opt->currentParameters();
   momentum.resize(P);
-  momentum.fill(0.0);
+  momentum.setZero();
   randomIndices.clear();
   randomIndices.reserve(N);
   rng.generateIndices<std::vector<int> >(N, randomIndices);

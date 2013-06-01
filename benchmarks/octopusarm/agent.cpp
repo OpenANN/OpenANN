@@ -135,7 +135,7 @@ int chooseAction(double state_data[], double out_action[])
 
   action = y;
   if(isMatrixBroken(action))
-    action.fill(0.0);
+    action.setZero();
 
   convert(action, out_action);
   return 0;

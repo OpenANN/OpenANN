@@ -54,7 +54,7 @@ void AlphaBetaFilter::updatedParameters()
 void AlphaBetaFilter::reset()
 {
   first = true;
-  y.fill(0.0);
+  y.setZero();
 }
 
 void AlphaBetaFilter::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)

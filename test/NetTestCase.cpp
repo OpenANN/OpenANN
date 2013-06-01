@@ -105,7 +105,7 @@ void NetTestCase::gradientCE()
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   // Target components have to sum up to 1
   Eigen::MatrixXd T(N, F);
-  T.fill(0.0);
+  T.setZero();
   OpenANN::RandomNumberGenerator rng;
   for(int n = 0; n < N; n++)
     T(n, rng.generateIndex(F)) = 1.0;

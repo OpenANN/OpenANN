@@ -382,7 +382,7 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
 
   const bool singleGradient = n >= 0;
   if(!singleGradient)
-    g.fill(0.0);
+    g.setZero();
 
   const int start = singleGradient * n;
   const int end = singleGradient ? n + 1 : examples();

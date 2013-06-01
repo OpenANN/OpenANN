@@ -84,7 +84,7 @@ bool IntrinsicPlasticity::providesGradient()
 
 Eigen::VectorXd IntrinsicPlasticity::gradient()
 {
-  g.fill(0.0);
+  g.setZero();
   for(int n = 0; n < trainSet->samples(); n++)
     g += gradient(n);
   return g;

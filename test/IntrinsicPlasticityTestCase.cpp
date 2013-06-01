@@ -52,7 +52,7 @@ void IntrinsicPlasticityTestCase::learn()
   ASSERT_NOT_EQUALS(p(3), 0.0);
 
   Eigen::VectorXd y(2);
-  y.fill(0.0);
+  y.setZero();
   for(int i = 0; i < samples; i++)
     y += ip(ds.getInstance(i));
   Eigen::VectorXd mean = y / (double) samples;
@@ -67,7 +67,7 @@ void IntrinsicPlasticityTestCase::learn()
   sgd.setStopCriteria(stop);
   while(sgd.step());
 
-  y.fill(0.0);
+  y.setZero();
   for(int i = 0; i < samples; i++)
     y += ip(ds.getInstance(i));
   mean = y / (double) samples;
