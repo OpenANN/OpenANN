@@ -23,7 +23,7 @@ class Evaluator;
  */
 class DirectStorageDataSet : public DataSet
 {
-private:
+protected:
   Eigen::MatrixXd* in;
   Eigen::MatrixXd* out;
   const int N;

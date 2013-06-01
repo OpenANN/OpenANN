@@ -1,8 +1,8 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
 #include "IDXLoader.h"
-#include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/Evaluator.h>
+#include "EnhancedDataSet.h"
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -34,11 +34,17 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
+  OpenANN::Log::getLevel() = OpenANN::Log::DEBUG;
+
   std::string directory = "./";
   if(argc > 1)
     directory = std::string(argv[1]);
 
+  // TODO pad images?
   IDXLoader loader(28, 28, 60000, 10000, directory);
+  Distorter distorter;
+  EnhancedDataSet trainingSet(loader.trainingInput, loader.trainingOutput, 2,
+                              distorter);
 
   OpenANN::Net net;                                       // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY)         //   1 x 28 x 28
