@@ -8,6 +8,7 @@
 
 namespace OpenANN
 {
+
 namespace LibSVM
 {
 
@@ -153,5 +154,6 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& s
 
 
 
-}
-} // namespace OpenANN::LibSVM
+} // namespace LibSVM
+
+} // namespace OpenANN

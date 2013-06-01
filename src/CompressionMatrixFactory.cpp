@@ -88,4 +88,4 @@ void CompressionMatrixFactory::fillCompressionMatrix(Eigen::MatrixXd& cm)
   }
 }
 
-}
+} // namespace OpenANN

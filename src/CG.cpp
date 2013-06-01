@@ -188,4 +188,4 @@ void CG::reset()
   iteration = -1;
 }
 
-}
+} // namespace OpenANN

@@ -139,7 +139,4 @@ void merge(DataSetView& merging, std::vector<DataSetView>& groups)
   }
 }
 
-
-
-
-}
+} // namespace OpenANN

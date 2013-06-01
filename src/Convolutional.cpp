@@ -195,4 +195,4 @@ Eigen::MatrixXd& Convolutional::getOutput()
   return y;
 }
 
-}
+} // namespace OpenANN

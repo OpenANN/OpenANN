@@ -88,4 +88,4 @@ Eigen::MatrixXd& AlphaBetaFilter::getOutput()
   return y;
 }
 
-}
+} // namespace OpenANN

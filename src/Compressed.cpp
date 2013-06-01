@@ -103,4 +103,4 @@ Eigen::MatrixXd& Compressed::getOutput()
   return y;
 }
 
-}
+} // namespace OpenANN

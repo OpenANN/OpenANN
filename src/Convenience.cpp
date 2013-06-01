@@ -38,4 +38,4 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
   net.useDropout(false);
 }
 
-}
+} // namespace OpenANN
