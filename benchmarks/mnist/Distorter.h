@@ -40,38 +40,30 @@ public:
   Eigen::MatrixXd gaussianKernel;
   Eigen::MatrixXd distortionH, distortionV;
 
-  Distorter(double sigma = 5.0, double alpha = 0.5, double beta = 15.0,
+  Distorter(double sigma = 5.0, double alpha = 36.0/255.0, double beta = 15.0,
             double gammaX = 15.0, double gammaY = 15.0)
     : sigma(sigma), alpha(alpha), beta(beta), gammaX(gammaX), gammaY(gammaY),
       gaussianKernelSize(21), gaussianKernel(gaussianKernelSize,
                                              gaussianKernelSize)
   {
-    double twoSigmaSquared = sigma * sigma / 2.0;
-    double twoPiSigma = sqrt(2.0 * M_PI) / sigma;
+    const double twoSigmaSquared = 2.0 / (sigma * sigma);
+    const double twoPiSigma = std::sqrt(2.0 * M_PI) / (sigma+1e-10);
     int center = gaussianKernelSize / 2;
     for(int row = 0; row < gaussianKernelSize; row++)
       for(int col = 0; col < gaussianKernelSize; col++)
-        gaussianKernel(row, col) = twoPiSigma * exp(-twoSigmaSquared *
+        gaussianKernel(row, col) = twoPiSigma * std::exp(-twoSigmaSquared *
             (std::pow((double)(row - center), 2.0) +
-            std::pow((double)(col - center), 2.0)));
+             std::pow((double)(col - center), 2.0)));
     OPENANN_CHECK_MATRIX_BROKEN(gaussianKernel);
   }
 
   void createDistortionMap(int rows, int cols)
   {
-    // uniform random matrices
-    OpenANN::RandomNumberGenerator rng;
-    Eigen::MatrixXd uniformH(rows, cols), uniformV(rows, cols);
-    for(int r = 0; r < rows; r++)
-    {
-      for(int c = 0; c < cols; c++)
-      {
-        uniformH(r, c) = rng.generate<double>(-1.0, 2.0);
-        uniformV(r, c) = rng.generate<double>(-1.0, 2.0);
-      }
-    }
+    // Uniform random matrices in [-1, 1]
+    Eigen::MatrixXd uniformH = Eigen::MatrixXd::Random(rows, cols);
+    Eigen::MatrixXd uniformV = Eigen::MatrixXd::Random(rows, cols);
 
-    // gaussian filter
+    // Gaussian filter
     distortionH.resize(rows, cols), distortionV.resize(rows, cols);
     distortionH.setZero();
     distortionV.setZero();
@@ -85,8 +77,9 @@ public:
         {
           for(int kc = 0; kc < gaussianKernelSize; kc++)
           {
-            int inputRow = r - kernelCenter + kr, inputCol = c - kernelCenter + kc;
-            if(!(inputRow < 0 || inputRow >= rows || inputCol < 0 || inputCol >= cols))
+            int inputRow = r - kernelCenter + kr;
+            int inputCol = c - kernelCenter + kc;
+            if(inputRow >= 0 && inputRow < rows && inputCol >= 0 && inputCol < cols)
             {
               convolvedH += uniformH(inputRow, inputCol) * gaussianKernel(kr, kc);
               convolvedV += uniformV(inputRow, inputCol) * gaussianKernel(kr, kc);
@@ -100,11 +93,12 @@ public:
     OPENANN_CHECK_MATRIX_BROKEN(distortionH);
     OPENANN_CHECK_MATRIX_BROKEN(distortionV);
 
-    // image scaling
+    // Image scaling
+    OpenANN::RandomNumberGenerator rng;
     double horizontalScaling = rng.generate<double>(-1.0, 2.0) * gammaX / 100.0;
     double verticalScaling = rng.generate<double>(-1.0, 2.0) * gammaY / 100.0;
-    int imageCenter = rows / 2;
     OPENANN_CHECK_EQUALS(cols, rows); // could be generalized but YAGNI
+    int imageCenter = rows / 2;
     for(int r = 0; r < rows; r++)
     {
       for(int c = 0; c < cols; c++)

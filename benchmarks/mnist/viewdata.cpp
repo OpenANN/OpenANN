@@ -25,7 +25,8 @@ public:
                     int cols, QWidget* parent = 0,
                     const QGLWidget* shareWidget = 0, Qt::WindowFlags f = 0)
       : dataSet(dataSet), xImages(5), yImages(5), rows(rows), cols(cols),
-        width(800), height(600), instance(0), toggleDistortions(false)
+        width(800), height(600), instance(0), toggleDistortions(false),
+        distorter(5.0, 36.0/255.0, 15.0, 15.0, 15.0)
   {
   }
 
@@ -144,7 +145,7 @@ int main(int argc, char** argv)
 #endif
   OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
 
-  std::string directory = "mnist/";
+  std::string directory = "./";
   if(argc > 1)
     directory = std::string(argv[1]);
 
