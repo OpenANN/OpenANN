@@ -14,10 +14,18 @@
  *
  * Available distortions are:
  *
- * - rotation
- * - horizontal and vertical scaling
  * - elastic distortions (emulation of uncontrolled oscillations of the hand
  *   muscles)
+ * - rotation
+ * - horizontal and vertical scaling
+ *
+ * To apply elastic distortions, the original image is distorted with random
+ * displacements and then convolved with a Gaussian kernel of width
+ * \f$ \sigma \in [ 5, 6] \f$. Then the values are rescaled by the factor
+ * \f$ \alpha \in [36/255, 36/255] \f$. Afterwards the image will be rotated
+ * by \f$ \beta \in [7.5, 15] \f$ degrees and scaled horizontally by the
+ * factor \f$ \gamma_x \in [15, 20] \f$ and vertically by
+ * \f$ \gamma_y \in [15, 20] \f$.
  *
  * Source: http://www.codeproject.com/Articles/16650/Neural-Network-for-Recognition-of-Handwritten-Digi
  */
@@ -110,7 +118,7 @@ public:
     OPENANN_CHECK_MATRIX_BROKEN(distortionH);
     OPENANN_CHECK_MATRIX_BROKEN(distortionV);
 
-    // rotation
+    // Rotation
     double angle = beta * rng.generate<double>(-1.0, 2.0) * M_PI / 180.0;
     double cosAngle = cos(angle);
     double sinAngle = sin(angle);

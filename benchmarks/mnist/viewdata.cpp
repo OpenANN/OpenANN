@@ -150,7 +150,8 @@ int main(int argc, char** argv)
     directory = std::string(argv[1]);
 
   IDXLoader loader(30, 30, 60000, 10000, directory);
-  OpenANN::DirectStorageDataSet dataSet(&loader.trainingInput, &loader.trainingOutput);
+  OpenANN::DirectStorageDataSet dataSet(&loader.trainingInput,
+                                        &loader.trainingOutput);
 
   QApplication app(argc, argv);
   DataVisualization visual(dataSet, loader.padToX, loader.padToY);
