@@ -46,12 +46,11 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;                                       // Nodes per layer:
   net.inputLayer(1, loader.padToX, loader.padToY)         //   1 x 28 x 28
-  .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05) //  20 x 24 x 24
+  .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05) //  20 x 24 x 24
   .maxPoolingLayer(2, 2)                                  //  20 x 12 x 12
-  .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05) //  20 x  8 x  8
+  .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05) //  20 x  8 x  8
   .maxPoolingLayer(2, 2)                                  //  20 x  4 x  4
-  .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)     // 150
-  .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)      // 100
+  .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)     // 150
   .outputLayer(loader.F, OpenANN::LINEAR, 0.05);          //  10
   OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
@@ -64,13 +63,13 @@ int main(int argc, char** argv)
   OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
                " iteration is finished.";
 
-  OpenANN::MBSGD optimizer(0.01, 0.6, 32, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  OpenANN::MBSGD optimizer(0.001, 0.0, 1, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
   OpenANN::DataStream stream(loader.trainingN);
   stream.setLearner(net);
   stream.setOptimizer(optimizer);
 
   Eigen::VectorXd x, t;
-  for(int it = 0; it < 100; it++)
+  for(int it = 0; it < 1000; it++)
   {
     for(int n = 0; n < loader.trainingN; n++)
     {

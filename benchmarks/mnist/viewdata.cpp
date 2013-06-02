@@ -149,7 +149,7 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(30, 30, 60000, 10000, directory);
+  IDXLoader loader(28, 28, 60000, 10000, directory);
   OpenANN::DirectStorageDataSet dataSet(&loader.trainingInput,
                                         &loader.trainingOutput);
 
