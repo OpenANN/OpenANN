@@ -37,21 +37,37 @@ int main(int argc, char** argv)
 #endif
 
   std::string directory = "./";
+  bool distortions = false;
   if(argc > 1)
     directory = std::string(argv[1]);
+  if(argc > 2)
+    distortions = true;
 
-  // TODO pad images?
   IDXLoader loader(28, 28, 60000, 10000, directory);
   Distorter distorter;
 
-  OpenANN::Net net;                                       // Nodes per layer:
-  net.inputLayer(1, loader.padToX, loader.padToY)         //   1 x 28 x 28
-  .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05) //  20 x 24 x 24
-  .maxPoolingLayer(2, 2)                                  //  20 x 12 x 12
-  .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05) //  20 x  8 x  8
-  .maxPoolingLayer(2, 2)                                  //  20 x  4 x  4
-  .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)     // 150
-  .outputLayer(loader.F, OpenANN::LINEAR, 0.05);          //  10
+  OpenANN::Net net;
+  net.inputLayer(1, loader.padToX, loader.padToY);
+  if(distortions)
+  {
+    // High model complexity
+    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05);
+  }
+  else
+  {
+    // Smaller network
+    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05);
+  }
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05);
   OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         &evaluator);
@@ -69,14 +85,30 @@ int main(int argc, char** argv)
   stream.setOptimizer(optimizer);
 
   Eigen::VectorXd x, t;
-  for(int it = 0; it < 1000; it++)
+  if(distortions)
   {
-    for(int n = 0; n < loader.trainingN; n++)
+    // Generate more training data with distortions
+    for(int it = 0; it < 1000; it++)
     {
-      x = loader.trainingInput.row(n);
-      t = loader.trainingOutput.row(n);
-      distorter.applyDistortion(x, loader.padToX, loader.padToY);
-      stream.addSample(&x, &t);
+      for(int n = 0; n < loader.trainingN; n++)
+      {
+        x = loader.trainingInput.row(n);
+        t = loader.trainingOutput.row(n);
+        distorter.applyDistortion(x, loader.padToX, loader.padToY);
+        stream.addSample(&x, &t);
+      }
+    }
+  }
+  else
+  {
+    for(int it = 0; it < 100; it++)
+    {
+      for(int n = 0; n < loader.trainingN; n++)
+      {
+        x = loader.trainingInput.row(n);
+        t = loader.trainingOutput.row(n);
+        stream.addSample(&x, &t);
+      }
     }
   }
 
