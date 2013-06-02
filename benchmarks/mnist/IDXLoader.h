@@ -133,34 +133,6 @@ public:
     }
   }
 
-  void distort(int multiplier = 10)
-  {
-    debugLogger << "Start creating " << (multiplier - 1) << " distortions.\n";
-    int originalN = trainingN;
-    trainingN *= multiplier;
-    Eigen::MatrixXd originalInput = trainingInput;
-    trainingInput.resize(D, trainingN);
-    trainingInput.block(0, 0, D, originalN) = originalInput;
-    Eigen::MatrixXd originalOutput = trainingOutput;
-    trainingOutput.resize(F, trainingN);
-    trainingOutput.block(0, 0, F, originalN) = originalOutput;
-
-    Eigen::VectorXd instance(D);
-    for(int distortion = 1; distortion < multiplier; distortion++)
-    {
-      Distorter distorter;
-      distorter.createDistortionMap(padToX, padToY);
-      for(int n = distortion * originalN; n < (distortion + 1)*originalN; n++)
-      {
-        instance = originalInput.col(n % originalN);
-        distorter.applyDistortion(instance);
-        trainingInput.col(n) = instance;
-      }
-      trainingOutput.block(0, distortion * originalN, F, originalN) = originalOutput;
-      debugLogger << "Finished distortion " << distortion << ".\n";
-    }
-  }
-
 private:
   template<typename T>
   void read(std::fstream& stream, T& t)
