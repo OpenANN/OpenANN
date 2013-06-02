@@ -16,7 +16,8 @@
  *
  * - rotation
  * - horizontal and vertical scaling
- * - elastic distortions
+ * - elastic distortions (emulation of uncontrolled oscillations of the hand
+ *   muscles)
  *
  * Source: http://www.codeproject.com/Articles/16650/Neural-Network-for-Recognition-of-Handwritten-Digi
  */

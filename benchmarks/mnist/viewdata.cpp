@@ -1,7 +1,8 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/io/Logger.h>
+#include <OpenANN/io/DirectStorageDataSet.h>
 #include "IDXLoader.h"
-#include "EnhancedDataSet.h"
+#include "Distorter.h"
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QApplication>
@@ -12,18 +13,19 @@
 
 class DataVisualization : public QGLWidget
 {
-  EnhancedDataSet& dataSet;
+  OpenANN::DirectStorageDataSet& dataSet;
   int xImages, yImages;
   int rows, cols;
   int width, height;
   int instance;
-  OpenANN::Logger debugLogger;
+  bool toggleDistortions;
+  Distorter distorter;
 public:
-  DataVisualization(EnhancedDataSet& dataSet, int rows, int cols,
-                    QWidget* parent = 0, const QGLWidget* shareWidget = 0,
-                    Qt::WindowFlags f = 0)
+  DataVisualization(OpenANN::DirectStorageDataSet& dataSet, int rows,
+                    int cols, QWidget* parent = 0,
+                    const QGLWidget* shareWidget = 0, Qt::WindowFlags f = 0)
       : dataSet(dataSet), xImages(5), yImages(5), rows(rows), cols(cols),
-        width(800), height(600), instance(0), debugLogger(OpenANN::Logger::CONSOLE)
+        width(800), height(600), instance(0), toggleDistortions(false)
   {
   }
 
@@ -76,6 +78,8 @@ public:
       for(int xIdx = 0; xIdx < xImages; xIdx++)
       {
         Eigen::VectorXd image = dataSet.getInstance(instance+xImages*yIdx+xIdx);
+        if(toggleDistortions)
+          distorter.applyDistortion(image, rows, cols);
 
         float translateX = xIdx * (rows+1);
         float translateY = yIdx * (cols+1);
@@ -123,7 +127,7 @@ public:
         update();
         break;
       case Qt::Key_Left:
-        dataSet.distort();
+        toggleDistortions = !toggleDistortions;
         update();
         break;
       default:
@@ -145,8 +149,7 @@ int main(int argc, char** argv)
     directory = std::string(argv[1]);
 
   IDXLoader loader(30, 30, 60000, 10000, directory);
-  Distorter distorter;
-  EnhancedDataSet dataSet(loader.trainingInput, loader.trainingOutput, 1, distorter);
+  OpenANN::DirectStorageDataSet dataSet(&loader.trainingInput, &loader.trainingOutput);
 
   QApplication app(argc, argv);
   DataVisualization visual(dataSet, loader.padToX, loader.padToY);
