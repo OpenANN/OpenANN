@@ -2,7 +2,6 @@ build
 .kdev4
 *~
 *.backup
-*.orig
 lib/ALGLIB
 lib/CMA-ES*
 src/OpenANN.cpp
