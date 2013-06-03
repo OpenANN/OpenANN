@@ -7,7 +7,7 @@ class Quadratic : public OpenANN::Optimizable
   Eigen::VectorXd x;
 public:
   Quadratic()
-      : x(N)
+    : x(N)
   {
   }
 

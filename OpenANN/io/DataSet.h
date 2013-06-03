@@ -1,8 +1,10 @@
-#pragma once
+#ifndef OPENANN_IO_DATA_SET_H_
+#define OPENANN_IO_DATA_SET_H_
 
 #include <Eigen/Dense>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 class Learner;
 
@@ -58,3 +60,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_IO_DATA_SET_H_

@@ -1,8 +1,10 @@
-#pragma once
+#ifndef OPENANN_LAYERS_LOCAL_RESPONSE_NORMALIZATION_H_
+#define OPENANN_LAYERS_LOCAL_RESPONSE_NORMALIZATION_H_
 
 #include <OpenANN/layers/Layer.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class LocalResponseNormalization
@@ -63,3 +65,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_LOCAL_RESPONSE_NORMALIZATION_H_

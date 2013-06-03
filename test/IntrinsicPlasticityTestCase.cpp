@@ -52,7 +52,7 @@ void IntrinsicPlasticityTestCase::learn()
   ASSERT_NOT_EQUALS(p(3), 0.0);
 
   Eigen::VectorXd y(2);
-  y.fill(0.0);
+  y.setZero();
   for(int i = 0; i < samples; i++)
     y += ip(ds.getInstance(i));
   Eigen::VectorXd mean = y / (double) samples;
@@ -67,7 +67,7 @@ void IntrinsicPlasticityTestCase::learn()
   sgd.setStopCriteria(stop);
   while(sgd.step());
 
-  y.fill(0.0);
+  y.setZero();
   for(int i = 0; i < samples; i++)
     y += ip(ds.getInstance(i));
   mean = y / (double) samples;
@@ -89,7 +89,7 @@ void IntrinsicPlasticityTestCase::backprop()
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);
   Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::
-      inputGradient(X, Y, opt);
+                                      inputGradient(X, Y, opt);
   ASSERT_EQUALS(estimatedGradient.rows(), 2);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)

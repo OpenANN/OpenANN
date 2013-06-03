@@ -1,18 +1,21 @@
-#pragma once
+#ifndef OPENANN_IO_FANN_H_
+#define OPENANN_IO_FANN_H_
 
 #include <Eigen/Dense>
 #include <iostream>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
-namespace FANN {
+namespace FANN
+{
 
 /**
  * Read a FANN-encoded dataset from the filesystem and load
  * its values into given in- and output matrices.
  *
  * @param in input matrix with an unspecific dimension that
- *           will contain the data 
+ *           will contain the data
  * @param out output matrix with an unspecific dimension that
  *            will contain the data.
  * @param filename name to the corresponding libsvm dataset file
@@ -22,10 +25,10 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename);
 
 /**
  * Read a FANN-encoded dataset from any input stream and load
- * its values into given in- and output matrices. 
+ * its values into given in- and output matrices.
  *
  * @param in input matrix with an unspecific dimension that
- *      will contain the data 
+ *      will contain the data
  * @param out output matrix with an unspecific dimension that
  *      will contain the data.
  * @param stream general STL data stream for getting libsvm-encoded datasets
@@ -55,3 +58,5 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& s
 }
 
 }
+
+#endif // OPENANN_IO_FANN_H_

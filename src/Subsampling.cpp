@@ -3,7 +3,8 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/OpenANNException.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
                          bool bias, ActivationFunction act, double stdDev)
@@ -19,14 +20,14 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
 {
   OutputInfo info;
   info.dimensions.push_back(fm);
-  outRows = inRows/kernelRows;
-  outCols = inCols/kernelCols;
+  outRows = inRows / kernelRows;
+  outCols = inCols / kernelCols;
   fmOutSize = outRows * outCols;
   info.dimensions.push_back(outRows);
   info.dimensions.push_back(outCols);
   fmInSize = inRows * inCols;
-  maxRow = inRows-kernelRows+1;
-  maxCol = inCols-kernelCols+1;
+  maxRow = inRows - kernelRows + 1;
+  maxCol = inCols - kernelCols + 1;
 
   W.resize(fm, Eigen::MatrixXd(outRows, outCols));
   Wd.resize(fm, Eigen::MatrixXd(outRows, outCols));
@@ -97,18 +98,18 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
   OPENANN_CHECK_EQUALS(x->cols(), fm * inRows * inCols);
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
-  a.fill(0.0);
-#pragma omp parallel for
+  a.setZero();
+  #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
     int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
-      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
       {
-        int rowBase = fmo*fmInSize + ri*inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+        int rowBase = fmo * fmInSize + ri * inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
         {
           for(int kr = 0; kr < kernelRows; kr++)
           {
@@ -137,12 +138,12 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
 
-  e.fill(0.0);
+  e.setZero();
   for(int fmo = 0; fmo < fm; fmo++)
   {
-    Wd[fmo].fill(0.0);
+    Wd[fmo].setZero();
     if(bias)
-      Wbd[fmo].fill(0.0);
+      Wbd[fmo].setZero();
   }
   for(int n = 0; n < N; n++)
   {
@@ -150,17 +151,17 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
     int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
-      for(int ri = 0, ro = 0; ri < maxRow; ri+=kernelRows, ro++)
+      for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
       {
-        int rowBase = fmo*fmInSize + ri*inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci+=kernelCols, co++, outputIdx++)
+        int rowBase = fmo * fmInSize + ri * inCols;
+        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
         {
           for(int kr = 0; kr < kernelRows; kr++)
           {
             inputIdx = rowBase + ci;
             for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
             {
-              e(n, inputIdx) += W[fmo](ro, co)*deltas(n, outputIdx);
+              e(n, inputIdx) += W[fmo](ro, co) * deltas(n, outputIdx);
               Wd[fmo](ro, co) += deltas(n, outputIdx) * (*x)(n, inputIdx);
             }
           }

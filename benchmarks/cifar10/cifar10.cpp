@@ -1,6 +1,7 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/Evaluator.h>
 #include <OpenANN/util/OpenANNException.h>
 #ifdef PARALLEL_CORES
 #include <omp.h>
@@ -15,7 +16,7 @@ public:
   int C, X, Y, D, F, trainingN, testN, NperFile;
 
   CIFARLoader(const std::string& directory)
-      : directory(directory)
+    : directory(directory)
   {
     setup();
     load(trainFiles, trainingInput, trainingOutput);
@@ -47,24 +48,24 @@ public:
   void load(std::vector<std::string>& file_names, Eigen::MatrixXd& inputs, Eigen::MatrixXd& outputs)
   {
     int instance = 0;
-    char values[D+1];
+    char values[D + 1];
     for(int f = 0; f < file_names.size(); f++)
     {
       std::fstream file((directory + "/" + file_names[f]).c_str(),
                         std::ios::in | std::ios::binary);
       if(!file.is_open())
         throw OpenANN::OpenANNException("Could not open file '"
-            + file_names[f] + "' in directory '" + directory + "'.");
+                                        + file_names[f] + "' in directory '" + directory + "'.");
       for(int n = 0; n < NperFile; n++, instance++)
       {
         if(file.eof())
           throw OpenANN::OpenANNException("Reached unexpected end of file "
-              + file_names[f] + ".");
+                                          + file_names[f] + ".");
 
-        file.read(values, D+1);
+        file.read(values, D + 1);
         if(values[0] < 0 || values[0] >= F)
           throw OpenANN::OpenANNException("Unknown class detected.");
-        outputs.row(instance).fill(0.0);
+        outputs.row(instance).setZero();
         outputs.row(instance)(*reinterpret_cast<unsigned char*>(&values[0])) = 1.0;
 
         int idx = 0;
@@ -75,7 +76,7 @@ public:
             for(int y = 0; y < Y; y++, idx++)
             {
               // Scale data to [-1, 1]
-              inputs(instance, idx) = ((double) *reinterpret_cast<unsigned char*>(&values[idx+1])) / 128.0 - 1.0;
+              inputs(instance, idx) = ((double) * reinterpret_cast<unsigned char*>(&values[idx + 1])) / 128.0 - 1.0;
             }
           }
         }
@@ -113,35 +114,35 @@ int main(int argc, char** argv)
 
   CIFARLoader loader(directory);
 
-  OpenANN::Net net;                                                      // Nodes per layer:
-  net.inputLayer(loader.C, loader.X, loader.Y);                          //   3 x 32 x 32
+  OpenANN::Net net;                                                  // Nodes per layer:
+  net.inputLayer(loader.C, loader.X, loader.Y);                      //   3 x 32 x 32
   if(bigNet)
   {
-     net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)         // 200 x 28 x 28
-        .maxPoolingLayer(2, 2)                                           // 200 x 14 x 14
-        .convolutionalLayer(150, 3, 3, OpenANN::RECTIFIER, 0.05)         // 150 x 12 x 12
-        .maxPoolingLayer(2, 2)                                           // 150 x  6 x  6
-        .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)         // 100 x  4 x  4
-        .maxPoolingLayer(2, 2)                                           // 100 x  2 x  2
-        .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 300
-        .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0); // 100
+    net.convolutionalLayer(200, 5, 5, OpenANN::RECTIFIER, 0.05)      // 200 x 28 x 28
+    .maxPoolingLayer(2, 2)                                           // 200 x 14 x 14
+    .convolutionalLayer(150, 3, 3, OpenANN::RECTIFIER, 0.05)         // 150 x 12 x 12
+    .maxPoolingLayer(2, 2)                                           // 150 x  6 x  6
+    .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)         // 100 x  4 x  4
+    .maxPoolingLayer(2, 2)                                           // 100 x  2 x  2
+    .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 300
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0); // 100
   }
   else
   {
-     net.convolutionalLayer(50, 5, 5, OpenANN::RECTIFIER, 0.05)          //  50 x 28 x 28
-        .maxPoolingLayer(2, 2)                                           //  50 x 14 x 14
-        .convolutionalLayer(30, 3, 3, OpenANN::RECTIFIER, 0.05)          //  30 x 12 x 12
-        .maxPoolingLayer(2, 2)                                           //  30 x  6 x  6
-        .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)          //  20 x  4 x  4
-        .maxPoolingLayer(2, 2)                                           //  20 x  2 x  2
-        .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 100
-        .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true, 15.0);  //  50
+    net.convolutionalLayer(50, 5, 5, OpenANN::RECTIFIER, 0.05)       //  50 x 28 x 28
+    .maxPoolingLayer(2, 2)                                           //  50 x 14 x 14
+    .convolutionalLayer(30, 3, 3, OpenANN::RECTIFIER, 0.05)          //  30 x 12 x 12
+    .maxPoolingLayer(2, 2)                                           //  30 x  6 x  6
+    .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)          //  20 x  4 x  4
+    .maxPoolingLayer(2, 2)                                           //  20 x  2 x  2
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 100
+    .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true, 15.0);  //  50
   }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                       //  10
-     .trainingSet(loader.trainingInput, loader.trainingOutput);
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                   //  10
+  .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
-                                        OpenANN::DirectStorageDataSet::MULTICLASS,
-                                        OpenANN::Logger::FILE);
+                                        &evaluator);
   net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   OPENANN_INFO << "Created MLP.";
@@ -156,7 +157,7 @@ int main(int argc, char** argv)
   optimizer.optimize();
 
   OPENANN_INFO << "Error = " << net.error();
-  OPENANN_INFO << "Wrote data to dataset-*.log.";
+  OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
   return EXIT_SUCCESS;
 }

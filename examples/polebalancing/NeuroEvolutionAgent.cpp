@@ -24,7 +24,7 @@ void NeuroEvolutionAgent::abandoneIn(Environment& environment)
 
   ActivationFunction act = a == "tanh" ? TANH : LINEAR;
   inputSize = (fullyObservable || alphaBetaFilter ? 1 : 2)
-      * environment.stateSpaceDimension();
+              * environment.stateSpaceDimension();
   policy.inputLayer(inputSize, 1, 1);
 
   if(!fullyObservable)
@@ -81,7 +81,8 @@ void NeuroEvolutionAgent::chooseAction()
     if(!gruauFitness)
       fitness = -environment->stepsInEpisode();
     else
-    { // Gruau's fitness measurement
+    {
+      // Gruau's fitness measurement
       const double f1 = environment->stepsInEpisode() / 1000.0;
       double f2;
       if(environment->stepsInEpisode() >= 100)
@@ -90,7 +91,7 @@ void NeuroEvolutionAgent::chooseAction()
         for(std::list<Eigen::VectorXd>::iterator it = inputBuffer.begin(); it != inputBuffer.end(); it++)
         {
           denom += std::fabs((*it)(0)); // position on the track
-          for(int i = 1; i < inputSize; i+=2)
+          for(int i = 1; i < inputSize; i += 2)
             denom += std::fabs((*it)(i)); // velocities
         }
         f2 = 0.75 / denom;

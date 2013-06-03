@@ -4,27 +4,27 @@
 #include <QApplication>
 
 TwoSpiralsVisualization::TwoSpiralsVisualization(
-    const Eigen::MatrixXd& trainingInput,
-    const Eigen::MatrixXd& trainingOutput,
-    const Eigen::MatrixXd& testInput,
-    const Eigen::MatrixXd& testOutput)
-    : width(500), height(500),
-      trainingSet(trainingInput, trainingOutput),
-      testSet(testInput, testOutput), showTraining(true), showTest(true),
-      showPrediction(true), showSmooth(true), net(new Net)
+  const Eigen::MatrixXd& trainingInput,
+  const Eigen::MatrixXd& trainingOutput,
+  const Eigen::MatrixXd& testInput,
+  const Eigen::MatrixXd& testOutput)
+  : width(500), height(500),
+    trainingSet(trainingInput, trainingOutput),
+    testSet(testInput, testOutput), showTraining(true), showTest(true),
+    showPrediction(true), showSmooth(true), net(new Net)
 {
-  std::memset(classes, 0, sizeof(double)*100*100);
+  std::memset(classes, 0, sizeof(double) * 100 * 100);
   trainingSet.setVisualization(this);
   QObject::connect(this, SIGNAL(updatedData()), this, SLOT(repaint()));
 
   // initialize MLP
   net->inputLayer(trainingSet.inputs())
-    // use this as only hidden layer to try extreme learning machine
-    //.extremeLayer(1500, RECTIFIER, 1.0)
-    .fullyConnectedLayer(20, TANH)
-    .fullyConnectedLayer(20, TANH)
-    .outputLayer(trainingSet.outputs(), TANH)
-    .trainingSet(trainingSet);
+  // use this as only hidden layer to try extreme learning machine
+  //.extremeLayer(1500, RECTIFIER, 1.0)
+  .fullyConnectedLayer(20, TANH)
+  .fullyConnectedLayer(20, TANH)
+  .outputLayer(trainingSet.outputs(), TANH)
+  .trainingSet(trainingSet);
   net->initialize();
 
   // set stop criteria
@@ -78,7 +78,7 @@ void TwoSpiralsVisualization::paintGL()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  glTranslatef(-0.5f,-0.5f,-1.25f);
+  glTranslatef(-0.5f, -0.5f, -1.25f);
 
   if(showPrediction)
     paintPrediction();
@@ -104,7 +104,7 @@ void TwoSpiralsVisualization::paintPrediction()
       v(0) = (double) x / 100.0f;
       v(1) = (double) y / 100.0f;
       if(showSmooth)
-        c = classes[x][y]/2.0f + 0.5f;
+        c = classes[x][y] / 2.0f + 0.5f;
       else
         c = classes[x][y] < 0.0 ? 0.0f : 1.0f;
       classesMutex.unlock();
@@ -114,10 +114,10 @@ void TwoSpiralsVisualization::paintPrediction()
       float minY = (float) y / 100.0f - 0.005;
       float maxY = minY + 0.01;
       glBegin(GL_QUADS);
-        glVertex2f(minX, maxY);
-        glVertex2f(maxX, maxY);
-        glVertex2f(maxX, minY);
-        glVertex2f(minX, minY);
+      glVertex2f(minX, maxY);
+      glVertex2f(maxX, maxY);
+      glVertex2f(maxX, minY);
+      glVertex2f(minX, minY);
       glEnd();
     }
   }
@@ -127,14 +127,14 @@ void TwoSpiralsVisualization::paintDataSet(bool training)
 {
   TwoSpiralsDataSet& dataSet = training ? trainingSet : testSet;
   glBegin(GL_POINTS);
-    for(int n = 0; n < dataSet.samples(); n++)
-    {
-      if(dataSet.getTarget(n)(0) > 0.0)
-        glColor3f(1.0f, 0.0f, 0.0f);
-      else
-        glColor3f(1.0f, 1.0f, 0.0f);
-      glVertex2d(dataSet.getInstance(n)(0), dataSet.getInstance(n)(1));
-    }
+  for(int n = 0; n < dataSet.samples(); n++)
+  {
+    if(dataSet.getTarget(n)(0) > 0.0)
+      glColor3f(1.0f, 0.0f, 0.0f);
+    else
+      glColor3f(1.0f, 1.0f, 0.0f);
+    glVertex2d(dataSet.getInstance(n)(0), dataSet.getInstance(n)(1));
+  }
   glEnd();
 }
 
@@ -142,37 +142,37 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
 {
   switch(keyEvent->key())
   {
-    case Qt::Key_Q:
-      OPENANN_INFO << "Switching training set on/off.";
-      showTraining = !showTraining;
-      update();
-      break;
-    case Qt::Key_W:
-      OPENANN_INFO << "Switching test set on/off.";
-      showTest = !showTest;
-      update();
-      break;
-    case Qt::Key_E:
-      OPENANN_INFO << "Switching prediction on/off.";
-      showPrediction = !showPrediction;
-      update();
-      break;
-    case Qt::Key_R:
-      OPENANN_INFO << "Switching smooth classes on/off.";
-      showSmooth = !showSmooth;
-      update();
-      break;
-    case Qt::Key_A:
-      OPENANN_INFO << "Training with restart (" << net->dimension() << " parameters)...";
-      train(*net, "LMA", SSE, stop, true);
-      break;
-    case Qt::Key_Escape:
-      OPENANN_INFO << "Quitting application.";
-      QApplication::quit();
-      break;
-    default:
-      QGLWidget::keyPressEvent(keyEvent);
-      break;
+  case Qt::Key_Q:
+    OPENANN_INFO << "Switching training set on/off.";
+    showTraining = !showTraining;
+    update();
+    break;
+  case Qt::Key_W:
+    OPENANN_INFO << "Switching test set on/off.";
+    showTest = !showTest;
+    update();
+    break;
+  case Qt::Key_E:
+    OPENANN_INFO << "Switching prediction on/off.";
+    showPrediction = !showPrediction;
+    update();
+    break;
+  case Qt::Key_R:
+    OPENANN_INFO << "Switching smooth classes on/off.";
+    showSmooth = !showSmooth;
+    update();
+    break;
+  case Qt::Key_A:
+    OPENANN_INFO << "Training with restart (" << net->dimension() << " parameters)...";
+    train(*net, "LMA", SSE, stop, true);
+    break;
+  case Qt::Key_Escape:
+    OPENANN_INFO << "Quitting application.";
+    QApplication::quit();
+    break;
+  default:
+    QGLWidget::keyPressEvent(keyEvent);
+    break;
   }
 }
 
@@ -195,7 +195,7 @@ void TwoSpiralsDataSet::finishIteration(Learner& learner)
       for(int y = 0; y < 100; y++)
       {
         Eigen::VectorXd in(2);
-        in << (double)x/double(100), (double)y/double(100);
+        in << (double)x / double(100), (double)y / double(100);
         Eigen::VectorXd out = learner(in);
         visualization->predictClass(x, y, out(0, 0));
       }

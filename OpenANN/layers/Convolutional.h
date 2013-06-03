@@ -1,9 +1,11 @@
-#pragma once
+#ifndef OPENANN_LAYERS_CONVOLUTIONAL_H_
+#define OPENANN_LAYERS_CONVOLUTIONAL_H_
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class Convolutional
@@ -59,3 +61,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_CONVOLUTIONAL_H_

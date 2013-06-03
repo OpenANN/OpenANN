@@ -5,8 +5,8 @@ namespace OpenANN
 {
 
 Learner::Learner()
-    : trainSet(0), validSet(0), deleteTrainSet(false), deleteValidSet(false),
-      N(0)
+  : trainSet(0), validSet(0), deleteTrainSet(false), deleteValidSet(false),
+    N(0)
 {
 }
 

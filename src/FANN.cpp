@@ -2,9 +2,11 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <fstream>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
-namespace FANN {
+namespace FANN
+{
 
 int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, const char* filename)
 {

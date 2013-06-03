@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_ACTIVATION_FUNCTIONS_H_
+#define OPENANN_ACTIVATION_FUNCTIONS_H_
 
 #include <Eigen/Dense>
 
@@ -75,3 +76,5 @@ void linear(const Eigen::MatrixXd& a, Eigen::MatrixXd& z);
 void linearDerivative(Eigen::MatrixXd& gd);
 
 }
+
+#endif // OPENANN_ACTIVATION_FUNCTIONS_H_

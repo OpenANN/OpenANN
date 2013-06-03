@@ -1,8 +1,10 @@
-#pragma once
+#ifndef OPENANN_PREPROCESSING_H_
+#define OPENANN_PREPROCESSING_H_
 
 #include <Eigen/Dense>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * Scale all values to the interval [min, max].
@@ -30,3 +32,5 @@ void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd&
 void downsample(const Eigen::MatrixXd& y, Eigen::MatrixXd& d, int downSamplingFactor);
 
 }
+
+#endif // OPENANN_PREPROCESSING_H_

@@ -76,4 +76,4 @@ Eigen::VectorXd Compressor::compress(const Eigen::VectorXd& instance)
 #endif
 }
 
-}
+} // namespace OpenANN

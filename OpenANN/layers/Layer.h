@@ -1,9 +1,11 @@
-#pragma once
+#ifndef OPENANN_LAYERS_LAYER_H_
+#define OPENANN_LAYERS_LAYER_H_
 
 #include <Eigen/Dense>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class OutputInfo
@@ -73,3 +75,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_LAYER_H_

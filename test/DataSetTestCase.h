@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_TEST_DATA_SET_TEST_CASE_H_
+#define OPENANN_TEST_DATA_SET_TEST_CASE_H_
 
 #include <Test/TestCase.h>
 #include <Eigen/Dense>
@@ -15,3 +16,4 @@ public:
   void dataSetMerge();
 };
 
+#endif // OPENANN_TEST_DATA_SET_TEST_CASE_H_

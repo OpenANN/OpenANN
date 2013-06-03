@@ -16,7 +16,7 @@ void Optimizable::errorGradient(double& value, Eigen::VectorXd& grad)
   double tempValue;
   Eigen::VectorXd tempGrad(dimension());
   value = 0.0;
-  grad.fill(0.0);
+  grad.setZero();
   for(int n = 0; n < N; n++)
   {
     errorGradient(n, tempValue, tempGrad);
@@ -27,7 +27,7 @@ void Optimizable::errorGradient(double& value, Eigen::VectorXd& grad)
 Eigen::VectorXd Optimizable::error(std::vector<int>::const_iterator startN,
                                    std::vector<int>::const_iterator endN)
 {
-  Eigen::VectorXd errors(endN-startN);
+  Eigen::VectorXd errors(endN - startN);
   int n = 0;
   for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
     errors(n) = error(*it);
@@ -37,18 +37,18 @@ Eigen::VectorXd Optimizable::gradient(std::vector<int>::const_iterator startN,
                                       std::vector<int>::const_iterator endN)
 {
   Eigen::VectorXd g(dimension());
-  g.fill(0.0);
+  g.setZero();
   for(std::vector<int>::const_iterator it = startN; it != endN; it++)
     g += gradient(*it);
   return g;
 }
 
 void Optimizable::errorGradient(std::vector<int>::const_iterator startN,
-                            std::vector<int>::const_iterator endN,
-                            double& value, Eigen::VectorXd& grad)
+                                std::vector<int>::const_iterator endN,
+                                double& value, Eigen::VectorXd& grad)
 {
   value = 0.0;
-  grad.fill(0.0);
+  grad.setZero();
   for(std::vector<int>::const_iterator it = startN; it != endN; it++)
   {
     OPENANN_CHECK_WITHIN(*it, 0, examples());

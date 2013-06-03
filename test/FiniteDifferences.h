@@ -1,10 +1,12 @@
-#pragma once
+#ifndef OPENANN_TEST_FINITE_DIFFERENCES_H_
+#define OPENANN_TEST_FINITE_DIFFERENCES_H_
 
 #include <OpenANN/Learner.h>
 #include <Eigen/Dense>
 #include <vector>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @namespace FiniteDifferences
@@ -68,3 +70,5 @@ Eigen::VectorXd parameterGradient(std::vector<int>::const_iterator start,
 }
 
 }
+
+#endif // OPENANN_TEST_FINITE_DIFFERENCES_H_

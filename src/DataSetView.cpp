@@ -6,13 +6,15 @@
 #include <cmath>
 #include <cstdlib>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 int default_random(int i)
 {
   static bool initialized = false;
 
-  if(!initialized) {
+  if(!initialized)
+  {
     std::srand(unsigned(std::time(0)));
     initialized = true;
   }
@@ -20,13 +22,13 @@ int default_random(int i)
   return std::rand() % i;
 }
 
-  DataSetView::DataSetView(const DataSetView& ds)
+DataSetView::DataSetView(const DataSetView& ds)
   : indices(ds.indices), dataset(ds.dataset)
 {
 }
 
 
-int DataSetView::samples() 
+int DataSetView::samples()
 {
   return indices.size();
 }
@@ -77,7 +79,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_gro
 {
   OPENANN_CHECK(number_of_groups > 1);
   std::vector<int> indices;
-  
+
   indices.reserve(dataset.samples());
   groups.reserve(number_of_groups);
 
@@ -89,7 +91,8 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_gro
   if(shuffling)
     std::random_shuffle(indices.begin(), indices.end(), default_random);
 
-  for(int i = 0; i < number_of_groups; ++i) {
+  for(int i = 0; i < number_of_groups; ++i)
+  {
     std::vector<int>::iterator it = indices.begin() + i * samples_per_group;
 
     if(i < number_of_groups - 1)
@@ -127,15 +130,13 @@ void merge(DataSetView& merging, std::vector<DataSetView>& groups)
 {
   OPENANN_CHECK(groups.size() > 0);
 
-  for(int i = 0; i < groups.size(); ++i) {
+  for(int i = 0; i < groups.size(); ++i)
+  {
     OPENANN_CHECK(merging.dataset == groups.at(i).dataset);
 
-    std::copy(groups.at(i).indices.begin(), groups.at(i).indices.end(), 
-        std::back_inserter(merging.indices));
+    std::copy(groups.at(i).indices.begin(), groups.at(i).indices.end(),
+              std::back_inserter(merging.indices));
   }
 }
 
-
-
-
-}
+} // namespace OpenANN

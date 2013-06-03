@@ -16,9 +16,9 @@ void CompressionMatrixFactoryTestCase::compress()
 
   Eigen::MatrixXd expectedOrthogonalFunctionsMatrix(cmf.paramDim, cmf.inputDim);
   expectedOrthogonalFunctionsMatrix <<
-      1,  1,  1,
-      1,  0,  -1,
-      1,  -1,  1;
+                                    1,  1,  1,
+                                        1,  0,  -1,
+                                        1,  -1,  1;
 
   for(int m = 0; m < cmf.inputDim; m++)
   {

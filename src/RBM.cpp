@@ -4,14 +4,15 @@
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 RBM::RBM(int D, int H, int cdN, double stdDev, double l2Penalty, bool backprop)
   : D(D), H(H), cdN(cdN), stdDev(stdDev),
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
-    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D*H + D + H),
+    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D* H + D + H),
     deltas(1, H), e(1, D), params(K), grad(K), l2Penalty(l2Penalty),
     backprop(backprop)
 {
@@ -94,7 +95,7 @@ bool RBM::providesGradient()
 Eigen::VectorXd RBM::gradient()
 {
   Eigen::VectorXd grad(K);
-  grad.fill(0.0);
+  grad.setZero();
   for(int n = 0; n < trainSet->samples(); n++)
     grad += gradient(n);
   return grad;
@@ -125,7 +126,7 @@ void RBM::errorGradient(std::vector<int>::const_iterator startN,
   n = 0;
   value = 0.0;
   for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
-    value += (trainSet->getInstance(*it)-pv.row(n).transpose()).squaredNorm();
+    value += (trainSet->getInstance(*it) - pv.row(n).transpose()).squaredNorm();
 }
 
 OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
@@ -228,7 +229,7 @@ void RBM::sampleHgivenV()
   activationFunction(LOGISTIC, ph, ph);
   for(int n = 0; n < N; n++)
     for(int j = 0; j < H; j++)
-      h(n, j) = (double) (ph(n, j) > rng.generate<double>(0.0, 1.0));
+      h(n, j) = (double)(ph(n, j) > rng.generate<double>(0.0, 1.0));
 }
 
 void RBM::sampleVgivenH()
@@ -239,7 +240,7 @@ void RBM::sampleVgivenH()
   activationFunction(LOGISTIC, pv, pv);
   for(int n = 0; n < N; n++)
     for(int i = 0; i < D; i++)
-      v(n, i) = (double) (pv(n, i) > rng.generate<double>(0.0, 1.0));
+      v(n, i) = (double)(pv(n, i) > rng.generate<double>(0.0, 1.0));
 }
 
 void RBM::reality()

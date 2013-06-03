@@ -4,7 +4,7 @@
 #include <fstream>
 
 BCIDataSet::BCIDataCache::BCIDataCache(int size, int D)
-  : size(size*1024*1024), D(D)
+  : size(size * 1024 * 1024), D(D)
 {
 }
 
@@ -20,7 +20,7 @@ Eigen::VectorXd& BCIDataSet::BCIDataCache::getInstance(int epoch, int offset)
 
 bool BCIDataSet::BCIDataCache::hasSpace()
 {
-  return size >= (cache.size()+1)*D*sizeof(double);
+  return size >= (cache.size() + 1) * D * sizeof(double);
 }
 
 void BCIDataSet::BCIDataCache::cacheInstance(int epoch, int offset, const Eigen::VectorXd& instance)
@@ -34,13 +34,13 @@ void BCIDataSet::BCIDataCache::clear()
 }
 
 BCIDataSet::BCIDataSet(const std::string directory, const std::string& subject,
-    const std::string dataType, bool loadNow)
-    : directory(directory), subject(subject),
-          dataType(dataType == "test" ? TEST : (dataType == "demo" ? DEMO : TRAINING)),
-          debugLogger(OpenANN::Logger::NONE),
-          iteration(0),
-          comp(false), decimated(false), downSamplingFactor(1),
-          cache(1000, 0)
+                       const std::string dataType, bool loadNow)
+  : directory(directory), subject(subject),
+    dataType(dataType == "test" ? TEST : (dataType == "demo" ? DEMO : TRAINING)),
+    debugLogger(OpenANN::Logger::NONE),
+    iteration(0),
+    comp(false), decimated(false), downSamplingFactor(1),
+    cache(1000, 0)
 {
   determineDimension();
   if(loadNow)
@@ -69,16 +69,16 @@ void BCIDataSet::determineDimension()
   else
     readEpochs = epochs;
   maxT = 7794;
-  D = sampling*channels;
+  D = sampling * channels;
   F = 1;
   debugLogger << sampling << " samples, " << channels << " channels, "
-      << epochs << " epochs, " << maxT << " steps\n";
+              << epochs << " epochs, " << maxT << " steps\n";
   flashing.resize(maxT, epochs);
   stimulusCode.resize(maxT, epochs);
   stimulusType.resize(maxT, epochs);
   targetChar.resize(epochs);
   signal.resize(epochs, Eigen::MatrixXd(channels, maxT));
-  tempInstance.resize(channels*sampling);
+  tempInstance.resize(channels * sampling);
 }
 
 void BCIDataSet::loadFlashing()
@@ -156,16 +156,16 @@ void BCIDataSet::loadSignal()
     }
     if(debugLogger.isActive())
     {
-      double progress = 100.0 * (double) (e+1) / (double) readEpochs;
-      if(e % 10 == 0 || e == readEpochs-1)
+      double progress = 100.0 * (double)(e + 1) / (double) readEpochs;
+      if(e % 10 == 0 || e == readEpochs - 1)
       {
         debugLogger << "[";
         int p = 0;
-        for(; p < (int) (progress+0.5); p++)
+        for(; p < (int)(progress + 0.5); p++)
           debugLogger << "#";
         for(; p < 100; p++)
           debugLogger << " ";
-        debugLogger << "] (" << (int) (progress+0.5) << "%)\n";
+        debugLogger << "] (" << (int)(progress + 0.5) << "%)\n";
       }
     }
   }
@@ -187,7 +187,7 @@ void BCIDataSet::setupInterface()
       {
         N++;
         instanceStart[e].push_back(t);
-        label(0, 0) = ((int) stimulusType(t, e))*2-1;
+        label(0, 0) = ((int) stimulusType(t, e)) * 2 - 1;
         instanceLabel[e].push_back(label);
       }
       lastFlashing[e] = (int) flashing(t, e);
@@ -206,13 +206,13 @@ void BCIDataSet::clear()
 std::string BCIDataSet::fileName(const std::string& type)
 {
   return directory + "/Subject_" + subject + "_" +
-      (dataType == TEST ? "Test_" : "Train_") + type + ".txt";
+         (dataType == TEST ? "Test_" : "Train_") + type + ".txt";
 }
 
 void BCIDataSet::decimate(int factor)
 {
   downSamplingFactor = factor;
-  D = sampling/downSamplingFactor * channels;
+  D = sampling / downSamplingFactor * channels;
   decimated = true;
   clear();
 }
@@ -292,7 +292,7 @@ Eigen::MatrixXd BCIDataSet::extractInstance(int epoch, int t0)
   Eigen::MatrixXd instance(channels, sampling);
   for(int c = 0; c < channels; c++)
     for(int t = 0; t < sampling; t++)
-      instance(c, t) = signal[epoch](c, t0+t);
+      instance(c, t) = signal[epoch](c, t0 + t);
   return instance;
 }
 
@@ -301,7 +301,7 @@ Eigen::VectorXd BCIDataSet::toVector(const Eigen::MatrixXd& matrix)
   Eigen::VectorXd vector(matrix.rows()*matrix.cols());
   for(int r = 0; r < matrix.rows(); r++)
     for(int c = 0; c < matrix.cols(); c++)
-      vector(r*matrix.cols()+c) = matrix(r, c);
+      vector(r * matrix.cols() + c) = matrix(r, c);
   return vector;
 }
 
@@ -326,7 +326,8 @@ void BCIDataSet::finishIteration(OpenANN::Learner& learner)
 
 int BCIDataSet::evaluate(OpenANN::Learner& learner, int trials)
 {
-  char characters[6][7] = {
+  char characters[6][7] =
+  {
     "ABCDEF",
     "GHIJKL",
     "MNOPQR",
@@ -359,7 +360,7 @@ int BCIDataSet::evaluate(OpenANN::Learner& learner, int trials)
 
     int maxRow = -1, maxCol = -1;
     double maxRowScore = -std::numeric_limits<double>::max(),
-        maxColScore = -std::numeric_limits<double>::max();
+           maxColScore = -std::numeric_limits<double>::max();
     for(int i = 0; i < 6; i++)
     {
       if(score[i] > maxColScore)
@@ -372,7 +373,7 @@ int BCIDataSet::evaluate(OpenANN::Learner& learner, int trials)
     {
       if(score[i] > maxRowScore)
       {
-        maxRow = i-6;
+        maxRow = i - 6;
         maxRowScore = score[i];
       }
     }

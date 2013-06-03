@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_COMPRESSION_MATRIX_FACTORY_H_
+#define OPENANN_COMPRESSION_MATRIX_FACTORY_H_
 
 #include <Eigen/Dense>
 #include <vector>
@@ -18,7 +19,8 @@ class CompressionMatrixFactory
 {
 public:
   bool compress;
-  enum Transformation {
+  enum Transformation
+  {
     DCT, GAUSSIAN, SPARSE_RANDOM, AVERAGE, EDGE
   } transformation;
   int inputDim;
@@ -26,7 +28,7 @@ public:
 
   CompressionMatrixFactory();
   CompressionMatrixFactory(int inputDim, int paramDim,
-      Transformation transformation = DCT);
+                           Transformation transformation = DCT);
   void createCompressionMatrix(Eigen::MatrixXd& cm);
 
 private:
@@ -34,3 +36,5 @@ private:
 };
 
 }
+
+#endif // OPENANN_COMPRESSION_MATRIX_FACTORY_H_

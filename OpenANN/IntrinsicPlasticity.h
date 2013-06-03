@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_INTRINSIC_PLASTICITY_H_
+#define OPENANN_INTRINSIC_PLASTICITY_H_
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/layers/Layer.h>
@@ -70,3 +71,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_INTRINSIC_PLASTICITY_H_

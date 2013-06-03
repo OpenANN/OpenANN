@@ -214,17 +214,17 @@ public:
   Net& compressedOutputLayer(int units, int params, ActivationFunction act,
                              const std::string& compression,
                              double stdDev = 0.05, bool bias = true);
-  /** 
-   * Add a new layer to this deep neural network. 
-   * Never free/delete the added layer outside of this class. 
+  /**
+   * Add a new layer to this deep neural network.
+   * Never free/delete the added layer outside of this class.
    * Its cleaned up by Net's destructor automatically.
    * @param layer pointer to an instance that implements the Layer interface
    * @return this for chaining
    */
   Net& addLayer(Layer* layer);
-  /** 
-   * Add a new output layer to this deep neural network. 
-   * Never free/delete the added layer outside of this class. 
+  /**
+   * Add a new output layer to this deep neural network.
+   * Never free/delete the added layer outside of this class.
    * Its cleaned up by Net's destructor automatically.
    * @param layer pointer to an instance that implements the Layer interface
    * @return this for chaining

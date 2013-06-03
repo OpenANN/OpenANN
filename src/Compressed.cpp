@@ -2,17 +2,18 @@
 #include <OpenANN/CompressionMatrixFactory.h>
 #include <OpenANN/util/Random.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
                        double stdDev)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
-    W(J, I+bias), Wd(J, I+bias), b(J), phi(M, I+1), alpha(J, M), alphad(J, M),
-    x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I+bias)
+    W(J, I + bias), Wd(J, I + bias), b(J), phi(M, I + 1), alpha(J, M), alphad(J, M),
+    x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I + bias)
 {
   CompressionMatrixFactory::Transformation transformation =
-      CompressionMatrixFactory::SPARSE_RANDOM;
+    CompressionMatrixFactory::SPARSE_RANDOM;
   if(compression == std::string("gaussian"))
     transformation = CompressionMatrixFactory::GAUSSIAN;
   else if(compression == std::string("dct"))
@@ -23,15 +24,15 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
     transformation = CompressionMatrixFactory::EDGE;
   // For compatibility reasons, we create a compression matrix that assumes
   // that there is a bias.
-  CompressionMatrixFactory cmf(I+1, M, transformation);
+  CompressionMatrixFactory cmf(I + 1, M, transformation);
   cmf.createCompressionMatrix(phi);
 }
 
 OutputInfo Compressed::initialize(std::vector<double*>& parameterPointers,
-                                      std::vector<double*>& parameterDerivativePointers)
+                                  std::vector<double*>& parameterDerivativePointers)
 {
-  parameterPointers.reserve(parameterPointers.size() + J*M);
-  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J*M);
+  parameterPointers.reserve(parameterPointers.size() + J * M);
+  parameterDerivativePointers.reserve(parameterDerivativePointers.size() + J * M);
   for(int j = 0; j < J; j++)
   {
     for(int m = 0; m < M; m++)
@@ -59,7 +60,7 @@ void Compressed::initializeParameters()
 
 void Compressed::updatedParameters()
 {
-  W = alpha * phi.block(0, 0, M, I+bias);
+  W = alpha * phi.block(0, 0, M, I + bias);
   b = W.rightCols(1);
 }
 
@@ -102,4 +103,4 @@ Eigen::MatrixXd& Compressed::getOutput()
   return y;
 }
 
-}
+} // namespace OpenANN

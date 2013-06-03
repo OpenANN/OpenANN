@@ -1,7 +1,8 @@
 #include <OpenANN/Preprocessing.h>
 #include <OpenANN/util/OpenANNException.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 void scaleData(Eigen::MatrixXd& data, double min, double max)
 {
@@ -17,7 +18,7 @@ void scaleData(Eigen::MatrixXd& data, double min, double max)
 
 void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd& b, const Eigen::MatrixXd& a)
 {
-  y.fill(0.0);
+  y.setZero();
 
   for(int c = 0; c < x.rows(); c++)
   {
@@ -26,7 +27,7 @@ void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd&
       const int maxPQ = std::max(b.rows(), a.rows());
       for(int pq = 0; pq < maxPQ; pq++)
       {
-        const double tSource = t-pq;
+        const double tSource = t - pq;
         if(pq < b.rows())
         {
           if(tSource >= 0)
@@ -51,7 +52,7 @@ void downsample(const Eigen::MatrixXd& y, Eigen::MatrixXd& d, int downSamplingFa
 {
   for(int c = 0; c < y.rows(); c++)
     for(int target = 0, source = 0; target < d.cols();
-        target++, source+=downSamplingFactor)
+        target++, source += downSamplingFactor)
       d(c, target) = y(c, source);
 }
 

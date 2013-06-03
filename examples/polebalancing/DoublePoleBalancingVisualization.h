@@ -1,5 +1,5 @@
-#ifndef DOUBLEPOLEBALANCINGVISUALIZATION_H
-#define DOUBLEPOLEBALANCINGVISUALIZATION_H
+#ifndef DOUBLEPOLEBALANCINGVISUALIZATION_H_
+#define DOUBLEPOLEBALANCINGVISUALIZATION_H_
 
 #include <QGLWidget>
 
@@ -13,9 +13,9 @@ class DoublePoleBalancingVisualization : public QGLWidget
 
 public:
   DoublePoleBalancingVisualization(bool singlePole, bool fullyObservable,
-      bool alphaBetaFilter, bool doubleExponentialSmoothing,
-      QWidget* parent = 0, const QGLWidget* shareWidget = 0,
-      Qt::WindowFlags f = 0);
+                                   bool alphaBetaFilter, bool doubleExponentialSmoothing,
+                                   QWidget* parent = 0, const QGLWidget* shareWidget = 0,
+                                   Qt::WindowFlags f = 0);
 
 protected:
   virtual void initializeGL();
@@ -25,4 +25,4 @@ protected:
   void run();
 };
 
-#endif // DOUBLEPOLEBALANCINGVISUALIZATION_H
+#endif // DOUBLEPOLEBALANCINGVISUALIZATION_H_

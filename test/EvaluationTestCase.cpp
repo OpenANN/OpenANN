@@ -46,13 +46,13 @@ void EvaluationTestCase::sse()
   Eigen::MatrixXd Y(N, F);
   for(int n = 0; n < N; n++)
     for(int f = 0; f < F; f++)
-      Y(n, f) = rng.sampleNormalDistribution<double>()*2.0;
+      Y(n, f) = rng.sampleNormalDistribution<double>() * 2.0;
   Eigen::MatrixXd T(N, F);
-  T.fill(0.0);
+  T.setZero();
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   double sse = OpenANN::sse(learner, dataSet);
-  ASSERT_EQUALS_DELTA((int) sse, F*N*2*2, 1000);
+  ASSERT_EQUALS_DELTA((int) sse, F * N * 2 * 2, 1000);
 }
 
 void EvaluationTestCase::mse()
@@ -63,13 +63,13 @@ void EvaluationTestCase::mse()
   Eigen::MatrixXd Y(N, F);
   for(int n = 0; n < N; n++)
     for(int f = 0; f < F; f++)
-      Y(n, f) = rng.sampleNormalDistribution<double>()*2.0;
+      Y(n, f) = rng.sampleNormalDistribution<double>() * 2.0;
   Eigen::MatrixXd T(N, F);
-  T.fill(0.0);
+  T.setZero();
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   double mse = OpenANN::mse(learner, dataSet);
-  ASSERT_EQUALS_DELTA(mse, F*2.0*2.0, 1.0);
+  ASSERT_EQUALS_DELTA(mse, F * 2.0 * 2.0, 1.0);
 }
 
 void EvaluationTestCase::rmse()
@@ -80,13 +80,13 @@ void EvaluationTestCase::rmse()
   Eigen::MatrixXd Y(N, F);
   for(int n = 0; n < N; n++)
     for(int f = 0; f < F; f++)
-      Y(n, f) = rng.sampleNormalDistribution<double>()*2.0;
+      Y(n, f) = rng.sampleNormalDistribution<double>() * 2.0;
   Eigen::MatrixXd T(N, F);
-  T.fill(0.0);
+  T.setZero();
   ReturnInput learner;
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   double rmse = OpenANN::rmse(learner, dataSet);
-  ASSERT_EQUALS_DELTA(rmse, std::sqrt(F*2.0*2.0), 0.5);
+  ASSERT_EQUALS_DELTA(rmse, std::sqrt(F * 2.0 * 2.0), 0.5);
 }
 
 void EvaluationTestCase::ce()

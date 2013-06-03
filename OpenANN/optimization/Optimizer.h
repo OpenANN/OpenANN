@@ -1,10 +1,11 @@
-#ifndef OPTIMIZER_H
-#define OPTIMIZER_H
+#ifndef OPENANN_OPTIMIZATION_OPTIMIZER_H_
+#define OPENANN_OPTIMIZATION_OPTIMIZER_H_
 
 #include <Eigen/Dense>
 #include <string>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 class Optimizable;
 class StoppingCriteria;
@@ -50,4 +51,4 @@ public:
 
 }
 
-#endif // OPTIMIZER_H
+#endif // OPENANN_OPTIMIZATION_OPTIMIZER_H_

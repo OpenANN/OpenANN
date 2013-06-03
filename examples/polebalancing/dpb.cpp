@@ -27,10 +27,10 @@
 void printUsage()
 {
   std::cout << "unrecognized option, usage:" << std::endl
-      << "\t-spb\tSingle Pole Balancing" << std::endl
-      << "\t-po\tPartially Observable (without velocities)" << std::endl
-      << "\t-ab\tUse alpha beta filters to estimate the velocities" << std::endl
-      << "\t-des\tUse double exponential smoothing to estimate the velocities" << std::endl;
+            << "\t-spb\tSingle Pole Balancing" << std::endl
+            << "\t-po\tPartially Observable (without velocities)" << std::endl
+            << "\t-ab\tUse alpha beta filters to estimate the velocities" << std::endl
+            << "\t-des\tUse double exponential smoothing to estimate the velocities" << std::endl;
 }
 
 int main(int argc, char** argv)

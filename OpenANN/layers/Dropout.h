@@ -1,8 +1,10 @@
-#pragma once
+#ifndef OPENANN_LAYERS_DROPOUT_H_
+#define OPENANN_LAYERS_DROPOUT_H_
 
 #include <OpenANN/layers/Layer.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class Dropout
@@ -39,3 +41,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_DROPOUT_H_

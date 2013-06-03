@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_TEST_SIGMA_PI_CONSTRAINT_TEST_CASE_H_
+#define OPENANN_TEST_SIGMA_PI_CONSTRAINT_TEST_CASE_H_
 
 #include "Test/TestCase.h"
 #include <Eigen/Dense>
@@ -19,3 +20,4 @@ public:
   Eigen::VectorXd T3;
 };
 
+#endif // OPENANN_TEST_SIGMA_PI_CONSTRAINT_TEST_CASE_H_

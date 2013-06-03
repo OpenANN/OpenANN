@@ -1,5 +1,5 @@
-#ifndef BCIDATASET_H
-#define BCIDATASET_H
+#ifndef BCIDATASET_H_
+#define BCIDATASET_H_
 
 #include <OpenANN/Compressor.h>
 #include <OpenANN/io/DataSet.h>
@@ -35,7 +35,8 @@ public:
 
   std::string directory;
   std::string subject;
-  enum DataType {
+  enum DataType
+  {
     TRAINING, TEST, DEMO
   } dataType;
 
@@ -70,7 +71,7 @@ public:
   BCIDataCache cache;
 
   BCIDataSet(const std::string directory, const std::string& subject,
-      const std::string dataType, bool loadNow = true);
+             const std::string dataType, bool loadNow = true);
   virtual ~BCIDataSet() {}
   void load();
   void determineDimension();
@@ -99,4 +100,4 @@ public:
   int evaluate(OpenANN::Learner& mlp, int trials);
 };
 
-#endif // BCIDATASET_H
+#endif // BCIDATASET_H_

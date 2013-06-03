@@ -1,11 +1,13 @@
-#pragma once
+#ifndef OPENANN_LAYERS_SIGMA_PI_H_
+#define OPENANN_LAYERS_SIGMA_PI_H_
 
 #include <Eigen/Dense>
 #include <vector>
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class SigmaPi
@@ -13,7 +15,7 @@ namespace OpenANN {
  * Fully-connected, Higher-Order layers for neural networks
  *
  * For encoding invariances into the topology of the neural network
- * you can specify a weight constraint for a given higher-order node. 
+ * you can specify a weight constraint for a given higher-order node.
  *
  * [1] Max B. Reid, Lilly Spirkovska and Ellen Ochoa
  * Rapid training of higher-order neural network for invariant pattern recognition
@@ -23,10 +25,10 @@ namespace OpenANN {
  * Learning, invariance, and generalization in high-order neural networks
  * Appl. Opt, Vol. 26, pp. 4972-4978, 1987
  */
-class SigmaPi : public Layer 
+class SigmaPi : public Layer
 {
 protected:
-  struct HigherOrderUnit 
+  struct HigherOrderUnit
   {
     std::vector<int> position;
     size_t weight;
@@ -49,8 +51,8 @@ protected:
   std::vector<double> w;
   std::vector<double> wd;
   std::vector<HigherOrderNeuron> nodes;
-    
- public:
+
+public:
   /**
    * Construct a SigmaPi layer that can be extended with different higher-order nodes
    * @param info OutputInfo of previous, connected layer
@@ -64,14 +66,14 @@ protected:
    * See OpenANN::Layer::initialize(std::vector<double*>& pParameter, std::vector<double*>& pDerivative)
    */
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
-          std::vector<double*>& parameterDerivativePointers);
+                                std::vector<double*>& parameterDerivativePointers);
 
   /**
    * A helper class for specifying weight constrains in a higher-order neural network
-   * Derive a new class from this interface and simple reimplement the function call operator 
-   * for the corresponding higher-order term. 
+   * Derive a new class from this interface and simple reimplement the function call operator
+   * for the corresponding higher-order term.
    * e.g. constraint(p1, p2, p3) for third-order nodes.
-   * 
+   *
    * NEVER overwrite the isDefault method.
    * (This is only important for unconstrained higher-order nodes)
    */
@@ -82,21 +84,21 @@ protected:
     /**
       * function call operator for corresponding second-order nodes
       */
-    virtual double operator() (int p1, int p2) const;
+    virtual double operator()(int p1, int p2) const;
 
     /**
       * function call operator for corresponding third-order nodes
       */
-    virtual double operator() (int p1, int p2, int p3) const;
+    virtual double operator()(int p1, int p2, int p3) const;
 
     /**
       * function call operator for corresponding fourth-order nodes
       */
-    virtual double operator() (int p1, int p2, int p3, int p4) const;
+    virtual double operator()(int p1, int p2, int p3, int p4) const;
 
-    /** 
-      * @internal 
-      * NEVER overwrite this method. 
+    /**
+      * @internal
+      * NEVER overwrite this method.
       */
     virtual bool isDefault() const;
   };
@@ -155,6 +157,7 @@ protected:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-
-
 } // namespace OpenANN
+
+
+#endif // OPENANN_LAYERS_SIGMA_PI_H_

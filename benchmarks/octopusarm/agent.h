@@ -2,8 +2,8 @@
 #define AGENT_H
 
 /*
- * If any of these functions return < 0, it indicates an error and the agent 
- * handler will abort. A return value >= 0 indicates that the agent can 
+ * If any of these functions return < 0, it indicates an error and the agent
+ * handler will abort. A return value >= 0 indicates that the agent can
  * continue
  */
 
@@ -15,7 +15,7 @@
  * command line minus the first 4 (name of program, ip and port of
  * server and number of episodes)
  */
-int agent_init(int num_state_variables, int num_action_variables, int argc, const char *agent_param[]);
+int agent_init(int num_state_variables, int num_action_variables, int argc, const char* agent_param[]);
 
 /* When this function is called, the agent should return it's name. This
  * name will be used to identify individual agents during the competition.

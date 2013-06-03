@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_RL_RANDOM_AGENT_H_
+#define OPENANN_RL_RANDOM_AGENT_H_
 
 #include <OpenANN/rl/Agent.h>
 
@@ -23,3 +24,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_RL_RANDOM_AGENT_H_

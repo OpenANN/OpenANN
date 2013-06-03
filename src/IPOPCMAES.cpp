@@ -3,25 +3,26 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <cma-es/cmaes.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 IPOPCMAES::IPOPCMAES()
-    : logger(Logger::NONE),
-      maxFunEvalsActive(false),
-      opt(0),
-      cmaes(0),
-      parameters(new Parameters<double>),
-      currentIndividual(0),
-      initialX(0),
-      initialStdDev(0),
-      population(0),
-      fitnessValues(0),
-      restarts(-1),
-      evaluations(0),
-      evaluationsAfterRestart(0),
-      stopped(false),
-      optimumValue(std::numeric_limits<double>::max()),
-      sigma0(10.0)
+  : logger(Logger::NONE),
+    maxFunEvalsActive(false),
+    opt(0),
+    cmaes(0),
+    parameters(new Parameters<double>),
+    currentIndividual(0),
+    initialX(0),
+    initialStdDev(0),
+    population(0),
+    fitnessValues(0),
+    restarts(-1),
+    evaluations(0),
+    evaluationsAfterRestart(0),
+    stopped(false),
+    optimumValue(std::numeric_limits<double>::max()),
+    sigma0(10.0)
 {
 }
 
@@ -108,7 +109,7 @@ bool IPOPCMAES::restart()
 
   parameters->updateCmode.maxtime = 1.0;
   if(restarts > 0)
-    parameters->lambda = (int) ((double) parameters->lambda * 2.);
+    parameters->lambda = (int)((double) parameters->lambda * 2.);
 
   if(opt->providesInitialization())
   {
@@ -119,11 +120,11 @@ bool IPOPCMAES::restart()
   else
   {
     for(unsigned i = 0; i < N; i++)
-      initialX[i] = (double) i / (double) N - (double) (N/2);
+      initialX[i] = (double) i / (double) N - (double)(N / 2);
   }
   for(unsigned i = 0; i < N; i++)
     initialStdDev[i] = sigma0;
-    
+
   parameters->init(N, initialX, initialStdDev);
   fitnessValues = cmaes->init(*parameters);
   cmaes->countevals = (double) evaluations;
@@ -171,7 +172,7 @@ Eigen::VectorXd IPOPCMAES::getNext()
 {
   OPENANN_CHECK(cmaes);
   OPENANN_CHECK(opt);
-  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<double>::Lambda)-1);
+  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<double>::Lambda) - 1);
 
   if(currentIndividual == 0)
   {
@@ -190,7 +191,7 @@ void IPOPCMAES::setError(double fitness)
 {
   OPENANN_CHECK(cmaes);
   OPENANN_CHECK(opt);
-  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<double>::Lambda)-1);
+  OPENANN_CHECK_WITHIN(currentIndividual, 0, cmaes->get(CMAES<double>::Lambda) - 1);
 
   if(logger.isActive())
   {
@@ -220,7 +221,7 @@ bool IPOPCMAES::step()
 bool IPOPCMAES::terminated()
 {
   return currentIndividual == 0 && (cmaes->testForTermination()
-      || (maxFunEvalsActive && evaluationsAfterRestart >= stop.maximalFunctionEvaluations));
+                                    || (maxFunEvalsActive && evaluationsAfterRestart >= stop.maximalFunctionEvaluations));
 }
 
 Eigen::VectorXd IPOPCMAES::result()

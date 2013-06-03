@@ -1,11 +1,13 @@
-#pragma once
+#ifndef OPENANN_OPTIMIZATION_H_
+#define OPENANN_OPTIMIZATION_H_
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <Eigen/Dense>
 #include <optimization.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class CG
@@ -40,3 +42,5 @@ private:
 };
 
 }
+
+#endif // OPENANN_OPTIMIZATION_H_

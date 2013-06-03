@@ -1,8 +1,10 @@
-#pragma once
+#ifndef OPENANN_EVALUATION_H_
+#define OPENANN_EVALUATION_H_
 
 #include <Eigen/Dense>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 class Optimizer;
 class Learner;
@@ -121,3 +123,5 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
 int oneOfCDecoding(const Eigen::VectorXd& target);
 
 }
+
+#endif // OPENANN_EVALUATION_H_

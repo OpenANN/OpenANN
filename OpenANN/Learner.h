@@ -1,9 +1,11 @@
-#pragma once
+#ifndef OPENANN_LEARNER_H_
+#define OPENANN_LEARNER_H_
 
 #include <OpenANN/io/DataSet.h>
 #include <OpenANN/optimization/Optimizable.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class Learner
@@ -76,3 +78,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LEARNER_H_

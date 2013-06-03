@@ -3,8 +3,8 @@
  * Random number generator.
  */
 
-#ifndef OPENANN_RANDOM_H
-#define OPENANN_RANDOM_H
+#ifndef OPENANN_UTIL_RANDOM_H_
+#define OPENANN_UTIL_RANDOM_H_
 
 #include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
@@ -39,13 +39,13 @@ public:
    * @param min minimal value
    * @param range range of the interval, must be greater than 0
    * @return random number from the interval [min, range)
-   */ 
+   */
   int generateInt(int min, int range) const;
   /**
    * Draw an index from a uniform distribution.
    * @param size range of the index, must be greater than 0
    * @return random number from the interval [0, size)
-   */ 
+   */
   size_t generateIndex(size_t size) const;
 
   /**
@@ -72,10 +72,10 @@ public:
    * from the distribution \f$ \mathcal{N}(\mu, \sigma) \f$, you have to
    * shift and scale the output of this function:
    * \code
-RandomNumberGenerator rng;
-double mu = ...
-double sigma = ...
-double rn = mu + sigma*rng.sampleNormalDistribution<double>();
+  RandomNumberGenerator rng;
+  double mu = ...
+  double sigma = ...
+  double rn = mu + sigma*rng.sampleNormalDistribution<double>();
      \endcode
    * @tparam T number type
    * @return standard normal distributed random number
@@ -84,7 +84,7 @@ double rn = mu + sigma*rng.sampleNormalDistribution<double>();
   T sampleNormalDistribution() const
   {
     return std::sqrt(T(-2) * std::log(generate(T(), T(1)))) *
-        std::cos(T(2) * T(M_PI) * generate(T(), T(1)));
+           std::cos(T(2) * T(M_PI) * generate(T(), T(1)));
   }
 
   /**
@@ -113,4 +113,4 @@ double rn = mu + sigma*rng.sampleNormalDistribution<double>();
 
 }
 
-#endif // OPENANN_RANDOM_H
+#endif // OPENANN_UTIL_RANDOM_H_

@@ -9,7 +9,8 @@
 #include <OpenANN/io/Logger.h>
 #include <limits>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 CG::CG()
   : opt(0), iteration(-1), error(0.0)
@@ -75,7 +76,7 @@ bool CG::step()
       if(state.xupdated)
         continue;
       throw alglib::ap_error("ALGLIB: error in 'mincgoptimize'"
-          " (some derivatives were not provided?)");
+                             " (some derivatives were not provided?)");
     }
   }
   catch(alglib_impl::ae_error_type)
@@ -128,16 +129,16 @@ void CG::initialize()
 
   // Set convergence criteria
   double minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
-      StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
-      stop.minimalSearchSpaceStep : 0.0;
+                                  StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
+                                  stop.minimalSearchSpaceStep : 0.0;
   double minimalValueDifferences = stop.minimalValueDifferences !=
-      StoppingCriteria::defaultValue.minimalValueDifferences ?
-      stop.minimalValueDifferences : 0.0;
+                                   StoppingCriteria::defaultValue.minimalValueDifferences ?
+                                   stop.minimalValueDifferences : 0.0;
   int maximalIterations = stop.maximalIterations !=
-      StoppingCriteria::defaultValue.maximalIterations ?
-      stop.maximalIterations : 0;
+                          StoppingCriteria::defaultValue.maximalIterations ?
+                          stop.maximalIterations : 0;
   alglib::mincgsetcond(state, minimalSearchSpaceStep, minimalValueDifferences,
-      0.0, maximalIterations);
+                       0.0, maximalIterations);
 
   // Initialize optimizer state
   alglib_impl::ae_state_init(&envState);
@@ -174,8 +175,8 @@ void CG::reset()
     break;
   case 7:
     OPENANN_DEBUG << "Stopping conditions are too stringent, further"
-                << " improvement is impossible, we return the best "
-                << "X found so far.";
+                  << " improvement is impossible, we return the best "
+                  << "X found so far.";
     break;
   case 8:
     OPENANN_DEBUG << "Terminated by user.";
@@ -187,4 +188,4 @@ void CG::reset()
   iteration = -1;
 }
 
-}
+} // namespace OpenANN

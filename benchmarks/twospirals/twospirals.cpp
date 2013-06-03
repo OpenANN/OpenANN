@@ -15,54 +15,54 @@
  *
  * The result will look like this:
  * \verbatim
-$ ./TwoSpiralsBenchmark 
+$ ./TwoSpiralsBenchmark
 Architecture: 2-20-10-1 (bias)
 281 parameters
 ....................................................................................................
 Finished 100 runs.
-		Correct		Accuracy	Time/ms		Iterations
-Mean+-StdDev	188.250+-1.554	0.975+-0.112	5981		768+-21.979
-[min,max]	[177,193]	[0.917,1.000]			[206,4342]
+    Correct   Accuracy  Time/ms   Iterations
+Mean+-StdDev  188.250+-1.554  0.975+-0.112  5981    768+-21.979
+[min,max] [177,193] [0.917,1.000]     [206,4342]
 
 Architecture: 2-20-20-1 (bias)
 501 parameters
 ....................................................................................................
 Finished 100 runs.
-		Correct		Accuracy	Time/ms		Iterations
-Mean+-StdDev	188.570+-1.448	0.977+-0.104	12466		464+-13.867
-[min,max]	[180,193]	[0.933,1.000]			[192,1216]
+    Correct   Accuracy  Time/ms   Iterations
+Mean+-StdDev  188.570+-1.448  0.977+-0.104  12466   464+-13.867
+[min,max] [180,193] [0.933,1.000]     [192,1216]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-21-21
 501 parameters
 ....................................................................................................
 Finished 100 runs.
-		Correct		Accuracy	Time/ms		Iterations
-Mean+-StdDev	186.060+-1.533	0.964+-0.110	8174		305+-9.903
-[min,max]	[175,193]	[0.907,1.000]			[153,1038]
+    Correct   Accuracy  Time/ms   Iterations
+Mean+-StdDev  186.060+-1.533  0.964+-0.110  8174    305+-9.903
+[min,max] [175,193] [0.907,1.000]     [153,1038]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-12-12
 312 parameters
 ....................................................................................................
 Finished 100 runs.
-		Correct		Accuracy	Time/ms		Iterations
-Mean+-StdDev	185.660+-1.709	0.962+-0.123	5248		511+-16.075
-[min,max]	[168,192]	[0.870,0.995]			[192,2886]
+    Correct   Accuracy  Time/ms   Iterations
+Mean+-StdDev  185.660+-1.709  0.962+-0.123  5248    511+-16.075
+[min,max] [168,192] [0.870,0.995]     [192,2886]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-6-6
 186 parameters
 ....................................................................................................
 Finished 100 runs.
-		Correct		Accuracy	Time/ms		Iterations
-Mean+-StdDev	184.750+-1.914	0.957+-0.138	3033		679+-18.572
-[min,max]	[164,193]	[0.850,1.000]			[209,3023]
+    Correct   Accuracy  Time/ms   Iterations
+Mean+-StdDev  184.750+-1.914  0.957+-0.138  3033    679+-18.572
+[min,max] [164,193] [0.850,1.000]     [209,3023]
 
 Architecture: 2-20-20-1 (bias), Compression: 3-6-3
 183 parameters
 ....................................................................................................
 Finished 100 runs.
-		Correct		Accuracy	Time/ms		Iterations
-Mean+-StdDev	185.140+-1.798	0.959+-0.129	3381		775+-20.821
-[min,max]	[172,193]	[0.891,1.000]			[234,6584]
+    Correct   Accuracy  Time/ms   Iterations
+Mean+-StdDev  185.140+-1.798  0.959+-0.129  3381    775+-20.821
+[min,max] [172,193] [0.891,1.000]     [234,6584]
    \endverbatim
  */
 
@@ -97,64 +97,64 @@ void setup(OpenANN::Net& net, int architecture)
   setupLogger << "Architecture: ";
   switch(architecture)
   {
-    case 0:
-    {
-      setupLogger << "2-20-10-1 (bias)\n";
-      net.inputLayer(2)
-        .fullyConnectedLayer(20, OpenANN::TANH)
-        .fullyConnectedLayer(10, OpenANN::TANH)
-        .outputLayer(1, OpenANN::TANH);
-      break;
-    }
-    case 1:
-    {
-      setupLogger << "2-20-20-1 (bias)\n";
-      net.inputLayer(2)
-        .fullyConnectedLayer(20, OpenANN::TANH)
-        .fullyConnectedLayer(20, OpenANN::TANH)
-        .outputLayer(1, OpenANN::TANH);
-      break;
-    }
-    case 2:
-    {
-      setupLogger << "2-20-20-1 (bias), Compression: 3-21-21\n";
-      net.inputLayer(2)
-        .compressedLayer(20, 3, OpenANN::TANH, "dct")
-        .compressedLayer(20, 21, OpenANN::TANH, "dct")
-        .compressedOutputLayer(1, 21, OpenANN::TANH, "dct");
-      break;
-    }
-    case 3:
-    {
-      setupLogger << "2-20-20-1 (bias), Compression: 3-12-12\n";
-      net.inputLayer(2)
-        .compressedLayer(20, 3, OpenANN::TANH, "dct")
-        .compressedLayer(20, 12, OpenANN::TANH, "dct")
-        .compressedOutputLayer(1, 12, OpenANN::TANH, "dct");
-      break;
-    }
-    case 4:
-    {
-      setupLogger << "2-20-20-1 (bias), Compression: 3-6-6\n";
-      net.inputLayer(2)
-        .compressedLayer(20, 3, OpenANN::TANH, "dct")
-        .compressedLayer(20, 6, OpenANN::TANH, "dct")
-        .compressedOutputLayer(1, 6, OpenANN::TANH, "dct");
-      break;
-    }
-    case 5:
-    {
-      setupLogger << "2-20-20-1 (bias), Compression: 3-6-3\n";
-      net.inputLayer(2)
-        .compressedLayer(20, 3, OpenANN::TANH, "dct")
-        .compressedLayer(20, 6, OpenANN::TANH, "dct")
-        .compressedOutputLayer(1, 3, OpenANN::TANH, "dct");
-      break;
-    }
-    default:
-      setupLogger << "Unknown architecture, quitting.\n";
-      exit(EXIT_FAILURE);
-      break;
+  case 0:
+  {
+    setupLogger << "2-20-10-1 (bias)\n";
+    net.inputLayer(2)
+    .fullyConnectedLayer(20, OpenANN::TANH)
+    .fullyConnectedLayer(10, OpenANN::TANH)
+    .outputLayer(1, OpenANN::TANH);
+    break;
+  }
+  case 1:
+  {
+    setupLogger << "2-20-20-1 (bias)\n";
+    net.inputLayer(2)
+    .fullyConnectedLayer(20, OpenANN::TANH)
+    .fullyConnectedLayer(20, OpenANN::TANH)
+    .outputLayer(1, OpenANN::TANH);
+    break;
+  }
+  case 2:
+  {
+    setupLogger << "2-20-20-1 (bias), Compression: 3-21-21\n";
+    net.inputLayer(2)
+    .compressedLayer(20, 3, OpenANN::TANH, "dct")
+    .compressedLayer(20, 21, OpenANN::TANH, "dct")
+    .compressedOutputLayer(1, 21, OpenANN::TANH, "dct");
+    break;
+  }
+  case 3:
+  {
+    setupLogger << "2-20-20-1 (bias), Compression: 3-12-12\n";
+    net.inputLayer(2)
+    .compressedLayer(20, 3, OpenANN::TANH, "dct")
+    .compressedLayer(20, 12, OpenANN::TANH, "dct")
+    .compressedOutputLayer(1, 12, OpenANN::TANH, "dct");
+    break;
+  }
+  case 4:
+  {
+    setupLogger << "2-20-20-1 (bias), Compression: 3-6-6\n";
+    net.inputLayer(2)
+    .compressedLayer(20, 3, OpenANN::TANH, "dct")
+    .compressedLayer(20, 6, OpenANN::TANH, "dct")
+    .compressedOutputLayer(1, 6, OpenANN::TANH, "dct");
+    break;
+  }
+  case 5:
+  {
+    setupLogger << "2-20-20-1 (bias), Compression: 3-6-3\n";
+    net.inputLayer(2)
+    .compressedLayer(20, 3, OpenANN::TANH, "dct")
+    .compressedLayer(20, 6, OpenANN::TANH, "dct")
+    .compressedOutputLayer(1, 3, OpenANN::TANH, "dct");
+    break;
+  }
+  default:
+    setupLogger << "Unknown architecture, quitting.\n";
+    exit(EXIT_FAILURE);
+    break;
   }
   setupLogger << net.dimension() << " parameters\n";
 }
@@ -228,13 +228,13 @@ void logResults(std::vector<Result>& results, unsigned long time)
   double iterationsStdDev = std::sqrt(iterations.mean());
   resultLogger << "Mean+-StdDev\t";
   resultLogger << fmt(correctMean, 3) << "+-" << fmt(correctStdDev, 3) << "\t"
-      << fmt(accuracyMean, 3) << "+-" << fmt(accuracyStdDev, 3) << "\t"
-      << (int) ((double)time/(double)results.size()) << "\t\t"
-      << iterationsMean << "+-" << fmt(iterationsStdDev, 3) << "\n";
+               << fmt(accuracyMean, 3) << "+-" << fmt(accuracyStdDev, 3) << "\t"
+               << (int)((double)time / (double)results.size()) << "\t\t"
+               << iterationsMean << "+-" << fmt(iterationsStdDev, 3) << "\n";
   resultLogger << "[min,max]\t";
   resultLogger << "[" << correctMin << "," << correctMax << "]\t"
-      << "[" << fmt(accuracyMin, 3) << "," << fmt(accuracyMax, 3) << "]\t\t\t"
-      << "[" << (int) iterationsMin << "," << (int) iterationsMax << "]\n\n";
+               << "[" << fmt(accuracyMin, 3) << "," << fmt(accuracyMax, 3) << "]\t\t\t"
+               << "[" << (int) iterationsMin << "," << (int) iterationsMax << "]\n\n";
 }
 
 int main(int argc, char** argv)

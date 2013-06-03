@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OPENANN_OPTIMIZATION_MBSGD_H_
+#define OPENANN_OPTIMIZATION_MBSGD_H_
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
@@ -7,7 +8,8 @@
 #include <vector>
 #include <list>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class MBSGD
@@ -177,3 +179,5 @@ private:
 };
 
 }
+
+#endif // OPENANN_OPTIMIZATION_MBSGD_H_

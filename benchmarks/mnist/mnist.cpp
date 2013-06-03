@@ -1,7 +1,9 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
-#include "IDXLoader.h"
+#include <OpenANN/Evaluator.h>
+#include <OpenANN/io/DataStream.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include "IDXLoader.h"
 #ifdef PARALLEL_CORES
 #include <omp.h>
 #endif
@@ -16,8 +18,8 @@
  * directory "mnist" in your working directory, move the data set to this
  * directory and execute the benchmark or pass the directory of the MNIST
  * data set as argument to the program. Some information about the
- * classification of the test set will be logged in the file "dataset-*.log",
- * where '*' is the starting time.
+ * classification of the test set will be logged in the file
+ * "evaluation-*.log", where '*' is the starting time.
  *
  * To execute the benchmark you can run the Python script:
 \code
@@ -33,42 +35,85 @@ int main(int argc, char** argv)
 #ifdef PARALLEL_CORES
   omp_set_num_threads(PARALLEL_CORES);
 #endif
+
   std::string directory = "./";
+  bool distortions = false;
   if(argc > 1)
     directory = std::string(argv[1]);
+  if(argc > 2)
+    distortions = true;
 
   IDXLoader loader(28, 28, 60000, 10000, directory);
+  Distorter distorter;
 
-  OpenANN::Net net;                                               // Nodes per layer:
-  net.inputLayer(1, loader.padToX, loader.padToY)                 //   1 x 28 x 28
-     .convolutionalLayer(10, 5, 5, OpenANN::RECTIFIER, 0.05)      //  20 x 24 x 24
-     .maxPoolingLayer(2, 2)                                       //  20 x 12 x 12
-     .convolutionalLayer(16, 5, 5, OpenANN::RECTIFIER, 0.05)      //  20 x  8 x  8
-     .maxPoolingLayer(2, 2)                                       //  20 x  4 x  4
-     .fullyConnectedLayer(120, OpenANN::RECTIFIER, 0.05)          // 150
-     .fullyConnectedLayer(84, OpenANN::RECTIFIER, 0.05)          // 100
-     .outputLayer(loader.F, OpenANN::LINEAR, 0.05)                //  10
-     .trainingSet(loader.trainingInput, loader.trainingOutput);
+  OpenANN::Net net;
+  net.inputLayer(1, loader.padToX, loader.padToY);
+  if(distortions)
+  {
+    // High model complexity
+    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05);
+  }
+  else
+  {
+    // Smaller network
+    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05);
+  }
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05);
+  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
-                                        OpenANN::DirectStorageDataSet::MULTICLASS,
-                                        OpenANN::Logger::FILE);
+                                        &evaluator);
   net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
   OPENANN_INFO << "Created MLP.";
   OPENANN_INFO << "D = " << loader.D << ", F = " << loader.F
                << ", N = " << loader.trainingN << ", L = " << net.dimension();
   OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
-      " iteration is finished.";
+               " iteration is finished.";
 
-  OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 100;
-  OpenANN::MBSGD optimizer(0.01, 0.6, 16, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
-  optimizer.setOptimizable(net);
-  optimizer.setStopCriteria(stop);
-  optimizer.optimize();
+  OpenANN::MBSGD optimizer(0.001, 0.0, 1, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+  OpenANN::DataStream stream(loader.trainingN);
+  stream.setLearner(net);
+  stream.setOptimizer(optimizer);
+
+  Eigen::VectorXd x, t;
+  if(distortions)
+  {
+    // Generate more training data with distortions
+    for(int it = 0; it < 1000; it++)
+    {
+      for(int n = 0; n < loader.trainingN; n++)
+      {
+        x = loader.trainingInput.row(n);
+        t = loader.trainingOutput.row(n);
+        distorter.applyDistortion(x, loader.padToX, loader.padToY);
+        stream.addSample(&x, &t);
+      }
+    }
+  }
+  else
+  {
+    for(int it = 0; it < 100; it++)
+    {
+      for(int n = 0; n < loader.trainingN; n++)
+      {
+        x = loader.trainingInput.row(n);
+        t = loader.trainingOutput.row(n);
+        stream.addSample(&x, &t);
+      }
+    }
+  }
 
   OPENANN_INFO << "Error = " << net.error();
-  OPENANN_INFO << "Wrote data to dataset-*.log.";
+  OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
   OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
   resultLogger << optimizer.result();

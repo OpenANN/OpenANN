@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TWO_SPIRALS_VISUALIZATION_H_
+#define TWO_SPIRALS_VISUALIZATION_H_
 
 #include <OpenANN/OpenANN>
 #include <OpenANN/io/DirectStorageDataSet.h>
@@ -42,7 +43,7 @@ class TwoSpiralsVisualization : public QGLWidget
 
 public:
   TwoSpiralsVisualization(const Eigen::MatrixXd& trainingInput, const Eigen::MatrixXd& trainingOutput,
-      const Eigen::MatrixXd& testInput, const Eigen::MatrixXd& testOutput);
+                          const Eigen::MatrixXd& testInput, const Eigen::MatrixXd& testOutput);
   virtual ~TwoSpiralsVisualization();
   void predictClass(int x, int y, double predictedClass);
 
@@ -57,3 +58,5 @@ protected:
 signals:
   void updatedData();
 };
+
+#endif // TWO_SPIRALS_VISUALIZATION_H_

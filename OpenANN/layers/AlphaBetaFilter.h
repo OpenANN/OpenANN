@@ -1,9 +1,11 @@
-#pragma once
+#ifndef OPENANN_LAYERS_ALPHA_BETA_FILTER_H_
+#define OPENANN_LAYERS_ALPHA_BETA_FILTER_H_
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class AlphaBetaFilter
@@ -43,3 +45,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_LAYERS_ALPHA_BETA_FILTER_H_

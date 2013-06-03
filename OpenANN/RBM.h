@@ -93,7 +93,7 @@ public:
                                 bool dropout);
   virtual Eigen::MatrixXd& getOutput();
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
-      std::vector<double*>& parameterDerivativePointers);
+                                std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
 

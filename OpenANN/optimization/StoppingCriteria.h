@@ -1,7 +1,8 @@
-#ifndef STOPPINGCRITERIA_H
-#define STOPPINGCRITERIA_H
+#ifndef OPENANN_OPTIMIZATION_STOPPINGCRITERIA_H_
+#define OPENANN_OPTIMIZATION_STOPPINGCRITERIA_H_
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class StoppingCriteria
@@ -49,4 +50,4 @@ public:
 
 }
 
-#endif // STOPPINGCRITERIA_H
+#endif // OPENANN_OPTIMIZATION_STOPPINGCRITERIA_H_

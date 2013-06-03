@@ -1,8 +1,10 @@
-#pragma once
+#ifndef OPENANN_UTIL_OPENANN_EXCEPTION_H_
+#define OPENANN_UTIL_OPENANN_EXCEPTION_H_
 
 #include <stdexcept>
 
-namespace OpenANN {
+namespace OpenANN
+{
 
 /**
  * @class OpenANNException
@@ -17,3 +19,5 @@ public:
 };
 
 }
+
+#endif // OPENANN_UTIL_OPENANN_EXCEPTION_H_

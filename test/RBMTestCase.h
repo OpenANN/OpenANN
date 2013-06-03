@@ -1,3 +1,6 @@
+#ifndef OPENANN_TEST_RBM_TEST_CASE_H_
+#define OPENANN_TEST_RBM_TEST_CASE_H_
+
 #include <Test/TestCase.h>
 
 class RBMTestCase : public TestCase
@@ -8,3 +11,5 @@ class RBMTestCase : public TestCase
   void parameterGradient();
   void inputGradient();
 };
+
+#endif // OPENANN_TEST_RBM_TEST_CASE_H_

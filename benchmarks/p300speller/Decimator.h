@@ -1,5 +1,5 @@
-#ifndef DECIMATOR_H
-#define DECIMATOR_H
+#ifndef DECIMATOR_H_
+#define DECIMATOR_H_
 
 #include <OpenANN/Preprocessing.h>
 #include <Eigen/Dense>
@@ -28,20 +28,20 @@ public:
     Eigen::MatrixXd y1(x.rows(), x.cols());
     Eigen::VectorXd b1(31);
     b1 << 0.00256293,  0.0032317 ,  0.00475108,  0.00727558,  0.01088579,
-        0.01557498,  0.02124304,  0.02769838,  0.03466804,  0.04181521,
-        0.04876293,  0.05512206,  0.06052093,  0.06463443,  0.06720971,
-        0.06808644,  0.06720971,  0.06463443,  0.06052093,  0.05512206,
-        0.04876293,  0.04181521,  0.03466804,  0.02769838,  0.02124304,
-        0.01557498,  0.01088579,  0.00727558,  0.00475108,  0.0032317 ,
-        0.00256293;
+       0.01557498,  0.02124304,  0.02769838,  0.03466804,  0.04181521,
+       0.04876293,  0.05512206,  0.06052093,  0.06463443,  0.06720971,
+       0.06808644,  0.06720971,  0.06463443,  0.06052093,  0.05512206,
+       0.04876293,  0.04181521,  0.03466804,  0.02769838,  0.02124304,
+       0.01557498,  0.01088579,  0.00727558,  0.00475108,  0.0032317 ,
+       0.00256293;
     Eigen::VectorXd a1(1);
     a1 << 1.;
     OpenANN::filter(x, y1, b1, a1);
 
-    Eigen::MatrixXd d(x.rows(), x.cols()/downSamplingFactor);
+    Eigen::MatrixXd d(x.rows(), x.cols() / downSamplingFactor);
     OpenANN::downsample(y1, d, downSamplingFactor);
     return d;
   }
 };
 
-#endif // DECIMATOR_H
+#endif // DECIMATOR_H_
