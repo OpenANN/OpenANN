@@ -16,7 +16,7 @@ void RBMTestCase::run()
 void RBMTestCase::setUp()
 {
   OpenANN::RandomNumberGenerator rng;
-  rng.seed(0);
+  rng.seed(2);
 }
 
 void RBMTestCase::learnSimpleExample()
