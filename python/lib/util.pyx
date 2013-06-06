@@ -28,6 +28,7 @@ cdef object __matrix_eigen_to_numpy__(openann.MatrixXd* X_eigen):
 
 
 cdef class Log:
+  """Provides logging functionality."""
   DISABLED = openann.DISABLED
   ERROR = openann.ERROR
   INFO = openann.INFO

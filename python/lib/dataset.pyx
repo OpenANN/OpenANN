@@ -1,4 +1,5 @@
 cdef class Dataset:
+  """Contains instances and targets."""
   cdef openann.MatrixXd* input
   cdef openann.MatrixXd* output
   cdef openann.DataSet* storage
@@ -53,6 +54,7 @@ cdef class Dataset:
 
 
 def load_from_libsvm(filename):
+  """Load dataset from libsvm file."""
   cdef openann.MatrixXd* input = new openann.MatrixXd()
   cdef openann.MatrixXd* output = new openann.MatrixXd()
   dset = Dataset()
@@ -61,4 +63,3 @@ def load_from_libsvm(filename):
   openann.libsvm_load(deref(input), deref(output), filename, 0)
   dset.storage = new openann.DirectStorageDataSet(input, output)
   return dset 
-

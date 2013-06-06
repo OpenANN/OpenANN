@@ -1,4 +1,5 @@
 class Activation:
+  """Activation function."""
   LOGISTIC = openann.LOGISTIC
   TANH = openann.TANH
   TANH_SCALED = openann.TANH_SCALED
@@ -6,11 +7,13 @@ class Activation:
   LINEAR = openann.LINEAR
 
 class Error:
+  """Error function."""
   SSE = openann.SSE
   MSE = openann.MSE
   CE = openann.CE
 
 cdef class Net:
+  """A multilayer feedforward network."""
   cdef openann.Net *thisptr
   cdef object layers
 
