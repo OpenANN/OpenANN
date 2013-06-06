@@ -10,7 +10,7 @@ if __name__ == "__main__":
     author = "Alexander Fabisch",
     author_email = "afabisch@googlemail.com",
     url = "https://github.com/AlexanderFabisch/OpenANN",
-    platforms = "Linux",
+    platforms = ["Linux", "MacOS"],
     license = "GPL",
     ext_modules=[
       Extension("openann",
