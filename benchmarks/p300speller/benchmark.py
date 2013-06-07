@@ -31,6 +31,14 @@ def download_p300speller(directory):
           downloader = urllib.urlopen(LABEL_URLS[i])
           open(directory + "/" + LABEL_FILES[i], "w").write(downloader.read())
 
+    if True:#not os.path.exists(directory + "/" + "Subject_A_Test_StimulusType.txt"):
+        convert_test_targets()
+
+def convert_test_targets():
+    print("Converting test targets...")
+    for f in [directory + "/" + f for f in LABEL_FILES]:
+      print(f)
+
 
 def run_p300speller(directory):
     pass
