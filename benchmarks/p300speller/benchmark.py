@@ -36,10 +36,6 @@ def run_p300speller(directory):
     pass
 
 
-def evaluate_p300speller():
-    pass
-
-
 if __name__ == "__main__":
     if len(sys.argv) <= 2:
         print_usage()
@@ -51,8 +47,6 @@ if __name__ == "__main__":
             download_p300speller(directory)
         elif command == "run":
             run_p300speller(directory)
-        elif command == "evaluate":
-            evaluate_p300speller()
         else:
             print_usage()
             exit(1)
