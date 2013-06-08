@@ -49,8 +49,8 @@
  *
  * - Subject_A_Test_StimulusType.txt
  * - Subject_A_Test_TargetChar.txt
- * - Subject_B_Test_StimulusCode.txt
- * - Subject_B_Test_TargetType.txt
+ * - Subject_B_Test_StimulusType.txt
+ * - Subject_B_Test_TargetChar.txt
  *
  * with the ruby script "targets":
  *
