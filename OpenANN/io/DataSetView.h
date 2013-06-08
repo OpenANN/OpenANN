@@ -15,13 +15,12 @@ class Learner;
  * @class DataSetView
  *
  * An index-based dataset wrapper for representing efficient dataset views on
- * any OpenANN::DataSet instance. Its only operating on an index container
- * that points to the current accessable instances from the reference
- * OpenANN::DataSet.
+ * any DataSet instance. Its only operating on an index container that points
+ * to the current accessable instances from the reference DataSet.
  *
- * Can be used for splitting and merging any DataSet& partitions.
+ * Can be used for splitting and merging any DataSet partitions.
  *
- * No manually memory de- and allocation is needed to handle internal pointers.
+ * No manual memory de- and allocation is needed to handle internal pointers.
  */
 class DataSetView : public DataSet
 {
@@ -97,13 +96,13 @@ public:
   virtual DataSetView& shuffle();
 
 private:
-  // indices from the original dataset that are related to this subview.
+  //! Indices from the original dataset that are related to this subview.
   std::vector<int> indices;
 
-  // reference to the original dataset interface
+  //! Reference to the original dataset interface
   DataSet* dataset;
 
-  // friend declaration for direct indices access
+  //! Friend declaration for direct access to indices
   friend void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 };
 
