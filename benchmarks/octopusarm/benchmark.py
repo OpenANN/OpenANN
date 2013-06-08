@@ -108,8 +108,6 @@ def evaluate_octopusarm(plot_axes, moving_average=100):
         print("Required libraries: NumPy, Matplotlib.")
         exit(1)
 
-    axes = ["Epoch", "MSE", "Correct", "Errors", "Time"]
-
     log = {}
     for f in glob.iglob("logs/Neuro*.log"):
         run = []
