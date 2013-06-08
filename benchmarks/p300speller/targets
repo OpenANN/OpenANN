@@ -1,10 +1,10 @@
 # !/usr/bin/env ruby
 
 # This script will generate these files:
-# - Subject_A_Test_StimulusType.txt
+# - Subject_A_Test_StimulusCode.txt
 # - Subject_A_Test_TargetChar.txt
 # - Subject_B_Test_StimulusCode.txt
-# - Subject_B_Test_TargetType.txt
+# - Subject_B_Test_TargetChar.txt
 # You need these files:
 # - Subject_A_Test_StimulusType.txt
 # - Subject_B_Test_StimulusType.txt
