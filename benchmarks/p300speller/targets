@@ -41,6 +41,7 @@ puts "Generating classifier targets in '#{directory}'..."
   File.open directory+ File::SEPARATOR + "Subject_#{subject.capitalize}_Test_TargetChar.txt", "w" do |file|
     file.write target_ascii * "\n"
   end
+
   stimulus_type = File.new directory+ File::SEPARATOR + "Subject_#{subject.capitalize}_Test_StimulusType.txt", "w"
   File.open directory+ File::SEPARATOR + "Subject_#{subject.capitalize}_Test_StimulusCode.txt" do |file|
     while line = file.gets
