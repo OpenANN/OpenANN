@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 import urllib
 import numpy
 
@@ -37,9 +38,9 @@ def download_p300speller(directory):
           open(directory + os.sep + LABEL_FILES[i], "w").write(downloader.read())
 
     if not os.path.exists(directory + os.sep + "Subject_A_Test_StimulusType.txt"):
-        convert_test_targets()
+        convert_test_targets(directory)
 
-def convert_test_targets():
+def convert_test_targets(directory):
     print("Converting test targets...")
     for subject in ["a", "b"]:
         f = directory + os.sep + label_file_template % subject
@@ -78,7 +79,8 @@ def convert_test_targets():
 
 
 def run_p300speller(directory):
-    pass
+    print("Starting benchmark, this will take some minutes...")
+    subprocess.call(["./P300Speller", directory])
 
 
 if __name__ == "__main__":
