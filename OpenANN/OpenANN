@@ -4,19 +4,30 @@
 namespace OpenANN
 {
 
+/**
+ * @class OpenANNLibraryInfo
+ *
+ * Provides information about the OpenANN library.
+ */
 class OpenANNLibraryInfo
 {
 public:
+  //! OpenANN Version.
   static const char* VERSION;
+  //! URL of OpenANN website.
   static const char* URL;
+  //! Short description of the library.
   static const char* DESCRIPTION;
+  //! Exact time of compilation.
   static const char* COMPILATION_TIME;
+  //! Used compiler flags.
   static const char* COMPILER_FLAGS;
 
+  //! Print all information on stdout.
   static void print();
 };
 
-}
+} // namespace OpenANN
 
 #include <OpenANN/Net.h>
 #include <OpenANN/Convenience.h>
