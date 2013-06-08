@@ -226,7 +226,7 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY)
-  .restrictedBoltzmannMachineLayer(50, 1, 0.01, 0.01, false)
+  .restrictedBoltzmannMachineLayer(50, 1, 0.1, 0.0002, false)
   .outputLayer(loader.F, OpenANN::LINEAR)
   .setErrorFunction(OpenANN::CE)
   .trainingSet(trainSet);

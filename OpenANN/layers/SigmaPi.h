@@ -12,7 +12,7 @@ namespace OpenANN
 /**
  * @class SigmaPi
  *
- * Fully-connected, Higher-Order layers for neural networks
+ * Fully connected higher-order layer.
  *
  * For encoding invariances into the topology of the neural network
  * you can specify a weight constraint for a given higher-order node.

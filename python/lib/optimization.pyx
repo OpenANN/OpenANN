@@ -1,4 +1,5 @@
 cdef class StoppingCriteria:
+  """Stopping criteria for optimization algorithms."""
   cdef openann.StoppingCriteria *thisptr
   
   def __cinit__(self, stop={}):
@@ -17,10 +18,12 @@ cdef class StoppingCriteria:
     self.thisptr.minimalSearchSpaceStep = stop.get('minimal_search_space_step', self.thisptr.minimalSearchSpaceStep)
 
 cdef class Optimizer:
+  """Common base of optimization algorithms."""
   cdef openann.Optimizer *thisptr
   cdef object stopping_criteria
 
 cdef class StochasticGradientDescent(Optimizer):
+  """Mini-batch stochastic gradient descent."""
   def __cinit__(self, 
       object stop={}, 
       double learning_rate=0.01, 
@@ -45,12 +48,14 @@ cdef class StochasticGradientDescent(Optimizer):
     del self.thisptr
 
   def optimize(self, net, dataset):
+    """Perform optimization until stopping criteria are satisfied."""
     (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
     self.thisptr.setOptimizable(deref((<Net>net).thisptr))
     self.thisptr.optimize()
 
 
 cdef class LMA(Optimizer):
+  """Levenberg-Marquardt algorithm."""
   def __cinit__(self, stop={}):
     self.thisptr = new openann.LMA()
     self.stopping_criteria = StoppingCriteria(stop)
@@ -63,6 +68,7 @@ cdef class LMA(Optimizer):
     return self.thisptr.name().c_str()
 
   def optimize(self, net, dataset):
+    """Perform optimization until stopping criteria are satisfied."""
     (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
     self.thisptr.setOptimizable(deref((<Net>net).thisptr))
     self.thisptr.optimize()

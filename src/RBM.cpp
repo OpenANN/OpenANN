@@ -40,8 +40,19 @@ bool RBM::providesInitialization()
 
 void RBM::initialize()
 {
-  for(int k = 0; k < K; k++)
-    params(k) = rng.sampleNormalDistribution<double>() * stdDev;
+  int idx = 0;
+  for(int j = 0; j < H; j++)
+    for(int i = 0; i < D; i++)
+    {
+      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
+      params(idx++) = W(j, i);
+    }
+  bv.setZero();
+  for(int i = 0; i < D; i++)
+    params(idx++) = bv(i);
+  bh.setZero();
+  for(int j = 0; j < H; j++)
+    params(idx++) = bh(j);
   setParameters(params);
 }
 

@@ -1,9 +1,11 @@
 cdef class Layer:
+  """Common base of all layers."""
   cdef openann.Layer* construct(self):
     return NULL
 
 
 cdef class SigmaPiLayer(Layer):
+  """Fully connected higher-order layer."""
   cdef int width
   cdef int height
 

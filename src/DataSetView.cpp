@@ -9,19 +9,6 @@
 namespace OpenANN
 {
 
-int default_random(int i)
-{
-  static bool initialized = false;
-
-  if(!initialized)
-  {
-    std::srand(unsigned(std::time(0)));
-    initialized = true;
-  }
-
-  return std::rand() % i;
-}
-
 DataSetView::DataSetView(const DataSetView& ds)
   : indices(ds.indices), dataset(ds.dataset)
 {
@@ -68,7 +55,7 @@ void DataSetView::finishIteration(Learner& learner)
 
 DataSetView& DataSetView::shuffle()
 {
-  std::random_shuffle(indices.begin(), indices.end(), default_random);
+  std::random_shuffle(indices.begin(), indices.end());
 
   return *this;
 }
@@ -89,7 +76,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, int number_of_gro
   int samples_per_group = std::ceil(dataset.samples() / number_of_groups + 0.5);
 
   if(shuffling)
-    std::random_shuffle(indices.begin(), indices.end(), default_random);
+    std::random_shuffle(indices.begin(), indices.end());
 
   for(int i = 0; i < number_of_groups; ++i)
   {
@@ -118,7 +105,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio, boo
   int samples = std::ceil(ratio * dataset.samples());
 
   if(shuffling)
-    std::random_shuffle(indices.begin(), indices.end(), default_random);
+    std::random_shuffle(indices.begin(), indices.end());
 
   groups.push_back(DataSetView(dataset, indices.begin(), indices.begin() + samples));
   groups.push_back(DataSetView(dataset, indices.begin() + samples, indices.end()));
