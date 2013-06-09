@@ -46,7 +46,7 @@ python benchmark.py [download] [run] [evaluate]
 \endcode
  * download will download the dataset, run will start the benchmark and
  * evaluate will plot the result. You can of course modify the script or do
- * the each step manually.
+ * each step manually.
  *
  * If you run this benchmark on one computer, it takes about 20 days. Thus,
  * it is recommended to start the benchmark on multiple computers. You can

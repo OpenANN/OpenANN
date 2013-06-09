@@ -5,6 +5,10 @@ namespace OpenANN
 
 \page Benchmarks Benchmarks
 
+Python scripts that download required dataset, execute benchmarks and
+display the results are provided for all benchmarks. They are located in the
+corresponding build directory and are called "benchmark.py".
+
 Classification
 
   - \ref MNISTBenchmark
