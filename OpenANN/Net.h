@@ -3,8 +3,8 @@
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
-#include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
 namespace OpenANN
@@ -37,6 +37,7 @@ class Net : public Learner
   std::vector<Layer*> layers;
   std::vector<double*> parameters;
   std::vector<double*> derivatives;
+  Regularization regularization;
   ErrorFunction errorFunction;
   bool dropout;
 
@@ -266,6 +267,8 @@ public:
    * @name Optimization Contol
    */
   ///@{
+  Net& setRegularization(double l1Penalty = 0.0, double l2Penalty = 0.0,
+                         double maxSquaredWeightNorm = 0.0);
   /**
    * Set the error function.
    * @param errorFunction error function

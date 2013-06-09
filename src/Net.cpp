@@ -201,6 +201,14 @@ Net& Net::useDropout(bool activate)
   return *this;
 }
 
+Net& Net::setRegularization(double l1Penalty, double l2Penalty,
+                            double maxSquaredWeightNorm)
+{
+  regularization.l1Penalty = l1Penalty;
+  regularization.l2Penalty = l2Penalty;
+  regularization.maxSquaredWeightNorm = maxSquaredWeightNorm;
+}
+
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
 {
   this->errorFunction = errorFunction;
