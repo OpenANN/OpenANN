@@ -19,7 +19,8 @@
  *
  * Here we use the data set II from the BCI competition III. You can download
  * the data set from http://www.bbci.de/competition/iii. Note that you have to
- * register first. You need the ASCII format. The downloaded files will be
+ * register first. You need the files in ASCII format. The downloaded files
+ * will be
  *
  * - Subject_A_Train_Flashing.txt
  * - Subject_A_Train_Signal.txt
@@ -40,30 +41,15 @@
  *
  * In order to test the performance on the test set, we have to download the
  * target characters of the test set separately and we must generate the
- * expected targets for the classifier. You find the target characters at
+ * expected targets for the classifier. This will be done by a script.
  *
- * - http://www.bbci.de/competition/iii/results/albany/true_labels_a.txt
- * - http://www.bbci.de/competition/iii/results/albany/true_labels_b.txt
- *
- * You can generate the files
- *
- * - Subject_A_Test_StimulusType.txt
- * - Subject_A_Test_TargetChar.txt
- * - Subject_B_Test_StimulusType.txt
- * - Subject_B_Test_TargetChar.txt
- *
- * with the ruby script "targets":
- *
- * \code
- * ruby targets /path/to/dataset-directory/
- * \endcode
- *
- * The directory /path/to/dataset-directory/ should contain all data set files
- * and will contain the labels after you run the script. Now, you can start
- * the benchmark:
- * \code
- * ./P300Speller /path/to/dataset-directory/
- * \endcode
+ * To execute the benchmark you can run the Python script:
+\code
+python benchmark.py directory [download] [run]
+\endcode
+ * download will download the targets for test sets and run will start the
+ * benchmark. The directory should point to the location where the datasets
+ * are stored.
  *
  * The output could be
  * \verbatim
