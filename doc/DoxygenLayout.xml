@@ -9,14 +9,14 @@
       <tab type="namespacemembers" visible="yes" title="" intro=""/>
     </tab>
     <tab type="classes" visible="yes" title="">
-      <tab type="classlist" visible="yes" title="" intro=""/>
-      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/> 
-      <tab type="hierarchy" visible="yes" title="" intro=""/>
-      <tab type="classmembers" visible="no" title="" intro=""/>
+      <tab type="classlist" visible="yes" title="List" intro=""/>
+      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title="Index" intro=""/>
+      <tab type="hierarchy" visible="yes" title="Inheritance" intro=""/>
+      <tab type="classmembers" visible="no" title="Members" intro=""/>
     </tab>
     <tab type="files" visible="yes" title="">
-      <tab type="filelist" visible="yes" title="" intro=""/>
-      <tab type="globals" visible="no" title="" intro=""/>
+      <tab type="filelist" visible="yes" title="List" intro=""/>
+      <tab type="globals" visible="no" title="Globals" intro=""/>
     </tab>
     <tab type="dirs" visible="yes" title="" intro=""/>
     <tab type="examples" visible="yes" title="" intro=""/>  
