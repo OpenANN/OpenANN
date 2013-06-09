@@ -23,6 +23,6 @@ public:
   virtual void chooseOptimalAction();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_RL_RANDOM_AGENT_H_

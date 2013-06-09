@@ -145,6 +145,6 @@ public:
   virtual void finishedIteration() {}
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_OPTIMIZABLE_H_

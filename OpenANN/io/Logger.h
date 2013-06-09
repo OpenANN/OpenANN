@@ -165,6 +165,6 @@ Logger& operator<<(Logger& logger, const T& t)
   return logger;
 }
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_IO_LOGGER_H_

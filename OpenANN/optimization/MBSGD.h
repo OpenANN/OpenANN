@@ -178,6 +178,6 @@ private:
   void initialize();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_MBSGD_H_

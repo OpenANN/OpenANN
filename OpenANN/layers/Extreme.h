@@ -50,6 +50,6 @@ public:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LAYERS_EXTREME_H_

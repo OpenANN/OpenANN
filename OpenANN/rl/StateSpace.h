@@ -29,6 +29,6 @@ public:
   virtual const S& getDiscreteStateSpace() const = 0;
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_RL_STATE_SPACE_H_

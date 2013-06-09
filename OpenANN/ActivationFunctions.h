@@ -75,6 +75,6 @@ void rectifierDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd);
 void linear(const Eigen::MatrixXd& a, Eigen::MatrixXd& z);
 void linearDerivative(Eigen::MatrixXd& gd);
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_ACTIVATION_FUNCTIONS_H_

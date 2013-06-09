@@ -55,8 +55,8 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, const char* fil
  */
 void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out, std::ostream& stream);
 
-}
+} // namespace FANN
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_IO_FANN_H_

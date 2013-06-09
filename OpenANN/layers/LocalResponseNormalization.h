@@ -64,6 +64,6 @@ public:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LAYERS_LOCAL_RESPONSE_NORMALIZATION_H_

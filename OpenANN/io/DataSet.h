@@ -59,6 +59,6 @@ public:
   virtual void finishIteration(Learner& learner) = 0;
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_IO_DATA_SET_H_

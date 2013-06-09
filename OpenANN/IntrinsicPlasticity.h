@@ -70,6 +70,6 @@ public:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_INTRINSIC_PLASTICITY_H_

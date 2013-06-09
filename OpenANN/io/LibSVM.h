@@ -60,8 +60,8 @@ void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out,
 void save(const Eigen::MatrixXd& in, const Eigen::MatrixXd& out,
           std::ostream& stream);
 
-}
+} // namespace LibSVM
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_IO_LIB_SVM_H_

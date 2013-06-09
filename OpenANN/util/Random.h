@@ -111,6 +111,6 @@ public:
   }
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_UTIL_RANDOM_H_

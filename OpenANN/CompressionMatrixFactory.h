@@ -35,6 +35,6 @@ private:
   void fillCompressionMatrix(Eigen::MatrixXd& cm);
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_COMPRESSION_MATRIX_FACTORY_H_

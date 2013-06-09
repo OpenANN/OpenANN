@@ -28,6 +28,6 @@ public:
   virtual const A& getDiscreteActionSpace() const = 0;
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_RL_ACTION_SPACE_H_

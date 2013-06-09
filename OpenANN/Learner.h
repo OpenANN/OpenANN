@@ -77,6 +77,6 @@ public:
   virtual Learner& removeValidationSet();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LEARNER_H_

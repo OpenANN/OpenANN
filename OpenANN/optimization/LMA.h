@@ -68,6 +68,6 @@ private:
   void reset();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_LMA_H_

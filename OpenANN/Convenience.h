@@ -22,6 +22,6 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
            StoppingCriteria stop, bool reinitialize = false,
            bool dropout = false);
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_CONVENIENCE_H_

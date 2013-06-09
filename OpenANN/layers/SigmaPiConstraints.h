@@ -168,6 +168,6 @@ private:
   double resolution;
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LAYERS_SIGMA_PI_CONSTRAINTS_H_

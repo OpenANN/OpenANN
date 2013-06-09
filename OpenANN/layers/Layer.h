@@ -74,6 +74,6 @@ public:
   virtual Eigen::MatrixXd& getOutput() = 0;
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LAYERS_LAYER_H_

@@ -18,6 +18,6 @@ public:
   OpenANNException(const std::string& msg);
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_UTIL_OPENANN_EXCEPTION_H_

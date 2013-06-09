@@ -44,6 +44,6 @@ public:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LAYERS_ALPHA_BETA_FILTER_H_

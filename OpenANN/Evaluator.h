@@ -36,6 +36,6 @@ public:
   virtual void evaluate(Learner& learner, DataSet& dataSet);
 };
 
-} // OpenANN
+} // namespace OpenANN
 
 #endif // OPENANN_EVALUATOR_H_

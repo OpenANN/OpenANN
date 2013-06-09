@@ -103,6 +103,6 @@ public:
   void setSigma0(double sigma0);
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_IPOPCMAES_H_

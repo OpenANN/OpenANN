@@ -38,6 +38,6 @@ private:
   static void setStoppingInterruptSignal(int param);
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_STOPPING_INTERRIPT_H_

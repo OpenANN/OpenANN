@@ -49,6 +49,6 @@ public:
   virtual std::string name() = 0;
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_OPTIMIZER_H_

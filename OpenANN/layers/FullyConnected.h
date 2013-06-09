@@ -65,6 +65,6 @@ public:
   virtual Eigen::MatrixXd& getOutput();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_LAYERS_FULLY_CONNECTED_H_

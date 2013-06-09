@@ -50,6 +50,6 @@ public:
   virtual void finishIteration(Learner& learner);
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_IO_DIRECT_STORAGE_DATA_SET_H_

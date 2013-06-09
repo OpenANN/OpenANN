@@ -122,6 +122,6 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
  */
 int oneOfCDecoding(const Eigen::VectorXd& target);
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_EVALUATION_H_

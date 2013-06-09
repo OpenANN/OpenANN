@@ -23,6 +23,6 @@ public:
   virtual double deltaT() const { return 1.0; }
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_RL_ENVIRONMENT_H_

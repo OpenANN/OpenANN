@@ -48,6 +48,6 @@ public:
   StoppingCriteria();
 };
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_OPTIMIZATION_STOPPINGCRITERIA_H_

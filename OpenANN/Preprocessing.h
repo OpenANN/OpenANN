@@ -31,6 +31,6 @@ void filter(const Eigen::MatrixXd& x, Eigen::MatrixXd& y, const Eigen::MatrixXd&
  */
 void downsample(const Eigen::MatrixXd& y, Eigen::MatrixXd& d, int downSamplingFactor);
 
-}
+} // namespace OpenANN
 
 #endif // OPENANN_PREPROCESSING_H_

@@ -29,7 +29,7 @@ bool isInf(T value)
   return std::isinf(value);
 }
 
-}
+} // namespace OpenANN
 
 #define OPENANN_CHECK(x) assert(x)
 
