@@ -154,7 +154,6 @@ cdef extern from "OpenANN/optimization/Optimizer.h" namespace "OpenANN":
 cdef extern from "OpenANN/optimization/MBSGD.h" namespace "OpenANN":
   cdef cppclass MBSGD(Optimizer):
     MBSGD(double learningRate, double momentum, int batchSize,
-       double gamma, 
        double learningRateDecay, double minimalLearningRate, 
        double momentumGain, double maximalMomentum,
        double minGain, double maxGain)

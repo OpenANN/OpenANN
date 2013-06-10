@@ -249,7 +249,7 @@ int main(int argc, char** argv)
 
   OpenANN::StoppingCriteria stopNet;
   stopNet.maximalIterations = 10;
-  OpenANN::MBSGD netOptimizer(0.01, 0.5, 16, 0.0, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  OpenANN::MBSGD netOptimizer(0.01, 0.5, 16, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   netOptimizer.setOptimizable(net);
   netOptimizer.setStopCriteria(stopNet);
   netOptimizer.optimize();

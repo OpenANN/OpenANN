@@ -24,20 +24,19 @@ cdef class Optimizer:
 
 cdef class StochasticGradientDescent(Optimizer):
   """Mini-batch stochastic gradient descent."""
-  def __cinit__(self, 
-      object stop={}, 
-      double learning_rate=0.01, 
-      double momentum=0.5, 
-      int batch_size=10, 
-      double gamma=0.0,
-      double learning_rate_decay=1.0, 
-      double min_learning_rate=0.0, 
-      double momentum_gain=0.0, 
-      double max_momentum=1.0, 
-      double min_gain=1.0, 
+  def __cinit__(self,
+      object stop={},
+      double learning_rate=0.01,
+      double momentum=0.5,
+      int batch_size=10,
+      double learning_rate_decay=1.0,
+      double min_learning_rate=0.0,
+      double momentum_gain=0.0,
+      double max_momentum=1.0,
+      double min_gain=1.0,
       double max_gain=1.0):
 
-    self.thisptr = new openann.MBSGD(learning_rate, momentum, batch_size, gamma, learning_rate_decay, min_learning_rate, momentum_gain, max_momentum, min_gain, max_gain)
+    self.thisptr = new openann.MBSGD(learning_rate, momentum, batch_size, learning_rate_decay, min_learning_rate, momentum_gain, max_momentum, min_gain, max_gain)
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 
