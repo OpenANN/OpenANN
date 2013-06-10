@@ -2,6 +2,7 @@
 #define OPENANN_RBM_H_
 
 #include <OpenANN/Learner.h>
+#include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
@@ -31,6 +32,12 @@ namespace OpenANN
  * which was the major breakthrouh in deep learning. There are also other ways
  * to make deep learning work, e.g. CNNs (weight sharing), ReLUs, maxout, etc.
  *
+ * Supports the following regularization types:
+ *
+ * - L1 penalty
+ * - L2 penalty
+ * - Maximum of squared norm of the incoming weight vector
+ *
  * [1] Smolensky, Paul:
  * Information Processing in Dynamical Systems: Foundations of Harmony Theory,
  * MIT Press, 1986, pp. 194-281.
@@ -51,8 +58,8 @@ class RBM : public Learner, public Layer
   Eigen::MatrixXd deltas, e;
   int K;
   Eigen::VectorXd params, grad;
-  double l2Penalty;
   bool backprop;
+  Regularization regularization;
 
 public:
   /**
@@ -62,11 +69,11 @@ public:
    * @param H number of hidden nodes
    * @param cdN number of contrastive divergence steps
    * @param stdDev standard deviation of initial weights
-   * @param l2Penalty L2 regularization coefficient
    * @param backprop weights can be finetuned with backprop
+   * @param regularization regularization coefficients
    */
-  RBM(int D, int H, int cdN = 1, double stdDev = 0.01, double l2Penalty = 0.0,
-      bool backprop = true);
+  RBM(int D, int H, int cdN = 1, double stdDev = 0.01, bool backprop = true,
+      Regularization regularization = Regularization());
   virtual ~RBM() {}
 
   // Learner interface

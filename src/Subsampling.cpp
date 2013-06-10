@@ -7,11 +7,12 @@ namespace OpenANN
 {
 
 Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
-                         bool bias, ActivationFunction act, double stdDev)
+                         bool bias, ActivationFunction act, double stdDev,
+                         Regularization regularization)
   : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act), stdDev(stdDev), x(0),
-    e(1, I)
+    e(1, I), regularization(regularization)
 {
 }
 

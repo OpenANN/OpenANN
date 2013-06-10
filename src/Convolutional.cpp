@@ -8,11 +8,11 @@ namespace OpenANN
 
 Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                              int kernelCols, bool bias, ActivationFunction act,
-                             double stdDev)
+                             double stdDev, Regularization regularization)
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act),
-    stdDev(stdDev), x(0), e(1, I)
+    stdDev(stdDev), x(0), e(1, I), regularization(regularization)
 {
 }
 

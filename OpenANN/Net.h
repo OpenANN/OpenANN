@@ -80,27 +80,21 @@ public:
    * @param act activation function
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @param bias add bias term
-   * @param maxSquaredWeightNorm when training with dropout it is helpful to
-   *        explore with a high learning rate and constrain the incoming
-   *        weights of a neuron to have a maximum norm
    * @return this for chaining
    */
   Net& fullyConnectedLayer(int units, ActivationFunction act,
-                           double stdDev = 0.05, bool bias = true,
-                           double maxSquaredWeightNorm = 0.0);
+                           double stdDev = 0.05, bool bias = true);
   /**
    * Add a layer that contains an RBM.
    * @param H number of nodes (neurons)
    * @param cdN number of gibbs sampling steps for pretraining
    * @param stdDev standard deviation of the Gaussian distributed initial
    *               weights
-   * @param l2Penalty L2 regularization coefficient
    * @param backprop finetune weights with backpropagation
    * @return this for chaining
    */
   Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1,
                                        double stdDev = 0.01,
-                                       double l2Penalty = 0.0,
                                        bool backprop = true);
   /**
    * Add a compressed fully connected hidden layer.

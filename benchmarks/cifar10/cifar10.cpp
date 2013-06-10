@@ -124,8 +124,8 @@ int main(int argc, char** argv)
     .maxPoolingLayer(2, 2)                                           // 150 x  6 x  6
     .convolutionalLayer(100, 3, 3, OpenANN::RECTIFIER, 0.05)         // 100 x  4 x  4
     .maxPoolingLayer(2, 2)                                           // 100 x  2 x  2
-    .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 300
-    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0); // 100
+    .fullyConnectedLayer(300, OpenANN::RECTIFIER, 0.05, true)        // 300
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true);       // 100
   }
   else
   {
@@ -135,8 +135,8 @@ int main(int argc, char** argv)
     .maxPoolingLayer(2, 2)                                           //  30 x  6 x  6
     .convolutionalLayer(20, 3, 3, OpenANN::RECTIFIER, 0.05)          //  20 x  4 x  4
     .maxPoolingLayer(2, 2)                                           //  20 x  2 x  2
-    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true, 15.0)  // 100
-    .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true, 15.0);  //  50
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true)        // 100
+    .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true);        //  50
   }
   net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                   //  10
   .trainingSet(loader.trainingInput, loader.trainingOutput);

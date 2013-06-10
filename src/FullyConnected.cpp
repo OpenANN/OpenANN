@@ -6,10 +6,10 @@ namespace OpenANN
 
 FullyConnected::FullyConnected(OutputInfo info, int J, bool bias,
                                ActivationFunction act, double stdDev,
-                               double maxSquaredWeightNorm)
+                               Regularization regularization)
   : I(info.outputs()), J(J), bias(bias), act(act), stdDev(stdDev),
-    maxSquaredWeightNorm(maxSquaredWeightNorm), W(J, I), Wd(J, I),
-    b(J), bd(J), x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I)
+    W(J, I), Wd(J, I), b(J), bd(J), x(0), a(1, J), y(1, J), yd(1, J),
+    deltas(1, J), e(1, I), regularization(regularization)
 {
 }
 
@@ -53,13 +53,13 @@ void FullyConnected::initializeParameters()
 
 void FullyConnected::updatedParameters()
 {
-  if(maxSquaredWeightNorm > 0.0)
+  if(regularization.maxSquaredWeightNorm > 0.0)
   {
     for(int j = 0; j < J; j++)
     {
       const double squaredNorm = W.row(j).squaredNorm();
-      if(squaredNorm > maxSquaredWeightNorm)
-        W.row(j) *= sqrt(maxSquaredWeightNorm / squaredNorm);
+      if(squaredNorm > regularization.maxSquaredWeightNorm)
+        W.row(j) *= sqrt(regularization.maxSquaredWeightNorm / squaredNorm);
     }
   }
 }

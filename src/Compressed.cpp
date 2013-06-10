@@ -7,10 +7,11 @@ namespace OpenANN
 
 Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
-                       double stdDev)
+                       double stdDev, Regularization regularization)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
     W(J, I + bias), Wd(J, I + bias), b(J), phi(M, I + 1), alpha(J, M), alphad(J, M),
-    x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I + bias)
+    x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I + bias),
+    regularization(regularization)
 {
   CompressionMatrixFactory::Transformation transformation =
     CompressionMatrixFactory::SPARSE_RANDOM;

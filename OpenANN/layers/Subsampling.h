@@ -3,6 +3,7 @@
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/Regularization.h>
 
 namespace OpenANN
 {
@@ -19,6 +20,11 @@ namespace OpenANN
  * The components of each region will be summed up, multiplied by a weight and
  * added to a bias to compute the activation of a neuron. Then we apply an
  * activation function.
+ *
+ * Supports the following regularization types:
+ *
+ * - L1 penalty
+ * - L2 penalty
  *
  * [1] Yann LeCun, Léon Bottou, Yoshua Bengio and Patrick Haffner:
  * Gradient-Based Learning Applied to Document Recognition,
@@ -44,10 +50,12 @@ class Subsampling : public Layer
   Eigen::MatrixXd deltas;
   Eigen::MatrixXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
+  Regularization regularization;
 
 public:
   Subsampling(OutputInfo info, int kernelRows, int kernelCols, bool bias,
-              ActivationFunction act, double stdDev);
+              ActivationFunction act, double stdDev,
+              Regularization regularization);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

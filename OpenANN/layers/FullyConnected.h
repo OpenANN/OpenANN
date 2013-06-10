@@ -3,6 +3,7 @@
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/Regularization.h>
 
 namespace OpenANN
 {
@@ -31,6 +32,12 @@ namespace OpenANN
  * Subsampling) in the lower layers. These can be trained surprisingly well in
  * deep architectures.
  *
+ * Supports the following regularization types:
+ *
+ * - L1 penalty
+ * - L2 penalty
+ * - Maximum of squared norm of the incoming weight vector
+ *
  * [1] Kurt Hornik, Maxwell B. Stinchcombe and Halbert White:
  * Multilayer feedforward networks are universal approximators,
  * Neural Networks 2 (5), pp. 359-366, 1989.
@@ -41,7 +48,6 @@ class FullyConnected : public Layer
   bool bias;
   ActivationFunction act;
   double stdDev;
-  double maxSquaredWeightNorm;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
   Eigen::VectorXd b;
@@ -52,10 +58,11 @@ class FullyConnected : public Layer
   Eigen::MatrixXd yd;
   Eigen::MatrixXd deltas;
   Eigen::MatrixXd e;
+  Regularization regularization;
 
 public:
   FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
-                 double stdDev, double maxSquaredWeightNorm);
+                 double stdDev, Regularization regularization);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();
