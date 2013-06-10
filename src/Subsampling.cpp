@@ -173,6 +173,17 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
     }
   }
 
+  if(regularization.l1Penalty > 0.0)
+  {
+    for(int fmo = 0; fmo < fm; fmo++)
+      Wd[fmo].array() += regularization.l2Penalty * Wd[fmo].array() / Wd[fmo].array().abs();
+  }
+  if(regularization.l2Penalty > 0.0)
+  {
+    for(int fmo = 0; fmo < fm; fmo++)
+        Wd[fmo] += regularization.l2Penalty * Wd[fmo];
+  }
+
   eout = &e;
 }
 
