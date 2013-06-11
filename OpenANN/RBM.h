@@ -36,7 +36,6 @@ namespace OpenANN
  *
  * - L1 penalty
  * - L2 penalty
- * - Maximum of squared norm of the incoming weight vector
  *
  * [1] Smolensky, Paul:
  * Information Processing in Dynamical Systems: Foundations of Harmony Theory,
