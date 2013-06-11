@@ -90,9 +90,9 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   if(bias)
     bd = deltas.colwise().sum().transpose();
   if(regularization.l1Penalty > 0.0)
-    Wd.array() += regularization.l1Penalty * Wd.array() / Wd.array().abs();
+    Wd.array() += regularization.l1Penalty * W.array() / W.array().abs();
   if(regularization.l2Penalty > 0.0)
-    Wd += regularization.l2Penalty * Wd;
+    Wd += regularization.l2Penalty * W;
   // Prepare error signals for previous layer
   e = deltas * W;
   eout = &e;

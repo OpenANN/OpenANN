@@ -11,7 +11,7 @@ net = Net()
 lma = LMA(stop)
 
 net.input_layer(1)
-net.set_regularization(0.0, 0.01, 0.0)
+net.set_regularization(0.0, 0.0001, 0.0)
 net.fully_connected_layer(10, Activation.LOGISTIC)
 net.fully_connected_layer(10, Activation.LOGISTIC)
 net.output_layer(1, Activation.LINEAR)
