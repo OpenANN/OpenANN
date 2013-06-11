@@ -173,20 +173,31 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net()
     Net& inputLayer(int dim1, int dim2, int dim3)
     Net& alphaBetaFilterLayer(double deltaT, double stdDev)
-    Net& fullyConnectedLayer(int units, ActivationFunction act, double stdDev, bool bias)
-    Net& compressedLayer(int units, int params, ActivationFunction act, string compression, double stdDev, bool bias)
-    Net& extremeLayer(int units, ActivationFunction act, double stdDev, bool bias)
-    Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols, ActivationFunction act, double stdDev, bool bias)
-    Net& subsamplingLayer(int kernelRows, int kernelCols, ActivationFunction act, double stdDev, bool bias)
+    Net& fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
+                             bool bias)
+    Net& compressedLayer(int units, int params, ActivationFunction act,
+                         string compression, double stdDev, bool bias)
+    Net& extremeLayer(int units, ActivationFunction act, double stdDev,
+                      bool bias)
+    Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
+                            ActivationFunction act, double stdDev, bool bias)
+    Net& subsamplingLayer(int kernelRows, int kernelCols,
+                          ActivationFunction act, double stdDev, bool bias)
     Net& maxPoolingLayer(int kernelRows, int kernelCols)
-    Net& localReponseNormalizationLayer(double k, int n, double alpha, double beta)
+    Net& localReponseNormalizationLayer(double k, int n, double alpha,
+                                        double beta)
     Net& outputLayer(int units, ActivationFunction act, double stdDev)
-    Net& compressedOutputLayer(int units, int params, ActivationFunction act, string& compression, double stdDev)
+    Net& compressedOutputLayer(int units, int params, ActivationFunction act,
+                               string& compression, double stdDev)
     Net& dropoutLayer(double dropoutProbability) 
-    Net& setErrorFunction(ErrorFunction errorFunction)
-    Net& useDropout(bool activate)
     Net& addLayer(Layer *layer)
     Net& addOutputLayer(Layer *layer)
+
+    Net& setRegularization(double l1Penalty, double l2Penalty,
+                           double maxSquaredWeightNorm)
+    Net& setErrorFunction(ErrorFunction errorFunction)
+    Net& useDropout(bool activate)
+
     unsigned int numberOflayers()
     OutputInfo getOutputInfo(int l)
 

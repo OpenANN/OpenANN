@@ -98,6 +98,10 @@ cdef class Net:
     self.thisptr.compressedOutputLayer(units, params, act, string(comp), std_dev)
     return self
 
+  def set_regularization(l1_penalty, l2_penalty, max_squared_weight_norm)
+    """Set regularization coefficients."""
+    self.thisptr.setRegularization(l1_penalty, l2_penalty, max_squared_weight_norm)
+
   def set_error_function(self, err):
     """Set the error function."""
     self.thisptr.setErrorFunction(err)
