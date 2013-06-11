@@ -42,7 +42,7 @@ void DataStream::addSample(Eigen::VectorXd* x, Eigen::VectorXd* t)
   if(t) T.row(collected) = *t;
   if(++collected >= cacheSize)
   {
-    opt->optimize();
+    opt->step();
     collected = 0;
   }
 }
