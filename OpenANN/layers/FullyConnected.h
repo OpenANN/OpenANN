@@ -19,6 +19,22 @@ namespace OpenANN
  * on a vector, \f$ x \f$ is the input of the layer, \f$ W \f$ is a weight
  * matrix and \f$ b \f$ is a bias vector.
  *
+ * Actually, we have a faster implementation that computes the forward and
+ * backward pass for N instances in parallel. Suppose we have an input matrix
+ * \f$ X \f$ with \f$ N \f$ rows and \f$ I \f$ columns, i.e. each row contains
+ * an input vector \f$ x \f$. The forward propagation is implemented in two
+ * steps:
+ *
+ * \f$ A = X W^T, Y = g(A) \f$
+ *
+ * and the backpropagation is
+ *
+ * \f$ \Delta = g'(A) * \frac{\partial E}{\partial Y},
+ *     \frac{\partial E}{\partial X} = \Delta W,
+ *     \frac{\partial E}{\partial W} = \Delta^T X,
+ *     \frac{\partial E}{\partial b} =
+ *       \sum_n \frac{\partial E}{\partial Y_n} \f$
+ *
  * Neural networks with one fully connected hidden layer and a nonlinear
  * activation function are universal function approximators, i. e. with a
  * sufficient number of nodes any function can be approximated with arbitrary
