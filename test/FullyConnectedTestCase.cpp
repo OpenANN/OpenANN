@@ -17,7 +17,7 @@ void FullyConnectedTestCase::forward()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, false, TANH, 0.05, OpenANN::Regularization());
 
   std::vector<double*> pp;
   std::vector<double*> pdp;
@@ -57,7 +57,7 @@ void FullyConnectedTestCase::backprop()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, false, TANH, 0.05, OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
@@ -77,7 +77,7 @@ void FullyConnectedTestCase::inputGradient()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, false, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, false, TANH, 0.05, OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
@@ -97,7 +97,7 @@ void FullyConnectedTestCase::parallelForward()
 {
   OutputInfo info;
   info.dimensions.push_back(3);
-  FullyConnected layer(info, 2, true, TANH, 0.05, 0.0);
+  FullyConnected layer(info, 2, true, TANH, 0.05, OpenANN::Regularization());
 
   std::vector<double*> pp;
   std::vector<double*> pdp;

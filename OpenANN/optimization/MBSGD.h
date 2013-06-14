@@ -133,8 +133,6 @@ class MBSGD : public Optimizer
   double maxGain;
   //! Use parameter adaption
   bool useGain;
-  //! Tikhonov regularization coefficient
-  double gamma;
 
   int iteration;
   RandomNumberGenerator rng;
@@ -150,8 +148,6 @@ public:
    * @param momentum momentum coefficient (usually called eta); range: [0, 1)
    * @param batchSize size of the mini-batches; range: [1, N], where N is the
    *                  size of the training set
-   * @param gamma Tikhonov (squared norm) regularization coefficient; range:
-   *              [0, 1]
    * @param learningRateDecay will be multiplied with the learning rate after
    *                          each weight update; range: (0, 1]
    * @param minimalLearningRate minimum value for the learning rate; range:
@@ -163,7 +159,6 @@ public:
    * @param maxGain maximum factor for individual learning rates
    */
   MBSGD(double learningRate = 0.01, double momentum = 0.5, int batchSize = 10,
-        double gamma = 0.0,
         double learningRateDecay = 1.0, double minimalLearningRate = 0.0,
         double momentumGain = 0.0, double maximalMomentum = 1.0,
         double minGain = 1.0, double maxGain = 1.0);

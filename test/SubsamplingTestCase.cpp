@@ -18,7 +18,7 @@ void SubsamplingTestCase::subsampling()
   info.dimensions.push_back(2);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  Subsampling layer(info, 2, 2, false, TANH, 0.05);
+  Subsampling layer(info, 2, 2, false, TANH, 0.05, OpenANN::Regularization());
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
   OutputInfo info2 = layer.initialize(parameterPointers,
@@ -46,7 +46,7 @@ void SubsamplingTestCase::subsamplingGradient()
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  Subsampling layer(info, 2, 2, true, LINEAR, 0.05);
+  Subsampling layer(info, 2, 2, true, LINEAR, 0.05, OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*4*4);
@@ -68,7 +68,7 @@ void SubsamplingTestCase::subsamplingInputGradient()
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  Subsampling layer(info, 2, 2, true, LINEAR, 0.05);
+  Subsampling layer(info, 2, 2, true, LINEAR, 0.05, OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*4*4);
