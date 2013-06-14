@@ -15,14 +15,14 @@ namespace OpenANN
 {
 
 MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
-             double gamma, double learningRateDecay,
-             double minimalLearningRate, double momentumGain,
-             double maximalMomentum, double minGain, double maxGain)
+             double learningRateDecay, double minimalLearningRate,
+             double momentumGain, double maximalMomentum,
+             double minGain, double maxGain)
   : alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
     maxGain(maxGain), useGain(minGain != 1.0 || maxGain != 1.0),
-    gamma(gamma), iteration(-1)
+    iteration(-1)
 {
   if(learningRate <= 0.0 || learningRate > 1.0)
     throw OpenANNException("Invalid learning rate, should be within (0, 1]");
@@ -30,8 +30,6 @@ MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
     throw OpenANNException("Invalid momentum, should be within [0, 1)");
   if(batchSize < 1)
     throw OpenANNException("Invalid batch size, should be greater than 0");
-  if(gamma < 0.0 || gamma > 1.0)
-    throw OpenANNException("Invalid gamma, should be within [0, 1]");
   if(learningRateDecay <= 0.0 || learningRateDecay > 1.0)
     throw OpenANNException("Invalid learning rate decay, should be within (0, 1]");
   if(minimalLearningRate < 0.0 || minimalLearningRate > 1.0)
@@ -113,8 +111,6 @@ bool MBSGD::step()
 
     momentum = eta * momentum - alpha * gradient;
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
-    if(gamma > 0.0) // Tikhonov (L2 norm) regularization
-      momentum -= alpha * gamma * parameters;
     parameters += momentum;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
     opt->setParameters(parameters);

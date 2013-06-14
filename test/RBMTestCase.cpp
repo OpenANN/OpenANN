@@ -75,7 +75,7 @@ void RBMTestCase::parameterGradient()
 {
   OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  OpenANN::RBM layer(3, 2, 1, 0.01, 0.0, true);
+  OpenANN::RBM layer(3, 2, 1, 0.01, true);
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);

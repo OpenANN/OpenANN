@@ -47,17 +47,17 @@ Net& Net::alphaBetaFilterLayer(double deltaT, double stdDev)
 }
 
 Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
-                              bool bias, double maxSquaredWeightNorm)
+                              bool bias)
 {
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
-                                     maxSquaredWeightNorm));
+                                     regularization));
 }
 
 Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
-                                          double l2Penalty, bool backprop)
+                                          bool backprop)
 {
-  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev, l2Penalty,
-                          backprop));
+  return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev,
+                          backprop, regularization));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
@@ -65,7 +65,7 @@ Net& Net::compressedLayer(int units, int params, ActivationFunction act,
                           bool bias)
 {
   return addLayer(new Compressed(infos.back(), units, params, bias, act,
-                                 compression, stdDev));
+                                 compression, stdDev, regularization));
 }
 
 Net& Net::extremeLayer(int units, ActivationFunction act, double stdDev,
@@ -84,13 +84,14 @@ Net& Net::convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
                              ActivationFunction act, double stdDev, bool bias)
 {
   return addLayer(new Convolutional(infos.back(), featureMaps, kernelRows,
-                                    kernelCols, bias, act, stdDev));
+                                    kernelCols, bias, act, stdDev, regularization));
 }
 
 Net& Net::subsamplingLayer(int kernelRows, int kernelCols,
                            ActivationFunction act, double stdDev, bool bias)
 {
-  return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias, act, stdDev));
+  return addLayer(new Subsampling(infos.back(), kernelRows, kernelCols, bias,
+                                  act, stdDev, regularization));
 }
 
 Net& Net::maxPoolingLayer(int kernelRows, int kernelCols)
@@ -199,6 +200,14 @@ Net& Net::useDropout(bool activate)
 {
   dropout = activate;
   return *this;
+}
+
+Net& Net::setRegularization(double l1Penalty, double l2Penalty,
+                            double maxSquaredWeightNorm)
+{
+  regularization.l1Penalty = l1Penalty;
+  regularization.l2Penalty = l2Penalty;
+  regularization.maxSquaredWeightNorm = maxSquaredWeightNorm;
 }
 
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
