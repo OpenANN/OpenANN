@@ -3,6 +3,7 @@
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/Regularization.h>
 
 namespace OpenANN
 {
@@ -20,6 +21,11 @@ namespace OpenANN
  * representation of weights is equivalent to compressing the input of the
  * layer with \f$ \Phi x \f$ and regarding \f$ \alpha \f$ as the weight
  * matrix.
+ *
+ * Supports the following regularization types:
+ *
+ * - L1 penalty
+ * - L2 penalty
  *
  * [1] A. Fabisch, Y. Kassahun, H. Wöhrle and F. Kirchner:
  * Learning in compressed space,
@@ -43,10 +49,12 @@ class Compressed : public Layer
   Eigen::MatrixXd yd;
   Eigen::MatrixXd deltas;
   Eigen::MatrixXd e;
+  Regularization regularization;
 
 public:
   Compressed(OutputInfo info, int J, int M, bool bias, ActivationFunction act,
-             const std::string& compression, double stdDev);
+             const std::string& compression, double stdDev,
+             Regularization regularization);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

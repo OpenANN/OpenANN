@@ -8,11 +8,11 @@ namespace OpenANN
 
 Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                              int kernelCols, bool bias, ActivationFunction act,
-                             double stdDev)
+                             double stdDev, Regularization regularization)
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act),
-    stdDev(stdDev), x(0), e(1, I)
+    stdDev(stdDev), x(0), e(1, I), regularization(regularization)
 {
 }
 
@@ -185,6 +185,19 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
         }
       }
     }
+  }
+
+  if(regularization.l1Penalty > 0.0)
+  {
+    for(int fmo = 0; fmo < fmout; fmo++)
+      for(int fmi = 0; fmi < fmin; fmi++)
+        Wd[fmo][fmi].array() += regularization.l2Penalty * W[fmo][fmi].array() / W[fmo][fmi].array().abs();
+  }
+  if(regularization.l2Penalty > 0.0)
+  {
+    for(int fmo = 0; fmo < fmout; fmo++)
+      for(int fmi = 0; fmi < fmin; fmi++)
+        Wd[fmo][fmi] += regularization.l2Penalty * W[fmo][fmi];
   }
 
   eout = &e;

@@ -2,6 +2,7 @@
 #define OPENANN_CONVENIENCE_H_
 
 #include <OpenANN/Net.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include <string>
 
 namespace OpenANN

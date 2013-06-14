@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
                " iteration is finished.";
 
-  OpenANN::MBSGD optimizer(0.001, 0.0, 1, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+  OpenANN::MBSGD optimizer(0.001, 0.0, 1, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
   OpenANN::DataStream stream(loader.trainingN);
   stream.setLearner(net);
   stream.setOptimizer(optimizer);

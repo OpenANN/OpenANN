@@ -7,11 +7,12 @@ namespace OpenANN
 {
 
 Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
-                         bool bias, ActivationFunction act, double stdDev)
+                         bool bias, ActivationFunction act, double stdDev,
+                         Regularization regularization)
   : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act), stdDev(stdDev), x(0),
-    e(1, I)
+    e(1, I), regularization(regularization)
 {
 }
 
@@ -170,6 +171,17 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
         }
       }
     }
+  }
+
+  if(regularization.l1Penalty > 0.0)
+  {
+    for(int fmo = 0; fmo < fm; fmo++)
+      Wd[fmo].array() += regularization.l2Penalty * W[fmo].array() / W[fmo].array().abs();
+  }
+  if(regularization.l2Penalty > 0.0)
+  {
+    for(int fmo = 0; fmo < fm; fmo++)
+        Wd[fmo] += regularization.l2Penalty * W[fmo];
   }
 
   eout = &e;

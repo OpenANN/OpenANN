@@ -3,6 +3,7 @@
 
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/Regularization.h>
 
 namespace OpenANN
 {
@@ -21,6 +22,11 @@ namespace OpenANN
  * previous layer such that we use one convolution kernel for each of these
  * connections. After convolving the input feature maps, an activation
  * function will be applied on the activations.
+ *
+ * Supports the following regularization types:
+ *
+ * - L1 penalty
+ * - L2 penalty
  *
  * [1] Yann LeCun, Léon Bottou, Yoshua Bengio and Patrick Haffner:
  * Gradient-Based Learning Applied to Document Recognition,
@@ -46,11 +52,12 @@ class Convolutional : public Layer
   Eigen::MatrixXd deltas;
   Eigen::MatrixXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
+  Regularization regularization;
 
 public:
   Convolutional(OutputInfo info, int featureMaps, int kernelRows,
                 int kernelCols, bool bias, ActivationFunction act,
-                double stdDev);
+                double stdDev, Regularization regularization);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters();

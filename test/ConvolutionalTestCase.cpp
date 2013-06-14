@@ -23,7 +23,7 @@ void ConvolutionalTestCase::convolutional()
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  OpenANN::Convolutional layer(info, 2, 3, 3, false, OpenANN::TANH, 0.05);
+  OpenANN::Convolutional layer(info, 2, 3, 3, false, OpenANN::TANH, 0.05, OpenANN::Regularization());
   std::vector<double*> pp;
   std::vector<double*> pdp;
   OpenANN::OutputInfo info2 = layer.initialize(pp, pdp);
@@ -56,7 +56,7 @@ void ConvolutionalTestCase::convolutionalGradient()
   info.dimensions.push_back(3);
   info.dimensions.push_back(5);
   info.dimensions.push_back(5);
-  OpenANN::Convolutional layer(info, 2, 3, 3, true, OpenANN::LINEAR, 0.05);
+  OpenANN::Convolutional layer(info, 2, 3, 3, true, OpenANN::LINEAR, 0.05, OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3*5*5);
@@ -78,7 +78,7 @@ void ConvolutionalTestCase::convolutionalInputGradient()
   info.dimensions.push_back(3);
   info.dimensions.push_back(5);
   info.dimensions.push_back(5);
-  OpenANN::Convolutional layer(info, 2, 3, 3, true, OpenANN::LINEAR, 0.05);
+  OpenANN::Convolutional layer(info, 2, 3, 3, true, OpenANN::LINEAR, 0.05, OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3*5*5);

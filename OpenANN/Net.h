@@ -3,8 +3,8 @@
 
 #include <OpenANN/Learner.h>
 #include <OpenANN/ActivationFunctions.h>
+#include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
-#include <OpenANN/optimization/StoppingCriteria.h>
 #include <vector>
 
 namespace OpenANN
@@ -37,6 +37,7 @@ class Net : public Learner
   std::vector<Layer*> layers;
   std::vector<double*> parameters;
   std::vector<double*> derivatives;
+  Regularization regularization;
   ErrorFunction errorFunction;
   bool dropout;
 
@@ -79,27 +80,21 @@ public:
    * @param act activation function
    * @param stdDev standard deviation of the Gaussian distributed initial weights
    * @param bias add bias term
-   * @param maxSquaredWeightNorm when training with dropout it is helpful to
-   *        explore with a high learning rate and constrain the incoming
-   *        weights of a neuron to have a maximum norm
    * @return this for chaining
    */
   Net& fullyConnectedLayer(int units, ActivationFunction act,
-                           double stdDev = 0.05, bool bias = true,
-                           double maxSquaredWeightNorm = 0.0);
+                           double stdDev = 0.05, bool bias = true);
   /**
    * Add a layer that contains an RBM.
    * @param H number of nodes (neurons)
    * @param cdN number of gibbs sampling steps for pretraining
    * @param stdDev standard deviation of the Gaussian distributed initial
    *               weights
-   * @param l2Penalty L2 regularization coefficient
    * @param backprop finetune weights with backpropagation
    * @return this for chaining
    */
   Net& restrictedBoltzmannMachineLayer(int H, int cdN = 1,
                                        double stdDev = 0.01,
-                                       double l2Penalty = 0.0,
                                        bool backprop = true);
   /**
    * Add a compressed fully connected hidden layer.
@@ -266,6 +261,8 @@ public:
    * @name Optimization Contol
    */
   ///@{
+  Net& setRegularization(double l1Penalty = 0.0, double l2Penalty = 0.0,
+                         double maxSquaredWeightNorm = 0.0);
   /**
    * Set the error function.
    * @param errorFunction error function
