@@ -5,18 +5,20 @@ namespace OpenANN
 
 \page Benchmarks Benchmarks
 
+We provide some benchmarks with %OpenANN.
+
 Python scripts that download required dataset, execute benchmarks and
 display the results are provided for all benchmarks. They are located in the
 corresponding build directory and are called "benchmark.py".
 
-Classification
+\section Classification
 
   - \ref MNISTBenchmark
   - \ref P300SpellerBenchmark
   - \ref TwoSpiralsBenchmark
   - \ref CIFAR10Benchmark
 
-Reinforcement Learning
+\section Reinforcement Learning
 
   - \ref PoleBalancingBenchmark
   - \ref OctopusArm
