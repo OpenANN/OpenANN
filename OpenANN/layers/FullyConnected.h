@@ -34,7 +34,7 @@ namespace OpenANN
  *     \frac{\partial E}{\partial X} = \Delta W,
  *     \frac{\partial E}{\partial W} = \Delta^T X,
  *     \frac{\partial E}{\partial b} =
- *       \sum_n \frac{\partial E}{\partial Y_n} \f$
+ *       \sum_n \Delta_n \f$
  *
  * Neural networks with one fully connected hidden layer and a nonlinear
  * activation function are universal function approximators, i. e. with a
