@@ -176,23 +176,37 @@ int main(int argc, char** argv)
   OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);
 
   std::string directory = "mnist/";
+  bool distortions = false;
   if(argc > 1)
     directory = std::string(argv[1]);
+  if(argc > 2)
+    distortions = true;
 
-  IDXLoader loader(28, 28, 60000, 10000, directory);
+  IDXLoader loader(28, 28, 0, 10000, directory);
 
   OpenANN::Net net;
-  net.inputLayer(1, loader.padToX, loader.padToY)
-  .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-  .maxPoolingLayer(2, 2)
-  .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-  .maxPoolingLayer(2, 2)
-  .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
-  .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05)
-  .outputLayer(loader.F, OpenANN::LINEAR, 0.05)
-  .trainingSet(loader.trainingInput, loader.trainingOutput);
+  net.inputLayer(1, loader.padToX, loader.padToY);
+  if(distortions)
+  {
+    // High model complexity
+    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05);
+  }
+  else
+  {
+    // Smaller network
+    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
+    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05);
+  }
+  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput);
-  net.initialize();
 
   // Load parameters
   std::ifstream file("weights.log");
@@ -200,11 +214,7 @@ int main(int argc, char** argv)
   for(int i = 0; i < net.dimension(); i++)
     file >> weights(i);
   net.setParameters(weights);
-
-  net.validationSet(testSet);
   net.setErrorFunction(OpenANN::CE);
-  interfaceLogger << "Created MLP.\n" << "D = " << loader.D << ", F = "
-                  << loader.F << ", N = " << loader.trainingN << ", L = " << net.dimension() << "\n";
 
   QApplication app(argc, argv);
   MNISTVisualization visual(net, testSet, loader.padToX, loader.padToY);
