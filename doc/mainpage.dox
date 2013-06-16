@@ -27,6 +27,7 @@ To start using %OpenANN it might be helpful to take a look at
 \subsection Tutorials
   - \ref CreateDataSet
   - \ref HowtoLearn
+  - \ref Convenience
   - \ref Architecture
   - \ref Logging
 
