@@ -14,6 +14,20 @@ OpenANN/OpenANN or OpenANN/Convenience.h are included.
 <table>
 <tr><th>Function</th><th>Usage</th><th>Description</th></tr>
 <tr>
+  <td>OpenANN::makeMLNN</td>
+  <td>
+\code
+OpenANN::Net net;
+OpenANN::makeMLNN(net, OpenANN::LOGISTIC, OpenANN::LOGISTIC, D, F, 2, 3, 3);
+\endcode
+  </td>
+  <td>
+  Create a multilayer neural network with D inputs, F outputs and two hidden
+  layers with 3 nodes each. Note that you cannot set the standard deviation of
+  the initial random weights or the bias of the MLNN.
+  </td>
+</tr>
+<tr>
   <td>OpenANN::train</td>
   <td>
 \code
