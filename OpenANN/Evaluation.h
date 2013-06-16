@@ -96,10 +96,11 @@ Eigen::MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet);
 /**
  * Classification hits.
  *
- * @todo document the shape of the labels
- *
  * @param learner learned model
- * @param dataSet dataset
+ * @param dataSet dataset; the targets are assumed to be encoded with 1-of-c
+ *                encoding if there are 2 or more components, otherwise the
+ *                output is assumed to be within [0, 1], where values of 0.5
+ *                or greater and all other values belong to different classes
  * @return number of correct predictions
  */
 int classificationHits(Learner& learner, DataSet& dataSet);
