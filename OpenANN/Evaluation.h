@@ -1,6 +1,12 @@
 #ifndef OPENANN_EVALUATION_H_
 #define OPENANN_EVALUATION_H_
 
+/**
+ * @file Evaluation.h
+ *
+ * Provides some convenience functions to evaluate learners.
+ */
+
 #include <Eigen/Dense>
 
 namespace OpenANN

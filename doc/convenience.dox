@@ -9,7 +9,9 @@ Since there are many coding patterns that occur very often when you use
 artificial neural networks, it is sometimes helpful to have shortcuts.
 
 Here is an overview over these shortcuts. They are available only if either
-OpenANN/OpenANN or OpenANN/Convenience.h are included.
+OpenANN/OpenANN or OpenANN/Convenience.h are included. In addition, there
+are some other helper functions in other headers that are not documented here.
+These headers are OpenANN/Preprocessing.h and OpenANN/Evaluation.h.
 
 <table>
 <tr><th>Function</th><th>Usage</th><th>Description</th></tr>
