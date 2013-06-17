@@ -13,17 +13,18 @@ cdef object __vector_eigen_to_numpy__(openann.VectorXd* x_eigen):
 
 
 cdef openann.MatrixXd* __matrix_numpy_to_eigen__(object X_numpy):
-  cdef openann.MatrixXd* X_eigen = new openann.MatrixXd(X_numpy.shape[0], X_numpy.shape[1])
-  flatten_matrix = numpy.reshape(X_numpy, X_numpy.size, order='C')
-  for r in range(X_numpy.size):
-    X_eigen.data()[r] = flatten_matrix[r]
+  cdef openann.MatrixXd* X_eigen = new openann.MatrixXd(X_numpy.shape[0],
+                                                        X_numpy.shape[1])
+  for r in range(X_numpy.shape[0]):
+    for c in range(X_numpy.shape[1]):
+      X_eigen.data()[X_numpy.shape[0] * c + r] = X_numpy[r, c]
   return X_eigen
 
 cdef object __matrix_eigen_to_numpy__(openann.MatrixXd* X_eigen):
   x_numpy = numpy.ndarray(shape=(X_eigen.rows(), X_eigen.cols()))
-  for i in range(X_eigen.rows()):
-    for j in range(X_eigen.cols()):
-        x_numpy[i,j] = X_eigen.get(i, j)
+  for r in range(X_eigen.rows()):
+    for c in range(X_eigen.cols()):
+        x_numpy[r, c] = X_eigen.coeff(r, c)
   return x_numpy
 
 

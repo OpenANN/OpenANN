@@ -20,7 +20,6 @@ stop  = {
 optimizer = MBSGD(
     stop,
     learning_rate=0.7, learning_rate_decay=0.99897, min_learning_rate=0.00001,
-    #learning_rate=0.001, learning_rate_decay=0.99897, min_learning_rate=0.0001,
     momentum=0.5,
     batch_size=16)
 
