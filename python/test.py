@@ -26,8 +26,7 @@ Log.info("Using {0} samples with {1} inputs and {2} outputs".
 
 lma.optimize(net, dataset)
 
-prediction = numpy.array([net.predict(inputs[i])
-                          for i in range(inputs.shape[0])])
+prediction = net.predict(inputs)
 
 pylab.plot(inputs[:, 0], outputs[:, 0], ".", label="Data Set")
 pylab.plot(inputs[:, 0], prediction[:, 0], label="Prediction")

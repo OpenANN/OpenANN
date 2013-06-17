@@ -166,7 +166,7 @@ cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   cdef cppclass Learner(Optimizable):
     Learner& trainingSet(MatrixXd& input, MatrixXd& output)
     Learner& trainingSet(DataSet& dataset)
-    VectorXd predict "operator()" (VectorXd& x)
+    MatrixXd predict "operator()" (MatrixXd& x)
 
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef cppclass Net(Learner):
