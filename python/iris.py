@@ -1,4 +1,8 @@
-from sklearn import datasets
+try:
+    from sklearn import datasets
+except:
+    print("scikit-learn is required to run this example.")
+    exit(1)
 from openann import *
 
 # Load IRIS dataset
