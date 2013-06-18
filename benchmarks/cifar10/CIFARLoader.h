@@ -63,7 +63,8 @@ private:
                         std::ios::in | std::ios::binary);
       if(!file.is_open())
         throw OpenANN::OpenANNException("Could not open file '"
-                                        + file_names[f] + "' in directory '" + directory + "'.");
+                                        + file_names[f] + "' in directory '" 
+                                        + directory + "'.");
       for(int n = 0; n < NperFile; n++, instance++)
       {
         if(file.eof())

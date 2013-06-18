@@ -1,0 +1,53 @@
+namespace OpenANN
+{
+
+/**
+
+\page Convenience Convenience Functions
+
+Since there are many coding patterns that occur very often when you use
+artificial neural networks, it is sometimes helpful to have shortcuts.
+
+Here is an overview over these shortcuts. They are available only if either
+OpenANN/OpenANN or OpenANN/Convenience.h are included. In addition, there
+are some other helper functions in other headers that are not documented here.
+These headers are OpenANN/Preprocessing.h and OpenANN/Evaluation.h.
+
+<table>
+<tr><th>Function</th><th>Usage</th><th>Description</th></tr>
+<tr>
+  <td>OpenANN::makeMLNN</td>
+  <td>
+\code
+OpenANN::Net net;
+OpenANN::makeMLNN(net, OpenANN::LOGISTIC, OpenANN::LOGISTIC, D, F, 2, 3, 3);
+\endcode
+  </td>
+  <td>
+  Create a multilayer neural network with D inputs, F outputs and two hidden
+  layers with 3 nodes each. Note that you cannot set the standard deviation of
+  the initial random weights or the bias of the MLNN.
+  </td>
+</tr>
+<tr>
+  <td>OpenANN::train</td>
+  <td>
+\code
+OpenANN::Net net;
+// add layers
+OpenANN::StoppingCriteria stop;
+stop.maximalIterations = 100;
+OpenANN::train(net, "LMA", OpenANN::SSE, stop);
+\endcode
+  </td>
+  <td>
+  Trains a multilayer feedforward neural network. Note that you cannot
+  pass any arguments to the optimization algorithm, that is you have to rely
+  on the default settings for e.g. MBSGD which is usually not a good idea.
+  </td>
+</tr>
+</table>
+
+*/
+
+}

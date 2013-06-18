@@ -5,6 +5,7 @@
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/CG.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
+#include <cstdarg>
 
 namespace OpenANN
 {
@@ -36,6 +37,21 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
 
   delete opt;
   net.useDropout(false);
+}
+
+void makeMLNN(Net& net, ActivationFunction g, ActivationFunction h,
+              int D, int F, int H, ...)
+{
+  std::va_list nodes;
+  va_start(nodes, H);
+
+  net.inputLayer(D);
+  for(int i = 0; i < H; i++)
+  {
+    const int j = va_arg(nodes, int);
+    net.fullyConnectedLayer(j, g);
+  }
+  net.outputLayer(F, h);
 }
 
 } // namespace OpenANN
