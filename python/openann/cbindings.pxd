@@ -20,6 +20,15 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     double& get "operator()"(int rows, int cols)
 
+  cdef cppclass MatrixXi:
+    MatrixXi()
+    MatrixXi(int rows, int cols)
+    int& coeff(int row, int col)
+    int* data()
+    int rows()
+    int cols()
+    int& get "operator()"(int rows, int cols)
+
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
   cdef enum ActivationFunction:
     LOGISTIC
@@ -206,6 +215,7 @@ cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double mse(Learner& learner, DataSet& dataSet)
   double rmse(Learner& learner, DataSet& dataSet)
   double accuracy(Learner& learner, DataSet& dataSet)
+  MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
   int classificationHits(Learner& learner, DataSet& dataSet)
   void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
 

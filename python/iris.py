@@ -46,5 +46,9 @@ print("Iris data set has %d inputs, %d classes and %d examples" % (D, F, N))
 print("The data has been split up input training and validation set.")
 print("Correct predictions on training set: %d/%d"
       % (classification_hits(net, training_set), len(X1)))
+print("Confusion matrix:")
+print(confusion_matrix(net, training_set))
 print("Correct predictions on test set: %d/%d"
       % (classification_hits(net, validation_set), len(X2)))
+print("Confusion matrix:")
+print(confusion_matrix(net, validation_set))

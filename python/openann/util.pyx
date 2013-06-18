@@ -27,6 +27,13 @@ cdef object __matrix_eigen_to_numpy__(openann.MatrixXd* X_eigen):
         x_numpy[r, c] = X_eigen.coeff(r, c)
   return x_numpy
 
+cdef object __matrix_eigen_to_numpy_int__(openann.MatrixXi* X_eigen):
+  x_numpy = numpy.ndarray(shape=(X_eigen.rows(), X_eigen.cols()))
+  for r in range(X_eigen.rows()):
+    for c in range(X_eigen.cols()):
+        x_numpy[r, c] = X_eigen.coeff(r, c)
+  return x_numpy
+
 
 cdef class Log:
   """Provides logging functionality."""
@@ -46,4 +53,3 @@ cdef class Log:
   @classmethod
   def error(cls, text):
     openann.write(openann.Log().get(Log.ERROR), <char*?>text)
-

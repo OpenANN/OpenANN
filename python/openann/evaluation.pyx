@@ -22,6 +22,14 @@ def accuracy(learner, dataset):
   cdef openann.DataSet *ds = (<Dataset?>dataset).storage
   return openann.accuracy(deref(net), deref(ds))
 
+def confusion_matrix(learner, dataset):
+  """Compute confusion matrix."""
+  cdef openann.Learner *net = (<Net?>learner).thisptr
+  cdef openann.DataSet *ds = (<Dataset?>dataset).storage
+  cdef openann.MatrixXi conf_mat = openann.confusionMatrix(deref(net),
+                                                           deref(ds))
+  return __matrix_eigen_to_numpy_int__(&conf_mat)
+
 def classification_hits(learner, dataset):
   """Compute number of correct predictions."""
   cdef openann.Learner *net = (<Net?>learner).thisptr
