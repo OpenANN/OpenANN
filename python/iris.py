@@ -18,6 +18,7 @@ X = (X - X.mean(axis=0)) / X.std(axis=0)
 T = numpy.zeros((N, F))
 T[(range(N), Y)] = 1.0
 
+# Setup network
 net = Net()
 net.set_regularization(0.0, 0.01, 0.0)
 net.input_layer(D)
@@ -39,9 +40,9 @@ validation_set = Dataset(X2, T2)
 optimizer = MBSGD({"maximal_iterations": 500}, learning_rate=0.7,
     learning_rate_decay=0.999, min_learning_rate=0.001, momentum=0.5,
     batch_size=16)
+Log.set_info() # Deactivate debug output
 optimizer.optimize(net, training_set)
 
-print("")
 print("Iris data set has %d inputs, %d classes and %d examples" % (D, F, N))
 print("The data has been split up input training and validation set.")
 print("Correct predictions on training set: %d/%d"

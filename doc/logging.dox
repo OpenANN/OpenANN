@@ -34,6 +34,15 @@ on again. However, you can turn log levels off during runtime with
 OpenANN::Log::getLevel() = OpenANN::Log::INFO;
 \endcode
 
+or one of these functions
+
+\code
+OpenANN::Log::setDisabled();
+OpenANN::Log::setError();
+OpenANN::Log::setInfo();
+OpenANN::Log::setDebug();
+\endcode
+
 You can also change the logging target to any std::ostream at runtime with
 
 \code

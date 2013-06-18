@@ -67,6 +67,12 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
     Log()
     ostream& get(LogLevel level, char* namespace = ?)
 
+cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
+  void setDisabled()
+  void setError()
+  void setInfo()
+  void setDebug()
+
 
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass OutputInfo:
@@ -218,4 +224,3 @@ cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
   int classificationHits(Learner& learner, DataSet& dataSet)
   void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
-

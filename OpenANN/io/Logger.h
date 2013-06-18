@@ -103,6 +103,10 @@ public:
   static std::ostream& getStream();
   static LogLevel& getLevel();
 
+  static void setDisabled();
+  static void setError();
+  static void setInfo();
+  static void setDebug();
 private:
   std::ostringstream message;
   LogLevel level;

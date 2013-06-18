@@ -43,6 +43,22 @@ cdef class Log:
   DEBUG = openann.DEBUG
 
   @classmethod
+  def set_disabled(cls):
+    openann.setDisabled()
+
+  @classmethod
+  def set_error(cls):
+    openann.setError()
+
+  @classmethod
+  def set_info(cls):
+    openann.setInfo()
+
+  @classmethod
+  def set_debug(cls):
+    openann.setDebug()
+
+  @classmethod
   def debug(cls, text):
     openann.write(openann.Log().get(Log.DEBUG), <char*?>text)
 
