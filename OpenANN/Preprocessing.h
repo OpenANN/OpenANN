@@ -1,6 +1,12 @@
 #ifndef OPENANN_PREPROCESSING_H_
 #define OPENANN_PREPROCESSING_H_
 
+/**
+ * @file Preprocessing.h
+ *
+ * Provides some convenience functions to preprocess data.
+ */
+
 #include <Eigen/Dense>
 
 namespace OpenANN

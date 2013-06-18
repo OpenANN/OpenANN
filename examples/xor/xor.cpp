@@ -39,8 +39,8 @@ int main()
   const int F = 1; // number of outputs
   const int N = 4; // size of training set
   Eigen::MatrixXd X(N, D); // inputs
-  Eigen::MatrixXd T(N, F); // outputs
-  // Each row represents an input
+  Eigen::MatrixXd T(N, F); // desired outputs (targets)
+  // Each row represents an instance
   X.row(0) << 0.0, 1.0;
   T.row(0) << 1.0;
   X.row(1) << 0.0, 0.0;
@@ -53,15 +53,12 @@ int main()
 
   // Create network
   Net net;
-  // Add an input layer with D inputs
-  net.inputLayer(D)
-  // Add a fully connected hidden layer with 2 nodes and logistic activation
-  // function
-  .fullyConnectedLayer(2, LOGISTIC)
-  // Add an output layer with F outputs and logistic activation function
-  .outputLayer(F, LOGISTIC)
+  // Add an input layer with D inputs, 1 hidden layer with 2 nodes and an
+  // output layer with F outputs. Use logistic activation function in hidden
+  // layer and output layer.
+  makeMLNN(net, LOGISTIC, LOGISTIC, D, F, 1, 2);
   // Add training set
-  .trainingSet(dataSet);
+  net.trainingSet(dataSet);
 
   // Set stopping conditions
   StoppingCriteria stop;

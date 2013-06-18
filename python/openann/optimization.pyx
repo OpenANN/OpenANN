@@ -22,7 +22,7 @@ cdef class Optimizer:
   cdef openann.Optimizer *thisptr
   cdef object stopping_criteria
 
-cdef class StochasticGradientDescent(Optimizer):
+cdef class MBSGD(Optimizer):
   """Mini-batch stochastic gradient descent."""
   def __cinit__(self,
       object stop={},

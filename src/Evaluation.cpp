@@ -81,7 +81,7 @@ int classificationHits(Learner& learner, DataSet& dataSet)
 
     int klass, result;
 
-    if(dataSet.outputs() > 2)
+    if(dataSet.outputs() >= 2)
     {
       klass = output.maxCoeff();
       result = learner(input).maxCoeff();
