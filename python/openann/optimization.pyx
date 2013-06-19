@@ -73,3 +73,21 @@ cdef class LMA(Optimizer):
     self.thisptr.optimize()
 
 
+cdef class CG(Optimizer):
+  """Conjugate gradient."""
+  def __cinit__(self, stop={}):
+    self.thisptr = new openann.CG()
+    self.stopping_criteria = StoppingCriteria(stop)
+    self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def __str__(self):
+    return self.thisptr.name().c_str()
+
+  def optimize(self, net, dataset):
+    """Perform optimization until stopping criteria are satisfied."""
+    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    self.thisptr.optimize()

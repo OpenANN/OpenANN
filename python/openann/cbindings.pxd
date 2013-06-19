@@ -177,6 +177,10 @@ cdef extern from "OpenANN/optimization/LMA.h" namespace "OpenANN":
   cdef cppclass LMA(Optimizer):
     LMA()
 
+cdef extern from "OpenANN/optimization/CG.h" namespace "OpenANN":
+  cdef cppclass CG(Optimizer):
+    CG()
+
 cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   cdef cppclass Learner(Optimizable):
     Learner& trainingSet(MatrixXd& input, MatrixXd& output)
