@@ -18,6 +18,10 @@ corresponding build directory and are called "benchmark.py".
   - \ref TwoSpiralsBenchmark
   - \ref CIFAR10Benchmark
 
+\section Regression
+
+  - \ref SARCOS
+
 \section Reinforcement Learning
 
   - \ref PoleBalancingBenchmark
