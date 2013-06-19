@@ -17,10 +17,11 @@ corresponding build directory and are called "benchmark.py".
   - \ref P300SpellerBenchmark
   - \ref TwoSpiralsBenchmark
   - \ref CIFAR10Benchmark
+  - \ref IrisBenchmark
 
 \section Regression
 
-  - \ref SARCOS
+  - \ref SARCOSBenchmark
 
 \section Reinforcement Learning
 

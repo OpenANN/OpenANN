@@ -1,3 +1,3 @@
-project(SARCOSBenchmark)
+project(IrisBenchmark)
 
 file(COPY benchmark.py DESTINATION .)

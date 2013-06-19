@@ -1,4 +1,4 @@
-## \page SARCOS SARCOS Inverse Dynamics Problem
+## \page SARCOSBenchmark SARCOS Inverse Dynamics Problem
 #
 #  The SARCOS dataset is taken from
 #  <a href="http://www.gaussianprocess.org/gpml/data/" target=_blank>this</a>
