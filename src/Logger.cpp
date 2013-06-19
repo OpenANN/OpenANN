@@ -112,6 +112,26 @@ Log::LogLevel& Log::getLevel()
   return gLevel;
 }
 
+void Log::setDisabled()
+{
+  Log::getLevel() = Log::DISABLED;
+}
+
+void Log::setError()
+{
+  Log::getLevel() = Log::ERROR;
+}
+
+void Log::setInfo()
+{
+  Log::getLevel() = Log::INFO;
+}
+
+void Log::setDebug()
+{
+  Log::getLevel() = Log::DEBUG;
+}
+
 std::ostream& operator<<(std::ostream& os, const FloatingPointFormatter& t)
 {
   os << std::fixed << std::setprecision(t.precision) << t.value

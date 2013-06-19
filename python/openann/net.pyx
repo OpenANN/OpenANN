@@ -112,11 +112,12 @@ cdef class Net:
     self.thisptr.useDropout(activate)
 
   def predict(self, x_numpy):
-    """Predict output for a given input."""
-    cdef openann.VectorXd* x_eigen = __vector_numpy_to_eigen__(x_numpy)
-    cdef openann.VectorXd y_eigen = self.thisptr.predict(deref(x_eigen))
+    """Predict output for given inputs, each row represents an instance."""
+    x_numpy = numpy.atleast_2d(x_numpy)
+    cdef openann.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
+    cdef openann.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
     del x_eigen
-    return __vector_eigen_to_numpy__(&y_eigen)
+    return __matrix_eigen_to_numpy__(&y_eigen)
 
   cdef openann.OutputInfo last_output_info(self):
     cdef int layers = self.thisptr.numberOflayers()
