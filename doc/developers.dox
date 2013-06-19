@@ -77,8 +77,21 @@ astyle --options=.astylerc --recursive "OpenANN/*.h" "src/*.cpp" "examples/*.h" 
 
 \section FAQ
 
-- How can I minimize the time that is required to switch between different
-build types (Debug and Release)?
+\subsection FAQ1 What can I do to contribute to %OpenANN?
+
+There is a list of open issues at our github page:
+<a href="https://github.com/OpenANN/OpenANN/issues?state=open"
+target="_blank">issues</a>.
+
+\subsection FAQ2 How can I verify my contribution?
+
+-# Write unit tests.
+-# Use Cppcheck: \verbatim cppcheck -q --enable=all <files> \endverbatim.
+-# Maybe add an example or a benchmark for major components like a new type of
+learner.
+-# Use valgrind to check for memory leaks etc.
+
+\subsection FAQ3 How can I minimize the time that is required to switch between different build types (Debug and Release)?
 
 Both build types can be maintained simultanously:
 \code
@@ -91,12 +104,6 @@ cd ../Release
 cmake -D CMAKE_BUILD_TYPE:String=Release ../..
 make
 \endcode
-
-- What can I do to contribute to %OpenANN?
-
-There is a list of open issues at our github page:
-<a href="https://github.com/OpenANN/OpenANN/issues?state=open"
-target="_blank">issues</a>.
 
 */
 
