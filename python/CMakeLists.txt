@@ -10,7 +10,6 @@ if(PYTHONINTERP_FOUND)
     set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"alglib\"")
   endif()
 
-  file(COPY test.py DESTINATION .)
   file(COPY openann/cbindings.pxd DESTINATION .)
   file(COPY openann/layer.pyx openann/evaluation.pyx openann/openann.pyx
             openann/optimization.pyx openann/net.pyx openann/util.pyx
