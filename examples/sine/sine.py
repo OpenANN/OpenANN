@@ -1,6 +1,10 @@
+try:
+    import pylab
+except:
+    print("Matplotlib is required")
+    exit(1)
 from openann import *
 import numpy
-import pylab
 
 # Create network
 net = Net()
@@ -34,5 +38,3 @@ pylab.plot(X, T, ".", label="Data Set")
 pylab.plot(X, Y, label="Prediction", linewidth=3)
 pylab.legend()
 pylab.show()
-
-
