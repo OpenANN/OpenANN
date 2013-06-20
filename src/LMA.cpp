@@ -13,7 +13,7 @@ namespace OpenANN
 {
 
 LMA::LMA()
-  : opt(0), iteration(-1)
+  : opt(0), iteration(-1), n(-1)
 {
 }
 
@@ -50,6 +50,7 @@ bool LMA::step()
   OPENANN_CHECK(opt);
   if(iteration < 0)
     initialize();
+  OPENANN_CHECK(n > 0);
 
   try
   {

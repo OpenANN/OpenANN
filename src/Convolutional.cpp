@@ -73,6 +73,13 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
     throw OpenANNException("Number of outputs in convolutional layer is below"
                            " 1. You should either choose a smaller filter"
                            " size or generate a bigger input.");
+  OPENANN_CHECK(fmInSize > 0);
+  OPENANN_CHECK(outRows > 0);
+  OPENANN_CHECK(outCols > 0);
+  OPENANN_CHECK(fmOutSize > 0);
+  OPENANN_CHECK(maxRow > 0);
+  OPENANN_CHECK(maxCol > 0);
+
   return info;
 }
 
