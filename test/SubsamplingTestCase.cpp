@@ -29,7 +29,7 @@ void SubsamplingTestCase::subsampling()
   ASSERT_EQUALS(info2.dimensions[2], 3);
 
   for(std::vector<double*>::iterator it = parameterPointers.begin();
-      it != parameterPointers.end(); it++)
+      it != parameterPointers.end(); ++it)
     **it = 0.1;
 
   Eigen::MatrixXd x(1, info.outputs());

@@ -2,7 +2,7 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
 
-NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string a,
+NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string& a,
                                          bool compress, int m,
                                          bool fullyObservable,
                                          bool alphaBetaFilter,
@@ -88,7 +88,7 @@ void NeuroEvolutionAgent::chooseAction()
       if(environment->stepsInEpisode() >= 100)
       {
         double denom = 0.0;
-        for(std::list<Eigen::VectorXd>::iterator it = inputBuffer.begin(); it != inputBuffer.end(); it++)
+        for(std::list<Eigen::VectorXd>::iterator it = inputBuffer.begin(); it != inputBuffer.end(); ++it)
         {
           denom += std::fabs((*it)(0)); // position on the track
           for(int i = 1; i < inputSize; i += 2)

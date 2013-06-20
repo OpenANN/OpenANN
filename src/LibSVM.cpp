@@ -44,7 +44,7 @@ int load(Eigen::MatrixXd& in, Eigen::MatrixXd& out, std::istream& stream, int co
         line.push_back(token);
     }
 
-    if(line.size() > 0)
+    if(!line.empty())
     {
       std::string& classStr = line.front();
       std::string& last = line.back();
