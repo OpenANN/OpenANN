@@ -12,7 +12,8 @@ Subsampling::Subsampling(OutputInfo info, int kernelRows, int kernelCols,
   : I(info.outputs()), fm(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act), stdDev(stdDev), x(0),
-    e(1, I), regularization(regularization)
+    e(1, I), fmInSize(-1), outRows(-1), outCols(-1), fmOutSize(-1),
+    maxRow(-1), maxCol(-1), regularization(regularization)
 {
 }
 
@@ -69,6 +70,13 @@ OutputInfo Subsampling::initialize(std::vector<double*>& parameterPointers,
     throw OpenANNException("Number of outputs in subsampling layer is below"
                            " 1. You should either choose a smaller filter"
                            " size or generate a bigger input.");
+  OPENANN_CHECK(fmInSize > 0);
+  OPENANN_CHECK(outRows > 0);
+  OPENANN_CHECK(outCols > 0);
+  OPENANN_CHECK(fmOutSize > 0);
+  OPENANN_CHECK(maxRow > 0);
+  OPENANN_CHECK(maxCol > 0);
+
   return info;
 }
 

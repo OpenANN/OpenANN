@@ -10,7 +10,8 @@ NeuroEvolutionAgent::NeuroEvolutionAgent(int h, bool b, const std::string& a,
   : h(h), b(b), a(a), compress(compress), m(m),
     fullyObservable(fullyObservable), alphaBetaFilter(alphaBetaFilter),
     doubleExponentialSmoothing(doubleExponentialSmoothing),
-    gruauFitness(false)
+    gruauFitness(false),
+    environment(0), inputSize(-1), firstStep(true)
 {
 }
 
