@@ -12,7 +12,8 @@ Convolutional::Convolutional(OutputInfo info, int featureMaps, int kernelRows,
   : I(info.outputs()), fmin(info.dimensions[0]), inRows(info.dimensions[1]),
     inCols(info.dimensions[2]), fmout(featureMaps), kernelRows(kernelRows),
     kernelCols(kernelCols), bias(bias), act(act),
-    stdDev(stdDev), x(0), e(1, I), regularization(regularization)
+    stdDev(stdDev), x(0), e(1, I), fmInSize(-1), outRows(-1), outCols(-1),
+    fmOutSize(-1), maxRow(-1), maxCol(-1), regularization(regularization)
 {
 }
 
