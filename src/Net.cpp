@@ -20,7 +20,7 @@ namespace OpenANN
 {
 
 Net::Net()
-  : errorFunction(SSE), dropout(false), initialized(false), L(0)
+  : errorFunction(SSE), dropout(false), initialized(false), P(-1), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);

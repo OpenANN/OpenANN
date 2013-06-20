@@ -7,7 +7,7 @@ namespace OpenANN
 LocalResponseNormalization::LocalResponseNormalization(
   OutputInfo info, double k, int n, double alpha, double beta)
   : I(info.outputs()), fm(info.dimensions[0]), rows(info.dimensions[1]),
-    cols(info.dimensions[2]), x(0), denoms(1, I), y(1, I), etmp(1, I),
+    cols(info.dimensions[2]), fmSize(-1), x(0), denoms(1, I), y(1, I), etmp(1, I),
     e(1, I), k(k), n(n), alpha(alpha), beta(beta)
 {
 }
@@ -17,6 +17,7 @@ OutputInfo LocalResponseNormalization::initialize(
   std::vector<double*>& parameterDerivativePointers)
 {
   fmSize = rows * cols;
+  OPENANN_CHECK(fmSize > 0);
 
   OutputInfo info;
   info.dimensions.push_back(fm);

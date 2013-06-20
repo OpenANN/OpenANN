@@ -65,7 +65,6 @@ void SigmaPi::updatedParameters()
 void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   const int N = x->rows();
-  int J = nodes.size();
   this->x.conservativeResize(N, Eigen::NoChange);
   a.conservativeResize(N, Eigen::NoChange);
   this->x.rightCols(1).setZero();
@@ -121,7 +120,6 @@ void SigmaPi::backpropagate(Eigen::MatrixXd* error_in, Eigen::MatrixXd*& error_o
     int i = 0;
     for(HigherOrderNeuron* n = &nodes.front(); n <= &nodes.back(); ++n)
     {
-      double sum = 0.0;
       deltas(instance, i) = (*error_in)(instance, i) * yd(instance, i);
 
       for(HigherOrderUnit* u = &n->front(); u <= &n->back(); ++u)

@@ -8,8 +8,9 @@ namespace OpenANN
 {
 
 MaxPooling::MaxPooling(OutputInfo info, int kernelRows, int kernelCols)
-  : I(info.outputs()), fm(info.dimensions[0]),
+  : I(info.outputs()), fm(info.dimensions[0]), fmInSize(-1),
     inRows(info.dimensions[1]), inCols(info.dimensions[2]),
+    outRows(-1), outCols(-1), fmOutSize(-1), maxRow(-1), maxCol(-1),
     kernelRows(kernelRows), kernelCols(kernelCols), x(0), e(1, I)
 {
 }
@@ -35,6 +36,12 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
     throw OpenANNException("Number of outputs in max-pooling layer is below"
                            " 1. You should either choose a smaller filter"
                            " size or generate a bigger input.");
+  OPENANN_CHECK(fmInSize > 0);
+  OPENANN_CHECK(outRows > 0);
+  OPENANN_CHECK(outCols > 0);
+  OPENANN_CHECK(fmOutSize > 0);
+  OPENANN_CHECK(maxRow > 0);
+  OPENANN_CHECK(maxCol > 0);
   return info;
 }
 
