@@ -3,12 +3,14 @@ OpenANN
 
 An open source library for artificial neural networks.
 
+[API documentation](http://openann.github.io/OpenANN-apidoc/)
+
 [![Build Status](https://travis-ci.org/OpenANN/OpenANN.png?branch=master)](https://travis-ci.org/OpenANN/OpenANN)
 
 License
 -------
 
-The license is GPL 3. You can find the license text in the files `COPYING`.
+The license is GPL 3. You can find the license text in the file `COPYING`.
 
 Minimum Requirements
 --------------------
