@@ -2,6 +2,7 @@ include(CheckCXXCompilerFlag)
 
 # A macro that determines the current time
 # source: http://www.cmake.org/pipermail/cmake/2004-September/005526.html
+# TODO: does not work for Windows 7
 macro(current_time result)
   set(NEED_FLAG)
   if(WIN32)
