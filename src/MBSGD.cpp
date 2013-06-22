@@ -161,7 +161,6 @@ std::string MBSGD::name()
   ss << "(learning rate = " << alpha
      << ", momentum = " << eta
      << ", batch_size " << batchSize
-     << ", gamma = " << gamma
      << ")";
 
   return ss.str();

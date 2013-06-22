@@ -99,13 +99,6 @@ namespace OpenANN
  * time until we reach a maximum:
  *
  * \f$ \eta^t = min(\eta^{t-1} + \eta_{inc}, \eta_{max}). \f$
- *
- * To avoid overfitting it is sometimes helpful to add a penalty on the
- * squared weight norm, i.e. we substract
- *
- * \f$ \alpha \gamma w^{t-1} \f$
- *
- * from the weight vector in each update.
  */
 class MBSGD : public Optimizer
 {
