@@ -1,4 +1,8 @@
 language: cpp
+branches:
+  only:
+    - master
+    - /\d+\.\d+\..+/
 compiler:
   - clang
   - gcc
