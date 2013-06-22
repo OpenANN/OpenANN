@@ -44,7 +44,6 @@ class SinglePoleBalancing : public OpenANN::Environment
   double maxForce;
 
   double massLength1;
-  double massLength2;
 
   Environment::Action actionSpaceLo;
   Environment::Action actionSpaceHi;

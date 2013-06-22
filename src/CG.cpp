@@ -13,7 +13,7 @@ namespace OpenANN
 {
 
 CG::CG()
-  : opt(0), iteration(-1), error(0.0)
+  : opt(0), iteration(-1), n(-1), error(0.0)
 {
 }
 
@@ -36,6 +36,7 @@ bool CG::step()
   OPENANN_CHECK(opt);
   if(iteration < 0)
     initialize();
+  OPENANN_CHECK(n > 0);
 
   try
   {

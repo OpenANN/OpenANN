@@ -129,7 +129,7 @@ void RBM::errorGradient(std::vector<int>::const_iterator startN,
   const int N = endN - startN;
   v.conservativeResize(N, trainSet->inputs());
   int n = 0;
-  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it, ++n)
     v.row(n) = trainSet->getInstance(*it);
   reality();
   daydream();
@@ -137,7 +137,7 @@ void RBM::errorGradient(std::vector<int>::const_iterator startN,
   grad = this->grad;
   n = 0;
   value = 0.0;
-  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it, ++n)
     value += (trainSet->getInstance(*it) - pv.row(n).transpose()).squaredNorm();
 }
 

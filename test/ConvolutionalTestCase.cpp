@@ -32,7 +32,7 @@ void ConvolutionalTestCase::convolutional()
   ASSERT_EQUALS(info2.dimensions[1], 2);
   ASSERT_EQUALS(info2.dimensions[2], 2);
 
-  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); ++it)
     **it = 0.01;
   layer.updatedParameters();
 

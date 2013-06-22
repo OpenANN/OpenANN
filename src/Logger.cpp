@@ -70,6 +70,7 @@ Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
 }
 
 Log::Log()
+  : level(DEBUG)
 {
 }
 

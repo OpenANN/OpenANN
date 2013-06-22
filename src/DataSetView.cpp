@@ -115,7 +115,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio, boo
 
 void merge(DataSetView& merging, std::vector<DataSetView>& groups)
 {
-  OPENANN_CHECK(groups.size() > 0);
+  OPENANN_CHECK(!groups.empty());
 
   for(int i = 0; i < groups.size(); ++i)
   {

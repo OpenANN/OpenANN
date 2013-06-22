@@ -25,7 +25,7 @@ void CompressedTestCase::compressed()
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); ++it)
     **it = 1.0;
   layer.updatedParameters();
   Eigen::MatrixXd x(1, 3);
@@ -90,7 +90,7 @@ void CompressedTestCase::parallelCompressed()
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); ++it)
     **it = 1.0;
   layer.updatedParameters();
   Eigen::MatrixXd x(2, 3);
@@ -112,6 +112,6 @@ void CompressedTestCase::parallelCompressed()
   layer.backpropagate(&e, e2);
   Eigen::VectorXd Wd(8);
   int i = 0;
-  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); it++)
+  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); ++it)
     Wd(i++) = **it;
 }
