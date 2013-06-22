@@ -40,7 +40,7 @@ class NeuroEvolutionAgent : public Agent, public Optimizable
   std::vector<DoubleExponentialSmoothing> des;
   std::list<Eigen::VectorXd> inputBuffer;
 public:
-  NeuroEvolutionAgent(int h, bool b, const std::string a,
+  NeuroEvolutionAgent(int h, bool b, const std::string& a,
                       bool compress = false, int m = 0,
                       bool fullyObservable = true,
                       bool alphaBetaFilter = false,

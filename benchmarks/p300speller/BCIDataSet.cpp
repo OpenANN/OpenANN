@@ -33,8 +33,8 @@ void BCIDataSet::BCIDataCache::clear()
   cache.clear();
 }
 
-BCIDataSet::BCIDataSet(const std::string directory, const std::string& subject,
-                       const std::string dataType, bool loadNow)
+BCIDataSet::BCIDataSet(const std::string& directory, const std::string& subject,
+                       const std::string& dataType, bool loadNow)
   : directory(directory), subject(subject),
     dataType(dataType == "test" ? TEST : (dataType == "demo" ? DEMO : TRAINING)),
     debugLogger(OpenANN::Logger::NONE),

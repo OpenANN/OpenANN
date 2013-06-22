@@ -25,7 +25,7 @@ void FullyConnectedTestCase::forward()
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); ++it)
     **it = 1.0;
   Eigen::MatrixXd x(1, 3);
   x << 0.5, 1.0, 2.0;
@@ -42,7 +42,7 @@ void FullyConnectedTestCase::forward()
   layer.backpropagate(&e, e2);
   Eigen::VectorXd Wd(6);
   int i = 0;
-  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); it++)
+  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); ++it)
     Wd(i++) = **it;
   ASSERT_EQUALS_DELTA(Wd(0), 0.5*(1.0-(*y)(0)*(*y)(0))*1.0, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(1), 1.0*(1.0-(*y)(0)*(*y)(0))*1.0, 1e-7);
@@ -105,7 +105,7 @@ void FullyConnectedTestCase::parallelForward()
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
-  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); it++)
+  for(std::vector<double*>::iterator it = pp.begin(); it != pp.end(); ++it)
     **it = 1.0;
   Eigen::MatrixXd x(2, 3);
   x << 0.5, 1.0, 2.0,
@@ -126,7 +126,7 @@ void FullyConnectedTestCase::parallelForward()
   layer.backpropagate(&e, e2);
   Eigen::VectorXd Wd(8);
   int i = 0;
-  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); it++)
+  for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); ++it)
     Wd(i++) = **it;
   ASSERT_EQUALS_DELTA(Wd(0), 2.0*0.5*(1.0-(*y)(0, 0)*(*y)(0, 0))*1.0, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(1), 2.0*1.0*(1.0-(*y)(0, 0)*(*y)(0, 0))*1.0, 1e-7);

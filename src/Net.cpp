@@ -20,7 +20,7 @@ namespace OpenANN
 {
 
 Net::Net()
-  : errorFunction(SSE), dropout(false), initialized(false), L(0)
+  : errorFunction(SSE), dropout(false), initialized(false), P(-1), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -173,7 +173,7 @@ DataSet* Net::propagateDataSet(DataSet& dataSet, int l)
     Eigen::MatrixXd* y = &tempInput;
     int i = 0;
     for(std::vector<Layer*>::iterator layer = layers.begin();
-        layer != layers.end() && i < l; layer++)
+        layer != layers.end() && i < l; ++layer)
       (**layer).forwardPropagate(y, y, dropout);
     tempOutput = *y;
     X.row(n) = tempOutput;
@@ -264,7 +264,7 @@ void Net::setParameters(const Eigen::VectorXd& parameters)
   for(int p = 0; p < P; p++)
     *(this->parameters[p]) = parameters(p);
   for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); layer++)
+      layer != layers.end(); ++layer)
     (**layer).updatedParameters();
 }
 
@@ -277,7 +277,7 @@ void Net::initialize()
 {
   OPENANN_CHECK(initialized);
   for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); layer++)
+      layer != layers.end(); ++layer)
     (**layer).initializeParameters();
   for(int p = 0; p < P; p++)
     parameterVector(p) = *parameters[p];
@@ -342,7 +342,7 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   tempInput.conservativeResize(N, trainSet->inputs());
   Eigen::MatrixXd T(N, trainSet->outputs());
   int n = 0;
-  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it, ++n)
   {
     tempInput.row(n) = trainSet->getInstance(*it);
     T.row(n) = trainSet->getTarget(*it);
@@ -369,7 +369,7 @@ void Net::forwardPropagate()
 {
   Eigen::MatrixXd* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); layer++)
+      layer != layers.end(); ++layer)
     (**layer).forwardPropagate(y, y, dropout);
   tempOutput = *y;
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
@@ -381,7 +381,7 @@ void Net::backpropagate()
 {
   Eigen::MatrixXd* e = &tempError;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
-      layer != layers.rend(); layer++)
+      layer != layers.rend(); ++layer)
     (**layer).backpropagate(e, e);
 }
 

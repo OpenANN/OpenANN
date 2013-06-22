@@ -27,7 +27,7 @@ class DoubleExponentialSmoothing
 
 public:
   DoubleExponentialSmoothing()
-    : alpha(0.9), beta(0.9)
+    : alpha(0.9), beta(0.9), sc(0.0), sn(0.0), bc(0.0), bn(0.0)
   {
     restart();
   }

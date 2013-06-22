@@ -70,8 +70,8 @@ public:
 
   BCIDataCache cache;
 
-  BCIDataSet(const std::string directory, const std::string& subject,
-             const std::string dataType, bool loadNow = true);
+  BCIDataSet(const std::string& directory, const std::string& subject,
+             const std::string& dataType, bool loadNow = true);
   virtual ~BCIDataSet() {}
   void load();
   void determineDimension();

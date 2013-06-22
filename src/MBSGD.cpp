@@ -18,7 +18,8 @@ MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
              double learningRateDecay, double minimalLearningRate,
              double momentumGain, double maximalMomentum,
              double minGain, double maxGain)
-  : alpha(learningRate), alphaDecay(learningRateDecay),
+  : opt(0), P(-1), N(-1), batches(-1), accumulatedError(0.0),
+    alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
     maxGain(maxGain), useGain(minGain != 1.0 || maxGain != 1.0),
@@ -78,11 +79,14 @@ void MBSGD::optimize()
 
 bool MBSGD::step()
 {
+  OPENANN_CHECK(opt);
   if(iteration < 0)
     initialize();
+  OPENANN_CHECK(P > 0);
+  OPENANN_CHECK(N > 0);
+  OPENANN_CHECK(batches > 0);
 
   accumulatedError = 0.0;
-  double currentError;
   rng.generateIndices<std::vector<int> >(N, randomIndices, true);
   std::vector<int>::const_iterator startN = randomIndices.begin();
   std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;

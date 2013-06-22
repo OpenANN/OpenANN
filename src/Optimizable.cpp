@@ -29,7 +29,7 @@ Eigen::VectorXd Optimizable::error(std::vector<int>::const_iterator startN,
 {
   Eigen::VectorXd errors(endN - startN);
   int n = 0;
-  for(std::vector<int>::const_iterator it = startN; it != endN; it++, n++)
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it, ++n)
     errors(n) = error(*it);
   return errors;
 }
@@ -38,7 +38,7 @@ Eigen::VectorXd Optimizable::gradient(std::vector<int>::const_iterator startN,
 {
   Eigen::VectorXd g(dimension());
   g.setZero();
-  for(std::vector<int>::const_iterator it = startN; it != endN; it++)
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it)
     g += gradient(*it);
   return g;
 }
@@ -49,7 +49,7 @@ void Optimizable::errorGradient(std::vector<int>::const_iterator startN,
 {
   value = 0.0;
   grad.setZero();
-  for(std::vector<int>::const_iterator it = startN; it != endN; it++)
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it)
   {
     OPENANN_CHECK_WITHIN(*it, 0, examples());
     value += error(*it);
