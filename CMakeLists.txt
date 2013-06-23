@@ -47,7 +47,7 @@ if(NOT PARALLEL_CORES)
   set(PARALLEL_CORES 4)
 endif()
 
-set(OPENANN_VERSION_NUMBER "1.0.0")
+set(OPENANN_VERSION_NUMBER "1.1.0")
 set(OPENANN_URL "https://github.com/OpenANN/OpenANN")
 set(OPENANN_BRIEF_DESCRIPTION "An open source library for artificial neural networks.")
 current_time(OPENANN_TIME)
