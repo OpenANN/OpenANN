@@ -20,7 +20,8 @@ public:
    * @param beta weight of sparsity
    * @param rho desired mean activation of hidden neurons
    */
-  SparseAutoEncoder(int D, int H, ActivationFunction act, double beta, double rho);
+  SparseAutoEncoder(int D, int H, ActivationFunction act, double beta,
+                    double rho);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual void errorGradient(double& value, Eigen::VectorXd& grad);
