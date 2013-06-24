@@ -20,11 +20,17 @@ public:
   double l2Penalty;
   //! Maximum value for squared norm of the weight vector of a single neuron.
   double maxSquaredWeightNorm;
+  //! Desired activation of neurons.
+  double desiredActivation;
+  //! Sparsity weight (influence of desired activation).
+  double sparsityWeight;
 
   Regularization(double l1Penalty = 0.0, double l2Penalty = 0.0,
-                 double maxSquaredWeightNorm = 0.0)
+                 double maxSquaredWeightNorm = 0.0,
+                 double desiredActivation = 0.0, double sparsityWeight = 0.0)
     : l1Penalty(l1Penalty), l2Penalty(l2Penalty),
-      maxSquaredWeightNorm(maxSquaredWeightNorm)
+      maxSquaredWeightNorm(maxSquaredWeightNorm),
+      desiredActivation(desiredActivation), sparsityWeight(sparsityWeight)
   {
   }
 };

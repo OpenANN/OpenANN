@@ -203,11 +203,15 @@ Net& Net::useDropout(bool activate)
 }
 
 Net& Net::setRegularization(double l1Penalty, double l2Penalty,
-                            double maxSquaredWeightNorm)
+                            double maxSquaredWeightNorm,
+                            double desiredActivation,
+                            double sparsityWeight)
 {
   regularization.l1Penalty = l1Penalty;
   regularization.l2Penalty = l2Penalty;
   regularization.maxSquaredWeightNorm = maxSquaredWeightNorm;
+  regularization.desiredActivation = desiredActivation;
+  regularization.sparsityWeight = sparsityWeight;
 }
 
 Net& Net::setErrorFunction(ErrorFunction errorFunction)

@@ -85,6 +85,13 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   // Derive activations
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
+  if(regularization.sparsityWeight > 0.0)
+  {
+    Eigen::MatrixXd mean = x->colwise().mean();
+    deltas.rowwise() += (regularization.sparsityWeight *
+        (-regularization.desiredActivation * mean.array().inverse() +
+         (1.0 - regularization.desiredActivation) * (1.0 - mean.array()).inverse()));
+  }
   // Weight derivatives
   Wd = deltas.transpose() * *x;
   if(bias)

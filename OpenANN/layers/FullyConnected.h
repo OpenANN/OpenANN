@@ -53,6 +53,7 @@ namespace OpenANN
  * - L1 penalty
  * - L2 penalty
  * - Maximum of squared norm of the incoming weight vector
+ * - Sparse activation
  *
  * [1] Kurt Hornik, Maxwell B. Stinchcombe and Halbert White:
  * Multilayer feedforward networks are universal approximators,
