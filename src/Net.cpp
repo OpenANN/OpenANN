@@ -286,11 +286,18 @@ void Net::initialize()
 double Net::error(unsigned int i)
 {
   if(errorFunction == CE)
+  {
+    tempInput = trainSet->getInstance(i).transpose();
+    forwardPropagate();
     return -(trainSet->getTarget(i).array() *
-             (((*this)(trainSet->getInstance(i)).array() + 1e-10).log())).sum();
+             ((tempOutput.transpose().array() + 1e-10).log())).sum();
+  }
   else
-    return ((*this)(trainSet->getInstance(i)) -
-            trainSet->getTarget(i)).squaredNorm() / 2.0;
+  {
+    tempInput = trainSet->getInstance(i).transpose();
+    forwardPropagate();
+    return (tempOutput.transpose() - trainSet->getTarget(i)).squaredNorm() / 2.0;
+  }
 }
 
 double Net::error()
@@ -399,8 +406,9 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
   double error = 0.0;
   for(int i = start; i < end; i++)
   {
-    tempError = ((*this)(trainSet->getInstance(i)) -
-                 trainSet->getTarget(i)).transpose();
+    tempInput = trainSet->getInstance(i).transpose();
+    forwardPropagate();
+    tempError = tempOutput - trainSet->getTarget(i).transpose();
 
     if(computeError)
     {
