@@ -25,6 +25,9 @@ public:
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual void errorGradient(double& value, Eigen::VectorXd& grad);
+  Eigen::MatrixXd getInputWeights();
+  Eigen::MatrixXd getOutputWeights();
+  Eigen::VectorXd reconstruct(const Eigen::VectorXd& x);
 };
 
 } // OpenANN

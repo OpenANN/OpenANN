@@ -27,6 +27,7 @@ class SparseAutoEncoderVisualization : public QGLWidget
 {
   OpenANN::SparseAutoEncoder& sae;
   OpenANN::DataSet& dataSet;
+  int H;
   int neuronRows, neuronCols;
   int width, height;
   int instance;
@@ -35,12 +36,12 @@ class SparseAutoEncoderVisualization : public QGLWidget
   bool showFilters;
 public:
   SparseAutoEncoderVisualization(OpenANN::SparseAutoEncoder& sae,
-                                 OpenANN::DataSet& dataSet, int neuronRows,
-                                 int neuronCols, int width, int height,
-                                 QWidget* parent = 0,
+                                 OpenANN::DataSet& dataSet, int H,
+                                 int neuronRows, int neuronCols, int width,
+                                 int height, QWidget* parent = 0,
                                  const QGLWidget* shareWidget = 0,
                                  Qt::WindowFlags f = 0)
-    : sae(sae), dataSet(dataSet), neuronRows(neuronRows),
+    : sae(sae), dataSet(dataSet), H(H), neuronRows(neuronRows),
       neuronCols(neuronCols), width(width), height(height), instance(0),
       offset(0), fantasy(0), showFilters(false)
   {
@@ -92,8 +93,10 @@ public:
 
     if(showFilters)
     {
-      /*double mi = sae.getWeights().minCoeff();
-      double ma = sae.getWeights().maxCoeff();
+      Eigen::MatrixXd W1 = sae.getInputWeights();
+      Eigen::MatrixXd W2 = sae.getOutputWeights();
+      double mi = sae.getInputWeights().minCoeff();
+      double ma = sae.getInputWeights().maxCoeff();
       double range = ma - mi;
       for(int row = 0, filter = 0; row < neuronRows; row++)
       {
@@ -104,13 +107,14 @@ public:
           {
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
-              int h = filter + offset;
-              if(h >= rbm.getWeights().rows())
+              int h = (filter + offset) / 2;
+              bool in = (filter + offset) % 2 == 0;
+              if(h >= W1.rows())
                 throw OpenANN::OpenANNException("Illegal index for hidden unit");
               int idx = yIdx * 28 + xIdx;
-              if(idx >= rbm.getWeights().cols())
+              if(idx >= W1.cols())
                 throw OpenANN::OpenANNException("Illegal index for pixel");
-              float c = (rbm.getWeights()(h, idx) - mi) / range;
+              float c = ((in ? W1(h, idx) : W2(idx, h)) - mi) / range;
               float x = xIdx * scale + col * 29.0f * scale - 30.0f;
               float y = (28.0f - yIdx) * scale - row * scale * 29.0f + 90.0f;
               glColor3f(c, c, c);
@@ -122,7 +126,7 @@ public:
           }
           glEnd();
         }
-      }*/
+      }
     }
     else
     {
@@ -136,7 +140,7 @@ public:
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
               int idx = yIdx * 28 + xIdx;
-              Eigen::VectorXd out = sae(dataSet.getInstance(offset + row*neuronCols+col));
+              Eigen::VectorXd out = sae.reconstruct(dataSet.getInstance(offset + row*neuronCols+col));
               float c = out(idx);
               float x = xIdx * scale + col * 29.0f * scale - 30.0f;
               float y = (28.0f - yIdx) * scale - row * scale * 29.0f + 90.0f;
@@ -183,7 +187,7 @@ public:
     case Qt::Key_Right:
     {
       offset++;
-      int tooHi = offset + neuronRows * neuronCols - 10; // TODO magic number
+      int tooHi = offset + neuronRows * neuronCols - H/2; // TODO magic number
       if(tooHi > 0)
         offset -= tooHi;
       update();
@@ -224,12 +228,13 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingInput);
 
-  OpenANN::SparseAutoEncoder sae(loader.D, 800, OpenANN::TANH, 0.0, 0.0);
+  int H = 100;
+  OpenANN::SparseAutoEncoder sae(loader.D, H, OpenANN::TANH, 0.1, 0.1);
   sae.trainingSet(trainSet);
 
   OpenANN::MBSGD optimizer(0.01, 0.5, 128);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 10;
+  stop.maximalIterations = 5;
   optimizer.setOptimizable(sae);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();
@@ -240,7 +245,7 @@ int main(int argc, char** argv)
   sae.validationSet(testSet);
 
   QApplication app(argc, argv);
-  SparseAutoEncoderVisualization visual(sae, trainSet, 5, 7, 800, 600);
+  SparseAutoEncoderVisualization visual(sae, trainSet, H, 5, 7, 800, 600);
   visual.show();
   visual.resize(800, 600);
   return app.exec();

@@ -60,6 +60,7 @@ namespace OpenANN
  */
 class FullyConnected : public Layer
 {
+protected:
   int I, J;
   bool bias;
   ActivationFunction act;
@@ -86,6 +87,7 @@ public:
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout);
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
   virtual Eigen::MatrixXd& getOutput();
+  Eigen::MatrixXd getWeights();
 };
 
 } // namespace OpenANN
