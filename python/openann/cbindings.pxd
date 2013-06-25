@@ -213,9 +213,7 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& addOutputLayer(Layer *layer)
 
     Net& setRegularization(double l1Penalty, double l2Penalty,
-                           double maxSquaredWeightNorm,
-                           double desiredActivation,
-                           double sparsityWeight)
+                           double maxSquaredWeightNorm)
     Net& setErrorFunction(ErrorFunction errorFunction)
     Net& useDropout(bool activate)
 

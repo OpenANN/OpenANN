@@ -7,10 +7,8 @@ SparseAutoEncoder::SparseAutoEncoder(int D, int H, ActivationFunction act,
                                      double beta, double rho)
   : D(D), H(H), beta(beta), rho(rho)
 {
-  setRegularization(0.0, 0.0, 0.0, rho, beta);
   inputLayer(D);
   fullyConnectedLayer(H, act);
-  setRegularization(0.0, 0.0, 0.0, 0.0, 0.0);
   outputLayer(D, LINEAR);
 }
 

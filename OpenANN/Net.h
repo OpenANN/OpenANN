@@ -263,9 +263,7 @@ public:
    */
   ///@{
   Net& setRegularization(double l1Penalty = 0.0, double l2Penalty = 0.0,
-                         double maxSquaredWeightNorm = 0.0,
-                         double desiredActivation = 0.0,
-                         double sparsityWeight = 0.0);
+                         double maxSquaredWeightNorm = 0.0);
   /**
    * Set the error function.
    * @param errorFunction error function
