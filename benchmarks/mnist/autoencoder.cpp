@@ -209,17 +209,17 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 60000, 10000, directory);
+  IDXLoader loader(28, 28, 60000, 0, directory);
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingInput);
 
-  int H = 400;
-  OpenANN::SparseAutoEncoder sae(loader.D, H, OpenANN::TANH, 0.1, 0.1);
+  int H = 100;
+  OpenANN::SparseAutoEncoder sae(loader.D, H, OpenANN::LOGISTIC, 0.003, 0.01);
   sae.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.01, 0.5, 128);
+  OpenANN::MBSGD optimizer(0.01, 0.5, 64);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 10;
+  stop.maximalIterations = 20;
   optimizer.setOptimizable(sae);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();

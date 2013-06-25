@@ -26,9 +26,9 @@ public:
     // Derive activations
     activationFunctionDerivative(act, y, yd);
     deltas = yd.cwiseProduct(*ein);
-    deltas.array().rowwise() -= beta *
-        (-rho * meanActivation->array().inverse() +
-        (1.0 - rho) * (1.0 - meanActivation->array()).inverse());
+    deltas.array().rowwise() += beta *
+        ((1.0 - rho) * (1.0 - meanActivation->array()).inverse() -
+        rho * meanActivation->array().inverse());
     // Weight derivatives
     Wd = deltas.transpose() * *x;
     if(bias)
@@ -47,9 +47,10 @@ SparseAutoEncoder::SparseAutoEncoder(int D, int H, ActivationFunction act,
                                      double beta, double rho)
   : D(D), H(H), beta(beta), rho(rho)
 {
+  setRegularization(0.0, 0.0001, 0.0); // TODO weight decay parameter
   inputLayer(D);
-  addLayer(new FullyConnected(infos.back(), H, true, act, 0.05, // TODO stdDev as parameter
-                              regularization));
+  addLayer(new SparseFullyConnected(infos.back(), H, true, act, 0.05, // TODO stdDev as parameter
+                                    regularization, beta, rho));
   fullyConnectedLayer(H, act);
   outputLayer(D, LINEAR);
 }
@@ -74,12 +75,27 @@ Eigen::MatrixXd SparseAutoEncoder::operator()(const Eigen::MatrixXd& X)
   return tempOutput;
 }
 
+void SparseAutoEncoder::errorGradient(std::vector<int>::const_iterator startN,
+                                      std::vector<int>::const_iterator endN,
+                                      double& value, Eigen::VectorXd& grad)
+{
+  Eigen::VectorXd meanActivation = Eigen::VectorXd(H);
+  meanActivation.setZero();
+  for(std::vector<int>::const_iterator it = startN; it != endN; ++it)
+    meanActivation += (*this)(trainSet->getInstance(*it));
+  meanActivation /= endN - startN;
+  ((SparseFullyConnected&) getLayer(1)).meanActivation = &meanActivation;
+  Net::errorGradient(startN, endN, value, grad);
+  ((SparseFullyConnected&) getLayer(1)).meanActivation = 0;
+}
+
 void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
 {
   Eigen::VectorXd meanActivation = Eigen::VectorXd(H);
   meanActivation.setZero();
-  for(int n = 0; n < Net::trainSet->samples(); n++)
-    meanActivation += (*this)(Net::trainSet->getInstance(n));
+  for(int n = 0; n < trainSet->samples(); n++)
+    meanActivation += (*this)(trainSet->getInstance(n));
+  meanActivation /= trainSet->samples();
   ((SparseFullyConnected&) getLayer(1)).meanActivation = &meanActivation;
   Net::errorGradient(value, grad);
   ((SparseFullyConnected&) getLayer(1)).meanActivation = 0;

@@ -24,6 +24,9 @@ public:
                     double rho);
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
+  virtual void errorGradient(std::vector<int>::const_iterator startN,
+                             std::vector<int>::const_iterator endN,
+                             double& value, Eigen::VectorXd& grad);
   virtual void errorGradient(double& value, Eigen::VectorXd& grad);
   Eigen::MatrixXd getInputWeights();
   Eigen::MatrixXd getOutputWeights();
