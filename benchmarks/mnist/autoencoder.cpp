@@ -32,7 +32,6 @@ class SparseAutoEncoderVisualization : public QGLWidget
   int width, height;
   int instance;
   int offset;
-  int fantasy;
   bool showFilters;
 public:
   SparseAutoEncoderVisualization(OpenANN::SparseAutoEncoder& sae,
@@ -43,7 +42,7 @@ public:
                                  Qt::WindowFlags f = 0)
     : sae(sae), dataSet(dataSet), H(H), neuronRows(neuronRows),
       neuronCols(neuronCols), width(width), height(height), instance(0),
-      offset(0), fantasy(0), showFilters(false)
+      offset(0), showFilters(false)
   {
   }
 
@@ -109,11 +108,7 @@ public:
             {
               int h = (filter + offset) / 2;
               bool in = (filter + offset) % 2 == 0;
-              if(h >= W1.rows())
-                throw OpenANN::OpenANNException("Illegal index for hidden unit");
               int idx = yIdx * 28 + xIdx;
-              if(idx >= W1.cols())
-                throw OpenANN::OpenANNException("Illegal index for pixel");
               float c = ((in ? W1(h, idx) : W2(idx, h)) - mi) / range;
               float x = xIdx * scale + col * 29.0f * scale - 30.0f;
               float y = (28.0f - yIdx) * scale - row * scale * 29.0f + 90.0f;
@@ -134,13 +129,13 @@ public:
       {
         for(int col = 0; col < neuronCols; col++)
         {
+          Eigen::VectorXd out = sae.reconstruct(dataSet.getInstance(offset + row*neuronCols+col));
           glBegin(GL_QUADS);
           for(int yIdx = 0; yIdx < 28; yIdx++)
           {
             for(int xIdx = 0; xIdx < 28; xIdx++)
             {
               int idx = yIdx * 28 + xIdx;
-              Eigen::VectorXd out = sae.reconstruct(dataSet.getInstance(offset + row*neuronCols+col));
               float c = out(idx);
               float x = xIdx * scale + col * 29.0f * scale - 30.0f;
               float y = (28.0f - yIdx) * scale - row * scale * 29.0f + 90.0f;
@@ -187,22 +182,12 @@ public:
     case Qt::Key_Right:
     {
       offset++;
-      int tooHi = offset + neuronRows * neuronCols - H/2; // TODO magic number
+      int tooHi = offset + neuronRows * neuronCols - H/2;
       if(tooHi > 0)
         offset -= tooHi;
       update();
       break;
     }
-    case Qt::Key_Minus:
-      fantasy--;
-      if(fantasy < 0)
-        fantasy = 0;
-      update();
-      break;
-    case Qt::Key_Plus:
-      fantasy++;
-      update();
-      break;
     case Qt::Key_S:
       showFilters = !showFilters;
       update();
@@ -228,13 +213,13 @@ int main(int argc, char** argv)
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingInput);
 
-  int H = 100;
+  int H = 400;
   OpenANN::SparseAutoEncoder sae(loader.D, H, OpenANN::TANH, 0.1, 0.1);
   sae.trainingSet(trainSet);
 
   OpenANN::MBSGD optimizer(0.01, 0.5, 128);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 5;
+  stop.maximalIterations = 10;
   optimizer.setOptimizable(sae);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();
