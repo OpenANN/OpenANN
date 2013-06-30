@@ -85,12 +85,9 @@ double SparseAutoEncoder::error()
 
   dEdZ2 = Z2 - X;
   double err = dEdZ2.array().square().sum() / (2.0*N);
-  OPENANN_CHECK_INF_AND_NAN(err);
   err += lambda/2.0 * (W1.array().square().sum() + W2.array().square().sum());
-  OPENANN_CHECK_INF_AND_NAN(err);
   err += beta * (rho * (rho * meanActivation.array().inverse()).log() +
       (1 - rho) * ((1 - rho) * (1 - meanActivation.array()).inverse()).log()).sum();
-  OPENANN_CHECK_INF_AND_NAN(err);
   return err;
 }
 
