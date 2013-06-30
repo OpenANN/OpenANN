@@ -20,6 +20,7 @@ SparseAutoEncoder::SparseAutoEncoder(int D, int H, double beta, double rho,
 Eigen::VectorXd SparseAutoEncoder::operator()(const Eigen::VectorXd& x)
 {
   A1 = x.transpose() * W1.transpose();
+  A1.rowwise() += b1.transpose();
   Z1.conservativeResize(A1.rows(), Eigen::NoChange);
   activationFunction(act, A1, Z1);
   return Z2.transpose();
@@ -28,6 +29,7 @@ Eigen::VectorXd SparseAutoEncoder::operator()(const Eigen::VectorXd& x)
 Eigen::MatrixXd SparseAutoEncoder::operator()(const Eigen::MatrixXd& X)
 {
   A1 = X * W1.transpose();
+  A1.rowwise() += b1.transpose();
   Z1.conservativeResize(A1.rows(), Eigen::NoChange);
   activationFunction(act, A1, Z1);
   return Z2;
@@ -75,9 +77,11 @@ double SparseAutoEncoder::error()
 {
   const int N = X.rows();
   A1 = X * W1.transpose();
+  A1.rowwise() += b1.transpose();
   Z1.conservativeResize(A1.rows(), A1.cols());
   activationFunction(act, A1, Z1);
   A2 = Z1 * W2.transpose();
+  A2.rowwise() += b2.transpose();
   Z2.conservativeResize(A2.rows(), A2.cols());
   activationFunction(act, A2, Z2);
 
@@ -152,9 +156,11 @@ Eigen::MatrixXd SparseAutoEncoder::getOutputWeights()
 Eigen::VectorXd SparseAutoEncoder::reconstruct(const Eigen::VectorXd& x)
 {
   A1 = x.transpose() * W1.transpose();
+  A1.rowwise() += b1.transpose();
   Z1.conservativeResize(A1.rows(), A1.cols());
   activationFunction(act, A1, Z1);
   A2 = Z1 * W2.transpose();
+  A2.rowwise() += b2.transpose();
   Z2.conservativeResize(A2.rows(), A2.cols());
   activationFunction(act, A2, Z2);
   return Z2.transpose();
