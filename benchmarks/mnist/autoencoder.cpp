@@ -4,7 +4,7 @@
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/Evaluator.h>
 #include <OpenANN/util/OpenANNException.h>
-#include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/LBFGS.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include "IDXLoader.h"
 #include <QGLWidget>
@@ -16,11 +16,7 @@
 #endif
 
 /**
- * \page MNISTRBM Restricted Boltzmann Machine on MNIST dataset
- *
- * An RBM with 50 hidden nodes is trained on the MNIST dataset and then used
- * to generate features for another neural network that will be trained
- * supervised.
+ * \page MNISTSAE Sparse auto-encoder on MNIST dataset
  */
 
 class SparseAutoEncoderVisualization : public QGLWidget
@@ -209,17 +205,17 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 60000, 0, directory);
+  IDXLoader loader(28, 28, 10000, 0, directory);
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingInput);
 
-  int H = 100;
-  OpenANN::SparseAutoEncoder sae(loader.D, H, OpenANN::LOGISTIC, 0.003, 0.01);
+  int H = 196;
+  OpenANN::SparseAutoEncoder sae(loader.D, H, 3.0, 0.1, 3e-3, OpenANN::LOGISTIC);
   sae.trainingSet(trainSet);
 
-  OpenANN::MBSGD optimizer(0.01, 0.5, 64);
+  OpenANN::LBFGS optimizer(20);
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 20;
+  stop.maximalIterations = 400;
   optimizer.setOptimizable(sae);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();

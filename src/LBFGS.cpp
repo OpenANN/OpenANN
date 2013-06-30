@@ -80,7 +80,7 @@ bool LBFGS::step()
       if(state.xupdated)
         continue;
       throw alglib::ap_error("ALGLIB: error in 'minlbfgsoptimize'"
-                            " (some derivatives were not provided?)");
+                             " (some derivatives were not provided?)");
     }
   }
   catch(alglib_impl::ae_error_type)
