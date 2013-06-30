@@ -205,7 +205,7 @@ int main(int argc, char** argv)
   if(argc > 1)
     directory = std::string(argv[1]);
 
-  IDXLoader loader(28, 28, 10000, 0, directory);
+  IDXLoader loader(28, 28, 100, 0, directory); // TODO more instances
   OpenANN::DirectStorageDataSet trainSet(&loader.trainingInput,
                                          &loader.trainingInput);
 
