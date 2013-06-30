@@ -1,4 +1,10 @@
+#define OPENANN_LOG_NAMESPACE "LBFGS"
+
 #include <OpenANN/optimization/LBFGS.h>
+#include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
+#include <OpenANN/io/Logger.h>
 
 namespace OpenANN
 {
@@ -73,7 +79,7 @@ bool LBFGS::step()
       }
       if(state.xupdated)
         continue;
-      throw alglib::ap_error("ALGLIB: error in 'mincgoptimize'"
+      throw alglib::ap_error("ALGLIB: error in 'minlbfgsoptimize'"
                             " (some derivatives were not provided?)");
     }
   }
@@ -132,7 +138,7 @@ void LBFGS::reset()
   for(unsigned i = 0; i < n; i++)
     optimum(i) = xIn[i];
 
-  OPENANN_DEBUG << "CG terminated";
+  OPENANN_DEBUG << "LBFGS terminated";
   OPENANN_DEBUG << report.iterationscount << " iterations";
   OPENANN_DEBUG << report.nfev << " function evaluations";
   OPENANN_DEBUG << "reason: ";
