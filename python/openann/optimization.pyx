@@ -91,3 +91,23 @@ cdef class CG(Optimizer):
     (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
     self.thisptr.setOptimizable(deref((<Net>net).thisptr))
     self.thisptr.optimize()
+
+
+cdef class LBFGS(Optimizer):
+  """Limited storage Broyden-Fletcher-Goldfarb-Shanno."""
+  def __cinit__(self, stop={}, m=10):
+    self.thisptr = new openann.LBFGS(m)
+    self.stopping_criteria = StoppingCriteria(stop)
+    self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def __str__(self):
+    return self.thisptr.name().c_str()
+
+  def optimize(self, net, dataset):
+    """Perform optimization until stopping criteria are satisfied."""
+    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    self.thisptr.optimize()
