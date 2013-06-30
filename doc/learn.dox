@@ -99,8 +99,9 @@ small.
 \section Optimization Optimization Algorithm
 
 We can choose between stochastic gradient descent (MBSGD), conjugate gradient
-(CG) and Levenberg-Marquardt (LMA). LMA is usally the best algorithm because
-it uses second-order information of the error function, i.e. it approximates
+(CG), limited storage Broyden-Fletcher-Goldfarb-Shanno (LBFGS) and
+Levenberg-Marquardt (LMA). LMA is usally the best algorithm because it uses
+second-order information of the error function, i.e. it approximates
 the second derivative. But it has some drawbacks:
 
 - It works only for SSE.
@@ -111,7 +112,8 @@ Thus, it is neither applicable for large nets, nor for large datasets. In this
 case, we often use MBSGD because it has only \f$ O(L) \f$ time and space
 complexity. It usually works very well for large redundant datasets for
 classification. It might also be useful to take a look at conjugate gradient
-for datasets that are not redundant, e.g. regression problems.
+for datasets that are not redundant, e.g. regression problems. For networks
+like auto-encoders, L-BFGS is usually the standard optimization algorithm.
 
 \section References
 
