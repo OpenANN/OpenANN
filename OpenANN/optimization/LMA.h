@@ -53,7 +53,6 @@ class LMA : public Optimizer
   Eigen::MatrixXd jacobian;
   alglib::real_1d_array xIn;
   alglib::minlmstate state;
-  alglib::minlmreport report;
 public:
   LMA();
   virtual ~LMA();

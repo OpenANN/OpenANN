@@ -27,6 +27,7 @@
 #include "MBSGDTestCase.h"
 #include "LMATestCase.h"
 #include "CGTestCase.h"
+#include "LBFGSTestCase.h"
 #include "DataSetTestCase.h"
 #include "IODataSetTestCase.h"
 #include "EvaluationTestCase.h"
@@ -76,6 +77,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new MBSGDTestCase);
   ts.addTestCase(new LMATestCase);
   ts.addTestCase(new CGTestCase);
+  ts.addTestCase(new LBFGSTestcase);
 
   ts.addTestCase(new DataSetTestCase);
   ts.addTestCase(new IODataSetTestCase);

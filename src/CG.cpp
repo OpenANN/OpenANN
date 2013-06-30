@@ -151,6 +151,7 @@ void CG::reset()
 {
   alglib_impl::ae_state_clear(&envState);
 
+  alglib::mincgreport report;
   alglib::mincgresults(state, xIn, report);
   optimum.resize(n, 1);
   for(unsigned i = 0; i < n; i++)
