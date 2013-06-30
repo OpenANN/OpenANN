@@ -2,6 +2,7 @@
 #include <OpenANN/layers/FullyConnected.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {
@@ -80,12 +81,16 @@ double SparseAutoEncoder::error()
   Z2.conservativeResize(A2.rows(), A2.cols());
   activationFunction(act, A2, Z2);
 
-  meanActivation = Z1.colwise().sum().transpose();
+  meanActivation = Z1.colwise().sum().transpose() / N;
 
   dEdZ2 = Z2 - X;
-  double err = dEdZ2.array().square().sum();
+  double err = dEdZ2.array().square().sum() / (2.0*N);
+  OPENANN_CHECK_INF_AND_NAN(err);
+  err += lambda/2.0 * (W1.array().square().sum() + W2.array().square().sum());
+  OPENANN_CHECK_INF_AND_NAN(err);
   err += beta * (rho * (rho * meanActivation.array().inverse()).log() +
       (1 - rho) * ((1 - rho) * (1 - meanActivation.array()).inverse()).log()).sum();
+  OPENANN_CHECK_INF_AND_NAN(err);
   return err;
 }
 
@@ -103,14 +108,15 @@ Eigen::VectorXd SparseAutoEncoder::gradient()
 
 void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
 {
+  const int N = X.rows();
   // Forward propagation and error calculation
   value = error();
 
   G2D.conservativeResize(Z2.rows(), Z2.cols());
   activationFunctionDerivative(act, Z2, G2D);
   Eigen::MatrixXd deltas2 = G2D.cwiseProduct(dEdZ2);
-  W2d = deltas2.transpose() * Z1;
-  b2d = deltas2.colwise().sum().transpose();
+  W2d = deltas2.transpose() * Z1 / N;
+  b2d = deltas2.colwise().sum().transpose() / N;
   if(lambda > 0.0)
     W2d += lambda * W2;
   Eigen::MatrixXd dEdZ1 = deltas2 * W2;
@@ -120,12 +126,13 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
   deltas1.array().rowwise() += beta *
       ((1.0 - rho) * (1.0 - meanActivation.array()).inverse() -
       rho * meanActivation.array().inverse());
-  W1d = deltas1.transpose() * X;
-  b1d = deltas1.colwise().sum().transpose();
+  W1d = deltas1.transpose() * X / N;
+  b1d = deltas1.colwise().sum().transpose() / N;
   if(lambda > 0.0)
     W1d += lambda * W1;
 
   pack(grad, W1d, W2d, b1d, b2d);
+  OPENANN_CHECK_MATRIX_BROKEN(grad);
 }
 
 Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
