@@ -12,10 +12,13 @@ class SparseAutoEncoder : public Learner
   int D, H;
   double beta, rho, lambda;
   ActivationFunction act;
-  Eigen::MatrixXd W1, W2;
-  Eigen::VectorXd b1, b2;
-  Eigen::MatrixXd A1, Z1, A2, Z2;
+  Eigen::MatrixXd X;
+  Eigen::MatrixXd W1, W2, W1d, W2d;
+  Eigen::VectorXd b1, b2, b1d, b2d;
+  Eigen::MatrixXd A1, Z1, G1D, A2, Z2, G2D;
   Eigen::VectorXd parameters, grad;
+  Eigen::MatrixXd dEdZ2;
+  Eigen::VectorXd meanActivation;
 public:
   /**
    * Sparse auto-encoder.
@@ -39,6 +42,7 @@ public:
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient();
   virtual void errorGradient(double& value, Eigen::VectorXd& grad);
+  virtual Learner& trainingSet(DataSet& trainingSet);
   Eigen::MatrixXd getInputWeights();
   Eigen::MatrixXd getOutputWeights();
   Eigen::VectorXd reconstruct(const Eigen::VectorXd& x);
