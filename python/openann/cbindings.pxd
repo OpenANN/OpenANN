@@ -224,6 +224,14 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     unsigned int numberOflayers()
     OutputInfo getOutputInfo(int l)
 
+cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
+  cdef cppclass SparseAutoEncoder(Learner):
+    SparseAutoEncoder(int D, int H, double beta, double rho, double lmbda,
+                      ActivationFunction act)
+    MatrixXd getInputWeights()
+    MatrixXd getOutputWeights()
+    VectorXd reconstruct(VectorXd& x)
+
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
   double mse(Learner& learner, DataSet& dataSet)
