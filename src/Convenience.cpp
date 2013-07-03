@@ -4,6 +4,7 @@
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/CG.h>
+#include <OpenANN/optimization/LBFGS.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <cstdarg>
 
@@ -21,12 +22,14 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
   Optimizer* opt;
   if(algorithm == "MBSGD")
     opt = new MBSGD;
-  else if(algorithm == "CMAES")
-    opt = new IPOPCMAES;
   else if(algorithm == "LMA")
     opt = new LMA;
   else if(algorithm == "CG")
     opt = new CG;
+  else if(algorithm == "LBFGS")
+    opt = new LBFGS();
+  else if(algorithm == "CMAES")
+    opt = new IPOPCMAES;
   else
     throw OpenANNException("Unknown optimizer: " + algorithm);
 
