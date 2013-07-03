@@ -4,7 +4,6 @@ branches:
     - master
     - /\d+\.\d+\..+/
 compiler:
-  - clang
   - gcc
 before_script:
   - sudo apt-get update -qq
