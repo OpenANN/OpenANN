@@ -72,7 +72,7 @@ Eigen::VectorXd LayerAdapter::gradient()
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = *output - desired;
   Eigen::MatrixXd* e = &diff;
-  layer.backpropagate(e, e, true);
+  layer.backpropagate(e, e);
   Eigen::VectorXd derivs(dimension());
   std::vector<double*>::const_iterator it = derivatives.begin();
   for(int i = 0; i < dimension(); i++, it++)
@@ -89,7 +89,7 @@ Eigen::VectorXd LayerAdapter::gradient(unsigned int n)
   layer.forwardPropagate(&in, output, false);
   Eigen::MatrixXd diff = *output - out;
   Eigen::MatrixXd* e = &diff;
-  layer.backpropagate(e, e, true);
+  layer.backpropagate(e, e);
   Eigen::VectorXd derivs(dimension());
   std::vector<double*>::const_iterator it = derivatives.begin();
   for(int i = 0; i < dimension(); i++, it++)
@@ -107,7 +107,7 @@ Eigen::VectorXd LayerAdapter::gradient(std::vector<int>::const_iterator startN,
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = *output - desired;
   Eigen::MatrixXd* e = &diff;
-  layer.backpropagate(e, e, true);
+  layer.backpropagate(e, e);
   Eigen::VectorXd derivs(dimension());
   std::vector<double*>::const_iterator it = derivatives.begin();
   for(int i = 0; i < dimension(); i++, it++)
@@ -121,7 +121,7 @@ Eigen::MatrixXd LayerAdapter::inputGradient()
   layer.forwardPropagate(&input, output, false);
   Eigen::MatrixXd diff = *output - desired;
   Eigen::MatrixXd* e = &diff;
-  layer.backpropagate(e, e, true);
+  layer.backpropagate(e, e);
   return *e;
 }
 

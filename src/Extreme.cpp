@@ -42,8 +42,7 @@ void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
   y = &(this->y);
 }
 
-void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                            bool backpropToPrevious)
+void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   // Derive activations
   this->yd.conservativeResize(a.rows(), Eigen::NoChange);

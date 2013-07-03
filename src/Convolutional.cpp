@@ -147,9 +147,7 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
   y = &(this->y);
 }
 
-void Convolutional::backpropagate(Eigen::MatrixXd* ein,
-                                  Eigen::MatrixXd*& eout,
-                                  bool backpropToPrevious)
+void Convolutional::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   const int N = a.rows();
   // Derive activations

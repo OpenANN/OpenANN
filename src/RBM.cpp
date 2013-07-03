@@ -173,8 +173,7 @@ void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout
   y = &ph;
 }
 
-void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                        bool backpropToPrevious)
+void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   const int N = ph.rows();
   phd.conservativeResize(N, Eigen::NoChange);

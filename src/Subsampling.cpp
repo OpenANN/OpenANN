@@ -138,8 +138,7 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool
   y = &(this->y);
 }
 
-void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                                bool backpropToPrevious)
+void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);

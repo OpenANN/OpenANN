@@ -79,8 +79,7 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool 
   y = &(this->y);
 }
 
-void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                               bool backpropToPrevious)
+void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);

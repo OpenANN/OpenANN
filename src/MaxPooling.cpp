@@ -87,8 +87,7 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   y = &(this->y);
 }
 
-void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                               bool backpropToPrevious)
+void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
 {
   const int N = y.rows();
   e.conservativeResize(N, Eigen::NoChange);

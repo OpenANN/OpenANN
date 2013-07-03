@@ -139,8 +139,7 @@ void IntrinsicPlasticity::forwardPropagate(Eigen::MatrixXd* x,
 }
 
 void IntrinsicPlasticity::backpropagate(Eigen::MatrixXd* ein,
-                                        Eigen::MatrixXd*& eout,
-                                        bool backpropToPrevious)
+                                        Eigen::MatrixXd*& eout)
 {
   const int N = Y.rows();
   e.conservativeResize(N, nodes);
