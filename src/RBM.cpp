@@ -187,7 +187,8 @@ void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
     bhd = deltas.colwise().sum().transpose();
   }
   // Prepare error signals for previous layer
-  e = deltas * W;
+  if(backpropToPrevious)
+    e = deltas * W;
   eout = &e;
 }
 

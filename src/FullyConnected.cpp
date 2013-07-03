@@ -96,7 +96,8 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
   if(regularization.l2Penalty > 0.0)
     Wd += regularization.l2Penalty * W;
   // Prepare error signals for previous layer
-  e = deltas * W;
+  if(backpropToPrevious)
+    e = deltas * W;
   eout = &e;
 }
 
