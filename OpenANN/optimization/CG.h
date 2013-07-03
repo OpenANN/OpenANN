@@ -13,6 +13,9 @@ namespace OpenANN
  * @class CG
  *
  * Conjugate Gradient.
+ *
+ * The nonlinear conjugate gradient method is a generalization of the
+ * conjugate gradient method that finds the minimum of a quadratic function.
  */
 class CG : public Optimizer
 {
@@ -24,7 +27,6 @@ class CG : public Optimizer
   double error;
   alglib_impl::ae_state envState;
   alglib::mincgstate state;
-  alglib::mincgreport report;
   alglib::real_1d_array xIn;
 
 public:

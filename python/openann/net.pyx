@@ -127,3 +127,29 @@ cdef class Net:
   def parameter_size(self):
     """Get number of parameters."""
     return self.thisptr.dimension()
+
+cdef class SparseAutoEncoder:
+  """Sparse auto-encoder."""
+  cdef openann.SparseAutoEncoder *thisptr
+
+  def __init__(self, D, H, beta, rho, lmbda, act):
+    self.thisptr = new openann.SparseAutoEncoder(D, H, beta, rho, lmbda, act)
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def get_input_weights(self):
+    """Get weight matrix between input and hidden layer."""
+    cdef openann.MatrixXd weights = self.thisptr.getInputWeights()
+    return __matrix_eigen_to_numpy__(&weights)
+
+  def get_output_weights(self):
+    """Get weight matrix between hidden and output layer."""
+    cdef openann.MatrixXd weights = self.thisptr.getOutputWeights()
+    return __matrix_eigen_to_numpy__(&weights)
+
+  def reconstruct(self, x):
+    """Reconstruct input."""
+    cdef openann.VectorXd* x_eigen = __vector_numpy_to_eigen__(x)
+    cdef openann.VectorXd recon = self.thisptr.reconstruct(deref(x_eigen))
+    return __vector_eigen_to_numpy__(&recon)

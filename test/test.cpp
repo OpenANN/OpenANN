@@ -21,12 +21,14 @@
 #include "DropoutTestCase.h"
 #include "SigmaPiTestCase.h"
 #include "NetTestCase.h"
+#include "SparseAutoEncoderTestCase.h"
 #include "PreprocessingTestCase.h"
 #include "IntrinsicPlasticityTestCase.h"
 #include "RBMTestCase.h"
 #include "MBSGDTestCase.h"
 #include "LMATestCase.h"
 #include "CGTestCase.h"
+#include "LBFGSTestCase.h"
 #include "DataSetTestCase.h"
 #include "IODataSetTestCase.h"
 #include "EvaluationTestCase.h"
@@ -71,11 +73,13 @@ int main(int argc, char** argv)
   ts.addTestCase(new NetTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new RBMTestCase);
+  ts.addTestCase(new SparseAutoEncoderTestCase);
 
   ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new MBSGDTestCase);
   ts.addTestCase(new LMATestCase);
   ts.addTestCase(new CGTestCase);
+  ts.addTestCase(new LBFGSTestcase);
 
   ts.addTestCase(new DataSetTestCase);
   ts.addTestCase(new IODataSetTestCase);

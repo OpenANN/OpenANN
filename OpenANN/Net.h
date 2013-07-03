@@ -33,6 +33,7 @@ enum ErrorFunction
  */
 class Net : public Learner
 {
+protected:
   std::vector<OutputInfo> infos;
   std::vector<Layer*> layers;
   std::vector<double*> parameters;
@@ -301,7 +302,7 @@ public:
                              double& value, Eigen::VectorXd& grad);
   virtual void finishedIteration();
   ///@}
-private:
+protected:
   void forwardPropagate();
   void backpropagate();
   double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);

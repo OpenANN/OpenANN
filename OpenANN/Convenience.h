@@ -12,8 +12,8 @@ namespace OpenANN
  * Train a feedforward neural network supervised.
  *
  * @param net neural network
- * @param algorithm a registered algorithm, e.g. "MBSGD", "LMA", "CG" or
- *                  "CMAES"
+ * @param algorithm a registered algorithm, e.g. "MBSGD", "LMA", "CG", "LBFGS"
+ *                  or "CMAES"
  * @param errorFunction error function to optimize
  * @param stop stopping criteria
  * @param reinitialize should the weights be initialized before optimization?
