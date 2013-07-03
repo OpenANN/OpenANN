@@ -181,6 +181,10 @@ cdef extern from "OpenANN/optimization/CG.h" namespace "OpenANN":
   cdef cppclass CG(Optimizer):
     CG()
 
+cdef extern from "OpenANN/optimization/LBFGS.h" namespace "OpenANN":
+  cdef cppclass LBFGS(Optimizer):
+    LBFGS(int m)
+
 cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   cdef cppclass Learner(Optimizable):
     Learner& trainingSet(MatrixXd& input, MatrixXd& output)
@@ -219,6 +223,14 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
 
     unsigned int numberOflayers()
     OutputInfo getOutputInfo(int l)
+
+cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
+  cdef cppclass SparseAutoEncoder(Learner):
+    SparseAutoEncoder(int D, int H, double beta, double rho, double lmbda,
+                      ActivationFunction act)
+    MatrixXd getInputWeights()
+    MatrixXd getOutputWeights()
+    VectorXd reconstruct(VectorXd& x)
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)

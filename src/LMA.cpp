@@ -166,6 +166,7 @@ void LMA::initialize()
 void LMA::reset()
 {
   // Read out results
+  alglib::minlmreport report;
   alglib::minlmresults(state, xIn, report);
 
   // Set optimum

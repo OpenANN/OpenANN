@@ -48,6 +48,8 @@ To start using %OpenANN it might be helpful to take a look at
 - Optimization algorithms
   - Mini-batch stochastic gradient descent (MBSGD) for large networks
   - Conjugate gradient (CG) for large networks
+  - Limited storage Broyden-Fletcher-Goldfarb-Shanno (LBFGS) for networks of
+    medium size
   - Levenberg-Marquardt algorithm (LMA) for small networks
   - (Increasing population size) covariance matrix adaption evolution
     strategies (IPOPCMAES) for reinforcement learning

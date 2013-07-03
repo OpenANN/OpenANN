@@ -1,37 +1,40 @@
-#define OPENANN_LOG_NAMESPACE "CG"
+#define OPENANN_LOG_NAMESPACE "LBFGS"
 
-#include <OpenANN/optimization/CG.h>
+#include <OpenANN/optimization/LBFGS.h>
 #include <OpenANN/optimization/Optimizable.h>
-#include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/util/AssertionMacros.h>
-#include <OpenANN/util/Random.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
-#include <limits>
 
 namespace OpenANN
 {
 
-CG::CG()
-  : opt(0), iteration(-1), n(-1), error(0.0)
+LBFGS::LBFGS(int m)
+  : opt(0), iteration(-1), n(-1), m(m), error(0.0)
 {
 }
 
-CG::~CG()
+void LBFGS::setStopCriteria(const StoppingCriteria& sc)
 {
+  this->stop = sc;
 }
 
-void CG::setOptimizable(Optimizable& opt)
+void LBFGS::setOptimizable(Optimizable& optimizable)
 {
-  this->opt = &opt;
+  this->opt = &optimizable;
 }
 
-void CG::setStopCriteria(const StoppingCriteria& stop)
+void LBFGS::optimize()
 {
-  this->stop = stop;
+  OPENANN_CHECK(opt);
+  while(step())
+  {
+    OPENANN_DEBUG << "Iteration #" << iteration << ", training error = "
+                  << FloatingPointFormatter(error, 4);
+  }
 }
 
-bool CG::step()
+bool LBFGS::step()
 {
   OPENANN_CHECK(opt);
   if(iteration < 0)
@@ -40,7 +43,7 @@ bool CG::step()
 
   try
   {
-    while(alglib_impl::mincgiteration(state.c_ptr(), &envState))
+    while(alglib_impl::minlbfgsiteration(state.c_ptr(), &envState))
     {
       if(state.needf)
       {
@@ -76,7 +79,7 @@ bool CG::step()
       }
       if(state.xupdated)
         continue;
-      throw alglib::ap_error("ALGLIB: error in 'mincgoptimize'"
+      throw alglib::ap_error("ALGLIB: error in 'minlbfgsoptimize'"
                              " (some derivatives were not provided?)");
     }
   }
@@ -94,31 +97,10 @@ bool CG::step()
   return false;
 }
 
-void CG::optimize()
-{
-  OPENANN_CHECK(opt);
-  while(step())
-  {
-    OPENANN_DEBUG << "Iteration #" << iteration << ", training error = "
-                  << FloatingPointFormatter(error, 4);
-  }
-}
-
-Eigen::VectorXd CG::result()
-{
-  OPENANN_CHECK(opt);
-  opt->setParameters(optimum);
-  return optimum;
-}
-
-std::string CG::name()
-{
-  return "Conjugate Gradient";
-}
-
-void CG::initialize()
+void LBFGS::initialize()
 {
   n = opt->dimension();
+  m = std::min(m, n);
 
   parameters.resize(n);
   gradient.resize(n);
@@ -126,20 +108,27 @@ void CG::initialize()
   xIn.setcontent(n, opt->currentParameters().data());
 
   // Initialize optimizer
-  alglib::mincgcreate(xIn, state);
+  try
+  {
+    alglib::minlbfgscreate(m, xIn, state);
+  }
+  catch(alglib::ap_error error)
+  {
+    throw OpenANNException(error.msg);
+  }
 
   // Set convergence criteria
   double minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
                                   StoppingCriteria::defaultValue.minimalSearchSpaceStep ?
                                   stop.minimalSearchSpaceStep : 0.0;
   double minimalValueDifferences = stop.minimalValueDifferences !=
-                                   StoppingCriteria::defaultValue.minimalValueDifferences ?
-                                   stop.minimalValueDifferences : 0.0;
+                                  StoppingCriteria::defaultValue.minimalValueDifferences ?
+                                  stop.minimalValueDifferences : 0.0;
   int maximalIterations = stop.maximalIterations !=
                           StoppingCriteria::defaultValue.maximalIterations ?
                           stop.maximalIterations : 0;
-  alglib::mincgsetcond(state, minimalSearchSpaceStep, minimalValueDifferences,
-                       0.0, maximalIterations);
+  alglib::minlbfgssetcond(state, minimalSearchSpaceStep, minimalValueDifferences,
+                          0.0, maximalIterations);
 
   // Initialize optimizer state
   alglib_impl::ae_state_init(&envState);
@@ -147,22 +136,28 @@ void CG::initialize()
   iteration = 0;
 }
 
-void CG::reset()
+void LBFGS::reset()
 {
   alglib_impl::ae_state_clear(&envState);
 
-  alglib::mincgreport report;
-  alglib::mincgresults(state, xIn, report);
+  alglib::minlbfgsreport report;
+  alglib::minlbfgsresults(state, xIn, report);
   optimum.resize(n, 1);
   for(unsigned i = 0; i < n; i++)
     optimum(i) = xIn[i];
 
-  OPENANN_DEBUG << "CG terminated";
+  OPENANN_DEBUG << "LBFGS terminated";
   OPENANN_DEBUG << report.iterationscount << " iterations";
   OPENANN_DEBUG << report.nfev << " function evaluations";
   OPENANN_DEBUG << "reason: ";
   switch(report.terminationtype)
   {
+  case -2:
+    OPENANN_DEBUG << "Rounding errors prevent further improvement.";
+    break;
+  case -1:
+    OPENANN_DEBUG << "Incorrect parameters were specified.";
+    break;
   case 1:
     OPENANN_DEBUG << "Relative function improvement is no more than EpsF.";
     break;
@@ -180,14 +175,23 @@ void CG::reset()
                   << " improvement is impossible, we return the best "
                   << "X found so far.";
     break;
-  case 8:
-    OPENANN_DEBUG << "Terminated by user.";
-    break;
   default:
     OPENANN_DEBUG << "Unknown.";
   }
 
   iteration = -1;
+}
+
+Eigen::VectorXd LBFGS::result()
+{
+  OPENANN_CHECK(opt);
+  opt->setParameters(optimum);
+  return optimum;
+}
+
+std::string LBFGS::name()
+{
+  return "L-BFGS";
 }
 
 } // namespace OpenANN

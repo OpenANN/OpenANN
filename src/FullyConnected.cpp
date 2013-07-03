@@ -103,4 +103,9 @@ Eigen::MatrixXd& FullyConnected::getOutput()
   return y;
 }
 
+Eigen::MatrixXd FullyConnected::getWeights()
+{
+  return W;
+}
+
 }
