@@ -78,7 +78,9 @@ void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, b
   y = &(this->y);
 }
 
-void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
+                                   Eigen::MatrixXd*& eout,
+                                   bool backpropToPrevious)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);

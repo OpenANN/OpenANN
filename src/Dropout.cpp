@@ -41,7 +41,8 @@ void Dropout::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
   y = &this->y;
 }
 
-void Dropout::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+void Dropout::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
+                            bool backpropToPrevious)
 {
   e = dropoutMask.cwiseProduct(*ein);
   eout = &e;
