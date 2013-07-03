@@ -100,6 +100,7 @@ bool LBFGS::step()
 void LBFGS::initialize()
 {
   n = opt->dimension();
+  m = std::min(m, n);
 
   parameters.resize(n);
   gradient.resize(n);
@@ -107,7 +108,14 @@ void LBFGS::initialize()
   xIn.setcontent(n, opt->currentParameters().data());
 
   // Initialize optimizer
-  alglib::minlbfgscreate(m, xIn, state);
+  try
+  {
+    alglib::minlbfgscreate(m, xIn, state);
+  }
+  catch(alglib::ap_error error)
+  {
+    throw OpenANNException(error.msg);
+  }
 
   // Set convergence criteria
   double minimalSearchSpaceStep = stop.minimalSearchSpaceStep !=
