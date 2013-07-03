@@ -94,7 +94,8 @@ public:
                              double& value, Eigen::VectorXd& grad);
 
   // Layer interface
-  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout);
+  virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
+                             bool backpropToPrevious);
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                 bool dropout);
   virtual Eigen::MatrixXd& getOutput();
