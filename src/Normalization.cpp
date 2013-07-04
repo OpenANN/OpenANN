@@ -31,6 +31,7 @@ Normalization& Normalization::fit(const Eigen::MatrixXd& X)
     if(std(0, d) == 0.0)
       std(0, d) = 1.0;
   }
+  return *this;
 }
 
 Eigen::MatrixXd Normalization::transform(const Eigen::MatrixXd& X)
