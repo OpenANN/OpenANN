@@ -6,6 +6,7 @@
 class CompressedTestCase : public TestCase
 {
   virtual void run();
+  virtual void setUp();
   void compressed();
   void compressedGradient();
   void compressedInputGradient();

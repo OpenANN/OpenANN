@@ -2,6 +2,7 @@
 #include "FiniteDifferences.h"
 #include "LayerAdapter.h"
 #include <OpenANN/layers/Compressed.h>
+#include <OpenANN/util/Random.h>
 
 using namespace OpenANN;
 
@@ -11,6 +12,12 @@ void CompressedTestCase::run()
   RUN(CompressedTestCase, compressedGradient);
   RUN(CompressedTestCase, compressedInputGradient);
   RUN(CompressedTestCase, parallelCompressed);
+}
+
+void CompressedTestCase::setUp()
+{
+  RandomNumberGenerator rng;
+  rng.seed(0);
 }
 
 void CompressedTestCase::compressed()
