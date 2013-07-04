@@ -25,6 +25,7 @@ PCA& PCA::fit(const Eigen::MatrixXd& X)
       W.col(d).array() /= S.array();
     W *= std::sqrt((double) N);
   }
+  return *this;
 }
 
 Eigen::MatrixXd PCA::transform(const Eigen::MatrixXd& X)
