@@ -6,7 +6,8 @@
 class PCATestCase : public TestCase
 {
   virtual void run();
-  void pca();
+  void decorrelation();
+  void dimensionalityReduction();
 };
 
 #endif // OPENANN_TEST_PCA_TEST_CASE_H_

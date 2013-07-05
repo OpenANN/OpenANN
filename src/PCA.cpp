@@ -4,8 +4,8 @@
 namespace OpenANN
 {
 
-PCA::PCA(bool whiten)
-  : whiten(whiten)
+PCA::PCA(int components, bool whiten)
+  : components(components), whiten(whiten)
 {
 }
 
@@ -25,6 +25,10 @@ PCA& PCA::fit(const Eigen::MatrixXd& X)
       W.col(d).array() /= S.array();
     W *= std::sqrt((double) N);
   }
+  evr.resize(S.rows());
+  evr.array() = S.array().square() / (double) N;
+  evr /= evr.sum();
+  evr.conservativeResize(components);
   return *this;
 }
 
@@ -32,7 +36,12 @@ Eigen::MatrixXd PCA::transform(const Eigen::MatrixXd& X)
 {
   Eigen::MatrixXd Y = X;
   Y.rowwise() -= mean;
-  return Y * W.transpose();
+  return Y * W.topRows(components).transpose();
+}
+
+Eigen::VectorXd PCA::explainedVarianceRatio()
+{
+  return evr;
 }
 
 } // namespace OpenANN

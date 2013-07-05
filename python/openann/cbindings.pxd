@@ -242,9 +242,10 @@ cdef extern from "OpenANN/Normalization.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/PCA.h" namespace "OpenANN":
   cdef cppclass PCA:
-    PCA(bool whiten)
+    PCA(int components, bool whiten)
     PCA& fit(MatrixXd& X)
     MatrixXd transform(MatrixXd& X)
+    VectorXd explainedVarianceRatio()
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)

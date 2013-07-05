@@ -9,23 +9,29 @@ namespace OpenANN
 /**
  * @class PCA
  * Principal component analysis.
- *
- * After transformation, the features are ordered by importance from left to
- * right, i.e. some of the right columns can be discarded.
  */
 class PCA
 {
+  int components;
   bool whiten;
   Eigen::VectorXd mean;
   Eigen::MatrixXd W;
+  Eigen::VectorXd evr;
 public:
   /**
    * Create PCA.
-   * @param whiten output should have variance 1
+   * @param components number of dimensions after transformation
+   * @param whiten outputs should have variance 1
    */
-  PCA(bool whiten = true);
+  PCA(int components, bool whiten = true);
   PCA& fit(const Eigen::MatrixXd& X);
   Eigen::MatrixXd transform(const Eigen::MatrixXd& X);
+
+  /**
+   * Computes the ratio of explained variance for each transformed feature.
+   * @return explaned variance ratio, must be within [0, 1] and sum up to 1
+   */
+  Eigen::VectorXd explainedVarianceRatio();
 };
 
 } // OpenANN

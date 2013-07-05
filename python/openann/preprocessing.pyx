@@ -30,8 +30,8 @@ cdef class PCA:
   """Principal component analysis."""
   cdef openann.PCA *thisptr
 
-  def __init__(self, whiten=True):
-    self.thisptr = new openann.PCA(whiten)
+  def __init__(self, n_components, whiten=True):
+    self.thisptr = new openann.PCA(n_components, whiten)
 
   def __dealloc__(self):
     del self.thisptr
@@ -45,3 +45,7 @@ cdef class PCA:
     cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
     cdef openann.MatrixXd Y_eigen = self.thisptr.transform(deref(X_eigen))
     return __matrix_eigen_to_numpy__(&Y_eigen)
+
+  def explained_variance_ratio(self):
+    cdef openann.VectorXd evr_eigen = self.thisptr.explainedVarianceRatio()
+    return __vector_eigen_to_numpy__(&evr_eigen)
