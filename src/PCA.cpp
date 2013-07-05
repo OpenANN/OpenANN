@@ -16,20 +16,19 @@ Transformer& PCA::fit(const Eigen::MatrixXd& X)
   mean = X.colwise().mean().transpose();
   Eigen::MatrixXd aligned = X;
   aligned.rowwise() -= mean;
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd;
-  svd.compute(aligned, Eigen::ComputeFullV);
-  Eigen::VectorXd S = svd.singularValues();
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(aligned, Eigen::ComputeFullV);
+  Eigen::VectorXd S = svd.singularValues() / std::sqrt((double) N);
   W = svd.matrixV();
   if(whiten)
-  {
     for(int d = 0; d < X.cols(); ++d)
       W.col(d).array() /= S.array();
-    W *= std::sqrt((double) N);
-  }
+
   evr.resize(S.rows());
-  evr.array() = S.array().square() / (double) N;
+  evr.array() = S.array().square();
   evr /= evr.sum();
   evr.conservativeResize(components);
+
   return *this;
 }
 

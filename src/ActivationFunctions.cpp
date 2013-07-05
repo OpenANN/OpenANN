@@ -5,7 +5,8 @@
 namespace OpenANN
 {
 
-void activationFunction(ActivationFunction act, const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
+void activationFunction(ActivationFunction act, const Eigen::MatrixXd& a,
+                        Eigen::MatrixXd& z)
 {
   switch(act)
   {
@@ -28,7 +29,9 @@ void activationFunction(ActivationFunction act, const Eigen::MatrixXd& a, Eigen:
   }
 }
 
-void activationFunctionDerivative(ActivationFunction act, const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
+void activationFunctionDerivative(ActivationFunction act,
+                                  const Eigen::MatrixXd& z,
+                                  Eigen::MatrixXd& gd)
 {
   switch(act)
   {

@@ -11,6 +11,7 @@ Normalization::Normalization()
 Transformer& Normalization::fit(const Eigen::MatrixXd& X)
 {
   mean = X.colwise().mean();
+
   // Unfortunately there does not seem to be a function for the standard
   // deviation in Eigen
   std.resize(mean.rows(), mean.cols());
@@ -25,12 +26,11 @@ Transformer& Normalization::fit(const Eigen::MatrixXd& X)
   }
   std /= X.rows();
   std.array() = std.array().sqrt();
+
   // To avoid division by zero, we do not modify the corresponding features
   for(int d = 0; d < X.cols(); ++d)
-  {
     if(std(0, d) == 0.0)
       std(0, d) = 1.0;
-  }
   return *this;
 }
 
@@ -40,7 +40,8 @@ Eigen::MatrixXd Normalization::transform(const Eigen::MatrixXd& X)
   OPENANN_CHECK_EQUALS(X.cols(), mean.cols());
   Eigen::MatrixXd normalized(X.rows(), X.cols());
   for(int n = 0; n < X.rows(); ++n)
-    normalized.row(n).array() = (X.row(n).array() - mean.array()) * std.array().inverse();
+    normalized.row(n).array() = (X.row(n).array() - mean.array()) *
+        std.array().inverse();
   return normalized;
 }
 
