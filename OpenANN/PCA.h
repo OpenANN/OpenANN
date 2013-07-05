@@ -1,6 +1,7 @@
 #ifndef OPENANN_PCA_H_
 #define OPENANN_PCA_H_
 
+#include <OpenANN/Transformer.h>
 #include <Eigen/Dense>
 
 namespace OpenANN
@@ -10,7 +11,7 @@ namespace OpenANN
  * @class PCA
  * Principal component analysis.
  */
-class PCA
+class PCA : public Transformer
 {
   int components;
   bool whiten;
@@ -24,17 +25,18 @@ public:
    * @param whiten outputs should have variance 1
    */
   PCA(int components, bool whiten = true);
-  PCA& fit(const Eigen::MatrixXd& X);
-  Eigen::MatrixXd transform(const Eigen::MatrixXd& X);
+
+  virtual Transformer& fit(const Eigen::MatrixXd& X);
+  virtual Eigen::MatrixXd transform(const Eigen::MatrixXd& X);
 
   /**
-   * Computes the ratio of explained variance for each transformed feature.
+   * Get the ratio of explained variance for each transformed feature.
    * @return explaned variance ratio, must be within [0, 1] and sum up to 1
-   *         for all features
+   *         for all features (including discarded features)
    */
   Eigen::VectorXd explainedVarianceRatio();
 };
 
-} // OpenANN
+} // namespace OpenANN
 
 #endif // OPENANN_PCA_H_

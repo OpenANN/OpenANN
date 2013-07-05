@@ -8,7 +8,7 @@ Normalization::Normalization()
 {
 }
 
-Normalization& Normalization::fit(const Eigen::MatrixXd& X)
+Transformer& Normalization::fit(const Eigen::MatrixXd& X)
 {
   mean = X.colwise().mean();
   // Unfortunately there does not seem to be a function for the standard
@@ -36,7 +36,8 @@ Normalization& Normalization::fit(const Eigen::MatrixXd& X)
 
 Eigen::MatrixXd Normalization::transform(const Eigen::MatrixXd& X)
 {
-  OPENANN_CHECK_EQUALS(X.cols(), mean.cols())
+  OPENANN_CHECK(mean.cols() > 0);
+  OPENANN_CHECK_EQUALS(X.cols(), mean.cols());
   Eigen::MatrixXd normalized(X.rows(), X.cols());
   for(int n = 0; n < X.rows(); ++n)
     normalized.row(n).array() = (X.row(n).array() - mean.array()) * std.array().inverse();

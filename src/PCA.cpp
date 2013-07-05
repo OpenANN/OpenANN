@@ -1,4 +1,5 @@
 #include <OpenANN/PCA.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/SVD>
 
 namespace OpenANN
@@ -9,7 +10,7 @@ PCA::PCA(int components, bool whiten)
 {
 }
 
-PCA& PCA::fit(const Eigen::MatrixXd& X)
+Transformer& PCA::fit(const Eigen::MatrixXd& X)
 {
   const int N = X.rows();
   mean = X.colwise().mean().transpose();
@@ -34,6 +35,8 @@ PCA& PCA::fit(const Eigen::MatrixXd& X)
 
 Eigen::MatrixXd PCA::transform(const Eigen::MatrixXd& X)
 {
+  OPENANN_CHECK(mean.cols() > 0);
+  OPENANN_CHECK_EQUALS(X.cols(), mean.rows());
   Eigen::MatrixXd Y = X;
   Y.rowwise() -= mean;
   return Y * W.topRows(components).transpose();
