@@ -29,7 +29,6 @@ void DataStream::setOptimizer(Optimizer& opt)
 {
   this->opt = &opt;
   StoppingCriteria stop;
-  stop.maximalIterations = 1;
   opt.setStopCriteria(stop);
 }
 
