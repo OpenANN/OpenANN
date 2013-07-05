@@ -10,7 +10,8 @@ namespace OpenANN
  * @class PCA
  * Principal component analysis.
  *
- * The right columns can be discarded.
+ * After transformation, the features are ordered by importance from left to
+ * right, i.e. some of the right columns can be discarded.
  */
 class PCA
 {
