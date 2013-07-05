@@ -79,7 +79,8 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool 
   y = &(this->y);
 }
 
-void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
+                               bool backpropToPrevious)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);
@@ -99,7 +100,8 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   if(regularization.l2Penalty > 0.0)
     alphad += regularization.l2Penalty * alpha;
   // Prepare error signals for previous layer
-  e = deltas * W.leftCols(I);
+  if(backpropToPrevious)
+    e = deltas * W.leftCols(I);
   eout = &e;
 }
 

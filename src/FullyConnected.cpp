@@ -78,7 +78,9 @@ void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, b
   y = &(this->y);
 }
 
-void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
+                                   Eigen::MatrixXd*& eout,
+                                   bool backpropToPrevious)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);
@@ -94,7 +96,8 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
   if(regularization.l2Penalty > 0.0)
     Wd += regularization.l2Penalty * W;
   // Prepare error signals for previous layer
-  e = deltas * W;
+  if(backpropToPrevious)
+    e = deltas * W;
   eout = &e;
 }
 

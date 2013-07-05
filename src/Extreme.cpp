@@ -42,14 +42,16 @@ void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
   y = &(this->y);
 }
 
-void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
+                            bool backpropToPrevious)
 {
   // Derive activations
   this->yd.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunctionDerivative(act, y, yd);
   deltas = yd.cwiseProduct(*ein);
   // Prepare error signals for previous layer
-  e = deltas * W.leftCols(I);
+  if(backpropToPrevious)
+    e = deltas * W.leftCols(I);
   eout = &e;
 }
 

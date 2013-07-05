@@ -31,7 +31,8 @@ void Input::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropo
   y = this->x;
 }
 
-void Input::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout)
+void Input::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
+                          bool backpropToPrevious)
 {
   // Do nothing.
 }
