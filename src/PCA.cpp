@@ -16,7 +16,7 @@ PCA& PCA::fit(const Eigen::MatrixXd& X)
   Eigen::MatrixXd aligned = X;
   aligned.rowwise() -= mean;
   Eigen::JacobiSVD<Eigen::MatrixXd> svd;
-  svd.compute(aligned, Eigen::ComputeFullU | Eigen::ComputeFullV);
+  svd.compute(aligned, Eigen::ComputeFullV);
   Eigen::VectorXd S = svd.singularValues();
   W = svd.matrixV();
   if(whiten)
