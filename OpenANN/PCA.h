@@ -30,6 +30,7 @@ public:
   /**
    * Computes the ratio of explained variance for each transformed feature.
    * @return explaned variance ratio, must be within [0, 1] and sum up to 1
+   *         for all features
    */
   Eigen::VectorXd explainedVarianceRatio();
 };
