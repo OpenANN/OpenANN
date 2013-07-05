@@ -89,14 +89,11 @@ def run_sarcos():
     print("Starting benchmark, this will take some minutes...")
 
     # Normalize data
-    Xmu = X.mean(axis=0)
-    Xstd = X.std(axis=0)
-    X = (X - Xmu) / Xstd
-    Xtest = (Xtest - Xmu) / Xstd
-    Ymu = Y.mean(axis=0)
-    Ystd = Y.std(axis=0)
-    Y = (Y - Ymu) / Ystd
-    Ytest = (Ytest - Ymu) / Ystd
+    n = Normalization()
+    X = n.fit(X).transform(X)
+    Xtest = n.transform(Xtest)
+    Y = n.fit(Y).transform(Y)
+    Ytest = n.transform(Ytest)
 
     training_set = Dataset(X, Y)
     validation_set = Dataset(Xtest, Ytest)

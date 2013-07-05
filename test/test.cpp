@@ -11,6 +11,8 @@
 #include "ActivationFunctionsTestCase.h"
 #include "CMAESTestCase.h"
 #include "CompressionMatrixFactoryTestCase.h"
+#include "NormalizationTestCase.h"
+#include "PCATestCase.h"
 #include "RandomTestCase.h"
 #include "FullyConnectedTestCase.h"
 #include "CompressedTestCase.h"
@@ -60,6 +62,8 @@ int main(int argc, char** argv)
   ts.addTestCase(new PreprocessingTestCase);
   ts.addTestCase(new ActivationFunctionsTestCase);
   ts.addTestCase(new CompressionMatrixFactoryTestCase);
+  ts.addTestCase(new NormalizationTestCase);
+  ts.addTestCase(new PCATestCase);
 
   ts.addTestCase(new FullyConnectedTestCase);
   ts.addTestCase(new CompressedTestCase);

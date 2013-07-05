@@ -2,6 +2,7 @@
 #include "FiniteDifferences.h"
 #include "LayerAdapter.h"
 #include <OpenANN/layers/Compressed.h>
+#include <OpenANN/util/Random.h>
 
 using namespace OpenANN;
 
@@ -11,6 +12,12 @@ void CompressedTestCase::run()
   RUN(CompressedTestCase, compressedGradient);
   RUN(CompressedTestCase, compressedInputGradient);
   RUN(CompressedTestCase, parallelCompressed);
+}
+
+void CompressedTestCase::setUp()
+{
+  RandomNumberGenerator rng;
+  rng.seed(0);
 }
 
 void CompressedTestCase::compressed()
@@ -109,7 +116,7 @@ void CompressedTestCase::parallelCompressed()
   ASSERT_EQUALS_DELTA((*y)(0, 1), tanh(3.5), 1e-10);
 
   Eigen::MatrixXd* e2;
-  layer.backpropagate(&e, e2);
+  layer.backpropagate(&e, e2, true);
   Eigen::VectorXd Wd(8);
   int i = 0;
   for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); ++it)

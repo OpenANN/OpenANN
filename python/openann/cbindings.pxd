@@ -232,6 +232,20 @@ cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
     MatrixXd getOutputWeights()
     VectorXd reconstruct(VectorXd& x)
 
+cdef extern from "OpenANN/Normalization.h" namespace "OpenANN":
+  cdef cppclass Normalization:
+    Normalization()
+    Normalization& fit(MatrixXd& X)
+    MatrixXd transform(MatrixXd& X)
+    MatrixXd getMean()
+    MatrixXd getStd()
+
+cdef extern from "OpenANN/PCA.h" namespace "OpenANN":
+  cdef cppclass PCA:
+    PCA(bool whiten)
+    PCA& fit(MatrixXd& X)
+    MatrixXd transform(MatrixXd& X)
+
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
   double mse(Learner& learner, DataSet& dataSet)

@@ -13,7 +13,7 @@ if(PYTHONINTERP_FOUND)
   file(COPY openann/cbindings.pxd DESTINATION .)
   file(COPY openann/layer.pyx openann/evaluation.pyx openann/openann.pyx
             openann/optimization.pyx openann/net.pyx openann/util.pyx
-            openann/dataset.pyx
+            openann/dataset.pyx openann/preprocessing.pyx
        DESTINATION .)
   configure_file(setup.py.in setup.py)
 
