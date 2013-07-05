@@ -4,8 +4,6 @@
 #include <OpenANN/layers/Compressed.h>
 #include <OpenANN/util/Random.h>
 
-using namespace OpenANN;
-
 void CompressedTestCase::run()
 {
   RUN(CompressedTestCase, compressed);
@@ -16,19 +14,20 @@ void CompressedTestCase::run()
 
 void CompressedTestCase::setUp()
 {
-  RandomNumberGenerator rng;
+  OpenANN::RandomNumberGenerator rng;
   rng.seed(0);
 }
 
 void CompressedTestCase::compressed()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 3, false, TANH, "average", 0.05, OpenANN::Regularization());
+  OpenANN::Compressed layer(info, 2, 3, false, OpenANN::TANH, "average", 0.05,
+                            OpenANN::Regularization());
 
   std::vector<double*> pp;
   std::vector<double*> pdp;
-  OutputInfo info2 = layer.initialize(pp, pdp);
+  OpenANN::OutputInfo info2 = layer.initialize(pp, pdp);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
@@ -49,9 +48,10 @@ void CompressedTestCase::compressed()
 
 void CompressedTestCase::compressedGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, OpenANN::Regularization());
+  OpenANN::Compressed layer(info, 2, 2, true, OpenANN::TANH, "gaussian", 0.05,
+                            OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
@@ -61,25 +61,26 @@ void CompressedTestCase::compressedGradient()
   indices.push_back(1);
   opt.trainingSet(X, Y);
   Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
-      indices.begin(), indices.end(), opt);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::
+      parameterGradient(indices.begin(), indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
 
 void CompressedTestCase::compressedInputGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 2, true, TANH, "gaussian", 0.05, OpenANN::Regularization());
+  OpenANN::Compressed layer(info, 2, 2, true, OpenANN::TANH, "gaussian", 0.05,
+                            OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3);
   Eigen::MatrixXd Y = Eigen::MatrixXd::Random(2, 2);
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
-  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(
-      X, Y, opt, 1e-5);
+  Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::
+      inputGradient(X, Y, opt, 1e-5);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)
       ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
@@ -87,13 +88,14 @@ void CompressedTestCase::compressedInputGradient()
 
 void CompressedTestCase::parallelCompressed()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  Compressed layer(info, 2, 3, false, TANH, "average", 0.05, OpenANN::Regularization());
+  OpenANN::Compressed layer(info, 2, 3, false, OpenANN::TANH, "average", 0.05,
+                            OpenANN::Regularization());
 
   std::vector<double*> pp;
   std::vector<double*> pdp;
-  OutputInfo info2 = layer.initialize(pp, pdp);
+  OpenANN::OutputInfo info2 = layer.initialize(pp, pdp);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.outputs(), 2);
 
