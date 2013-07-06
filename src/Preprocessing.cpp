@@ -1,5 +1,7 @@
 #include <OpenANN/Preprocessing.h>
 #include <OpenANN/util/OpenANNException.h>
+#include <OpenANN/util/Random.h>
+#include <iostream>
 
 namespace OpenANN
 {
@@ -54,6 +56,36 @@ void downsample(const Eigen::MatrixXd& y, Eigen::MatrixXd& d, int downSamplingFa
     for(int target = 0, source = 0; target < d.cols();
         target++, source += downSamplingFactor)
       d(c, target) = y(c, source);
+}
+
+Eigen::MatrixXd sampleRandomPatches(const Eigen::MatrixXd& images,
+                                    int channels, int rows, int cols,
+                                    int samples, int patchRows, int patchCols)
+{
+  RandomNumberGenerator rng;
+  const int channelSize = patchRows * patchCols;
+  const int patchSize = channels * channelSize;
+  Eigen::MatrixXd patches(images.rows() * samples, patchSize);
+#pragma omp parallel for
+  for(int m = 0; m < images.rows(); ++m)
+  {
+    for(int n = 0; n < samples; ++n)
+    {
+      const int rowStart = rng.generateInt(patchRows, rows) - patchRows;
+      const int colStart = rng.generateInt(patchCols, cols) - patchCols;
+      for(int chan = 0, channelOffset = 0, pxIdx = 0; chan < channels;
+          ++chan, channelOffset += channelSize)
+      {
+        for(int row = rowStart; row < rows; ++row)
+          for(int col = colStart; col < cols; ++col)
+          {
+            std::cout << row << " " << col << std::endl << std::endl;
+            patches(m*samples+n, pxIdx++) = images(m, channelOffset+row*cols+col);
+          }
+      }
+    }
+  }
+  return patches;
 }
 
 }

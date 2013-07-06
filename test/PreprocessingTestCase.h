@@ -7,6 +7,7 @@ class PreprocessingTestCase : public TestCase
 {
   virtual void run();
   void scaling();
+  void testSampleRandomPatches();
 };
 
 #endif // OPENANN_TEST_PREPROCESSING_TEST_CASE_H_
