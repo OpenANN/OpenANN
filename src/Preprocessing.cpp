@@ -1,7 +1,7 @@
 #include <OpenANN/Preprocessing.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/util/Random.h>
-#include <iostream>
+#include <vector>
 
 namespace OpenANN
 {
@@ -63,25 +63,33 @@ Eigen::MatrixXd sampleRandomPatches(const Eigen::MatrixXd& images,
                                     int samples, int patchRows, int patchCols)
 {
   RandomNumberGenerator rng;
-  const int channelSize = patchRows * patchCols;
-  const int patchSize = channels * channelSize;
-  Eigen::MatrixXd patches(images.rows() * samples, patchSize);
+  const int channelSize = rows * cols;
+  const int patchSize = channels * patchRows * patchCols;
+  const int totalPatches = images.rows() * samples;
+  Eigen::MatrixXd patches(totalPatches, patchSize);
+
+  std::vector<std::pair<int, int> > patchIndices;
+  patchIndices.reserve(samples);
+  for(int n = 0; n < totalPatches; n++)
+    patchIndices.push_back(std::make_pair<int>(
+      rng.generateInt(0, rows - patchRows + 1),
+      rng.generateInt(0, cols - patchCols + 1)));
+
 #pragma omp parallel for
   for(int m = 0; m < images.rows(); ++m)
   {
     for(int n = 0; n < samples; ++n)
     {
-      const int rowStart = rng.generateInt(patchRows, rows) - patchRows;
-      const int colStart = rng.generateInt(patchCols, cols) - patchCols;
+      const int patchIdx = m*samples+n;
+      const int rowStart = patchIndices[patchIdx].first;
+      const int colStart = patchIndices[patchIdx].second;
       for(int chan = 0, channelOffset = 0, pxIdx = 0; chan < channels;
           ++chan, channelOffset += channelSize)
       {
-        for(int row = rowStart; row < rows; ++row)
-          for(int col = colStart; col < cols; ++col)
-          {
-            std::cout << row << " " << col << std::endl << std::endl;
-            patches(m*samples+n, pxIdx++) = images(m, channelOffset+row*cols+col);
-          }
+        for(int row = 0; row < patchRows; ++row)
+          for(int col = 0; col < patchCols; ++col)
+            patches(patchIdx, pxIdx++) =
+                images(m, channelOffset+(rowStart+row)*cols+colStart+col);
       }
     }
   }
@@ -89,5 +97,3 @@ Eigen::MatrixXd sampleRandomPatches(const Eigen::MatrixXd& images,
 }
 
 }
-
-
