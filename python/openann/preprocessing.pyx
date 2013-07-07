@@ -49,3 +49,26 @@ cdef class PCA:
   def explained_variance_ratio(self):
     cdef openann.VectorXd evr_eigen = self.thisptr.explainedVarianceRatio()
     return __vector_eigen_to_numpy__(&evr_eigen)
+
+cdef class KMeans:
+  """K-Means clustering."""
+  cdef openann.KMeans *thisptr
+
+  def __init__(self, n_inputs, n_centers):
+    self.thisptr = new openann.KMeans(n_inputs, n_centers)
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def update(self, X):
+    cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    self.thisptr.update(deref(X_eigen))
+
+  def predict(self, X):
+    cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    cdef openann.MatrixXd Y_eigen = self.thisptr.predict(deref(X_eigen))
+    return __matrix_eigen_to_numpy__(&Y_eigen)
+
+  def get_centers(self):
+    cdef openann.MatrixXd C_eigen = self.thisptr.getCenters()
+    return __matrix_eigen_to_numpy__(&C_eigen)

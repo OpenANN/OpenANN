@@ -11,8 +11,8 @@ namespace OpenANN
 
 class KMeans
 {
-  const int K;
   const int D;
+  const int K;
   Eigen::MatrixXd C;
   Eigen::VectorXi v;
   bool initialized;
@@ -41,10 +41,15 @@ public:
     return Y;
   }
 
+  Eigen::MatrixXd getCenters()
+  {
+    return C;
+  }
+
 private:
   void initialize(const Eigen::MatrixXd& X)
   {
-    rng.generateIndices<std::vector<int> >(X.rows(). clusterIndices, false);
+    rng.generateIndices(X.rows(), clusterIndices, false);
     for(int k = 0; k < K; ++k)
       C.row(k) = X.row(clusterIndices[k]);
     v.setZero();

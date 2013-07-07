@@ -248,6 +248,13 @@ cdef extern from "OpenANN/PCA.h" namespace "OpenANN":
     PCA(int components, bool whiten)
     VectorXd explainedVarianceRatio()
 
+cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
+  cdef cppclass KMeans:
+    KMeans(int D, int K)
+    void update(MatrixXd& X)
+    MatrixXd predict "operator()" (MatrixXd& x)
+    MatrixXd getCenters()
+
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
   double mse(Learner& learner, DataSet& dataSet)
