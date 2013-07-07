@@ -23,21 +23,36 @@ public:
   {
   }
 
+  /**
+   * Sequential update.
+   * @param X new training data, note that the number of samples per update
+   *          must never change!
+   */
   void update(const Eigen::MatrixXd& X)
   {
+    OPENANN_CHECK_EQUALS(X.cols(), D);
+
     if(!initialized)
       initialize(X);
+
+    OPENANN_CHECK_EQUALS(X.rows(), clusterIndices.size());
+
     findClusters(X);
     updateCenters(X);
   }
 
+  /**
+   * Compute for each instance the distances to the centers.
+   * @param X each row represents an instance
+   * @return each row contains the distances to all centers
+   */
   Eigen::MatrixXd operator()(const Eigen::MatrixXd& X)
   {
     const int N = X.rows();
     Eigen::MatrixXd Y(N, K);
     for(int n = 0; n < N; ++n)
       for(int k = 0; k < K; k++)
-        Y(n, k) = (X.row(n) - C.row(k)).squaredNorm();
+        Y(n, k) = (X.row(n) - C.row(k)).norm();
     return Y;
   }
 

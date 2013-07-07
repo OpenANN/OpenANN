@@ -64,9 +64,9 @@ cdef class KMeans:
     cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
     self.thisptr.update(deref(X_eigen))
 
-  def predict(self, X):
+  def transform(self, X):
     cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
-    cdef openann.MatrixXd Y_eigen = self.thisptr.predict(deref(X_eigen))
+    cdef openann.MatrixXd Y_eigen = self.thisptr.transform(deref(X_eigen))
     return __matrix_eigen_to_numpy__(&Y_eigen)
 
   def get_centers(self):

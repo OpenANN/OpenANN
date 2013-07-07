@@ -252,7 +252,7 @@ cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
   cdef cppclass KMeans:
     KMeans(int D, int K)
     void update(MatrixXd& X)
-    MatrixXd predict "operator()" (MatrixXd& x)
+    MatrixXd transform "operator()" (MatrixXd& x)
     MatrixXd getCenters()
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
