@@ -27,16 +27,8 @@ public:
   {
     if(!initialized)
       initialize(X);
-
     findClusters(X);
-    const int N = X.rows();
-    for(int n = 0; n < N; ++n)
-    {
-      const int cluster = clusterIndices[n];
-      v(cluster)++;
-      const double eta = 1.0 / (double) v(cluster);
-      C.row(cluster) += eta * (X.row(n) - C.row(cluster));
-    }
+    updateCenters(X);
   }
 
   Eigen::MatrixXd operator()(const Eigen::MatrixXd& X)
@@ -76,6 +68,18 @@ private:
         }
       }
       clusterIndices[n] = cluster;
+    }
+  }
+
+  void updateCenters(const Eigen::MatrixXd& X)
+  {
+    const int N = X.rows();
+    for(int n = 0; n < N; ++n)
+    {
+      const int cluster = clusterIndices[n];
+      v(cluster)++;
+      const double eta = 1.0 / (double) v(cluster);
+      C.row(cluster) += eta * (X.row(n) - C.row(cluster));
     }
   }
 };
