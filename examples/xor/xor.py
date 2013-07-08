@@ -24,4 +24,4 @@ if __name__ == "__main__":
     # Use network
     for n in range(N):
         y = net.predict(X[n])
-        print y
+        print(y)

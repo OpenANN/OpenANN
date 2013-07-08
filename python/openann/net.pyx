@@ -8,7 +8,6 @@ class Activation:
 
 class Error:
   """Error function."""
-  SSE = openann.SSE
   MSE = openann.MSE
   CE = openann.CE
 
