@@ -57,14 +57,13 @@ void MBSGD::setStopCriteria(const StoppingCriteria& stop)
 
 void MBSGD::optimize()
 {
-  OpenANN::StoppingInterrupt interrupt;
-
-
+  OPENANN_CHECK(opt);
+  StoppingInterrupt interrupt;
   while(step() && !interrupt.isSignaled())
   {
     std::stringstream ss;
 
-    ss << "iteration " << iteration;
+    ss << "Iteration " << iteration;
     ss << ", error = " << FloatingPointFormatter(accumulatedError, 4);
 
     if(alphaDecay < 1.0)

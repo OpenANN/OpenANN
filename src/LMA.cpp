@@ -34,14 +34,17 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
-
-  OpenANN::StoppingInterrupt interrupt;
-
-  while(step() && !interrupt.isSignaled())
+  StoppingInterrupt interrupt;
+  while(step())
   {
     OPENANN_DEBUG << "Iteration #" << iteration
                   << ", training error = "
                   << FloatingPointFormatter(errorValues.mean(), 4);
+    if(interrupt.isSignaled())
+    {
+      reset();
+      break;
+    }
   }
 }
 

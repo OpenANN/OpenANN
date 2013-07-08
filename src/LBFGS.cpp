@@ -2,6 +2,7 @@
 
 #include <OpenANN/optimization/LBFGS.h>
 #include <OpenANN/optimization/Optimizable.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/io/Logger.h>
@@ -27,10 +28,16 @@ void LBFGS::setOptimizable(Optimizable& optimizable)
 void LBFGS::optimize()
 {
   OPENANN_CHECK(opt);
+  StoppingInterrupt interrupt;
   while(step())
   {
     OPENANN_DEBUG << "Iteration #" << iteration << ", training error = "
                   << FloatingPointFormatter(error, 4);
+    if(interrupt.isSignaled())
+    {
+      reset();
+      break;
+    }
   }
 }
 
