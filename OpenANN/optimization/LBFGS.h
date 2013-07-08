@@ -38,7 +38,7 @@ public:
    */
   LBFGS(int m = 10);
   virtual ~LBFGS() {}
-  virtual void setStopCriteria(const StoppingCriteria& sc);
+  virtual void setStopCriteria(const StoppingCriteria& stop);
   virtual void setOptimizable(Optimizable& optimizable);
   virtual void optimize();
   virtual bool step();

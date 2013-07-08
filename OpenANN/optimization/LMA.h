@@ -50,7 +50,6 @@ class LMA : public Optimizer
   int iteration, n;
   alglib_impl::ae_state envState;
   Eigen::VectorXd parameters, errorValues, gradient;
-  Eigen::MatrixXd jacobian;
   alglib::real_1d_array xIn;
   alglib::minlmstate state;
 public:

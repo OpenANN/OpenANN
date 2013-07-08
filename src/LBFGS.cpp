@@ -14,9 +14,9 @@ LBFGS::LBFGS(int m)
 {
 }
 
-void LBFGS::setStopCriteria(const StoppingCriteria& sc)
+void LBFGS::setStopCriteria(const StoppingCriteria& stop)
 {
-  this->stop = sc;
+  this->stop = stop;
 }
 
 void LBFGS::setOptimizable(Optimizable& optimizable)
