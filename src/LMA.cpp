@@ -41,7 +41,7 @@ void LMA::optimize()
   {
     OPENANN_DEBUG << "Iteration #" << iteration
                   << ", training error = "
-                  << FloatingPointFormatter(errorValues.sum(), 4);
+                  << FloatingPointFormatter(errorValues.mean(), 4);
   }
 }
 
@@ -101,10 +101,6 @@ bool LMA::step()
   catch(alglib_impl::ae_error_type)
   {
     throw OpenANNException(envState.error_msg);
-  }
-  catch(...)
-  {
-    throw;
   }
 
   reset();

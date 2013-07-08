@@ -87,10 +87,6 @@ bool LBFGS::step()
   {
     throw OpenANNException(envState.error_msg);
   }
-  catch(...)
-  {
-    throw;
-  }
 
   reset();
 

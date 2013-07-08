@@ -195,7 +195,7 @@ void TwoSpiralsDataSet::finishIteration(Learner& learner)
       for(int y = 0; y < 100; y++)
       {
         Eigen::VectorXd in(2);
-        in << (double)x / double(100), (double)y / double(100);
+        in << (double) x / 100.0, (double) y / 100.0;
         Eigen::VectorXd out = learner(in);
         visualization->predictClass(x, y, out(0, 0));
       }
