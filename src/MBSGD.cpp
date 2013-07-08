@@ -65,7 +65,7 @@ void MBSGD::optimize()
     std::stringstream ss;
 
     ss << "iteration " << iteration;
-    ss << ", training error = " << FloatingPointFormatter(accumulatedError, 4);
+    ss << ", error = " << FloatingPointFormatter(accumulatedError, 4);
 
     if(alphaDecay < 1.0)
       ss << ", alpha = " << FloatingPointFormatter(alpha, 3);
