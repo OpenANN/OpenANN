@@ -98,7 +98,6 @@ bool MBSGD::step()
     opt->errorGradient(startN, endN, error, gradient);
     accumulatedError += error;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
-    gradient /= (double)(endN - startN);
 
     if(useGain)
     {
