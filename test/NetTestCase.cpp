@@ -55,9 +55,10 @@ void NetTestCase::error()
   .outputLayer(F, OpenANN::LINEAR)
   .trainingSet(X, T);
 
-  double error0 = net.error(0);
-  double error1 = net.error(1);
+  double error0 = net.error(0) / (double) N;
+  double error1 = net.error(1) / (double) N;
   double error = net.error();
+  ASSERT_EQUALS(net.examples(), N);
   ASSERT_EQUALS(error, error0 + error1);
 }
 
@@ -77,13 +78,13 @@ void NetTestCase::gradientSSE()
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
   Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
-  Eigen::VectorXd ga = ga0 + ga1;
+  Eigen::VectorXd ga = (ga0 + ga1) / (double) N;
 
   Eigen::VectorXd g = net.gradient();
-  double error;
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 
+  double error;
   net.errorGradient(error, g);
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
@@ -119,13 +120,13 @@ void NetTestCase::gradientCE()
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
   Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
-  Eigen::VectorXd ga = ga0 + ga1;
+  Eigen::VectorXd ga = (ga0 + ga1) / (double) N;
 
   Eigen::VectorXd g = net.gradient();
-  double error;
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 
+  double error;
   net.errorGradient(error, g);
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);

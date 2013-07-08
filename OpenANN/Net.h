@@ -18,8 +18,7 @@ namespace OpenANN
 enum ErrorFunction
 {
   NO_E_DEFINED,
-  SSE, //!< Sum of squared errors (regression, two classes)
-  MSE, //!< Mean of squared errors (regression, two classes)
+  MSE, //!< Mean squared error (regression, two classes)
   CE   //!< Cross entropy and softmax (multiple classes)
 };
 
@@ -290,7 +289,7 @@ public:
   virtual bool providesInitialization();
   virtual void initialize();
   virtual unsigned int examples();
-  virtual double error(unsigned int i);
+  virtual double error(unsigned int n);
   virtual double error();
   virtual bool providesGradient();
   virtual Eigen::VectorXd gradient(unsigned int n);

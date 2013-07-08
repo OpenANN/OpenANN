@@ -45,6 +45,7 @@ Learner& Learner::removeTrainingSet()
     delete trainSet;
   deleteTrainSet = false;
   trainSet = 0;
+  N = 0;
   return *this;
 }
 

@@ -20,7 +20,7 @@ namespace OpenANN
 {
 
 Net::Net()
-  : errorFunction(SSE), dropout(false), initialized(false), P(-1), L(0)
+  : errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -283,20 +283,20 @@ void Net::initialize()
     parameterVector(p) = *parameters[p];
 }
 
-double Net::error(unsigned int i)
+double Net::error(unsigned int n)
 {
   if(errorFunction == CE)
   {
-    tempInput = trainSet->getInstance(i).transpose();
+    tempInput = trainSet->getInstance(n).transpose();
     forwardPropagate();
-    return -(trainSet->getTarget(i).array() *
+    return -(trainSet->getTarget(n).array() *
              ((tempOutput.transpose().array() + 1e-10).log())).sum();
   }
   else
   {
-    tempInput = trainSet->getInstance(i).transpose();
+    tempInput = trainSet->getInstance(n).transpose();
     forwardPropagate();
-    return (tempOutput.transpose() - trainSet->getTarget(i)).squaredNorm() / 2.0;
+    return (tempOutput.transpose() - trainSet->getTarget(n)).squaredNorm() / 2.0;
   }
 }
 
@@ -304,12 +304,8 @@ double Net::error()
 {
   double e = 0.0;
   for(int n = 0; n < N; n++)
-    e += error(n);
-
-  if(errorFunction == MSE)
-    return e / (double) N;
-  else
-    return e;
+    e += error(n) / (double) N;
+  return e;
 }
 
 bool Net::providesGradient()
@@ -326,9 +322,7 @@ Eigen::VectorXd Net::gradient(unsigned int n)
 Eigen::VectorXd Net::gradient()
 {
   generalErrorGradient(false, tempGradient);
-  if(errorFunction == MSE)
-    tempGradient /= (double) examples();
-  return tempGradient;
+  return tempGradient / (double) N;
 }
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
@@ -338,7 +332,8 @@ void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 
 void Net::errorGradient(double& value, Eigen::VectorXd& grad)
 {
-  value = generalErrorGradient(true, grad, -1);
+  value = generalErrorGradient(true, grad, -1) / N;
+  grad /= N;
 }
 
 void Net::errorGradient(std::vector<int>::const_iterator startN,
@@ -365,11 +360,13 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
       value += tempError.row(i).squaredNorm();
     value /= 2.0;
   }
+  value /= (double) N;
 
   backpropagate();
 
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
+  grad /= N;
 }
 
 void Net::forwardPropagate()

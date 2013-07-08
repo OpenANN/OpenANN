@@ -40,7 +40,6 @@ cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef enum ErrorFunction:
     NO_E_DEFINED
-    SSE
     MSE
     CE
 

@@ -164,7 +164,7 @@ void TwoSpiralsVisualization::keyPressEvent(QKeyEvent* keyEvent)
     break;
   case Qt::Key_A:
     OPENANN_INFO << "Training with restart (" << net->dimension() << " parameters)...";
-    train(*net, "LMA", SSE, stop, true);
+    train(*net, "LMA", MSE, stop, true);
     break;
   case Qt::Key_Escape:
     OPENANN_INFO << "Quitting application.";
