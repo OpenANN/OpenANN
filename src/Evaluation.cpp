@@ -1,5 +1,6 @@
 #include <OpenANN/Evaluation.h>
 #include <OpenANN/Learner.h>
+#include <OpenANN/ErrorFunctions.h>
 #include <OpenANN/io/DataSet.h>
 #include <OpenANN/io/DataSetView.h>
 #include <OpenANN/io/Logger.h>
@@ -35,8 +36,8 @@ double ce(Learner& learner, DataSet& dataSet)
   const int N = dataSet.samples();
   double ce = 0.0;
   for(int n = 0; n < N; n++)
-    ce -= (dataSet.getTarget(n).array() *
-           (learner(dataSet.getInstance(n)).array() + 1e-10).log()).sum();
+    ce += crossEntropy(learner(dataSet.getInstance(n)).transpose(),
+                       dataSet.getTarget(n).transpose());
   return ce;
 }
 
