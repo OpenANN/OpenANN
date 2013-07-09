@@ -324,7 +324,7 @@ Eigen::VectorXd Net::gradient(unsigned int n)
 Eigen::VectorXd Net::gradient()
 {
   generalErrorGradient(false, tempGradient);
-  return tempGradient / (double) N;
+  return tempGradient;
 }
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
@@ -334,8 +334,7 @@ void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 
 void Net::errorGradient(double& value, Eigen::VectorXd& grad)
 {
-  value = generalErrorGradient(true, grad, -1) / N;
-  grad /= N;
+  value = generalErrorGradient(true, grad, -1);
 }
 
 void Net::errorGradient(std::vector<int>::const_iterator startN,
@@ -354,8 +353,8 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
 
   forwardPropagate();
   tempError = tempOutput - T;
-  value = errorFunction == CE ? crossEntropy(tempOutput, T)
-      : meanSquaredError(tempError);
+  value = errorFunction == CE ? crossEntropy(tempOutput, T) :
+      meanSquaredError(tempError);
   backpropagate();
 
   for(int p = 0; p < P; p++)
@@ -389,41 +388,16 @@ double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
   OPENANN_CHECK_EQUALS(g.rows(), dimension());
 
   const bool singleGradient = n >= 0;
-  if(!singleGradient)
-    g.setZero();
 
   const int start = singleGradient * n;
   const int end = singleGradient ? n + 1 : examples();
 
-  double error = 0.0;
+  std::vector<int> indices;
+  indices.reserve(end-start);
   for(int i = start; i < end; i++)
-  {
-    tempInput = trainSet->getInstance(i).transpose();
-    forwardPropagate();
-    tempError = tempOutput - trainSet->getTarget(i).transpose();
-
-    if(computeError)
-    {
-      if(errorFunction == CE)
-        error += -(trainSet->getTarget(i).array() *
-                   ((tempOutput.transpose().array() + 1e-10).log())).sum();
-      else
-        error += tempError.squaredNorm() / 2.0;
-    }
-
-    backpropagate();
-
-    if(singleGradient)
-    {
-      for(int p = 0; p < P; p++)
-        g(p) = *derivatives[p];
-    }
-    else
-    {
-      for(int p = 0; p < P; p++)
-        g(p) += *derivatives[p];
-    }
-  }
+    indices.push_back(i);
+  double error = 0.0;
+  errorGradient(indices.begin(), indices.end(), error, g);
 
   return error;
 }
