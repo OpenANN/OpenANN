@@ -208,6 +208,7 @@ Net& Net::setRegularization(double l1Penalty, double l2Penalty,
   regularization.l1Penalty = l1Penalty;
   regularization.l2Penalty = l2Penalty;
   regularization.maxSquaredWeightNorm = maxSquaredWeightNorm;
+  return *this;
 }
 
 Net& Net::setErrorFunction(ErrorFunction errorFunction)

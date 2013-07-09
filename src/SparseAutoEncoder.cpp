@@ -138,6 +138,7 @@ Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
   X.conservativeResize(trainingSet.samples(), trainingSet.inputs());
   for(int n = 0; n < trainingSet.samples(); n++)
     X.row(n) = trainingSet.getInstance(n);
+  return *this;
 }
 
 Eigen::MatrixXd SparseAutoEncoder::getInputWeights()
