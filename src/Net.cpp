@@ -11,6 +11,7 @@
 #include <OpenANN/layers/Dropout.h>
 #include <OpenANN/RBM.h>
 #include <OpenANN/IntrinsicPlasticity.h>
+#include <OpenANN/ErrorFunctions.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -350,19 +351,11 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
     tempInput.row(n) = trainSet->getInstance(*it);
     T.row(n) = trainSet->getTarget(*it);
   }
+
   forwardPropagate();
   tempError = tempOutput - T;
-  if(errorFunction == CE)
-    value = -(T.array() * ((tempOutput.array() + 1e-10).log())).sum();
-  else
-  {
-    value = 0.0;
-    for(int i = 0; i < tempError.rows(); i++)
-      value += tempError.row(i).squaredNorm();
-    value /= 2.0;
-  }
-  value /= (double) N;
-
+  value = errorFunction == CE ? crossEntropy(tempOutput, T)
+      : meanSquaredError(tempError);
   backpropagate();
 
   for(int p = 0; p < P; p++)
