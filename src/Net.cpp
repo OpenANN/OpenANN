@@ -317,24 +317,37 @@ bool Net::providesGradient()
 
 Eigen::VectorXd Net::gradient(unsigned int n)
 {
-  generalErrorGradient(false, tempGradient, n);
+  std::vector<int> indices;
+  indices.push_back(n);
+  double error;
+  errorGradient(indices.begin(), indices.end(), error, tempGradient);
   return tempGradient;
 }
 
 Eigen::VectorXd Net::gradient()
 {
-  generalErrorGradient(false, tempGradient);
+  std::vector<int> indices;
+  indices.reserve(N);
+  for(int n = 0; n < N; n++)
+    indices.push_back(n);
+  double error;
+  errorGradient(indices.begin(), indices.end(), error, tempGradient);
   return tempGradient;
 }
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 {
-  value = generalErrorGradient(true, grad, n);
+  std::vector<int> indices;
+  indices.push_back(n);
+  errorGradient(indices.begin(), indices.end(), value, grad);
 }
 
 void Net::errorGradient(double& value, Eigen::VectorXd& grad)
 {
-  value = generalErrorGradient(true, grad, -1);
+  std::vector<int> indices;
+  for(int n = 0; n < N; n++)
+    indices.push_back(n);
+  errorGradient(indices.begin(), indices.end(), value, grad);
 }
 
 void Net::errorGradient(std::vector<int>::const_iterator startN,
@@ -381,25 +394,6 @@ void Net::backpropagate()
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); ++layer, --l)
     (**layer).backpropagate(e, e, l != 2);
-}
-
-double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
-{
-  OPENANN_CHECK_EQUALS(g.rows(), dimension());
-
-  const bool singleGradient = n >= 0;
-
-  const int start = singleGradient * n;
-  const int end = singleGradient ? n + 1 : examples();
-
-  std::vector<int> indices;
-  indices.reserve(end-start);
-  for(int i = start; i < end; i++)
-    indices.push_back(i);
-  double error = 0.0;
-  errorGradient(indices.begin(), indices.end(), error, g);
-
-  return error;
 }
 
 }

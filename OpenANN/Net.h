@@ -304,7 +304,6 @@ public:
 protected:
   void forwardPropagate();
   void backpropagate();
-  double generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n = -1);
 };
 
 } // namespace OpenANN
