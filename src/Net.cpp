@@ -287,19 +287,12 @@ void Net::initialize()
 
 double Net::error(unsigned int n)
 {
+  tempInput = trainSet->getInstance(n).transpose();
+  forwardPropagate();
   if(errorFunction == CE)
-  {
-    tempInput = trainSet->getInstance(n).transpose();
-    forwardPropagate();
-    return -(trainSet->getTarget(n).array() *
-             ((tempOutput.transpose().array() + 1e-10).log())).sum();
-  }
+    return crossEntropy(tempOutput, trainSet->getTarget(n).transpose());
   else
-  {
-    tempInput = trainSet->getInstance(n).transpose();
-    forwardPropagate();
-    return (tempOutput.transpose() - trainSet->getTarget(n)).squaredNorm() / 2.0;
-  }
+    return meanSquaredError(tempOutput - trainSet->getTarget(n).transpose());
 }
 
 double Net::error()
