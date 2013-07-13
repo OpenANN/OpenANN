@@ -62,7 +62,8 @@ void SigmaPi::updatedParameters()
 {
 }
 
-void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                               bool dropout)
 {
   const int N = x->rows();
   this->x.conservativeResize(N, Eigen::NoChange);
@@ -387,7 +388,10 @@ SigmaPi& SigmaPi::fourthOrderNodes(int numbers, const Constraint& constraint)
   return *this;
 }
 
-
+Eigen::VectorXd SigmaPi::getParameters()
+{
+  throw OpenANNException("SigmaPi::getParameters() is not implemented!");
+}
 
 }
 

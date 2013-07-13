@@ -60,4 +60,9 @@ Eigen::MatrixXd& Extreme::getOutput()
   return y;
 }
 
+Eigen::VectorXd Extreme::getParameters()
+{
+  return Eigen::VectorXd();
+}
+
 }

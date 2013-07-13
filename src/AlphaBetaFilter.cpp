@@ -90,4 +90,9 @@ Eigen::MatrixXd& AlphaBetaFilter::getOutput()
   return y;
 }
 
+Eigen::VectorXd AlphaBetaFilter::getParameters()
+{
+  return gamma;
+}
+
 } // namespace OpenANN

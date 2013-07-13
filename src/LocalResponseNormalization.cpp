@@ -98,4 +98,9 @@ Eigen::MatrixXd& LocalResponseNormalization::getOutput()
   return y;
 }
 
+Eigen::VectorXd LocalResponseNormalization::getParameters()
+{
+  return Eigen::VectorXd();
+}
+
 }

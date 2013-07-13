@@ -97,7 +97,8 @@ void Subsampling::initializeParameters()
   }
 }
 
-void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                   bool dropout)
 {
   const int N = x->rows();
   this->a.conservativeResize(N, Eigen::NoChange);
@@ -199,6 +200,22 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
 Eigen::MatrixXd& Subsampling::getOutput()
 {
   return y;
+}
+
+Eigen::VectorXd Subsampling::getParameters()
+{
+  Eigen::VectorXd p((1+bias)*fm*outRows*outCols);
+  int idx = 0;
+  for(int fmo = 0; fmo < fm; fmo++)
+    for(int r = 0; r < outRows; r++)
+      for(int c = 0; c < outCols; c++)
+        p(idx++) = W[fmo](r, c);
+  if(bias)
+    for(int fmo = 0; fmo < fm; fmo++)
+      for(int r = 0; r < outRows; r++)
+        for(int c = 0; c < outCols; c++)
+          p(idx++) = W[fmo](r, c);
+  return p;
 }
 
 }
