@@ -226,6 +226,7 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& useDropout(bool activate)
 
     unsigned int numberOflayers()
+    Layer& getLayer(unsigned int l)
     OutputInfo getOutputInfo(int l)
     DataSet* propagateDataSet(DataSet& dataSet, int l)
 

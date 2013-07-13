@@ -135,6 +135,13 @@ cdef class Net:
     """Get number of layers."""
     return self.thisptr.numberOflayers()
 
+  cdef get_layer(self, l):
+    """Get the l-th layer."""
+    cdef openann.Layer* layer = &self.thisptr.getLayer(l)
+    layer_object = Layer()
+    layer_object.thisptr = layer
+    return layer_object
+
   cdef openann.OutputInfo output_info(self, layer):
     cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layer)
     return info
