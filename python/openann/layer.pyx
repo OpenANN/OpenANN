@@ -14,7 +14,7 @@ cdef class Layer:
     cdef openann.MatrixXd out_eigen = self.thisptr.getOutput()
     return __matrix_eigen_to_numpy__(&out_eigen)
 
-  def get_paramters(self):
+  def get_parameters(self):
     """Get the current parameters of the layer."""
     cdef openann.VectorXd params_eigen = self.thisptr.getParameters()
     return __vector_eigen_to_numpy__(&params_eigen)
