@@ -266,7 +266,7 @@ int main(int argc, char** argv)
       EvaluatableDataset ds(Xtr, Ytr);
       net.trainingSet(ds);
       sw.start();
-      OpenANN::train(net, "LMA", OpenANN::SSE, stop, true);
+      OpenANN::train(net, "LMA", OpenANN::MSE, stop, true);
       time += sw.stop(Stopwatch::MILLISECOND);
       Result result = evaluate(net, Xte, Yte, ds);
       results.push_back(result);

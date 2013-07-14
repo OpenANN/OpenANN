@@ -34,14 +34,17 @@ void LMA::setStopCriteria(const StoppingCriteria& stop)
 void LMA::optimize()
 {
   OPENANN_CHECK(opt);
-
-  OpenANN::StoppingInterrupt interrupt;
-
-  while(step() && !interrupt.isSignaled())
+  StoppingInterrupt interrupt;
+  while(step())
   {
     OPENANN_DEBUG << "Iteration #" << iteration
                   << ", training error = "
-                  << FloatingPointFormatter(errorValues.sum(), 4);
+                  << FloatingPointFormatter(errorValues.mean(), 4);
+    if(interrupt.isSignaled())
+    {
+      reset();
+      break;
+    }
   }
 }
 
@@ -79,15 +82,9 @@ bool LMA::step()
         for(int ex = 0; ex < opt->examples(); ex++)
         {
           opt->errorGradient(ex, errorValues(ex), gradient);
-          jacobian.row(ex) = gradient;
-        }
-        for(unsigned ex = 0; ex < opt->examples(); ex++)
-        {
           state.fi[ex] = errorValues(ex);
-          OPENANN_CHECK_EQUALS(state.j.rows(), jacobian.rows());
-          OPENANN_CHECK_EQUALS(state.j.cols(), jacobian.cols());
           for(unsigned d = 0; d < opt->dimension(); d++)
-            state.j[ex][d] = jacobian(ex, d);
+            state.j[ex][d] = gradient(d);
         }
         if(iteration != state.c_ptr()->repiterationscount)
         {
@@ -107,10 +104,6 @@ bool LMA::step()
   catch(alglib_impl::ae_error_type)
   {
     throw OpenANNException(envState.error_msg);
-  }
-  catch(...)
-  {
-    throw;
   }
 
   reset();
@@ -139,7 +132,6 @@ void LMA::initialize()
   parameters.resize(n);
   errorValues.resize(opt->examples());
   gradient.resize(n);
-  jacobian.resize(opt->examples(), n);
 
   xIn.setcontent(n, opt->currentParameters().data());
 

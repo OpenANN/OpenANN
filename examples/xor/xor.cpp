@@ -66,7 +66,7 @@ int main()
   // Train network, i.e. minimize sum of squared errors (SSE) with
   // Levenberg-Marquardt optimization algorithm until the stopping criteria
   // are satisfied.
-  train(net, "LMA", SSE, stop);
+  train(net, "LMA", MSE, stop);
 
   // Use network to predict labels of the training data
   for(int n = 0; n < N; n++)

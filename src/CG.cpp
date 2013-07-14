@@ -3,6 +3,7 @@
 #include <OpenANN/optimization/CG.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
+#include <OpenANN/optimization/StoppingInterrupt.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/OpenANNException.h>
@@ -84,23 +85,24 @@ bool CG::step()
   {
     throw OpenANNException(envState.error_msg);
   }
-  catch(...)
-  {
-    throw;
-  }
 
   reset();
-
   return false;
 }
 
 void CG::optimize()
 {
   OPENANN_CHECK(opt);
+  StoppingInterrupt interrupt;
   while(step())
   {
     OPENANN_DEBUG << "Iteration #" << iteration << ", training error = "
                   << FloatingPointFormatter(error, 4);
+    if(interrupt.isSignaled())
+    {
+      reset();
+      break;
+    }
   }
 }
 

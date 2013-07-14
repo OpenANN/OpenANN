@@ -15,8 +15,9 @@ cdef class SigmaPiLayer(Layer):
     
   cdef openann.SigmaPi* layer
 
-  def __cinit__(self, net, activation, std_dev =0.05, bias=False):
-    cdef openann.OutputInfo info = (<Net?>net).last_output_info()
+  def __cinit__(self, net, activation, std_dev=0.05, bias=False):
+    cdef openann.OutputInfo info = \
+        (<Net?>net).output_info((<Net?>net).number_of_layers()-1)
     self.layer = new openann.SigmaPi(info, bias, activation, std_dev)
 
     self.width = info.dimensions[1]
@@ -47,7 +48,8 @@ cdef class SigmaPiLayer(Layer):
 
   def triangle_3rd_order_nodes(self, numbers, resolution):
     if self.triangle == NULL:
-      self.triangle = new openann.TriangleConstraint(self.width, self.height, resolution)
+      self.triangle = new openann.TriangleConstraint(self.width, self.height,
+                                                     resolution)
     self.layer.thirdOrderNodes(numbers, deref(self.triangle))
     return self
 

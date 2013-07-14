@@ -17,11 +17,11 @@ if __name__ == "__main__":
     net.output_layer(F, Activation.LOGISTIC)
 
     # Train network
-    stop_dict = {"minimalValueDifferences" : 1e-10}
+    stop_dict = {"minimal_value_differences" : 1e-10}
     lma = LMA(stop_dict)
     lma.optimize(net, dataset)
 
     # Use network
     for n in range(N):
         y = net.predict(X[n])
-        print y
+        print(y)

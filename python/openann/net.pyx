@@ -8,7 +8,6 @@ class Activation:
 
 class Error:
   """Error function."""
-  SSE = openann.SSE
   MSE = openann.MSE
   CE = openann.CE
 
@@ -39,10 +38,18 @@ cdef class Net:
     self.thisptr.fullyConnectedLayer(units, act, std_dev, bias)
     return self
 
-  def compressed_layer(self, units, params, act, compression, std_dev=0.05, bias=True):
+  def restricted_boltzmann_machine_layer(self, units, cd_n=1, std_dev=0.01,
+                                         backprop=True):
+    """Add an RBM."""
+    self.thisptr.restrictedBoltzmannMachineLayer(units, cd_n, std_dev,
+                                                 backprop)
+
+  def compressed_layer(self, units, params, act, compression, std_dev=0.05,
+                       bias=True):
     """Add a compressed layer."""
     cdef char* comp = compression
-    self.thisptr.compressedLayer(units, params, act, string(comp), std_dev, bias)
+    self.thisptr.compressedLayer(units, params, act, string(comp), std_dev,
+                                 bias)
     return self
 
   def extreme_layer(self, units, act, std_dev=5.0, bias=True):
@@ -50,12 +57,19 @@ cdef class Net:
     self.thisptr.extremeLayer(units, act, std_dev, bias)
     return self
 
-  def convolutional_layer(self, featureMaps, kernelRows, kernelCols, act, std_dev=0.05, bias=True):
+  def intrinsic_plasticity_layer(self, target_mean, std_dev=1.0):
+    """Add an intrinsic plasticity layer."""
+    self.thisptr.intrinsicPlasticityLayer(target_mean, std_dev)
+
+  def convolutional_layer(self, featureMaps, kernelRows, kernelCols, act,
+                          std_dev=0.05, bias=True):
     """Add a convolutional layer."""
-    self.thisptr.convolutionalLayer(featureMaps, kernelRows, kernelCols, act, std_dev, bias)
+    self.thisptr.convolutionalLayer(featureMaps, kernelRows, kernelCols, act,
+                                    std_dev, bias)
     return self
 
-  def subsampling_layer(self, kernelRows, kernelCols, act, std_dev=0.05, bias=True):
+  def subsampling_layer(self, kernelRows, kernelCols, act, std_dev=0.05,
+                        bias=True):
     """Add a subsampling layer."""
     self.thisptr.subsamplingLayer(kernelRows, kernelCols, act, std_dev, bias)
     return self
@@ -70,14 +84,22 @@ cdef class Net:
     self.thisptr.localReponseNormalizationLayer(k, n, alpha, beta)
     return self
 
+  def dropout_layer(self, dropout_probability):
+    """Add a dropout layer."""
+    self.thisptr.dropoutLayer(dropout_probability)
+    return self
+
   def output_layer(self, units, act, std_dev=0.05):
     """Add an output layer."""
     self.thisptr.outputLayer(units, act, std_dev)
     return self
 
-  def dropout_layer(self, dropout_probability):
-    """Add a dropout layer."""
-    self.thisptr.dropoutLayer(dropout_probability)
+  def compressed_output_layer(self, units, params, act, compression,
+                              std_dev=0.05):
+    """Add a compressed output layer."""
+    cdef char* comp = compression
+    self.thisptr.compressedOutputLayer(units, params, act, string(comp),
+                                       std_dev)
     return self
 
   def add_layer(self, layer):
@@ -92,15 +114,11 @@ cdef class Net:
     self.thisptr.addOutputLayer((<Layer?>layer).construct())
     self.layers.append(layer)
 
-  def compressed_output_layer(self, units, params, act, compression, std_dev=0.05):
-    """Add a compressed output layer."""
-    cdef char* comp = compression
-    self.thisptr.compressedOutputLayer(units, params, act, string(comp), std_dev)
-    return self
-
-  def set_regularization(self, l1_penalty=0.0, l2_penalty=0.0, max_squared_weight_norm=0.0):
+  def set_regularization(self, l1_penalty=0.0, l2_penalty=0.0,
+                         max_squared_weight_norm=0.0):
     """Set regularization coefficients."""
-    self.thisptr.setRegularization(l1_penalty, l2_penalty, max_squared_weight_norm)
+    self.thisptr.setRegularization(l1_penalty, l2_penalty,
+                                   max_squared_weight_norm)
 
   def set_error_function(self, err):
     """Set the error function."""
@@ -119,12 +137,15 @@ cdef class Net:
     del x_eigen
     return __matrix_eigen_to_numpy__(&y_eigen)
 
-  cdef openann.OutputInfo last_output_info(self):
-    cdef int layers = self.thisptr.numberOflayers()
-    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layers - 1)
+  cdef number_of_layers(self):
+    """Get number of layers."""
+    return self.thisptr.numberOflayers()
+
+  cdef openann.OutputInfo output_info(self, layer):
+    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layer)
     return info
 
-  def parameter_size(self):
+  def dimension(self):
     """Get number of parameters."""
     return self.thisptr.dimension()
 

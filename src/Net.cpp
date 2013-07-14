@@ -11,6 +11,7 @@
 #include <OpenANN/layers/Dropout.h>
 #include <OpenANN/RBM.h>
 #include <OpenANN/IntrinsicPlasticity.h>
+#include <OpenANN/ErrorFunctions.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
 #include <OpenANN/optimization/LMA.h>
@@ -20,7 +21,7 @@ namespace OpenANN
 {
 
 Net::Net()
-  : errorFunction(SSE), dropout(false), initialized(false), P(-1), L(0)
+  : errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -208,6 +209,7 @@ Net& Net::setRegularization(double l1Penalty, double l2Penalty,
   regularization.l1Penalty = l1Penalty;
   regularization.l2Penalty = l2Penalty;
   regularization.maxSquaredWeightNorm = maxSquaredWeightNorm;
+  return *this;
 }
 
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
@@ -283,33 +285,22 @@ void Net::initialize()
     parameterVector(p) = *parameters[p];
 }
 
-double Net::error(unsigned int i)
+double Net::error(unsigned int n)
 {
+  tempInput = trainSet->getInstance(n).transpose();
+  forwardPropagate();
   if(errorFunction == CE)
-  {
-    tempInput = trainSet->getInstance(i).transpose();
-    forwardPropagate();
-    return -(trainSet->getTarget(i).array() *
-             ((tempOutput.transpose().array() + 1e-10).log())).sum();
-  }
+    return crossEntropy(tempOutput, trainSet->getTarget(n).transpose());
   else
-  {
-    tempInput = trainSet->getInstance(i).transpose();
-    forwardPropagate();
-    return (tempOutput.transpose() - trainSet->getTarget(i)).squaredNorm() / 2.0;
-  }
+    return meanSquaredError(tempOutput - trainSet->getTarget(n).transpose());
 }
 
 double Net::error()
 {
   double e = 0.0;
   for(int n = 0; n < N; n++)
-    e += error(n);
-
-  if(errorFunction == MSE)
-    return e / (double) N;
-  else
-    return e;
+    e += error(n) / (double) N;
+  return e;
 }
 
 bool Net::providesGradient()
@@ -319,26 +310,37 @@ bool Net::providesGradient()
 
 Eigen::VectorXd Net::gradient(unsigned int n)
 {
-  generalErrorGradient(false, tempGradient, n);
+  std::vector<int> indices;
+  indices.push_back(n);
+  double error;
+  errorGradient(indices.begin(), indices.end(), error, tempGradient);
   return tempGradient;
 }
 
 Eigen::VectorXd Net::gradient()
 {
-  generalErrorGradient(false, tempGradient);
-  if(errorFunction == MSE)
-    tempGradient /= (double) examples();
+  std::vector<int> indices;
+  indices.reserve(N);
+  for(int n = 0; n < N; n++)
+    indices.push_back(n);
+  double error;
+  errorGradient(indices.begin(), indices.end(), error, tempGradient);
   return tempGradient;
 }
 
 void Net::errorGradient(int n, double& value, Eigen::VectorXd& grad)
 {
-  value = generalErrorGradient(true, grad, n);
+  std::vector<int> indices;
+  indices.push_back(n);
+  errorGradient(indices.begin(), indices.end(), value, grad);
 }
 
 void Net::errorGradient(double& value, Eigen::VectorXd& grad)
 {
-  value = generalErrorGradient(true, grad, -1);
+  std::vector<int> indices;
+  for(int n = 0; n < N; n++)
+    indices.push_back(n);
+  errorGradient(indices.begin(), indices.end(), value, grad);
 }
 
 void Net::errorGradient(std::vector<int>::const_iterator startN,
@@ -354,22 +356,16 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
     tempInput.row(n) = trainSet->getInstance(*it);
     T.row(n) = trainSet->getTarget(*it);
   }
+
   forwardPropagate();
   tempError = tempOutput - T;
-  if(errorFunction == CE)
-    value = -(T.array() * ((tempOutput.array() + 1e-10).log())).sum();
-  else
-  {
-    value = 0.0;
-    for(int i = 0; i < tempError.rows(); i++)
-      value += tempError.row(i).squaredNorm();
-    value /= 2.0;
-  }
-
+  value = errorFunction == CE ? crossEntropy(tempOutput, T) :
+      meanSquaredError(tempError);
   backpropagate();
 
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
+  grad /= N;
 }
 
 void Net::forwardPropagate()
@@ -391,50 +387,6 @@ void Net::backpropagate()
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); ++layer, --l)
     (**layer).backpropagate(e, e, l != 2);
-}
-
-double Net::generalErrorGradient(bool computeError, Eigen::VectorXd& g, int n)
-{
-  OPENANN_CHECK_EQUALS(g.rows(), dimension());
-
-  const bool singleGradient = n >= 0;
-  if(!singleGradient)
-    g.setZero();
-
-  const int start = singleGradient * n;
-  const int end = singleGradient ? n + 1 : examples();
-
-  double error = 0.0;
-  for(int i = start; i < end; i++)
-  {
-    tempInput = trainSet->getInstance(i).transpose();
-    forwardPropagate();
-    tempError = tempOutput - trainSet->getTarget(i).transpose();
-
-    if(computeError)
-    {
-      if(errorFunction == CE)
-        error += -(trainSet->getTarget(i).array() *
-                   ((tempOutput.transpose().array() + 1e-10).log())).sum();
-      else
-        error += tempError.squaredNorm() / 2.0;
-    }
-
-    backpropagate();
-
-    if(singleGradient)
-    {
-      for(int p = 0; p < P; p++)
-        g(p) = *derivatives[p];
-    }
-    else
-    {
-      for(int p = 0; p < P; p++)
-        g(p) += *derivatives[p];
-    }
-  }
-
-  return error;
 }
 
 }

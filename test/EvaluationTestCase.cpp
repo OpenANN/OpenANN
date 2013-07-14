@@ -6,19 +6,27 @@
 
 class ReturnInput : public OpenANN::Learner
 {
+  Eigen::VectorXd p;
 public:
   ReturnInput() {}
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x) { return x; }
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X) { return X; }
-  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput, Eigen::MatrixXd& trainingOutput) {}
-  virtual Learner& trainingSet(OpenANN::DataSet& trainingSet) {}
-  virtual const Eigen::VectorXd& currentParameters() {}
-  virtual unsigned int dimension() {}
-  virtual double error() {}
-  virtual Eigen::VectorXd gradient() {}
+  virtual Learner& trainingSet(Eigen::MatrixXd& trainingInput,
+                               Eigen::MatrixXd& trainingOutput)
+  {
+    return *this;
+  }
+  virtual Learner& trainingSet(OpenANN::DataSet& trainingSet)
+  {
+    return *this;
+  }
+  virtual const Eigen::VectorXd& currentParameters() { return p; }
+  virtual unsigned int dimension() { return 1; }
+  virtual double error() { return 0.0; }
+  virtual Eigen::VectorXd gradient() { return p; }
   virtual void initialize() {}
-  virtual bool providesGradient() {}
-  virtual bool providesInitialization() {}
+  virtual bool providesGradient() { return false; }
+  virtual bool providesInitialization() { return true; }
   virtual void setParameters(const Eigen::VectorXd& parameters) {}
 };
 

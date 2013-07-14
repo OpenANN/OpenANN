@@ -40,7 +40,6 @@ cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef enum ErrorFunction:
     NO_E_DEFINED
-    SSE
     MSE
     CE
 
@@ -128,7 +127,8 @@ cdef extern from "OpenANN/io/DirectStorageDataSet.h" namespace "OpenANN":
     DirectStorageDataSet(MatrixXd* input, MatrixXd* output)
 
 cdef extern from "OpenANN/io/LibSVM.h":
-  int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output, char *filename, int min_inputs)
+  int libsvm_load "OpenANN::LibSVM::load" (MatrixXd& input, MatrixXd& output,
+                                           char *filename, int min_inputs)
   void save (MatrixXd& input, MatrixXd& output, char *filename)
 
 
@@ -198,10 +198,13 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& alphaBetaFilterLayer(double deltaT, double stdDev)
     Net& fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
                              bool bias)
+    Net& restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
+                                         bool backprop)
     Net& compressedLayer(int units, int params, ActivationFunction act,
                          string compression, double stdDev, bool bias)
     Net& extremeLayer(int units, ActivationFunction act, double stdDev,
                       bool bias)
+    Net& intrinsicPlasticityLayer(double targetMean, double stdDev)
     Net& convolutionalLayer(int featureMaps, int kernelRows, int kernelCols,
                             ActivationFunction act, double stdDev, bool bias)
     Net& subsamplingLayer(int kernelRows, int kernelCols,
@@ -209,10 +212,10 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& maxPoolingLayer(int kernelRows, int kernelCols)
     Net& localReponseNormalizationLayer(double k, int n, double alpha,
                                         double beta)
+    Net& dropoutLayer(double dropoutProbability)
     Net& outputLayer(int units, ActivationFunction act, double stdDev)
     Net& compressedOutputLayer(int units, int params, ActivationFunction act,
                                string& compression, double stdDev)
-    Net& dropoutLayer(double dropoutProbability) 
     Net& addLayer(Layer *layer)
     Net& addOutputLayer(Layer *layer)
 
@@ -223,6 +226,7 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
 
     unsigned int numberOflayers()
     OutputInfo getOutputInfo(int l)
+    DataSet* propagateDataSet(DataSet& dataSet, int l)
 
 cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
   cdef cppclass SparseAutoEncoder(Learner):

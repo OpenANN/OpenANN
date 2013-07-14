@@ -1,3 +1,5 @@
+import warnings
+
 cdef class StoppingCriteria:
   """Stopping criteria for optimization algorithms."""
   cdef openann.StoppingCriteria *thisptr
@@ -10,12 +12,30 @@ cdef class StoppingCriteria:
     del self.thisptr
 
   def __configure_stopping_criteria__(self, stop):
-    self.thisptr.maximalIterations = stop.get('maximal_iterations', self.thisptr.maximalIterations)
-    self.thisptr.maximalFunctionEvaluations = stop.get('maximal_function_evaluations', self.thisptr.maximalFunctionEvaluations)
-    self.thisptr.maximalRestarts = stop.get('maximal_restarts', self.thisptr.maximalRestarts)
-    self.thisptr.minimalValue = stop.get('minimal_value', self.thisptr.minimalValue)
-    self.thisptr.minimalValueDifferences = stop.get('minimal_value_differences', self.thisptr.minimalValueDifferences)
-    self.thisptr.minimalSearchSpaceStep = stop.get('minimal_search_space_step', self.thisptr.minimalSearchSpaceStep)
+    available_keys = ['maximal_iterations', 'maximal_function_evaluations',
+                      'maximal_restarts', 'minimal_value',
+                      'minimal_value_differences',
+                      'minimal_search_space_step']
+    unrecognized_keys = [k for k in stop.keys() if k not in available_keys]
+    if len(unrecognized_keys) > 0:
+      warnings.warn("Unrecognized stopping criteria: " +
+                    str(unrecognized_keys))
+
+    self.thisptr.maximalIterations = \
+      stop.get('maximal_iterations', self.thisptr.maximalIterations)
+    self.thisptr.maximalFunctionEvaluations = \
+      stop.get('maximal_function_evaluations',
+               self.thisptr.maximalFunctionEvaluations)
+    self.thisptr.maximalRestarts = \
+      stop.get('maximal_restarts', self.thisptr.maximalRestarts)
+    self.thisptr.minimalValue = \
+      stop.get('minimal_value', self.thisptr.minimalValue)
+    self.thisptr.minimalValueDifferences = \
+      stop.get('minimal_value_differences',
+               self.thisptr.minimalValueDifferences)
+    self.thisptr.minimalSearchSpaceStep = \
+      stop.get('minimal_search_space_step',
+               self.thisptr.minimalSearchSpaceStep)
 
 cdef class Optimizer:
   """Common base of optimization algorithms."""
