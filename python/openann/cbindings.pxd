@@ -261,4 +261,4 @@ cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double accuracy(Learner& learner, DataSet& dataSet)
   MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
   int classificationHits(Learner& learner, DataSet& dataSet)
-  void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
+  double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)

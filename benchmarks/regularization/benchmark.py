@@ -70,12 +70,15 @@ def run_regularization():
         net = build_net(D, [50, 50], F, l2_penalty=0.1)
     elif regularization == "noise":
         X, T = enhance_data(X, T, 5)
-        net = build_net(D, [50], F)
+        net = build_net(D, [50, 50], F)
 
     net.set_error_function(Error.CE)
     opt = CG({"maximal_iterations" : 1000})
     ds = Dataset(X, T)
+    Log.set_info()
+    print("%.2f" % cross_validation(2, net, ds, opt))
     opt.optimize(net, ds)
+    print("%.2f" % accuracy(net, ds))
 
     XX, YY = numpy.meshgrid(numpy.linspace(X[:, 0].min(), X[:, 0].max(), 100),
                             numpy.linspace(X[:, 1].min(), X[:, 1].max(), 100))
