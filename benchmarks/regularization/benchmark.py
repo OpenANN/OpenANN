@@ -20,6 +20,7 @@ def generate_data(N, D):
     return numpy.vstack((X1, X2)), numpy.hstack((C1, C2))
 
 def enhance_data(X, T, multiplier):
+    N = X.shape[0]
     X_t = numpy.ndarray((N*multiplier, X.shape[1]))
     T_t = numpy.ndarray((N*multiplier, T.shape[1]))
     for i in range(multiplier):
@@ -49,23 +50,29 @@ def build_net(D, H, F, l2_penalty=None, C=None, comp=""):
 def run_regularization():
     numpy.random.seed(0)
 
-    regularization = ["none", "simple", "compression", "l2", "noise"][1]
+    regularization = ["none", "simple", "compression", "l2", "noise"][2]
+    print(regularization)
 
-    N = 1000
+    N = 200
+    Nt = 1000
     D = 2
     F = 2
+    n_folds = 5
     X, C = generate_data(N, D)
+    Xt, Ct = generate_data(Nt, D)
 
     # 1-of-c encoding
     T = numpy.zeros((N, F))
     T[range(N), C] = 1.0
+    Tt = numpy.zeros((Nt, F))
+    Tt[range(Nt), Ct] = 1.0
 
     if regularization == "none":
         net = build_net(D, [50, 50], F)
     elif regularization == "simple":
         net = build_net(D, [5, 5], F)
     elif regularization == "compression":
-        net = build_net(D, [50, 50], F, C=[2, 2], comp="dct")
+        net = build_net(D, [50, 50], F, C=[2, 2], comp="gaussian")
     elif regularization == "l2":
         net = build_net(D, [50, 50], F, l2_penalty=0.1)
     elif regularization == "noise":
@@ -74,11 +81,13 @@ def run_regularization():
 
     net.set_error_function(Error.CE)
     opt = CG({"maximal_iterations" : 1000})
-    ds = Dataset(X, T)
+    ts = Dataset(X, T)
+    tes = Dataset(Xt, Tt)
     Log.set_info()
-    print("%.2f" % cross_validation(2, net, ds, opt))
-    opt.optimize(net, ds)
-    print("%.2f" % accuracy(net, ds))
+    print("%.2f %%" % (100*cross_validation(n_folds, net, ts, opt)))
+    net.initialize()
+    opt.optimize(net, ts)
+    print("%.2f %%" % (100*accuracy(net, tes)))
 
     XX, YY = numpy.meshgrid(numpy.linspace(X[:, 0].min(), X[:, 0].max(), 100),
                             numpy.linspace(X[:, 1].min(), X[:, 1].max(), 100))

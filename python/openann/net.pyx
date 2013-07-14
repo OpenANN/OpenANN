@@ -21,6 +21,9 @@ cdef class Net:
   def __dealloc__(self):
     del self.thisptr
 
+  def initialize(self):
+    self.thisptr.initialize()
+
   def input_layer(self, dim1, dim2=1, dim3=1):
     """Add an input layer."""
     self.thisptr.inputLayer(dim1, dim2, dim3)
