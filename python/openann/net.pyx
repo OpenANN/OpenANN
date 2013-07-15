@@ -149,6 +149,11 @@ cdef class Net:
     """Get number of parameters."""
     return self.thisptr.dimension()
 
+  def set_parameters(self, parameters):
+    """Set parameters of the network."""
+    cdef openann.VectorXd* params_eigen = __vector_numpy_to_eigen__(parameters)
+    self.thisptr.setParameters(deref(params_eigen))
+
   def current_parameters(self):
     """Get current parameters."""
     cdef openann.VectorXd params_eigen = self.thisptr.currentParameters()
