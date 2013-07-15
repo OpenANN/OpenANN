@@ -147,7 +147,7 @@ cdef extern from "OpenANN/optimization/Optimizable.h" namespace "OpenANN":
   cdef cppclass Optimizable:
     bool providesInitialization()
     void initialize()
-    VectorXd currentParameters()
+    VectorXd& currentParameters()
     int dimension()
     double error()
     double error_from "error" (unsigned int i)

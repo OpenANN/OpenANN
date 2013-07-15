@@ -149,6 +149,11 @@ cdef class Net:
     """Get number of parameters."""
     return self.thisptr.dimension()
 
+  def current_parameters(self):
+    """Get current parameters."""
+    cdef openann.VectorXd params_eigen = self.thisptr.currentParameters()
+    return __vector_eigen_to_numpy__(&params_eigen)
+
 cdef class SparseAutoEncoder:
   """Sparse auto-encoder."""
   cdef openann.SparseAutoEncoder *thisptr
