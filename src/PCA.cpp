@@ -37,7 +37,7 @@ Eigen::MatrixXd PCA::transform(const Eigen::MatrixXd& X)
   OPENANN_CHECK(mean.cols() > 0);
   OPENANN_CHECK_EQUALS(X.cols(), mean.rows());
   Eigen::MatrixXd Y = X;
-  Y.rowwise() -= mean;
+  Y.rowwise() -= mean.transpose();
   return Y * W.topRows(components).transpose();
 }
 
