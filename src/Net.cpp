@@ -184,6 +184,14 @@ DataSet* Net::propagateDataSet(DataSet& dataSet, int l)
   return transformedDataSet;
 }
 
+void Net::save(const std::string& fileName)
+{
+}
+
+void load(const std::string& fileName)
+{
+}
+
 void Net::initializeNetwork()
 {
   P = parameters.size();

@@ -258,6 +258,22 @@ public:
   ///@}
 
   /**
+   * @name Persistence
+   */
+  ///@{
+  /**
+   * Save network.
+   * @param fileName name of the file
+   */
+  void save(const std::string& fileName);
+  /**
+   * Load network from file.
+   * @param fileName name of the file
+   */
+  void load(const std::string& fileName);
+  ///@}
+
+  /**
    * @name Optimization Contol
    */
   ///@{
