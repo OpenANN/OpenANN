@@ -156,7 +156,8 @@ Net& Net::outputLayer(int units, ActivationFunction act, double stdDev, bool bia
 {
   architecture << "output " << units << " " << (int) act << " " << stdDev
       << " " << bias << " ";
-  fullyConnectedLayer(units, act, stdDev, bias);
+  addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
+                              regularization));
   initializeNetwork();
   return *this;
 }
@@ -167,7 +168,8 @@ Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
 {
   architecture << "compressed_output " << units << " " << params << " "
       << (int) act << " " << compression << " " << stdDev << " " << bias << " ";
-  compressedLayer(units, params, act, compression, stdDev, bias);
+  addLayer(new Compressed(infos.back(), units, params, bias, act, compression,
+                          stdDev, regularization));
   initializeNetwork();
   return *this;
 }
@@ -214,7 +216,7 @@ void Net::save(const std::string& fileName)
   std::ofstream file(fileName.c_str());
   if(!file.is_open())
     throw OpenANNException("Could not open '" + fileName + "'.'");
-  file << architecture << "parameters " << currentParameters();
+  file << architecture.str() << "parameters " << currentParameters();
   file.close();
 }
 
@@ -232,6 +234,7 @@ void Net::load(const std::string& fileName)
     {
       int dim1, dim2, dim3;
       file >> dim1 >> dim2 >> dim3;
+      OPENANN_DEBUG << "input " << dim1 << " " << dim2 << " " << dim3;
       inputLayer(dim1, dim2, dim3);
     }
     else if(type == "alpha_beta_filter")
@@ -247,6 +250,8 @@ void Net::load(const std::string& fileName)
       double stdDev;
       bool bias;
       file >> units >> act >> stdDev >> bias;
+      OPENANN_DEBUG << "fully_connected " << units << " " << act << " "
+          << stdDev << " " << bias;
       fullyConnectedLayer(units, (ActivationFunction) act, stdDev, bias);
     }
     else if(type == "rbm")
@@ -330,6 +335,8 @@ void Net::load(const std::string& fileName)
       double stdDev;
       bool bias;
       file >> units >> act >> stdDev >> bias;
+      OPENANN_DEBUG << "output " << units << " " << act << " " << stdDev
+          << " " << bias;
       outputLayer(units, (ActivationFunction) act, stdDev, bias);
     }
     else if(type == "compressed_output")
@@ -356,6 +363,7 @@ void Net::load(const std::string& fileName)
       throw OpenANNException("Unknown layer type: '" + type + "'.");
     }
   }
+  file.close();
 }
 
 void Net::initializeNetwork()
