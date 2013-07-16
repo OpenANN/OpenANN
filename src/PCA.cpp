@@ -15,7 +15,7 @@ Transformer& PCA::fit(const Eigen::MatrixXd& X)
   const int N = X.rows();
   mean = X.colwise().mean().transpose();
   Eigen::MatrixXd aligned = X;
-  aligned.rowwise() -= mean;
+  aligned.rowwise() -= mean.transpose();
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(aligned, Eigen::ComputeFullV);
   Eigen::VectorXd S = svd.singularValues() / std::sqrt((double) N);
