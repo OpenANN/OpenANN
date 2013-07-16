@@ -159,6 +159,15 @@ cdef class Net:
     cdef openann.VectorXd params_eigen = self.thisptr.currentParameters()
     return __vector_eigen_to_numpy__(&params_eigen)
 
+  def save(self, file_name):
+    cdef char* fn = file_name
+    self.thisptr.save(string(fn))
+
+  def load(self, file_name):
+    cdef char* fn = file_name
+    self.thisptr.load(string(fn))
+
+
 cdef class SparseAutoEncoder:
   """Sparse auto-encoder."""
   cdef openann.SparseAutoEncoder *thisptr

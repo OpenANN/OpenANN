@@ -229,6 +229,9 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     OutputInfo getOutputInfo(int l)
     DataSet* propagateDataSet(DataSet& dataSet, int l)
 
+    void save(string& fileName)
+    void load(string& fileName)
+
 cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
   cdef cppclass SparseAutoEncoder(Learner):
     SparseAutoEncoder(int D, int H, double beta, double rho, double lmbda,
