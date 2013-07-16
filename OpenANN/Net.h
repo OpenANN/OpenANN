@@ -6,6 +6,7 @@
 #include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
 #include <vector>
+#include <sstream>
 
 namespace OpenANN
 {
@@ -45,6 +46,8 @@ protected:
   int P, L;
   Eigen::VectorXd parameterVector, tempGradient;
   Eigen::MatrixXd tempInput, tempOutput, tempError;
+
+  std::stringstream architecture;
 
   void initializeNetwork();
 
