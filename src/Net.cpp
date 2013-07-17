@@ -241,6 +241,7 @@ void Net::load(const std::string& fileName)
     {
       double deltaT, stdDev;
       file >> deltaT >> stdDev;
+      OPENANN_DEBUG << "alpha_beta_filter" << deltaT << " " << stdDev;
       alphaBetaFilterLayer(deltaT, stdDev);
     }
     else if(type == "fully_connected")
@@ -351,6 +352,18 @@ void Net::load(const std::string& fileName)
       compressedOutputLayer(units, params, (ActivationFunction) act,
                             compression, stdDev, bias);
     }
+    else if(type == "error_function")
+    {
+      int errorFunction;
+      file >> errorFunction;
+      setErrorFunction((ErrorFunction) errorFunction);
+    }
+    else if(type == "regularization ")
+    {
+      double l1Penalty, l2Penalty, maxSquaredWeightNorm;
+      file >> l1Penalty >> l2Penalty >> maxSquaredWeightNorm;
+      setRegularization(l1Penalty, l2Penalty, maxSquaredWeightNorm);
+    }
     else if(type == "parameters")
     {
       double p = 0.0;
@@ -388,6 +401,8 @@ Net& Net::useDropout(bool activate)
 Net& Net::setRegularization(double l1Penalty, double l2Penalty,
                             double maxSquaredWeightNorm)
 {
+  architecture << "regularization " << l1Penalty << " " << l2Penalty << " "
+      << maxSquaredWeightNorm << " ";
   regularization.l1Penalty = l1Penalty;
   regularization.l2Penalty = l2Penalty;
   regularization.maxSquaredWeightNorm = maxSquaredWeightNorm;
@@ -396,6 +411,7 @@ Net& Net::setRegularization(double l1Penalty, double l2Penalty,
 
 Net& Net::setErrorFunction(ErrorFunction errorFunction)
 {
+  architecture << "error_function " << (int) errorFunction << " ";
   this->errorFunction = errorFunction;
   return *this;
 }
