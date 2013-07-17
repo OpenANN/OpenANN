@@ -270,10 +270,20 @@ public:
    */
   void save(const std::string& fileName);
   /**
+   * Save network.
+   * @param stream output stream
+   */
+  void save(std::ostream& stream);
+  /**
    * Load network from file.
    * @param fileName name of the file
    */
   void load(const std::string& fileName);
+  /**
+   * Load network from stream.
+   * @param stream input stream
+   */
+  void load(std::istream& stream);
   ///@}
 
   /**

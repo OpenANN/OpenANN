@@ -216,8 +216,13 @@ void Net::save(const std::string& fileName)
   std::ofstream file(fileName.c_str());
   if(!file.is_open())
     throw OpenANNException("Could not open '" + fileName + "'.'");
-  file << architecture.str() << "parameters " << currentParameters();
+  save(file);
   file.close();
+}
+
+void Net::save(std::ostream& stream)
+{
+  stream << architecture.str() << "parameters " << currentParameters();
 }
 
 void Net::load(const std::string& fileName)
@@ -225,22 +230,27 @@ void Net::load(const std::string& fileName)
   std::ifstream file(fileName.c_str());
   if(!file.is_open())
     throw OpenANNException("Could not open '" + fileName + "'.'");
+  load(file);
+  file.close();
+}
 
+void Net::load(std::istream& stream)
+{
   std::string type;
-  while(!file.eof())
+  while(!stream.eof())
   {
-    file >> type;
+    stream >> type;
     if(type == "input")
     {
       int dim1, dim2, dim3;
-      file >> dim1 >> dim2 >> dim3;
+      stream >> dim1 >> dim2 >> dim3;
       OPENANN_DEBUG << "input " << dim1 << " " << dim2 << " " << dim3;
       inputLayer(dim1, dim2, dim3);
     }
     else if(type == "alpha_beta_filter")
     {
       double deltaT, stdDev;
-      file >> deltaT >> stdDev;
+      stream >> deltaT >> stdDev;
       OPENANN_DEBUG << "alpha_beta_filter" << deltaT << " " << stdDev;
       alphaBetaFilterLayer(deltaT, stdDev);
     }
@@ -250,7 +260,7 @@ void Net::load(const std::string& fileName)
       int act;
       double stdDev;
       bool bias;
-      file >> units >> act >> stdDev >> bias;
+      stream >> units >> act >> stdDev >> bias;
       OPENANN_DEBUG << "fully_connected " << units << " " << act << " "
           << stdDev << " " << bias;
       fullyConnectedLayer(units, (ActivationFunction) act, stdDev, bias);
@@ -261,7 +271,7 @@ void Net::load(const std::string& fileName)
       int cdN;
       double stdDev;
       bool backprop;
-      file >> H >> cdN >> stdDev >> backprop;
+      stream >> H >> cdN >> stdDev >> backprop;
       OPENANN_DEBUG << "rbm " << H << " " << cdN << " " << stdDev << " "
           << backprop;
       restrictedBoltzmannMachineLayer(H, cdN, stdDev, backprop);
@@ -274,7 +284,7 @@ void Net::load(const std::string& fileName)
       std::string compression;
       double stdDev;
       bool bias;
-      file >> units >> params >> act >> compression >> stdDev >> bias;
+      stream >> units >> params >> act >> compression >> stdDev >> bias;
       OPENANN_DEBUG << "compressed " << units << " " << params << " " << act
           << " " << compression << " " << stdDev << " " << bias;
       compressedLayer(units, params, (ActivationFunction) act, compression,
@@ -286,7 +296,7 @@ void Net::load(const std::string& fileName)
       int act;
       double stdDev;
       bool bias;
-      file >> units >> act >> stdDev >> bias;
+      stream >> units >> act >> stdDev >> bias;
       OPENANN_DEBUG << "extreme " << units << " " << act << " " << stdDev
           << " " << bias;
       extremeLayer(units, (ActivationFunction) act, stdDev, bias);
@@ -295,7 +305,7 @@ void Net::load(const std::string& fileName)
     {
       double targetMean;
       double stdDev;
-      file >> targetMean >> stdDev;
+      stream >> targetMean >> stdDev;
       OPENANN_DEBUG << "intrinsic_plasticity " << targetMean << " " << stdDev;
       intrinsicPlasticityLayer(targetMean, stdDev);
     }
@@ -304,7 +314,7 @@ void Net::load(const std::string& fileName)
       int featureMaps, kernelRows, kernelCols, act;
       double stdDev;
       bool bias;
-      file >> featureMaps >> kernelRows >> kernelCols >> act >> stdDev >> bias;
+      stream >> featureMaps >> kernelRows >> kernelCols >> act >> stdDev >> bias;
       OPENANN_DEBUG << "convolutional " << featureMaps << " " << kernelRows
           << " " << kernelCols << " " << act << " " << stdDev << " " << bias;
       convolutionalLayer(featureMaps, kernelRows, kernelCols,
@@ -315,7 +325,7 @@ void Net::load(const std::string& fileName)
       int kernelRows, kernelCols, act;
       double stdDev;
       bool bias;
-      file >> kernelRows >> kernelCols >> act >> stdDev >> bias;
+      stream >> kernelRows >> kernelCols >> act >> stdDev >> bias;
       OPENANN_DEBUG << "subsampling " << kernelRows << " " << kernelCols
           << " " << act << " " << stdDev << " " << bias;
       subsamplingLayer(kernelRows, kernelCols, (ActivationFunction) act,
@@ -324,7 +334,7 @@ void Net::load(const std::string& fileName)
     else if(type == "max_pooling")
     {
       int kernelRows, kernelCols;
-      file >> kernelRows >> kernelCols;
+      stream >> kernelRows >> kernelCols;
       OPENANN_DEBUG << "max_pooling " << kernelRows << " " << kernelCols;
       maxPoolingLayer(kernelRows, kernelCols);
     }
@@ -332,7 +342,7 @@ void Net::load(const std::string& fileName)
     {
       double k, alpha, beta;
       int n;
-      file >> k >> n >> alpha >> beta;
+      stream >> k >> n >> alpha >> beta;
       OPENANN_DEBUG << "local_response_normalization " << k << " " << n << " "
           << alpha << " " << beta;
       localReponseNormalizationLayer(k, n, alpha, beta);
@@ -340,7 +350,7 @@ void Net::load(const std::string& fileName)
     else if(type == "dropout")
     {
       double dropoutProbability;
-      file >> dropoutProbability;
+      stream >> dropoutProbability;
       OPENANN_DEBUG << "dropout " << dropoutProbability;
       dropoutLayer(dropoutProbability);
     }
@@ -350,7 +360,7 @@ void Net::load(const std::string& fileName)
       int act;
       double stdDev;
       bool bias;
-      file >> units >> act >> stdDev >> bias;
+      stream >> units >> act >> stdDev >> bias;
       OPENANN_DEBUG << "output " << units << " " << act << " " << stdDev
           << " " << bias;
       outputLayer(units, (ActivationFunction) act, stdDev, bias);
@@ -363,7 +373,7 @@ void Net::load(const std::string& fileName)
       std::string compression;
       double stdDev;
       bool bias;
-      file >> units >> params >> act >> compression >> stdDev >> bias;
+      stream >> units >> params >> act >> compression >> stdDev >> bias;
       OPENANN_DEBUG << "compressed_output " << units << " " << params << " "
           << act << " " << compression << " " << stdDev << " " << bias;
       compressedOutputLayer(units, params, (ActivationFunction) act,
@@ -372,14 +382,14 @@ void Net::load(const std::string& fileName)
     else if(type == "error_function")
     {
       int errorFunction;
-      file >> errorFunction;
+      stream >> errorFunction;
       OPENANN_DEBUG << "error_function " << errorFunction;
       setErrorFunction((ErrorFunction) errorFunction);
     }
     else if(type == "regularization ")
     {
       double l1Penalty, l2Penalty, maxSquaredWeightNorm;
-      file >> l1Penalty >> l2Penalty >> maxSquaredWeightNorm;
+      stream >> l1Penalty >> l2Penalty >> maxSquaredWeightNorm;
       OPENANN_DEBUG << "regularization " << l1Penalty << " " << l2Penalty
           << " " << maxSquaredWeightNorm;
       setRegularization(l1Penalty, l2Penalty, maxSquaredWeightNorm);
@@ -388,7 +398,7 @@ void Net::load(const std::string& fileName)
     {
       double p = 0.0;
       for(int i = 0; i < dimension(); i++)
-        file >> parameterVector(i);
+        stream >> parameterVector(i);
       setParameters(parameterVector);
     }
     else
@@ -396,7 +406,6 @@ void Net::load(const std::string& fileName)
       throw OpenANNException("Unknown layer type: '" + type + "'.");
     }
   }
-  file.close();
 }
 
 void Net::initializeNetwork()
