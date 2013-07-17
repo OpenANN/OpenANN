@@ -3,6 +3,7 @@
 #include <OpenANN/Net.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
+#include <sstream>
 
 void NetTestCase::run()
 {
@@ -13,6 +14,7 @@ void NetTestCase::run()
   RUN(NetTestCase, multilayerNetwork);
   RUN(NetTestCase, predictMinibatch);
   RUN(NetTestCase, minibatchErrorGradient);
+  RUN(NetTestCase, saveLoad);
 }
 
 void NetTestCase::dimension()
@@ -218,4 +220,28 @@ void NetTestCase::minibatchErrorGradient()
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(g1(k), g2(k), 1e-2);
   ASSERT_EQUALS_DELTA(error1, error2, 1e-2);
+}
+
+void NetTestCase::saveLoad()
+{
+  OpenANN::Net net;
+  net.setRegularization(0.001, 0.001, 0.0);
+  net.inputLayer(2, 6, 6)
+  .convolutionalLayer(2, 3, 3, OpenANN::TANH)
+  .subsamplingLayer(2, 2, OpenANN::TANH)
+  .fullyConnectedLayer(10, OpenANN::TANH)
+  .outputLayer(2, OpenANN::LINEAR);
+  net.setErrorFunction(OpenANN::CE);
+  std::stringstream stream;
+  net.save(stream);
+  OpenANN::Net loadedNet;
+  loadedNet.load(stream);
+  ASSERT_EQUALS(net.numberOflayers(), loadedNet.numberOflayers());
+  ASSERT_EQUALS(net.dimension(), loadedNet.dimension());
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*6*6);
+  Eigen::MatrixXd Y1 = net(X);
+  Eigen::MatrixXd Y2 = loadedNet(X);
+  for(int n = 0; n < Y1.rows(); n++)
+    for(int f = 0; f < Y2.cols(); f++)
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-5);
 }

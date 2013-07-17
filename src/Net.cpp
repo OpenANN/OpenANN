@@ -386,7 +386,7 @@ void Net::load(std::istream& stream)
       OPENANN_DEBUG << "error_function " << errorFunction;
       setErrorFunction((ErrorFunction) errorFunction);
     }
-    else if(type == "regularization ")
+    else if(type == "regularization")
     {
       double l1Penalty, l2Penalty, maxSquaredWeightNorm;
       stream >> l1Penalty >> l2Penalty >> maxSquaredWeightNorm;

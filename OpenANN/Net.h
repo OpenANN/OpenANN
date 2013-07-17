@@ -281,6 +281,12 @@ public:
   void load(const std::string& fileName);
   /**
    * Load network from stream.
+   *
+   * @note Note that the network will not be reconstructed correctly in case
+   * it contains either an extreme layer, compressed layer or a compressed
+   * output layer because these types of layers internally generate random
+   * matrices that cannot be stored at the moment.
+   *
    * @param stream input stream
    */
   void load(std::istream& stream);
