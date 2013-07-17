@@ -115,8 +115,7 @@ int main(int argc, char** argv)
   OPENANN_INFO << "Error = " << net.error();
   OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
-  OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
-  resultLogger << optimizer.result();
+  net.save("mnist.net");
 
   return EXIT_SUCCESS;
 }
