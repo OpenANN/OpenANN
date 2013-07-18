@@ -73,6 +73,11 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   void setDebug()
 
 
+cdef extern from "OpenANN/util/Random.h" namespace "OpenANN":
+  cdef cppclass RandomNumberGenerator:
+    void seed(unsigned int seed)
+
+
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass OutputInfo:
     bool bias

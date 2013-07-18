@@ -69,3 +69,17 @@ cdef class Log:
   @classmethod
   def error(cls, text):
     openann.write(openann.Log().get(Log.ERROR), <char*?>text)
+
+
+cdef class RandomNumberGenerator:
+  """Controls random number generation in OpenANN."""
+  cdef openann.RandomNumberGenerator *thisptr
+
+  def __cinit__(self):
+    self.thisptr = new openann.RandomNumberGenerator()
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def seed(self, s):
+    self.thisptr.seed(s)
