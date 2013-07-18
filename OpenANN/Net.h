@@ -49,9 +49,10 @@ protected:
 
   std::stringstream architecture;
 
-  void initializeNetwork();
-
 public:
+  /**
+   * Create feedforward neural network.
+   */
   Net();
   virtual ~Net();
 
@@ -282,10 +283,21 @@ public:
   /**
    * Load network from stream.
    *
-   * @note Note that the network will not be reconstructed correctly in case
-   * it contains either an extreme layer, compressed layer or a compressed
-   * output layer because these types of layers internally generate random
-   * matrices that cannot be stored at the moment.
+   * @note Note that we cannot ensure that the network will be reconstructed
+   *       correctly in case it contains either an extreme layer, compressed
+   *       layer or a compressed output layer because these types of layers
+   *       internally generate random matrices that will not be stored. To
+   *       ensure that these matrices will contain the same values, you will
+   *       have to set the seed for the random number generator, e.g.
+   *       \code
+OpenANN::RandomNumberGenerator().seed(0);
+Net net;
+// Construct and train network
+net.save("mlnn.net");
+OpenANN::RandomNumberGenerator().seed(0);
+Net net2;
+net2.load("mlnn.net");
+   *       \endcode
    *
    * @param stream input stream
    */
@@ -336,7 +348,9 @@ public:
                              double& value, Eigen::VectorXd& grad);
   virtual void finishedIteration();
   ///@}
+
 protected:
+  void initializeNetwork();
   void forwardPropagate();
   void backpropagate();
 };

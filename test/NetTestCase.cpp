@@ -224,16 +224,19 @@ void NetTestCase::minibatchErrorGradient()
 
 void NetTestCase::saveLoad()
 {
+  OpenANN::RandomNumberGenerator().seed(0);
   OpenANN::Net net;
   net.setRegularization(0.001, 0.001, 0.0);
   net.inputLayer(2, 6, 6)
   .convolutionalLayer(2, 3, 3, OpenANN::TANH)
   .subsamplingLayer(2, 2, OpenANN::TANH)
+  .extremeLayer(5, OpenANN::TANH, 1.0)
   .fullyConnectedLayer(10, OpenANN::TANH)
-  .outputLayer(2, OpenANN::LINEAR);
+  .compressedOutputLayer(2, 2, OpenANN::LINEAR, "gaussian");
   net.setErrorFunction(OpenANN::CE);
   std::stringstream stream;
   net.save(stream);
+  OpenANN::RandomNumberGenerator().seed(0);
   OpenANN::Net loadedNet;
   loadedNet.load(stream);
   ASSERT_EQUALS(net.numberOflayers(), loadedNet.numberOflayers());

@@ -408,19 +408,6 @@ void Net::load(std::istream& stream)
   }
 }
 
-void Net::initializeNetwork()
-{
-  P = parameters.size();
-  tempInput.resize(1, infos[0].outputs());
-  tempOutput.resize(1, infos.back().outputs());
-  tempError.resize(1, infos.back().outputs());
-  tempGradient.resize(P);
-  parameterVector.resize(P);
-  for(int p = 0; p < P; p++)
-    parameterVector(p) = *parameters[p];
-  initialized = true;
-}
-
 Net& Net::useDropout(bool activate)
 {
   dropout = activate;
@@ -593,6 +580,19 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
   grad /= N;
+}
+
+void Net::initializeNetwork()
+{
+  P = parameters.size();
+  tempInput.resize(1, infos[0].outputs());
+  tempOutput.resize(1, infos.back().outputs());
+  tempError.resize(1, infos.back().outputs());
+  tempGradient.resize(P);
+  parameterVector.resize(P);
+  for(int p = 0; p < P; p++)
+    parameterVector(p) = *parameters[p];
+  initialized = true;
 }
 
 void Net::forwardPropagate()
