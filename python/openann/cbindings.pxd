@@ -2,6 +2,15 @@ from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+
+cdef extern from "OpenANN/OpenANN" namespace "OpenANN::OpenANNLibraryInfo":
+  char* VERSION
+  char* URL
+  char* DESCRIPTION
+  char* COMPILATION_TIME
+  char* COMPILER_FLAGS
+
+
 cdef extern from "Eigen/Dense" namespace "Eigen":
   cdef cppclass VectorXd:
     VectorXd()
