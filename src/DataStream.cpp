@@ -36,6 +36,9 @@ DataStream& DataStream::setOptimizer(Optimizer& opt)
 
 void DataStream::addSample(Eigen::VectorXd* x, Eigen::VectorXd* t)
 {
+  OPENANN_CHECK(learner);
+  OPENANN_CHECK(opt);
+
   if(!cache)
     initialize(x->rows(), t ? t->rows() : 0);
 
