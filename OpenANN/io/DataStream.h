@@ -39,13 +39,15 @@ public:
   /**
    * Add a learner.
    * @param learner model
+   * @return this for chaining
    */
-  void setLearner(Learner& learner);
+  DataStream& setLearner(Learner& learner);
   /**
    * Add an optimizer.
    * @param opt online optimization algorithm
+   * @return this for chaining
    */
-  void setOptimizer(Optimizer& opt);
+  DataStream& setOptimizer(Optimizer& opt);
   /**
    * Add a sample of the data distribution. This will start an optimization
    * epoch if the cache is full.
