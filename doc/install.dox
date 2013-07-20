@@ -46,6 +46,8 @@ The following programs and libraries are required to use OpenANN:
 </td>
 <td valign="top">
 - Python
+- Matplotlib
+- SciPy
 </td>
 </tr>
 </table>
