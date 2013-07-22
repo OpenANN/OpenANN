@@ -12,11 +12,11 @@ int main()
 
   OpenANN::Net net;
   net.inputLayer(channels, rows, cols)
-  .convolutionalLayer(5, 5, 5, OpenANN::RECTIFIER)
+  .convolutionalLayer(10, 3, 3, OpenANN::RECTIFIER)
+  .maxPoolingLayer(2, 2)
   .outputLayer(F, OpenANN::LINEAR)
   .trainingSet(X, T);
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 5;
   OpenANN::train(net, "MBSGD", OpenANN::MSE, stop);
 }
-

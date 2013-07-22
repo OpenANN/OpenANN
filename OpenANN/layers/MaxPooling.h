@@ -27,7 +27,6 @@ class MaxPooling : public Layer
   int I, fm, inRows, inCols, kernelRows, kernelCols;
   Eigen::MatrixXd* x;
   Eigen::MatrixXd y;
-  Eigen::MatrixXd deltas;
   Eigen::MatrixXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
