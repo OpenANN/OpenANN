@@ -127,12 +127,8 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
             for(int kr = 0, rowBase = fmInBase + row * inCols; kr < kernelRows;
                 kr++, rowBase += inCols)
             {
-              for(int kc = 0, inputIdx = rowBase + col; kc < kernelCols;
-                  kc++, inputIdx++)
-              {
-                OPENANN_CHECK(inputIdx < x->cols());
-                out += Wtmp(kr, kc) * (*x)(n, inputIdx);
-              }
+              out += (Wtmp.row(kr).array() *
+                  (*x).block(n, rowBase+col, 1, kernelCols).array()).sum();
             }
           }
         }
