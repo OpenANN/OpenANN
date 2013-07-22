@@ -124,11 +124,11 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
           {
             OPENANN_CHECK(outputIdx < a.cols());
             double& out = a(n, outputIdx);
-            for(int kr = 0, rowBase = fmInBase + row * inCols; kr < kernelRows;
-                kr++, rowBase += inCols)
+            for(int kr = 0, colBase = fmInBase + row * inCols + col;
+                kr < kernelRows; kr++, colBase += inCols)
             {
               out += (Wtmp.row(kr).array() *
-                  (*x).block(n, rowBase+col, 1, kernelCols).array()).sum();
+                  (*x).block(n, colBase, 1, kernelCols).array()).sum();
             }
           }
         }
@@ -167,6 +167,7 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
     for(int fmi = 0; fmi < fmin; fmi++)
       Wd[fmo][fmi].setZero();
 
+  // TODO parallelize over examples
   for(int n = 0; n < N; n++)
   {
     for(int fmo = 0; fmo < fmout; fmo++)
@@ -182,16 +183,11 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
           {
             OPENANN_CHECK(outputIdx < deltas.cols());
             const double d = deltas(n, outputIdx);
-            for(int kr = 0, rowBase = fmInBase + row * inCols;
-                kr < kernelRows; kr++, rowBase += inCols)
+            for(int kr = 0, colBase = fmInBase + row * inCols + col;
+                kr < kernelRows; kr++, colBase += inCols)
             {
-              for(int kc = 0, inputIdx = rowBase + col; kc < kernelCols;
-                  kc++, inputIdx++)
-              {
-                OPENANN_CHECK(inputIdx < x->cols());
-                e(n, inputIdx) += Wtmp(kr, kc) * d;
-                Wdtmp(kr, kc) += d * (*x)(n, inputIdx);
-              }
+              e.block(n, colBase, 1, kernelCols) += Wtmp.row(kr) * d;
+              Wdtmp.row(kr) += d * (*x).block(n, colBase, 1, kernelCols);
             }
           }
         }
