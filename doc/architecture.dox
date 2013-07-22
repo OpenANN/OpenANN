@@ -15,11 +15,11 @@ learning approaches. These are
 
 The most general concepts in the library are Optimizer and Optimizable.
 Optimizer is the common base class for optimization algorithms like IPOPCMAES,
-CG, LMA, MBSGD. An Optimizable provides at least an error function that has to
-be optimized during the learning process and could additionally provide the
-first and second derivative of the error function with respect to the weights
-to speed up the learning process. Most optimizers even require the first
-derivative. In supervised or unsupervised learning, we usually want to
+CG, LBFGS, LMA and MBSGD. An Optimizable provides at least an error function
+that has to be optimized during the learning process and could additionally
+provide the first and second derivative of the error function with respect to
+the weights to speed up the learning process. Most optimizers even require the
+first derivative. In supervised or unsupervised learning, we usually want to
 optimize a Learner. Each Learner combines a model with a DataSet. The dataset
 is called training set in this context. For each Learner we can compute an
 error and a gradient on the training set and it derives from Optimizable.
