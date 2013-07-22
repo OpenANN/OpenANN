@@ -13,7 +13,7 @@ int main()
   OpenANN::Net net;
   net.inputLayer(channels, rows, cols)
   .convolutionalLayer(10, 3, 3, OpenANN::RECTIFIER)
-  .maxPoolingLayer(2, 2)
+  .subsamplingLayer(2, 2, OpenANN::LINEAR)
   .outputLayer(F, OpenANN::LINEAR)
   .trainingSet(X, T);
   OpenANN::StoppingCriteria stop;
