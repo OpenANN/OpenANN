@@ -117,23 +117,23 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
       int fmInBase = 0;
       for(int fmi = 0; fmi < fmin; fmi++, fmInBase += fmInSize)
       {
+        Eigen::MatrixXd& Wtmp = W[fmo][fmi];
         int outputIdx = fmo * fmOutSize;
         for(int row = 0; row < maxRow; row++)
         {
           for(int col = 0; col < maxCol; col++, outputIdx++)
           {
             int rowBase = fmInBase + row * inCols;
-            for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase += inCols)
+            for(int kr = 0; kr < kernelRows; kr++, rowBase += inCols)
             {
-              int inputIdx = rowBase + col;
-              for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+              for(int kc = 0, inputIdx = rowBase + col; kc < kernelCols; kc++, inputIdx++)
               {
                 OPENANN_CHECK(outputIdx < a.cols());
                 OPENANN_CHECK(inputIdx < x->cols());
-                a(n, outputIdx) += W[fmo][fmi](kr, kc) * (*x)(n, inputIdx);
+                a(n, outputIdx) += Wtmp(kr, kc) * (*x)(n, inputIdx);
               }
             }
-            if(bias && fmi == 0)
+            if(bias && fmi == 0) // TODO should be row == 0 && col == 0
               a(n, outputIdx) += Wb(fmo, fmi);
           }
         }
@@ -189,7 +189,7 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
                 Wd[fmo][fmi](kr, kc) += deltas(n, outputIdx) * (*x)(n, inputIdx);
               }
             }
-            if(bias && fmi == 0)
+            if(bias && fmi == 0) // TODO should be row == 0 && col == 0
               Wbd(fmo, fmi) += deltas(n, outputIdx);
           }
         }
