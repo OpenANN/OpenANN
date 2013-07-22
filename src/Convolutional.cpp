@@ -167,7 +167,6 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
     for(int fmi = 0; fmi < fmin; fmi++)
       Wd[fmo][fmi].setZero();
 
-  // TODO parallelize over examples
   for(int n = 0; n < N; n++)
   {
     for(int fmo = 0; fmo < fmout; fmo++)
