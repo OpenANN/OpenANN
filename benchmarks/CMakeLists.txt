@@ -6,5 +6,3 @@ add_subdirectory(twospirals)
 add_subdirectory(cifar10)
 add_subdirectory(sarcos)
 add_subdirectory(iris)
-
-add_subdirectory(convolution)
