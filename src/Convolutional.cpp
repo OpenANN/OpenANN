@@ -118,19 +118,20 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
       for(int fmi = 0; fmi < fmin; fmi++, fmInBase += fmInSize)
       {
         Eigen::MatrixXd& Wtmp = W[fmo][fmi];
-        int outputIdx = fmo * fmOutSize;
-        for(int row = 0; row < maxRow; row++)
+        for(int row = 0, outputIdx = fmo * fmOutSize; row < maxRow; row++)
         {
           for(int col = 0; col < maxCol; col++, outputIdx++)
           {
-            int rowBase = fmInBase + row * inCols;
-            for(int kr = 0; kr < kernelRows; kr++, rowBase += inCols)
+            OPENANN_CHECK(outputIdx < a.cols());
+            double& out = a(n, outputIdx);
+            for(int kr = 0, rowBase = fmInBase + row * inCols; kr < kernelRows;
+                kr++, rowBase += inCols)
             {
-              for(int kc = 0, inputIdx = rowBase + col; kc < kernelCols; kc++, inputIdx++)
+              for(int kc = 0, inputIdx = rowBase + col; kc < kernelCols;
+                  kc++, inputIdx++)
               {
-                OPENANN_CHECK(outputIdx < a.cols());
                 OPENANN_CHECK(inputIdx < x->cols());
-                a(n, outputIdx) += Wtmp(kr, kc) * (*x)(n, inputIdx);
+                out += Wtmp(kr, kc) * (*x)(n, inputIdx);
               }
             }
           }
@@ -177,29 +178,30 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
       int fmInBase = 0;
       for(int fmi = 0; fmi < fmin; fmi++, fmInBase += fmInSize)
       {
-        int outputIdx = fmo * fmOutSize;
-        for(int row = 0; row < maxRow; row++)
+        Eigen::MatrixXd& Wtmp = W[fmo][fmi];
+        Eigen::MatrixXd& Wdtmp = Wd[fmo][fmi];
+        for(int row = 0, outputIdx = fmo * fmOutSize; row < maxRow; row++)
         {
           for(int col = 0; col < maxCol; col++, outputIdx++)
           {
-            int rowBase = fmInBase + row * inCols;
-            for(int kr = 0, kri = row; kr < kernelRows; kr++, kri++, rowBase += inCols)
+            OPENANN_CHECK(outputIdx < deltas.cols());
+            const double d = deltas(n, outputIdx);
+            for(int kr = 0, rowBase = fmInBase + row * inCols;
+                kr < kernelRows; kr++, rowBase += inCols)
             {
-              int inputIdx = rowBase + col;
-              for(int kc = 0, kci = col; kc < kernelCols; kc++, kci++, inputIdx++)
+              for(int kc = 0, inputIdx = rowBase + col; kc < kernelCols;
+                  kc++, inputIdx++)
               {
-                OPENANN_CHECK(outputIdx < deltas.cols());
                 OPENANN_CHECK(inputIdx < x->cols());
-                e(n, inputIdx) += W[fmo][fmi](kr, kc) * deltas(n, outputIdx);
-                Wd[fmo][fmi](kr, kc) += deltas(n, outputIdx) * (*x)(n, inputIdx);
+                e(n, inputIdx) += Wtmp(kr, kc) * d;
+                Wdtmp(kr, kc) += d * (*x)(n, inputIdx);
               }
             }
           }
         }
         if(bias)
         {
-          int outputIdx = fmo * fmOutSize;
-          for(int row = 0; row < maxRow; row++)
+          for(int row = 0, outputIdx = fmo * fmOutSize; row < maxRow; row++)
             for(int col = 0; col < maxCol; col++, outputIdx++)
               Wbd(fmo, fmi) += deltas(n, outputIdx);
         }
