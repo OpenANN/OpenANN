@@ -42,4 +42,9 @@ Eigen::MatrixXd& Input::getOutput()
   return *x;
 }
 
+Eigen::VectorXd Input::getParameters()
+{
+  return Eigen::VectorXd();
+}
+
 }

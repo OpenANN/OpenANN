@@ -85,7 +85,8 @@ cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
     void updatedParameters()
     void forwardPropagate(VectorXd* x, VectorXd*& y, bool dropout)
     void backpropagate(VectorXd* ein, VectorXd*& eout)
-    VectorXd& getOutput()
+    MatrixXd& getOutput()
+    VectorXd getParameters()
 
 
 cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN::SigmaPi":
@@ -226,6 +227,7 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& useDropout(bool activate)
 
     unsigned int numberOflayers()
+    Layer& getLayer(unsigned int l)
     OutputInfo getOutputInfo(int l)
     DataSet* propagateDataSet(DataSet& dataSet, int l)
 

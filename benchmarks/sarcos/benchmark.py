@@ -102,8 +102,7 @@ def run_sarcos():
     F = Y.shape[1]
     net = Net()
     net.input_layer(D)
-    net.fully_connected_layer(200, Activation.RECTIFIER)
-    net.fully_connected_layer(200, Activation.RECTIFIER)
+    net.fully_connected_layer(400, Activation.RECTIFIER)
     net.fully_connected_layer(200, Activation.RECTIFIER)
     net.fully_connected_layer(200, Activation.RECTIFIER)
     net.output_layer(F, Activation.LINEAR)
