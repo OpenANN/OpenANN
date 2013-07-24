@@ -50,57 +50,58 @@ def build_net(D, H, F, l2_penalty=None, C=None, comp=""):
 def run_regularization():
     numpy.random.seed(0)
 
-    regularization = ["none", "simple", "compression", "l2", "noise"][2]
-    print(regularization)
+    regularizations = ["none", "compression", "l2", "noise"]
+    for regularization in regularizations:
+        print(regularization)
 
-    N = 200
-    Nt = 1000
-    D = 2
-    F = 2
-    n_folds = 5
-    X, C = generate_data(N, D)
-    Xt, Ct = generate_data(Nt, D)
+        N = 200
+        Nt = 1000
+        D = 2
+        F = 2
+        n_folds = 5
+        X, C = generate_data(N, D)
+        Xt, Ct = generate_data(Nt, D)
 
-    # 1-of-c encoding
-    T = numpy.zeros((N, F))
-    T[range(N), C] = 1.0
-    Tt = numpy.zeros((Nt, F))
-    Tt[range(Nt), Ct] = 1.0
+        # 1-of-c encoding
+        T = numpy.zeros((N, F))
+        T[range(N), C] = 1.0
+        Tt = numpy.zeros((Nt, F))
+        Tt[range(Nt), Ct] = 1.0
 
-    if regularization == "none":
-        net = build_net(D, [50, 50], F)
-    elif regularization == "simple":
-        net = build_net(D, [5, 5], F)
-    elif regularization == "compression":
-        net = build_net(D, [50, 50], F, C=[2, 2], comp="gaussian")
-    elif regularization == "l2":
-        net = build_net(D, [50, 50], F, l2_penalty=0.1)
-    elif regularization == "noise":
-        X, T = enhance_data(X, T, 5)
-        net = build_net(D, [50, 50], F)
+        if regularization == "none":
+            net = build_net(D, [50, 50], F)
+        elif regularization == "compression":
+            net = build_net(D, [50, 50], F, C=[2, 2], comp="gaussian")
+        elif regularization == "l2":
+            net = build_net(D, [50, 50], F, l2_penalty=0.1)
+        elif regularization == "noise":
+            X, T = enhance_data(X, T, 5)
+            net = build_net(D, [50, 50], F)
 
-    net.set_error_function(Error.CE)
-    opt = CG({"maximal_iterations" : 1000})
-    ts = Dataset(X, T)
-    tes = Dataset(Xt, Tt)
-    Log.set_info()
-    print("%.2f %%" % (100*cross_validation(n_folds, net, ts, opt)))
-    net.initialize()
-    opt.optimize(net, ts)
-    print("%.2f %%" % (100*accuracy(net, tes)))
+        net.set_error_function(Error.CE)
+        opt = MBSGD({"maximal_iterations" : 1000}, learning_rate=0.01)
+        ts = Dataset(X, T)
+        tes = Dataset(Xt, Tt)
+        Log.set_info()
+        print("%.2f %%" % (100*cross_validation(n_folds, net, ts, opt)))
+        net.initialize()
+        opt.optimize(net, ts)
+        print("%.2f %%" % (100*accuracy(net, tes)))
 
-    XX, YY = numpy.meshgrid(numpy.linspace(X[:, 0].min(), X[:, 0].max(), 100),
-                            numpy.linspace(X[:, 1].min(), X[:, 1].max(), 100))
-    Z = numpy.zeros_like(XX)
-    for i in range(XX.shape[0]):
-        for j in range(XX.shape[1]):
-            Z[i, j] = net.predict([XX[i, j], YY[i, j]])[0, 0]
+        XX, YY = numpy.meshgrid(numpy.linspace(X[:, 0].min(), X[:, 0].max(), 100),
+                                numpy.linspace(X[:, 1].min(), X[:, 1].max(), 100))
+        Z = numpy.zeros_like(XX)
+        for i in range(XX.shape[0]):
+            for j in range(XX.shape[1]):
+                Z[i, j] = net.predict([XX[i, j], YY[i, j]])[0, 0]
 
-    pylab.contourf(XX, YY, Z)
-    pylab.plot(X[numpy.nonzero(C == 0), 0],
-               X[numpy.nonzero(C == 0), 1], "bo")
-    pylab.plot(X[numpy.nonzero(C == 1), 0],
-               X[numpy.nonzero(C == 1), 1], "ro")
+        pylab.figure()
+        pylab.title(regularization)
+        pylab.contourf(XX, YY, Z)
+        pylab.plot(X[numpy.nonzero(C == 0), 0],
+                  X[numpy.nonzero(C == 0), 1], "bo")
+        pylab.plot(X[numpy.nonzero(C == 1), 0],
+                  X[numpy.nonzero(C == 1), 1], "ro")
     pylab.show()
 
 
