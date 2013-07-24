@@ -27,7 +27,6 @@ class MaxPooling : public Layer
   int I, fm, inRows, inCols, kernelRows, kernelCols;
   Eigen::MatrixXd* x;
   Eigen::MatrixXd y;
-  Eigen::MatrixXd deltas;
   Eigen::MatrixXd e;
   int fmInSize, outRows, outCols, fmOutSize, maxRow, maxCol;
 
@@ -42,6 +41,7 @@ public:
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
                              bool backpropToPrevious);
   virtual Eigen::MatrixXd& getOutput();
+  virtual Eigen::VectorXd getParameters();
 };
 
 } // namespace OpenANN

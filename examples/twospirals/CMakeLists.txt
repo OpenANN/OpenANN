@@ -4,7 +4,7 @@ find_package(Qt4)
 find_package(OpenGL)
 find_package(GLUT)
 
-if(QT_FOUND AND GLUT_FOUND AND NOT CYGWIN_FOUND)
+if(QT_FOUND AND GLUT_FOUND AND GLUT_Xmu_LIBRARY AND NOT CYGWIN_FOUND)
   set(QT_USE_QTMAIN TRUE)
   set(QT_USE_QTOPENGL TRUE)
   include(${QT_USE_FILE})

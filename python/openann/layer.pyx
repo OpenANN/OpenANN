@@ -1,24 +1,42 @@
 cdef class Layer:
   """Common base of all layers."""
+  cdef openann.Layer *thisptr
+
+  def __cinit__(object self):
+    self.thisptr = NULL
+
   cdef openann.Layer* construct(self):
+    """Returns the internal representation of the layer."""
     return NULL
+
+  def get_output(self):
+    """Get the current output of the layer."""
+    cdef openann.MatrixXd out_eigen = self.thisptr.getOutput()
+    return __matrix_eigen_to_numpy__(&out_eigen)
+
+  def get_parameters(self):
+    """Get the current parameters of the layer."""
+    cdef openann.VectorXd params_eigen = self.thisptr.getParameters()
+    return __vector_eigen_to_numpy__(&params_eigen)
 
 
 cdef class SigmaPiLayer(Layer):
   """Fully connected higher-order layer."""
+  cdef openann.SigmaPi* layer
+
   cdef int width
   cdef int height
 
   cdef openann.Constraint* distance
   cdef openann.Constraint* slope
   cdef openann.Constraint* triangle
-    
-  cdef openann.SigmaPi* layer
 
   def __cinit__(self, net, activation, std_dev=0.05, bias=False):
+    super(SigmaPiLayer, self).__init__()
     cdef openann.OutputInfo info = \
         (<Net?>net).output_info((<Net?>net).number_of_layers()-1)
     self.layer = new openann.SigmaPi(info, bias, activation, std_dev)
+    self.thisptr = self.layer
 
     self.width = info.dimensions[1]
     self.height = info.dimensions[2]

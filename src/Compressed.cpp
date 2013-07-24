@@ -110,4 +110,14 @@ Eigen::MatrixXd& Compressed::getOutput()
   return y;
 }
 
+Eigen::VectorXd Compressed::getParameters()
+{
+  Eigen::VectorXd p(M*I);
+  int idx = 0;
+  for(int m = 0; m < M; m++)
+    for(int i = 0; i < I; i++)
+      p(idx++) = phi(m, i);
+  return p;
+}
+
 } // namespace OpenANN

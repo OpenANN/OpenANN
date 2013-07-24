@@ -1,4 +1,7 @@
 cdef openann.VectorXd* __vector_numpy_to_eigen__(object x_numpy):
+  assert len(x_numpy.shape) == 1, \
+      "Vector must have exactly one dimension instead of %d" % \
+      len(x_numpy.shape)
   cdef int dim_size = x_numpy.size
   cdef openann.VectorXd* x_eigen = new openann.VectorXd(dim_size)
   for r in range(x_numpy.size):
@@ -11,8 +14,10 @@ cdef object __vector_eigen_to_numpy__(openann.VectorXd* x_eigen):
     x_numpy[r] = x_eigen.data()[r]
   return x_numpy
 
-
 cdef openann.MatrixXd* __matrix_numpy_to_eigen__(object X_numpy):
+  assert len(X_numpy.shape) == 2, \
+      "Matrix must have exactly two dimensions instead of %d" % \
+      len(X_numpy.shape)
   cdef openann.MatrixXd* X_eigen = new openann.MatrixXd(X_numpy.shape[0],
                                                         X_numpy.shape[1])
   for r in range(X_numpy.shape[0]):

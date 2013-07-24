@@ -20,20 +20,25 @@ DataStream::~DataStream()
     delete cache;
 }
 
-void DataStream::setLearner(Learner& learner)
+DataStream& DataStream::setLearner(Learner& learner)
 {
   this->learner = &learner;
+  return *this;
 }
 
-void DataStream::setOptimizer(Optimizer& opt)
+DataStream& DataStream::setOptimizer(Optimizer& opt)
 {
   this->opt = &opt;
   StoppingCriteria stop;
   opt.setStopCriteria(stop);
+  return *this;
 }
 
 void DataStream::addSample(Eigen::VectorXd* x, Eigen::VectorXd* t)
 {
+  OPENANN_CHECK(learner);
+  OPENANN_CHECK(opt);
+
   if(!cache)
     initialize(x->rows(), t ? t->rows() : 0);
 
