@@ -106,13 +106,46 @@ public:
   virtual Eigen::VectorXd getParameters();
 
   // RBM interface
+  /**
+   * Get number of visible units.
+   * @return number of visible units
+   */
   int visibleUnits();
+  /**
+   * Get number of hidden units
+   * @return number of hidden units
+   */
   int hiddenUnits();
+  /**
+   * Get the current weight matrix.
+   * @return weight matrix
+   */
   const Eigen::MatrixXd& getWeights();
+  /**
+   * Get probabilities of visible units.
+   * @return probobilities of visible units
+   */
   const Eigen::MatrixXd& getVisibleProbs();
+  /**
+   * Get sample from the distribution of the visible units.
+   * @return sample from visible units
+   */
   const Eigen::MatrixXd& getVisibleSample();
+  /**
+   * Get the probability of the n-th training example after some sampling
+   * steps.
+   * @param n index of training example
+   * @param steps number of sampling steps
+   * @return probabilities of visible units
+   */
   Eigen::MatrixXd reconstructProb(int n, int steps);
+  /**
+   * Sample hidden units given visible units.
+   */
   void sampleHgivenV();
+  /**
+   * Sample visible units given hidden units.
+   */
   void sampleVgivenH();
 private:
   void reality();

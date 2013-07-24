@@ -26,6 +26,10 @@ Classification
   - \ref XOR
   - \ref TwoSpirals
 
+Regression
+
+  - \ref Sine
+
 Reinforcement Learning
 
   - \ref PB

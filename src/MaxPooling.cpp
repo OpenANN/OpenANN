@@ -30,7 +30,6 @@ OutputInfo MaxPooling::initialize(std::vector<double*>& parameterPointers,
   maxCol = inCols - kernelCols + 1;
 
   y.resize(1, info.outputs());
-  deltas.resize(1, info.outputs());
 
   if(info.outputs() < 1)
     throw OpenANNException("Number of outputs in max-pooling layer is below"
@@ -56,29 +55,27 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   this->y.conservativeResize(N, Eigen::NoChange);
   this->x = x;
 
-  OPENANN_CHECK(x->cols() == fm * inRows * inRows);
+  OPENANN_CHECK(x->cols() == fm * inRows * inCols);
   OPENANN_CHECK_EQUALS(this->y.cols(), fm * outRows * outCols);
 
   #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
-    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
       for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
       {
         int rowBase = fmo * fmInSize + ri * inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
+        for(int ci = 0; ci < maxCol; ci += kernelCols)
         {
           double m = -std::numeric_limits<double>::max();
           for(int kr = 0; kr < kernelRows; kr++)
           {
-            inputIdx = rowBase + ci;
-            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-              m = std::max(m, (*x)(n, inputIdx));
+            for(int kc = 0, inputIdx = rowBase + ci; kc < kernelCols; kc++)
+              m = std::max(m, (*x)(n, inputIdx++));
           }
-          this->y(n, outputIdx) = m;
+          this->y(n, outputIdx++) = m;
         }
       }
     }
@@ -92,27 +89,26 @@ void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
 {
   const int N = y.rows();
   e.conservativeResize(N, Eigen::NoChange);
-  deltas = (*ein);
-
   e.setZero();
+  Eigen::MatrixXd& deltas = *ein;
+
   #pragma omp parallel for
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
-    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
-      for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
+      for(int ri = 0; ri < maxRow; ri += kernelRows)
       {
         int rowBase = fmo * fmInSize + ri * inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
+        for(int ci = 0; ci < maxCol; ci += kernelCols, outputIdx++)
         {
           double m = -std::numeric_limits<double>::max();
           int idx = -1;
           for(int kr = 0; kr < kernelRows; kr++)
           {
-            inputIdx = rowBase + ci;
-            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+            for(int kc = 0, inputIdx = rowBase + ci; kc < kernelCols;
+                kc++, inputIdx++)
               if((*x)(n, inputIdx) > m)
               {
                 m = (*x)(n, inputIdx);

@@ -113,7 +113,6 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
-    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
       for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
@@ -123,9 +122,8 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
         {
           for(int kr = 0; kr < kernelRows; kr++)
           {
-            inputIdx = rowBase + ci;
-            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
-              a(n, outputIdx) += (*x)(n, inputIdx) * W[fmo](ro, co);
+            for(int kc = 0, inputIdx = rowBase + ci; kc < kernelCols; kc++)
+              a(n, outputIdx) += (*x)(n, inputIdx++) * W[fmo](ro, co);
           }
           if(bias)
             a(n, outputIdx) += Wb[fmo](ro, co);
@@ -156,28 +154,30 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
     if(bias)
       Wbd[fmo].setZero();
   }
+
   for(int n = 0; n < N; n++)
   {
     int outputIdx = 0;
-    int inputIdx = 0;
     for(int fmo = 0; fmo < fm; fmo++)
     {
       for(int ri = 0, ro = 0; ri < maxRow; ri += kernelRows, ro++)
       {
         int rowBase = fmo * fmInSize + ri * inCols;
-        for(int ci = 0, co = 0; ci < maxCol; ci += kernelCols, co++, outputIdx++)
+        for(int ci = 0, co = 0; ci < maxCol;
+            ci += kernelCols, co++, outputIdx++)
         {
+          const double d = deltas(n, outputIdx);
           for(int kr = 0; kr < kernelRows; kr++)
           {
-            inputIdx = rowBase + ci;
-            for(int kc = 0; kc < kernelCols; kc++, inputIdx++)
+            for(int kc = 0, inputIdx = rowBase + ci; kc < kernelCols;
+                kc++, inputIdx++)
             {
-              e(n, inputIdx) += W[fmo](ro, co) * deltas(n, outputIdx);
-              Wd[fmo](ro, co) += deltas(n, outputIdx) * (*x)(n, inputIdx);
+              e(n, inputIdx) += W[fmo](ro, co) * d;
+              Wd[fmo](ro, co) += d * (*x)(n, inputIdx);
             }
           }
           if(bias)
-            Wbd[fmo](ro, co) += deltas(n, outputIdx);
+            Wbd[fmo](ro, co) += d;
         }
       }
     }

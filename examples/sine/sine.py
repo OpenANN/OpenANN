@@ -1,3 +1,7 @@
+## \page Sine
+#
+# In this example, a sine function will approximated from noisy measurements.
+
 try:
     import pylab
 except:
