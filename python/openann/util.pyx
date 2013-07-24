@@ -88,3 +88,6 @@ cdef class RandomNumberGenerator:
 
   def seed(self, s):
     self.thisptr.seed(s)
+
+def use_all_cores():
+  openann.useAllCores()

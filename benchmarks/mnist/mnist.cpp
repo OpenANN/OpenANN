@@ -4,9 +4,6 @@
 #include <OpenANN/io/DataStream.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include "IDXLoader.h"
-#ifdef PARALLEL_CORES
-#include <omp.h>
-#endif
 
 /**
  * \page MNISTBenchmark MNIST
@@ -32,9 +29,7 @@ python benchmark.py [download] [run] [evaluate]
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  OpenANN::useAllCores();
 
   std::string directory = "./";
   bool distortions = false;
