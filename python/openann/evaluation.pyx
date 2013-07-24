@@ -41,4 +41,4 @@ def cross_validation(folds, learner, dataset, optimizer):
   cdef openann.Learner *net = (<Net?>learner).thisptr
   cdef openann.DataSet *ds = (<Dataset?>dataset).storage
   cdef openann.Optimizer *opt = (<Optimizer?>optimizer).thisptr
-  openann.crossValidation(folds, deref(net), deref(ds), deref(opt))
+  return openann.crossValidation(folds, deref(net), deref(ds), deref(opt))

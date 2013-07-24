@@ -133,4 +133,9 @@ Eigen::MatrixXd& MaxPooling::getOutput()
   return y;
 }
 
+Eigen::VectorXd MaxPooling::getParameters()
+{
+  return Eigen::VectorXd();
+}
+
 }

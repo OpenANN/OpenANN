@@ -103,6 +103,7 @@ public:
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
+  virtual Eigen::VectorXd getParameters();
 
   // RBM interface
   int visibleUnits();

@@ -89,7 +89,7 @@ public:
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
                              bool backpropToPrevious);
   virtual Eigen::MatrixXd& getOutput();
-  Eigen::MatrixXd getWeights();
+  virtual Eigen::VectorXd getParameters();
 };
 
 } // namespace OpenANN
