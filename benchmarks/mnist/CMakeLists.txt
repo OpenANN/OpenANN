@@ -14,7 +14,7 @@ if(HAVE_ENDIAN_H)
   add_executable(MNIST mnist.cpp)
   target_link_libraries(MNIST openann)
 
-  if(QT_FOUND AND GLUT_FOUND AND NOT CYGWIN_FOUND)
+  if(QT_FOUND AND GLUT_FOUND AND GLUT_Xmu_LIBRARY AND NOT CYGWIN_FOUND)
     set(QT_USE_QTMAIN TRUE)
     set(QT_USE_QTOPENGL TRUE)
     include(${QT_USE_FILE})
