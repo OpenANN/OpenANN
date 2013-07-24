@@ -10,6 +10,9 @@ if __name__ == "__main__":
     N = X.shape[0]
     dataset = Dataset(X, Y)
 
+    # Make the result repeatable
+    RandomNumberGenerator().seed(0)
+
     # Create network
     net = Net()
     net.input_layer(D)

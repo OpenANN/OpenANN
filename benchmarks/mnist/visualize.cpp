@@ -185,36 +185,9 @@ int main(int argc, char** argv)
   IDXLoader loader(28, 28, 0, 10000, directory);
 
   OpenANN::Net net;
-  net.inputLayer(1, loader.padToX, loader.padToY);
-  if(distortions)
-  {
-    // High model complexity
-    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-    .maxPoolingLayer(2, 2)
-    .convolutionalLayer(40, 5, 5, OpenANN::RECTIFIER, 0.05)
-    .maxPoolingLayer(2, 2)
-    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05);
-  }
-  else
-  {
-    // Smaller network
-    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-    .maxPoolingLayer(2, 2)
-    .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
-    .maxPoolingLayer(2, 2)
-    .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
-    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05);
-  }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05);
-  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput);
+  net.load("mnist.net");
 
-  // Load parameters
-  std::ifstream file("weights.log");
-  Eigen::VectorXd weights = net.currentParameters();
-  for(int i = 0; i < net.dimension(); i++)
-    file >> weights(i);
-  net.setParameters(weights);
-  net.setErrorFunction(OpenANN::CE);
+  OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput);
 
   QApplication app(argc, argv);
   MNISTVisualization visual(net, testSet, loader.padToX, loader.padToY);
