@@ -166,6 +166,11 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
   return info;
 }
 
+Eigen::VectorXd RBM::getParameters()
+{
+  return currentParameters();
+}
+
 void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
 {
   v = *x;

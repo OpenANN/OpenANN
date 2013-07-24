@@ -14,14 +14,15 @@ class Error:
 cdef class Net:
   """A multilayer feedforward network."""
   cdef openann.Net *thisptr
-  cdef object layers
 
   def __cinit__(self):
     self.thisptr = new openann.Net()
-    self.layers = []
 
   def __dealloc__(self):
     del self.thisptr
+
+  def initialize(self):
+    self.thisptr.initialize()
 
   def input_layer(self, dim1, dim2=1, dim3=1):
     """Add an input layer."""
@@ -104,15 +105,11 @@ cdef class Net:
 
   def add_layer(self, layer):
     """Add a layer."""
-    cdef int layers = self.thisptr.numberOflayers()
     self.thisptr.addLayer((<Layer?>layer).construct())
-    self.layers.append(layer)
 
   def add_output_layer(self, layer):
     """Add an output layer."""
-    cdef int layers = self.thisptr.numberOflayers()
     self.thisptr.addOutputLayer((<Layer?>layer).construct())
-    self.layers.append(layer)
 
   def set_regularization(self, l1_penalty=0.0, l2_penalty=0.0,
                          max_squared_weight_norm=0.0):
@@ -140,6 +137,13 @@ cdef class Net:
   cdef number_of_layers(self):
     """Get number of layers."""
     return self.thisptr.numberOflayers()
+
+  def get_layer(self, l):
+    """Get the l-th layer."""
+    cdef openann.Layer* layer = &self.thisptr.getLayer(l)
+    layer_object = Layer()
+    layer_object.thisptr = layer
+    return layer_object
 
   cdef openann.OutputInfo output_info(self, layer):
     cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layer)

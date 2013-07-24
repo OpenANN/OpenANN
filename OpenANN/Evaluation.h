@@ -83,7 +83,7 @@ double ce(Learner& learner, DataSet& dataSet);
  *
  * @param learner learned model
  * @param dataSet dataset
- * @return accuracy
+ * @return accuracy, within [0, 1]
  */
 double accuracy(Learner& learner, DataSet& dataSet);
 
@@ -118,8 +118,9 @@ int classificationHits(Learner& learner, DataSet& dataSet);
  * @param learner learner
  * @param dataSet dataset
  * @param opt optimization algorithm
+ * @return average accuracy on validation set, within [0, 1]
  */
-void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt);
+double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt);
 
 /**
  * One-of-c decoding.

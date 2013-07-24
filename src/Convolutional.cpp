@@ -218,4 +218,24 @@ Eigen::MatrixXd& Convolutional::getOutput()
   return y;
 }
 
+Eigen::VectorXd Convolutional::getParameters()
+{
+  Eigen::VectorXd p(fmout*fmin*kernelRows*kernelCols+bias*fmout*fmin);
+  int idx = 0;
+  for(int fmo = 0; fmo < fmout; fmo++)
+  {
+    for(int fmi = 0; fmi < fmin; fmi++)
+    {
+      for(int kr = 0; kr < kernelRows; kr++)
+        for(int kc = 0; kc < kernelCols; kc++)
+          p(idx++) = W[fmo][fmi](kr, kc);
+    }
+  }
+  if(bias)
+    for(int fmo = 0; fmo < fmout; fmo++)
+      for(int fmi = 0; fmi < fmin; fmi++)
+          p(idx++) = Wb(fmo, fmi);
+  return p;
+}
+
 } // namespace OpenANN

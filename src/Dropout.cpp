@@ -53,4 +53,9 @@ Eigen::MatrixXd& Dropout::getOutput()
   return y;
 }
 
+Eigen::VectorXd Dropout::getParameters()
+{
+  return Eigen::VectorXd();
+}
+
 }

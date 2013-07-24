@@ -75,6 +75,11 @@ public:
    * @return output
    */
   virtual Eigen::MatrixXd& getOutput() = 0;
+  /**
+   * Get the current values of parameters (weights, biases, ...).
+   * @return parameters
+   */
+  virtual Eigen::VectorXd getParameters() = 0;
 };
 
 } // namespace OpenANN
