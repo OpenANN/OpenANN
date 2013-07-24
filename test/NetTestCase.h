@@ -13,6 +13,7 @@ class NetTestCase : public TestCase
   void multilayerNetwork();
   void predictMinibatch();
   void minibatchErrorGradient();
+  void saveLoad();
 };
 
 #endif // OPENANN_TEST_NET_TEST_CASE_H_

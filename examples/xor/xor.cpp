@@ -1,6 +1,7 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
+#include <OpenANN/util/Random.h>
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -50,6 +51,9 @@ int main()
   X.row(3) << 1.0, 0.0;
   T.row(3) << 1.0;
   DirectStorageDataSet dataSet(&X, &T);
+
+  // Make the result repeatable
+  RandomNumberGenerator().seed(0);
 
   // Create network
   Net net;

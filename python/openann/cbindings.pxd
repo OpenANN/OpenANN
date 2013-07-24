@@ -73,6 +73,11 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   void setDebug()
 
 
+cdef extern from "OpenANN/util/Random.h" namespace "OpenANN":
+  cdef cppclass RandomNumberGenerator:
+    void seed(unsigned int seed)
+
+
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
   cdef cppclass OutputInfo:
     bool bias
@@ -230,6 +235,9 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Layer& getLayer(unsigned int l)
     OutputInfo getOutputInfo(int l)
     DataSet* propagateDataSet(DataSet& dataSet, int l)
+
+    void save(string& fileName)
+    void load(string& fileName)
 
 cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
   cdef cppclass SparseAutoEncoder(Learner):
