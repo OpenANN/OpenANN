@@ -5,9 +5,6 @@
 #include <Test/Stopwatch.h>
 #include <numeric>
 #include <vector>
-#ifdef PARALLEL_CORES
-#include <omp.h>
-#endif
 
 /**
  * \page PoleBalancingBenchmark Pole Balancing
@@ -229,9 +226,7 @@ void printResults(const Results& results)
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  OpenANN::useAllCores();
 
   OpenANN::Logger configLogger(OpenANN::Logger::CONSOLE);
   int runs = 1000;

@@ -4,9 +4,6 @@
 #include <Test/Stopwatch.h>
 #include <cstdlib>
 #include <vector>
-#ifdef PARALLEL_CORES
-#include <omp.h>
-#endif
 
 /**
  * \page TwoSpiralsBenchmark Two Spirals
@@ -239,9 +236,7 @@ void logResults(std::vector<Result>& results, unsigned long time)
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  OpenANN::useAllCores();
 
   OpenANN::Logger resultLogger(OpenANN::Logger::CONSOLE);
   const int architectures = 6;
