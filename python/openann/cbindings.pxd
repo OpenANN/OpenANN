@@ -64,7 +64,7 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
   cdef cppclass Log:
     Log()
-    ostream& get(LogLevel level, char* namespace = ?)
+    ostream& get(LogLevel level, char* namespace)
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   void setDisabled()

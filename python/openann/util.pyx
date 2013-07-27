@@ -65,15 +65,15 @@ cdef class Log:
 
   @classmethod
   def debug(cls, text):
-    openann.write(openann.Log().get(Log.DEBUG), <char*?>text)
+    openann.write(openann.Log().get(Log.DEBUG, ""), <char*?>text)
 
   @classmethod
   def info(cls, text):
-    openann.write(openann.Log().get(Log.INFO), <char*?>text)
+    openann.write(openann.Log().get(Log.INFO, ""), <char*?>text)
 
   @classmethod
   def error(cls, text):
-    openann.write(openann.Log().get(Log.ERROR), <char*?>text)
+    openann.write(openann.Log().get(Log.ERROR, ""), <char*?>text)
 
 
 cdef class RandomNumberGenerator:

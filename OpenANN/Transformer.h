@@ -16,6 +16,7 @@ namespace OpenANN
 class Transformer
 {
 public:
+  virtual ~Transformer() {}
   /**
    * Fit transformation according to training set X.
    * @param X each row represents an instance
