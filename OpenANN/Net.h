@@ -289,7 +289,7 @@ public:
    *       internally generate random matrices that will not be stored. To
    *       ensure that these matrices will contain the same values, you will
    *       have to set the seed for the random number generator, e.g.
-   *       \code
+\code
 OpenANN::RandomNumberGenerator().seed(0);
 Net net;
 // Construct and train network
@@ -297,7 +297,7 @@ net.save("mlnn.net");
 OpenANN::RandomNumberGenerator().seed(0);
 Net net2;
 net2.load("mlnn.net");
-   *       \endcode
+\endcode
    *
    * @param stream input stream
    */
