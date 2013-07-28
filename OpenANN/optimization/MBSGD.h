@@ -71,6 +71,16 @@ namespace OpenANN
  * down a hill. The gradient represents its acceleration and the acceleration
  * modifies its momentum.
  *
+ * Another type of momentum that is available in this implementation is the
+ * Nesterov's accelerated gradient (NAG). For smooth convex functions, NAG
+ * achieves a convergence rate of \f$ O(\frac{1}{T^2}) \f$ instead of
+ * \f$ O(\frac{1}{T}) \f$ [1]. The update rule only differs in where we
+ * calculate the gradient.
+ *
+ * \f$ \Delta w^t = \eta \Delta w^{t-1} - \frac{\alpha}{|B_t|}
+ *                  \sum_{n \in B_t} \nabla E_n(w + \eta \Delta w^{t-1}),
+ *                  \quad w^t = w^{t-1} + \Delta w^t, \f$
+ *
  * Another trick is using different learning rates for each weight. For each
  * weight \f$ w_{ji} \f$ we can introduce a gain \f$ g_{ji} \f$ which will be
  * multiplied with the learning rate so that we obtain an update rule for each
@@ -99,6 +109,10 @@ namespace OpenANN
  * time until we reach a maximum:
  *
  * \f$ \eta^t = min(\eta^{t-1} + \eta_{inc}, \eta_{max}). \f$
+ *
+ * [1] Sutskever, Ilya; Martens, James; Dahl, George; Hinton, Geoffrey:
+ * On the importance of initialization and momentum in deep learning,
+ * International Conference on Machine Learning, 2013.
  */
 class MBSGD : public Optimizer
 {
