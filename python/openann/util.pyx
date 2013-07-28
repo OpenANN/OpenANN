@@ -88,3 +88,12 @@ cdef class RandomNumberGenerator:
 
   def seed(self, s):
     self.thisptr.seed(s)
+
+
+cdef class OpenANN:
+  """OpenANN library infos."""
+  version = openann.VERSION
+  url = openann.URL
+  description = openann.DESCRIPTION
+  compilation_time = openann.COMPILATION_TIME
+  compilation_flags = openann.COMPILATION_FLAGS
