@@ -120,6 +120,8 @@ class MBSGD : public Optimizer
   StoppingCriteria stop;
   //! Optimizable problem
   Optimizable* opt; // do not delete
+  //! Use nesterov's accelerated momentum
+  bool nesterov;
   //! Learning rate
   double alpha;
   //! Learning rate decay
@@ -155,6 +157,7 @@ public:
    * @param momentum momentum coefficient (usually called eta); range: [0, 1)
    * @param batchSize size of the mini-batches; range: [1, N], where N is the
    *                  size of the training set
+   * @param nesterov use nesterov's accelerated momentum
    * @param learningRateDecay will be multiplied with the learning rate after
    *                          each weight update; range: (0, 1]
    * @param minimalLearningRate minimum value for the learning rate; range:
@@ -166,9 +169,10 @@ public:
    * @param maxGain maximum factor for individual learning rates
    */
   MBSGD(double learningRate = 0.01, double momentum = 0.5, int batchSize = 10,
-        double learningRateDecay = 1.0, double minimalLearningRate = 0.0,
-        double momentumGain = 0.0, double maximalMomentum = 1.0,
-        double minGain = 1.0, double maxGain = 1.0);
+        bool nesterov = false, double learningRateDecay = 1.0,
+        double minimalLearningRate = 0.0, double momentumGain = 0.0,
+        double maximalMomentum = 1.0, double minGain = 1.0,
+        double maxGain = 1.0);
   ~MBSGD();
   virtual void setOptimizable(Optimizable& opt);
   virtual void setStopCriteria(const StoppingCriteria& stop);
