@@ -21,7 +21,6 @@ class ZCAWhitening : public Transformer
 {
   Eigen::MatrixXd W;
 public:
-  ZCAWhitening() {}
   virtual Transformer& fit(const Eigen::MatrixXd& X);
   virtual Eigen::MatrixXd transform(const Eigen::MatrixXd& X);
 };
