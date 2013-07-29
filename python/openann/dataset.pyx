@@ -1,14 +1,14 @@
 cdef class Dataset:
   """Contains instances and targets."""
-  cdef openann.MatrixXd* input
-  cdef openann.MatrixXd* output
-  cdef openann.DataSet* storage
+  cdef cbindings.MatrixXd* input
+  cdef cbindings.MatrixXd* output
+  cdef cbindings.DataSet* storage
 
   def __cinit__(self, input=None, output=None):
     if input != None and output != None:
       self.input = __matrix_numpy_to_eigen__(input)
       self.output = __matrix_numpy_to_eigen__(output)
-      self.storage = new openann.DirectStorageDataSet(self.input, self.output)
+      self.storage = new cbindings.DirectStorageDataSet(self.input, self.output)
     else:
       self.input = NULL
       self.output = NULL
@@ -55,11 +55,11 @@ cdef class Dataset:
 
 def load_from_libsvm(filename):
   """Load dataset from libsvm file."""
-  cdef openann.MatrixXd* input = new openann.MatrixXd()
-  cdef openann.MatrixXd* output = new openann.MatrixXd()
+  cdef cbindings.MatrixXd* input = new cbindings.MatrixXd()
+  cdef cbindings.MatrixXd* output = new cbindings.MatrixXd()
   dset = Dataset()
   dset.input = input
   dset.output = output
-  openann.libsvm_load(deref(input), deref(output), filename, 0)
-  dset.storage = new openann.DirectStorageDataSet(input, output)
+  cbindings.libsvm_load(deref(input), deref(output), filename, 0)
+  dset.storage = new cbindings.DirectStorageDataSet(input, output)
   return dset 
