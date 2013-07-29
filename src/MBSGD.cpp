@@ -92,6 +92,10 @@ bool MBSGD::step()
   std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;
   if(endN > randomIndices.end())
     endN = randomIndices.end();
+
+  if(nesterov)
+    opt->setParameters(parameters + eta * momentum);
+
   for(int b = 0; b < batches; b++)
   {
     double error = 0.0;
@@ -116,10 +120,7 @@ bool MBSGD::step()
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
     parameters += momentum;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
-    if(nesterov)
-      opt->setParameters(parameters + eta * momentum);
-    else
-      opt->setParameters(parameters);
+    opt->setParameters(parameters);
 
     // Decay alpha, increase momentum
     alpha *= alphaDecay;
@@ -152,6 +153,7 @@ bool MBSGD::step()
 
 Eigen::VectorXd MBSGD::result()
 {
+  opt->setParameters(parameters);
   return parameters;
 }
 

@@ -110,7 +110,7 @@ def run_sarcos():
     stop_dict = {"maximal_iterations" : 100}
     opt = MBSGD(stop_dict, learning_rate=0.2, learning_rate_decay=0.9999,
                 min_learning_rate=0.001, momentum=0.5, batch_size=128,
-                nesterov=False)
+                nesterov=True)
     opt.optimize(net, training_set)
 
     pred = net.predict(X)
