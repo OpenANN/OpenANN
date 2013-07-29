@@ -92,8 +92,22 @@ cdef class RandomNumberGenerator:
 
 cdef class OpenANN:
   """OpenANN library infos."""
-  version = cbindings.VERSION
-  url = cbindings.URL
-  description = cbindings.DESCRIPTION
-  compilation_time = cbindings.COMPILATION_TIME
-  compilation_flags = cbindings.COMPILATION_FLAGS
+  @classmethod
+  def version(cls):
+    return cbindings.VERSION
+
+  @classmethod
+  def url(cls):
+    return cbindings.URL
+
+  @classmethod
+  def description(cls):
+    return cbindings.DESCRIPTION
+
+  @classmethod
+  def compilation_time(cls):
+    return cbindings.COMPILATION_TIME
+
+  @classmethod
+  def compilation_flags(cls):
+    return cbindings.COMPILATION_FLAGS
