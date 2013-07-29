@@ -1,6 +1,7 @@
 #include "ZCATestCase.h"
 #include <OpenANN/ZCAWhitening.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/io/Logger.h>
 
 void ZCATestCase::run()
 {
@@ -16,6 +17,8 @@ void ZCATestCase::whiten()
   for(int n = 0; n < N; n++)
     for(int d = 0; d < D; d++)
       X(n, d) = rng.sampleNormalDistribution<double>();
+  Eigen::VectorXd w = Eigen::VectorXd::Random(D);
+  X *= w.asDiagonal();
 
   OpenANN::ZCAWhitening zca;
   Eigen::MatrixXd Y = zca.fit(X).transform(X);
