@@ -8,8 +8,11 @@ namespace OpenANN
 Transformer& ZCAWhitening::fit(const Eigen::MatrixXd& X)
 {
   const int N = X.rows();
-  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenDecomp(X.transpose()*X);
-  W = std::sqrt((double) N - 1.0) * eigenDecomp.operatorInverseSqrt();
+  const int D = X.cols();
+  Eigen::MatrixXd C = X.transpose() * X / ((double) N - 1.0);
+  C += Eigen::MatrixXd::Identity(D, D) * 1e-5; // To avoid numerical problems
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenDecomp(C);
+  W = eigenDecomp.operatorInverseSqrt();
   return *this;
 }
 

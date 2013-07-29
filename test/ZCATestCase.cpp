@@ -30,7 +30,7 @@ void ZCATestCase::whiten()
   Eigen::MatrixXd Y = zca.fit(X).transform(X);
   Eigen::MatrixXd C = 1.0 / (N-1.0) * Y.transpose() * Y;
   for(int d = 0; d < D; d++)
-    ASSERT_EQUALS_DELTA(C(d, d), 1.0, 1e-5);
+    ASSERT_EQUALS_DELTA(C(d, d), 1.0, 1e-2);
   Eigen::MatrixXd Y2 = zca.transform(X2);
   C = 1.0 / (N2-1.0) * Y2.transpose() * Y2;
   for(int d = 0; d < D; d++)
