@@ -9,7 +9,12 @@ namespace OpenANN
 
 /**
  * @class ZCAWhitening
- * Principal component analysis.
+ *
+ * Zero component analysis whitening transformation.
+ *
+ * The data will be transformed through \f$ Y = X W \f$ such that the
+ * covariance matrix \f$ C = \frac{1}{n-1} Y^T Y \f$ will be \f$ I \f$ and
+ * \f$ W = W^T \f$.
  */
 class ZCAWhitening : public Transformer
 {
