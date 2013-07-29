@@ -86,7 +86,7 @@ int main(int argc, char** argv)
   OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
                " iteration is finished.";
 
-  OpenANN::MBSGD optimizer(0.05, 0.0, 1, false, 0.9998, 0.001, 0.0, 1.0, 1.0, 1.0);
+  OpenANN::MBSGD optimizer(0.05, 0.0, 1, true, 0.9998, 0.001, 0.0, 1.0, 1.0, 1.0);
   OpenANN::DataStream stream = OpenANN::DataStream(loader.trainingN)
       .setLearner(net).setOptimizer(optimizer);
 
@@ -118,6 +118,8 @@ int main(int argc, char** argv)
     }
   }
 
+  // Set best parameter vector
+  optimizer.result();
   OPENANN_INFO << "Error = " << net.error();
   OPENANN_INFO << "Wrote data to evaluation-*.log.";
 

@@ -93,11 +93,11 @@ bool MBSGD::step()
   if(endN > randomIndices.end())
     endN = randomIndices.end();
 
-  if(nesterov)
-    opt->setParameters(parameters + eta * momentum);
-
   for(int b = 0; b < batches; b++)
   {
+    if(nesterov)
+      opt->setParameters(parameters + eta * momentum);
+
     double error = 0.0;
     opt->errorGradient(startN, endN, error, gradient);
     accumulatedError += error;
@@ -120,7 +120,8 @@ bool MBSGD::step()
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
     parameters += momentum;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
-    opt->setParameters(parameters);
+    if(!nesterov)
+      opt->setParameters(parameters);
 
     // Decay alpha, increase momentum
     alpha *= alphaDecay;
