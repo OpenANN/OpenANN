@@ -39,7 +39,6 @@ class Compressed : public Layer
   double stdDev;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
-  Eigen::VectorXd b;
   Eigen::MatrixXd phi;
   Eigen::MatrixXd alpha;
   Eigen::MatrixXd alphad;

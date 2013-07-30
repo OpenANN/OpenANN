@@ -73,7 +73,7 @@ int main(int argc, char** argv)
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
-  OpenANN::MBSGD optimizer(0.01, 0.6, 10, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  OpenANN::MBSGD optimizer(0.01, 0.6, 10, false, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();

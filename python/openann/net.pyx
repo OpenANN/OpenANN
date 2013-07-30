@@ -1,22 +1,22 @@
 class Activation:
   """Activation function."""
-  LOGISTIC = openann.LOGISTIC
-  TANH = openann.TANH
-  TANH_SCALED = openann.TANH_SCALED
-  RECTIFIER = openann.RECTIFIER
-  LINEAR = openann.LINEAR
+  LOGISTIC = cbindings.LOGISTIC
+  TANH = cbindings.TANH
+  TANH_SCALED = cbindings.TANH_SCALED
+  RECTIFIER = cbindings.RECTIFIER
+  LINEAR = cbindings.LINEAR
 
 class Error:
   """Error function."""
-  MSE = openann.MSE
-  CE = openann.CE
+  MSE = cbindings.MSE
+  CE = cbindings.CE
 
 cdef class Net:
   """A multilayer feedforward network."""
-  cdef openann.Net *thisptr
+  cdef cbindings.Net *thisptr
 
   def __cinit__(self):
-    self.thisptr = new openann.Net()
+    self.thisptr = new cbindings.Net()
 
   def __dealloc__(self):
     del self.thisptr
@@ -129,8 +129,8 @@ cdef class Net:
   def predict(self, x_numpy):
     """Predict output for given inputs, each row represents an instance."""
     x_numpy = numpy.atleast_2d(x_numpy)
-    cdef openann.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
-    cdef openann.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
+    cdef cbindings.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
+    cdef cbindings.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
     del x_eigen
     return __matrix_eigen_to_numpy__(&y_eigen)
 
@@ -140,13 +140,13 @@ cdef class Net:
 
   def get_layer(self, l):
     """Get the l-th layer."""
-    cdef openann.Layer* layer = &self.thisptr.getLayer(l)
+    cdef cbindings.Layer* layer = &self.thisptr.getLayer(l)
     layer_object = Layer()
     layer_object.thisptr = layer
     return layer_object
 
-  cdef openann.OutputInfo output_info(self, layer):
-    cdef openann.OutputInfo info = self.thisptr.getOutputInfo(layer)
+  cdef cbindings.OutputInfo output_info(self, layer):
+    cdef cbindings.OutputInfo info = self.thisptr.getOutputInfo(layer)
     return info
 
   def dimension(self):
@@ -155,12 +155,12 @@ cdef class Net:
 
   def set_parameters(self, parameters):
     """Set parameters of the network."""
-    cdef openann.VectorXd* params_eigen = __vector_numpy_to_eigen__(parameters)
+    cdef cbindings.VectorXd* params_eigen = __vector_numpy_to_eigen__(parameters)
     self.thisptr.setParameters(deref(params_eigen))
 
   def current_parameters(self):
     """Get current parameters."""
-    cdef openann.VectorXd params_eigen = self.thisptr.currentParameters()
+    cdef cbindings.VectorXd params_eigen = self.thisptr.currentParameters()
     return __vector_eigen_to_numpy__(&params_eigen)
 
   def save(self, file_name):
@@ -174,26 +174,26 @@ cdef class Net:
 
 cdef class SparseAutoEncoder:
   """Sparse auto-encoder."""
-  cdef openann.SparseAutoEncoder *thisptr
+  cdef cbindings.SparseAutoEncoder *thisptr
 
   def __init__(self, D, H, beta, rho, lmbda, act):
-    self.thisptr = new openann.SparseAutoEncoder(D, H, beta, rho, lmbda, act)
+    self.thisptr = new cbindings.SparseAutoEncoder(D, H, beta, rho, lmbda, act)
 
   def __dealloc__(self):
     del self.thisptr
 
   def get_input_weights(self):
     """Get weight matrix between input and hidden layer."""
-    cdef openann.MatrixXd weights = self.thisptr.getInputWeights()
+    cdef cbindings.MatrixXd weights = self.thisptr.getInputWeights()
     return __matrix_eigen_to_numpy__(&weights)
 
   def get_output_weights(self):
     """Get weight matrix between hidden and output layer."""
-    cdef openann.MatrixXd weights = self.thisptr.getOutputWeights()
+    cdef cbindings.MatrixXd weights = self.thisptr.getOutputWeights()
     return __matrix_eigen_to_numpy__(&weights)
 
   def reconstruct(self, x):
     """Reconstruct input."""
-    cdef openann.VectorXd* x_eigen = __vector_numpy_to_eigen__(x)
-    cdef openann.VectorXd recon = self.thisptr.reconstruct(deref(x_eigen))
+    cdef cbindings.VectorXd* x_eigen = __vector_numpy_to_eigen__(x)
+    cdef cbindings.VectorXd recon = self.thisptr.reconstruct(deref(x_eigen))
     return __vector_eigen_to_numpy__(&recon)

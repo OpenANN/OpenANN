@@ -2,6 +2,15 @@ from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+
+cdef extern from "OpenANN/OpenANN" namespace "OpenANN::OpenANNLibraryInfo":
+  char* VERSION
+  char* URL
+  char* DESCRIPTION
+  char* COMPILATION_TIME
+  char* COMPILER_FLAGS
+
+
 cdef extern from "Eigen/Dense" namespace "Eigen":
   cdef cppclass VectorXd:
     VectorXd()
@@ -64,7 +73,7 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
   cdef cppclass Log:
     Log()
-    ostream& get(LogLevel level, char* namespace = ?)
+    ostream& get(LogLevel level, char* namespace)
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   void setDisabled()
@@ -175,7 +184,7 @@ cdef extern from "OpenANN/optimization/Optimizer.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/optimization/MBSGD.h" namespace "OpenANN":
   cdef cppclass MBSGD(Optimizer):
-    MBSGD(double learningRate, double momentum, int batchSize,
+    MBSGD(double learningRate, double momentum, int batchSize, bool nesterov,
        double learningRateDecay, double minimalLearningRate, 
        double momentumGain, double maximalMomentum,
        double minGain, double maxGain)
