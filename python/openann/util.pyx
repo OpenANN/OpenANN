@@ -114,7 +114,7 @@ cdef class OpenANN:
 
 
 def _use_all_cores():
-  openann.useAllCores()
+  cbindings.useAllCores()
 
 
 _use_all_cores()
