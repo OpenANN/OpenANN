@@ -1,6 +1,10 @@
 #ifndef OPENANN_INCLUDED
 #define OPENANN_INCLUDED
 
+#ifdef PARALLEL_CORES
+#include <omp.h>
+#endif
+
 namespace OpenANN
 {
 
@@ -26,6 +30,8 @@ public:
   //! Print all information on stdout.
   static void print();
 };
+
+void useAllCores();
 
 } // namespace OpenANN
 

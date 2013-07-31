@@ -39,6 +39,7 @@
 int main(int argc, char** argv)
 {
   OpenANN::OpenANNLibraryInfo::print();
+  OpenANN::useAllCores();
 
   bool verbose = false;
   bool qt = false;

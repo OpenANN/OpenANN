@@ -3,9 +3,6 @@
 #include <OpenANN/CompressionMatrixFactory.h>
 #include <OpenANN/io/Logger.h>
 #include <Test/Stopwatch.h>
-#ifdef PARALLEL_CORES
-#include <omp.h>
-#endif
 
 /**
  * \page P300SpellerBenchmark P300 Speller
@@ -149,9 +146,7 @@ void printResult(Result& result, int runs)
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  OpenANN::useAllCores();
 
   OpenANN::Log::getLevel() = OpenANN::Log::INFO;
   OpenANN::Logger interfaceLogger(OpenANN::Logger::CONSOLE);

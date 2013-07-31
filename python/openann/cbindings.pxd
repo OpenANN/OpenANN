@@ -38,6 +38,9 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     int& get "operator()"(int rows, int cols)
 
+cdef extern from "OpenANN/OpenANN" namespace "OpenANN":
+  void useAllCores()
+
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
   cdef enum ActivationFunction:
     LOGISTIC

@@ -43,9 +43,7 @@ if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "Default build type.")
 endif()
 
-if(NOT PARALLEL_CORES)
-  set(PARALLEL_CORES 4)
-endif()
+set(PARALLEL_CORES 4 CACHE Integer "Number of cores that can be used in parallel.")
 
 set(OPENANN_VERSION_NUMBER "1.1.0")
 set(OPENANN_URL "https://github.com/OpenANN/OpenANN")

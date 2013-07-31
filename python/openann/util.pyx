@@ -111,3 +111,10 @@ cdef class OpenANN:
   @classmethod
   def compilation_flags(cls):
     return cbindings.COMPILATION_FLAGS
+
+
+def _use_all_cores():
+  cbindings.useAllCores()
+
+
+_use_all_cores()
