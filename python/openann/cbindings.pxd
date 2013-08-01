@@ -275,6 +275,10 @@ cdef extern from "OpenANN/PCA.h" namespace "OpenANN":
     PCA(int components, bool whiten)
     VectorXd explainedVarianceRatio()
 
+cdef extern from "OpenANN/ZCAWhitening.h" namespace "OpenANN":
+  cdef cppclass ZCAWhitening(Transformer):
+    ZCAWhitening()
+
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
   double mse(Learner& learner, DataSet& dataSet)
