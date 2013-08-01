@@ -1,13 +1,9 @@
 find_package(PythonInterp)
 
 if(PYTHONINTERP_FOUND)
-  set(PYTHONEX_LINK_LIBRARIES "\"openann\"")
+  set(PYTHONEX_LINK_LIBRARIES "\"openann\", \"alglib\"")
   if(CUDA_FOUND)
     set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"openann_cuda\"")
-  else()
-  endif()
-  if(USE_GPL_LICENSE)
-    set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"alglib\"")
   endif()
 
   file(COPY openann/cbindings.pxd DESTINATION .)
