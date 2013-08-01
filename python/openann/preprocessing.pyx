@@ -49,3 +49,23 @@ cdef class PCA:
   def explained_variance_ratio(self):
     cdef cbindings.VectorXd evr_eigen = self.thisptr.explainedVarianceRatio()
     return __vector_eigen_to_numpy__(&evr_eigen)
+
+cdef class ZCAWhitening:
+  """Zero phase component analysis."""
+  cdef cbindings.ZCAWhitening *thisptr
+
+  def __init__(self):
+    self.thisptr = new cbindings.ZCAWhitening()
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def fit(self, X):
+    cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    self.thisptr.fit(deref(X_eigen))
+    return self
+
+  def transform(self, X):
+    cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    cdef cbindings.MatrixXd Y_eigen = self.thisptr.transform(deref(X_eigen))
+    return __matrix_eigen_to_numpy__(&Y_eigen)
