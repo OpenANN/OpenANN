@@ -29,9 +29,10 @@ macro(add_documentation target configuration)
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${DOXYGEN_INPUT}
   )
+  add_custom_target(${TARGET_NAME} DEPENDS ${COMMAND_NAME})
   foreach(opt ${ARGN})
     if(opt STREQUAL "ADD_TO_ALL")
-      add_custom_target(${TARGET_NAME} ALL DEPENDS ${COMMAND_NAME})
+      add_custom_target(${TARGET_NAME}_all ALL DEPENDS ${COMMAND_NAME})
     endif()
   endforeach()
 endmacro()
