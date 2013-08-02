@@ -11,8 +11,9 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake -D CMAKE_BUILD_TYPE:String=Debug ..
+  - cmake -D CMAKE_BUILD_TYPE=Release -D ALWAYS_BUILD_DOCUMENTATION=True -D EXCLUDE_TESTS_FROM_ALL=False ..
   - make
+  - make python_extension
   - test/TestSuite
 branches:
   only:
