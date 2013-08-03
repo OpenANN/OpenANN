@@ -1,4 +1,5 @@
 cimport cbindings
+cimport cython
 cimport numpy
 import numpy
 from cython.operator cimport dereference as deref
@@ -12,5 +13,3 @@ include "layer.pyx"
 include "net.pyx"
 include "optimization.pyx"
 include "evaluation.pyx"
-
-

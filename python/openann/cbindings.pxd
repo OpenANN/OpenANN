@@ -3,12 +3,9 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 
-cdef extern from "OpenANN/OpenANN" namespace "OpenANN::OpenANNLibraryInfo":
-  char* VERSION
-  char* URL
-  char* DESCRIPTION
-  char* COMPILATION_TIME
-  char* COMPILER_FLAGS
+cdef extern from "<iostream>" namespace "std":
+  cdef cppclass ostream
+  ostream& write "operator<<" (ostream& os, char* str)
 
 
 cdef extern from "Eigen/Dense" namespace "Eigen":
@@ -38,8 +35,17 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     int& get "operator()"(int rows, int cols)
 
+
+cdef extern from "OpenANN/OpenANN" namespace "OpenANN::OpenANNLibraryInfo":
+  char* VERSION
+  char* URL
+  char* DESCRIPTION
+  char* COMPILATION_TIME
+  char* COMPILER_FLAGS
+
 cdef extern from "OpenANN/OpenANN" namespace "OpenANN":
   void useAllCores()
+
 
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
   cdef enum ActivationFunction:
@@ -55,9 +61,6 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     MSE
     CE
 
-cdef extern from "<iostream>" namespace "std":
-  cdef cppclass ostream
-  ostream& write "operator<<" (ostream& os, char* str)
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Logger":
   cdef enum Target:
@@ -204,6 +207,7 @@ cdef extern from "OpenANN/optimization/LBFGS.h" namespace "OpenANN":
   cdef cppclass LBFGS(Optimizer):
     LBFGS(int m)
 
+
 cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   cdef cppclass Learner(Optimizable):
     Learner& trainingSet(MatrixXd& input, MatrixXd& output)
@@ -259,6 +263,7 @@ cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
     MatrixXd getOutputWeights()
     VectorXd reconstruct(VectorXd& x)
 
+
 cdef extern from "OpenANN/Transformer.h" namespace "OpenANN":
   cdef cppclass Transformer:
     Transformer& fit(MatrixXd& X)
@@ -279,6 +284,7 @@ cdef extern from "OpenANN/ZCAWhitening.h" namespace "OpenANN":
   cdef cppclass ZCAWhitening(Transformer):
     ZCAWhitening()
 
+
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
   double mse(Learner& learner, DataSet& dataSet)
@@ -286,4 +292,5 @@ cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double accuracy(Learner& learner, DataSet& dataSet)
   MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
   int classificationHits(Learner& learner, DataSet& dataSet)
-  double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
+  double crossValidation(int folds, Learner& learner, DataSet& dataSet,
+                         Optimizer& opt)
