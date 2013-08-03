@@ -7,18 +7,16 @@ if(PYTHONINTERP_FOUND)
   endif()
 
   file(COPY openann/cbindings.pxd DESTINATION .)
-  file(COPY openann/layer.pyx openann/evaluation.pyx openann/openann.pyx
-            openann/optimization.pyx openann/net.pyx openann/util.pyx
-            openann/dataset.pyx openann/preprocessing.pyx
-       DESTINATION .)
+  file(GLOB cython_pyx "openann/*.pyx")
+  file(COPY ${cython_pyx} DESTINATION .)
   configure_file(setup.py.in setup.py)
 
   add_custom_command(
     OUTPUT python_extension_command
     COMMAND ${CMAKE_COMMAND} -E echo "Building Python extension..."
-    COMMAND touch openann.pyx
     COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
+    DEPENDS ${cython_pyx} openann/cbindings.pxd
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   # HACK This target will only be build to test the python bindings!
@@ -29,6 +27,7 @@ if(PYTHONINTERP_FOUND)
     COMMAND ${CMAKE_COMMAND} -E echo "Installing Python extension..."
     COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
+    DEPENDS ${cython_pyx} openann/cbindings.pxd
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   add_custom_target(python_extension_install DEPENDS openann alglib python_extension_install_command)
