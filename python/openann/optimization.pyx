@@ -1,5 +1,3 @@
-import warnings
-
 cdef class StoppingCriteria:
   """Stopping criteria for optimization algorithms."""
   cdef cbindings.StoppingCriteria *thisptr
