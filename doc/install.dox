@@ -52,13 +52,25 @@ The following programs and libraries are required to use OpenANN:
 </tr>
 </table>
 
+\section Installation
+
+Go to the %OpenANN directory and execute
+
+\code
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=Release ..
+sudo make install
+sudo ldconfig
+\endcode
+
 \section BuildConfiguration Build Configuration
 
 The %OpenANN build is influenced by some options. These can be set with cmake:
 \verbatim
 cmake -D <option>=<value> ..
 \endverbatim
-You will see an example in the next section.
+You will see an example in the previous section.
 
 <table>
 <tr>
@@ -100,18 +112,6 @@ developers.</td>
 <td>ON</td>
 </tr>
 </table>
-
-\section Installation
-
-Go to the %OpenANN directory and execute
-
-\code
-mkdir build
-cd build
-cmake -D CMAKE_BUILD_TYPE=Release ..
-sudo make install
-sudo ldconfig
-\endcode
 
 */
 
