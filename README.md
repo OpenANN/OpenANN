@@ -29,8 +29,7 @@ Linux
     cd path/to/OpenANN/dir
     mkdir build
     cd build
-    # Available CMAKE_BUILD_TYPEs are Debug and Release.
-    cmake -D CMAKE_BUILD_TYPE:String=Release ..
+    cmake ..
     sudo make install
     sudo ldconfig
 

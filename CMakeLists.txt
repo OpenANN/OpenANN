@@ -10,13 +10,13 @@ include(cmake/UseDoxygen.cmake)
 include(cmake/Utilities.cmake)
 include(cmake/FindEigen3.cmake)
 
+# Check dependencies
 if(NOT EIGEN3_FOUND)
   message(FATAL_ERROR "Could not find Eigen 3 library. You can either "
                       "install it with your package management system or "
                       "download it from http://eigen.tuxfamily.org/ and "
                       "install it with CMake.")
 endif()
-
 if(UNIX)
   find_program(SH_EXECUTABLE sh)
   if(NOT SH_EXECUTABLE)
@@ -34,15 +34,16 @@ else()
   message(WARNING "Only MacOS and Linux are supported!")
 endif()
 
+# Ensure out-of-source build
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "Usage: mkdir build; cmake ..")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
-  message(STATUS "Default build type.")
 endif()
 
+set(LOG_LEVEL "INFO" CACHE String "Log level (DEBUG, INFO, ERROR, DISABLED).")
 set(PARALLEL_CORES 4 CACHE Integer "Number of cores that can be used in parallel.")
 
 set(OPENANN_VERSION_NUMBER "1.1.0")
@@ -64,6 +65,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
       compiler_add_flag("-fopenmp")
       compiler_add_flag("-DPARALLEL_CORES=1")
     endif()
+    compiler_add_flag("-DOPENANN_LOGLEVEL=OpenANN::Log::DEBUG")
   endif()
 elseif(${CMAKE_BUILD_TYPE} STREQUAL Release)
   message(STATUS "Release configuration")
@@ -81,6 +83,7 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL Release)
       compiler_add_flag("-fopenmp")
       compiler_add_flag("-DPARALLEL_CORES=${PARALLEL_CORES}")
     endif()
+    compiler_add_flag("-DOPENANN_LOGLEVEL=OpenANN::Log::${LOG_LEVEL}")
   endif()
 else()
   message(FATAL_ERROR "Unknown configuration, set CMAKE_BUILD_TYPE to Debug or Release")
