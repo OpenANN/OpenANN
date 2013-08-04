@@ -15,9 +15,7 @@ void PCATestCase::decorrelation()
   const int N = 100;
   const int D = 2;
   Eigen::MatrixXd X(N, D);
-  for(int n = 0; n < N; ++n)
-    for(int d = 0; d < D; ++d)
-      X(n, d) = rng.sampleNormalDistribution<double>();
+  rng.fillNormalDistribution(X);
 
   // Linear transformation (correlation)
   Eigen::MatrixXd A(D, D);
@@ -46,9 +44,7 @@ void PCATestCase::dimensionalityReduction()
   const int N = 100;
   const int D = 5;
   Eigen::MatrixXd X(N, D);
-  for(int n = 0; n < N; ++n)
-    for(int d = 0; d < D; ++d)
-      X(n, d) = rng.sampleNormalDistribution<double>();
+  rng.fillNormalDistribution(X);
 
   // Strong correlation
   Eigen::MatrixXd A = Eigen::MatrixXd::Identity(D, D) * 0.5 +

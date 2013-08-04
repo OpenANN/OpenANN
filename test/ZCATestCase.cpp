@@ -16,14 +16,10 @@ void ZCATestCase::whiten()
   Eigen::VectorXd w = Eigen::VectorXd::Random(D);
   Eigen::MatrixXd X(N, D);
   OpenANN::RandomNumberGenerator rng;
-  for(int n = 0; n < N; n++)
-    for(int d = 0; d < D; d++)
-      X(n, d) = rng.sampleNormalDistribution<double>();
+  rng.fillNormalDistribution(X);
   X *= w.asDiagonal();
   Eigen::MatrixXd X2(N2, D);
-  for(int n = 0; n < N2; n++)
-    for(int d = 0; d < D; d++)
-      X2(n, d) = rng.sampleNormalDistribution<double>();
+  rng.fillNormalDistribution(X2);
   X2 *= w.asDiagonal();
 
   OpenANN::ZCAWhitening zca;
