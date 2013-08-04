@@ -54,15 +54,64 @@ The following programs and libraries are required to use OpenANN:
 
 \section Installation
 
-Go to the OpenANN directory and execute
+Go to the %OpenANN directory and execute
 
 \code
 mkdir build
 cd build
-cmake -D CMAKE_BUILD_TYPE:String=Release ..
+cmake -D CMAKE_BUILD_TYPE=Release ..
 sudo make install
 sudo ldconfig
 \endcode
+
+\section BuildConfiguration Build Configuration
+
+The %OpenANN build is influenced by some options. These can be set with cmake:
+\verbatim
+cmake -D <option>=<value> ..
+\endverbatim
+You will see an example in the previous section.
+
+<table>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+<tr>
+<td>CMAKE_BUILD_TYPE</td>
+<td>Build configuration. Available options are: Debug, Release.</tr>
+<td>Release</tr>
+</tr>
+<tr>
+<td>LOG_LEVEL</td>
+<td>Log level of the internal logging. Available options are: DISABLED, ERROR,
+INFO, DEBUG</tr>
+<td>INFO</tr>
+</tr>
+<tr>
+<td>PARALLEL_CORES</td>
+<td>Number of CPU cores that %OpenANN can use.</tr>
+<td>4</tr>
+</tr>
+<tr>
+<td>ALWAYS_BUILD_DOCUMENTATION</td>
+<td>Add documentation target to default target (i.e. "make all").
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_PYTHON</td>
+<td>(De)activate building Python bindings for %OpenANN.</tr>
+<td>ON</tr>
+</tr>
+<tr>
+<td>EXCLUDE_TESTS_FROM_ALL</td>
+<td>You can build all examples, benchmarks and the test suite with the
+standard build target when you deactivate this. This might be useful for
+developers.</td>
+<td>ON</td>
+</tr>
+</table>
 
 */
 
