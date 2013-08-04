@@ -109,6 +109,14 @@ public:
     }
     std::random_shuffle(result.begin(), result.end());
   }
+
+  template<class M>
+  void fillNormalDistribution(M& matrix, double stdDev = 1.0)
+  {
+    for(int r = 0; r < matrix.rows(); r++)
+      for(int c = 0; c < matrix.cols(); c++)
+        matrix(r, c) = sampleNormalDistribution<double>() * stdDev;
+  }
 };
 
 } // namespace OpenANN
