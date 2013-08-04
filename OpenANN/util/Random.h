@@ -113,9 +113,9 @@ public:
   template<class M>
   void fillNormalDistribution(M& matrix, double stdDev = 1.0)
   {
-    for(int r = 0; r < matrix.rows(); r++)
-      for(int c = 0; c < matrix.cols(); c++)
-        matrix(r, c) = sampleNormalDistribution<double>() * stdDev;
+    const double* end = matrix.data() + matrix.rows() * matrix.cols();
+    for(double* p = matrix.data(); p < end; p++)
+        *p = sampleNormalDistribution<double>() * stdDev;
   }
 };
 
