@@ -75,6 +75,23 @@ Style</a>. You can run the following command in the %OpenANN main directory:
 astyle --options=.astylerc --recursive "OpenANN/*.h" "src/*.cpp" "examples/*.h" "examples/*.cpp" "benchmarks/*.h" "benchmarks/*.cpp" "test/*.h" "test/*.cpp"
 \endverbatim
 
+\section TestSuite Test Suite
+
+To build the %OpenANN test suite you have to build the target TestSuite:
+\verbatim
+make TestSuite
+\endverbatim
+You can run the tests with
+\verbatim
+test/TestSuite
+\endverbatim
+or
+\verbatim
+test/TestSuite -qt
+\endverbatim
+The latter will only work if Qt and the Qt headers are installed. Usually all
+tests should be succesful.
+
 \section FAQ
 
 \subsection FAQ1 What can I do to contribute to %OpenANN?
