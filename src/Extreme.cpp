@@ -24,9 +24,7 @@ OutputInfo Extreme::initialize(std::vector<double*>& parameterPointers,
 void Extreme::initializeParameters()
 {
   RandomNumberGenerator rng;
-  for(int j = 0; j < J; j++)
-    for(int i = 0; i < I + bias; i++)
-      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
+  rng.fillNormalDistribution(W, stdDev);
 }
 
 void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
