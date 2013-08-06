@@ -72,20 +72,20 @@ cdef class ZCAWhitening:
 
 cdef class KMeans:
   """K-Means clustering."""
-  cdef openann.KMeans *thisptr
+  cdef cbindings.KMeans *thisptr
 
   def __init__(self, n_inputs, n_centers):
-    self.thisptr = new openann.KMeans(n_inputs, n_centers)
+    self.thisptr = new cbindings.KMeans(n_inputs, n_centers)
 
   def update(self, X):
-    cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
     self.thisptr.update(deref(X_eigen))
 
   def transform(self, X):
-    cdef openann.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
-    cdef openann.MatrixXd Y_eigen = self.thisptr.transform(deref(X_eigen))
+    cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    cdef cbindings.MatrixXd Y_eigen = self.thisptr.transform(deref(X_eigen))
     return __matrix_eigen_to_numpy__(&Y_eigen)
 
   def get_centers(self):
-    cdef openann.MatrixXd C_eigen = self.thisptr.getCenters()
+    cdef cbindings.MatrixXd C_eigen = self.thisptr.getCenters()
     return __matrix_eigen_to_numpy__(&C_eigen)
