@@ -27,11 +27,13 @@ public:
 
 class MulticlassEvaluator : public Evaluator
 {
+  int interval;
   Logger* logger;
   Stopwatch* stopwatch;
   int iteration;
 public:
-  MulticlassEvaluator(Logger::Target target = Logger::CONSOLE);
+  MulticlassEvaluator(int interval = 1,
+                      Logger::Target target = Logger::CONSOLE);
   virtual ~MulticlassEvaluator();
   virtual void evaluate(Learner& learner, DataSet& dataSet);
 };
