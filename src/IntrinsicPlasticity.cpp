@@ -33,8 +33,7 @@ void IntrinsicPlasticity::initialize()
 {
   s.fill(1.0);
   RandomNumberGenerator rng;
-  for(int i = 0; i < nodes; i++)
-    b(i) = rng.sampleNormalDistribution<double>() * stdDev;
+  rng.fillNormalDistribution(b, stdDev);
 }
 
 double IntrinsicPlasticity::error()

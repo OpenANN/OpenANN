@@ -90,9 +90,7 @@ void Convolutional::initializeParameters()
   {
     for(int fmi = 0; fmi < fmin; fmi++)
     {
-      for(int kr = 0; kr < kernelRows; kr++)
-        for(int kc = 0; kc < kernelCols; kc++)
-          W[fmo][fmi](kr, kc) = rng.sampleNormalDistribution<double>() * stdDev;
+      rng.fillNormalDistribution(W[fmo][fmi], stdDev);
       if(bias)
         Wb(fmo, fmi) = rng.sampleNormalDistribution<double>() * stdDev;
     }
