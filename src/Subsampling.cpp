@@ -85,15 +85,9 @@ void Subsampling::initializeParameters()
   RandomNumberGenerator rng;
   for(int fmo = 0; fmo < fm; fmo++)
   {
-    for(int r = 0; r < outRows; r++)
-    {
-      for(int c = 0; c < outCols; c++)
-      {
-        W[fmo](r, c) = rng.sampleNormalDistribution<double>() * stdDev;
-        if(bias)
-          Wb[fmo](r, c) = rng.sampleNormalDistribution<double>() * stdDev;
-      }
-    }
+    rng.fillNormalDistribution(W[fmo], stdDev);
+    if(bias)
+      rng.fillNormalDistribution(Wb[fmo], stdDev);
   }
 }
 

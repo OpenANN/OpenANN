@@ -42,13 +42,9 @@ OutputInfo FullyConnected::initialize(std::vector<double*>& parameterPointers,
 void FullyConnected::initializeParameters()
 {
   RandomNumberGenerator rng;
-  for(int j = 0; j < J; j++)
-  {
-    for(int i = 0; i < I; i++)
-      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
-    if(bias)
-      b(j) = rng.sampleNormalDistribution<double>() * stdDev;
-  }
+  rng.fillNormalDistribution(W, stdDev);
+  if(bias)
+    rng.fillNormalDistribution(b, stdDev);
 }
 
 void FullyConnected::updatedParameters()

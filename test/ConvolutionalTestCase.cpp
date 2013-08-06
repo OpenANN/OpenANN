@@ -14,7 +14,7 @@ void ConvolutionalTestCase::run()
 void ConvolutionalTestCase::setUp()
 {
   OpenANN::RandomNumberGenerator rng;
-  rng.seed(4);
+  rng.seed(6);
 }
 
 void ConvolutionalTestCase::convolutional()
