@@ -32,7 +32,7 @@ dependencies and thus, it is suited to run on limited systems.
 <td>LGPL</td>
 <td>
 A well-known and widly used library for feedforward neural networks written in
-C with bindings for almost any languages. %FANN has limited functionality but
+C with bindings for almost any language. %FANN has limited functionality but
 is easy to use and robust. It usually used for small datasets and
 applications.
 </td>
@@ -87,12 +87,13 @@ CUDA code.
 <tr>
 <th>Torch7</th>
 <td><a href="http://www.torch.ch/" target=_blank>Link</a></td>
-<td>C++, Lua</td>
+<td>Lua</td>
 <td>BSD</td>
 <td>
-Yet another state of the art library for neural networks that builds upon a
-very efficient tensor library that supports speed-up with SSE, OpenMP and
-CUDA. It has a Lua interface.
+Torch 7 is a very efficient tensor library that supports speed-up with SSE,
+OpenMP, CUDA and is designed to implement machine learning algorithms. It
+supports automatic differentiation and is very similar to Theano. It has
+many packages, e.g. for deep learning models and optimization algorithms.
 </td>
 </tr>
 </table>

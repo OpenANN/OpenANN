@@ -7,7 +7,7 @@
 #
 # The following macros are defined:
 #
-# add_documentation(target <configuration file>)
+# add_documentation(target <configuration file> [ADD_TO_ALL])
 #     Adds targets that generate the documentation.
 # install_documentation(source_dir target_dir)
 #     Installs the documentation, e. g. copies the html documentation to
@@ -29,7 +29,12 @@ macro(add_documentation target configuration)
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${DOXYGEN_INPUT}
   )
-  add_custom_target(${TARGET_NAME} ALL DEPENDS ${COMMAND_NAME})
+  add_custom_target(${TARGET_NAME} DEPENDS ${COMMAND_NAME})
+  foreach(opt ${ARGN})
+    if(opt STREQUAL "ADD_TO_ALL")
+      add_custom_target(${TARGET_NAME}_all ALL DEPENDS ${COMMAND_NAME})
+    endif()
+  endforeach()
 endmacro()
 
 macro(install_documentation source target)

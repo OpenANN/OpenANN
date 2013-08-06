@@ -20,11 +20,15 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
 elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "sparc")
   set(ALGLIB_DEFINITIONS "${ALGLIB_DEFINITIONS} -DAE_CPU=2")
 endif()
-set(alglib_src ALGLIB/optimization.cpp ALGLIB/alglibinternal.cpp ALGLIB/linalg.cpp ALGLIB/alglibmisc.cpp ALGLIB/ap.cpp)
+set(alglib_src
+  ALGLIB/optimization.cpp
+  ALGLIB/alglibinternal.cpp
+  ALGLIB/linalg.cpp
+  ALGLIB/alglibmisc.cpp
+  ALGLIB/ap.cpp)
 add_library(alglib SHARED ${alglib_src})
 set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lalglib")
-set_target_properties(alglib PROPERTIES COMPILE_FLAGS "${OPENANN_OPTIMIZATION_FLAGS} ${ALGLIB_DEFINITIONS}")
+set_target_properties(alglib PROPERTIES COMPILE_FLAGS
+  "${OPENANN_OPTIMIZATION_FLAGS} ${ALGLIB_DEFINITIONS}")
 install(TARGETS alglib DESTINATION lib)
 install(DIRECTORY ALGLIB/ DESTINATION include/alglib FILES_MATCHING PATTERN "*.h")
-
-add_subdirectory(CMA-ESpp)

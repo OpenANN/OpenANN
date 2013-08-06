@@ -106,9 +106,17 @@ Eigen::MatrixXd& FullyConnected::getOutput()
   return y;
 }
 
-Eigen::MatrixXd FullyConnected::getWeights()
+Eigen::VectorXd FullyConnected::getParameters()
 {
-  return W;
+  Eigen::VectorXd p(J*(I+bias));
+  int idx = 0;
+  for(int j = 0; j < J; j++)
+    for(int i = 0; i < I; i++)
+      p(idx++) = W(j, i);
+  if(bias)
+    for(int j = 0; j < J; j++)
+      p(idx++) = b(j);
+  return p;
 }
 
 }

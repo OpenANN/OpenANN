@@ -6,6 +6,7 @@
 #include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
 #include <vector>
+#include <sstream>
 
 namespace OpenANN
 {
@@ -46,9 +47,12 @@ protected:
   Eigen::VectorXd parameterVector, tempGradient;
   Eigen::MatrixXd tempInput, tempOutput, tempError;
 
-  void initializeNetwork();
+  std::stringstream architecture;
 
 public:
+  /**
+   * Create feedforward neural network.
+   */
   Net();
   virtual ~Net();
 
@@ -258,6 +262,49 @@ public:
   ///@}
 
   /**
+   * @name Persistence
+   */
+  ///@{
+  /**
+   * Save network.
+   * @param fileName name of the file
+   */
+  void save(const std::string& fileName);
+  /**
+   * Save network.
+   * @param stream output stream
+   */
+  void save(std::ostream& stream);
+  /**
+   * Load network from file.
+   * @param fileName name of the file
+   */
+  void load(const std::string& fileName);
+  /**
+   * Load network from stream.
+   *
+   * @note Note that we cannot ensure that the network will be reconstructed
+   *       correctly in case it contains either an extreme layer, compressed
+   *       layer or a compressed output layer because these types of layers
+   *       internally generate random matrices that will not be stored. To
+   *       ensure that these matrices will contain the same values, you will
+   *       have to set the seed for the random number generator, e.g.
+\code
+OpenANN::RandomNumberGenerator().seed(0);
+Net net;
+// Construct and train network
+net.save("mlnn.net");
+OpenANN::RandomNumberGenerator().seed(0);
+Net net2;
+net2.load("mlnn.net");
+\endcode
+   *
+   * @param stream input stream
+   */
+  void load(std::istream& stream);
+  ///@}
+
+  /**
    * @name Optimization Contol
    */
   ///@{
@@ -301,7 +348,9 @@ public:
                              double& value, Eigen::VectorXd& grad);
   virtual void finishedIteration();
   ///@}
+
 protected:
+  void initializeNetwork();
   void forwardPropagate();
   void backpropagate();
 };

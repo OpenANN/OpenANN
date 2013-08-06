@@ -19,4 +19,11 @@ void OpenANNLibraryInfo::print()
       << "Compiled with flags: " << COMPILER_FLAGS << std::endl;
 }
 
+void useAllCores()
+{
+#ifdef PARALLEL_CORES
+  omp_set_num_threads(PARALLEL_CORES);
+#endif
+}
+
 }

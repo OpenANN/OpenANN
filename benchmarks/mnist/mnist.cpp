@@ -4,9 +4,6 @@
 #include <OpenANN/io/DataStream.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include "IDXLoader.h"
-#ifdef PARALLEL_CORES
-#include <omp.h>
-#endif
 
 /**
  * \page MNISTBenchmark MNIST
@@ -32,9 +29,7 @@ python benchmark.py [download] [run] [evaluate]
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  OpenANN::useAllCores();
 
   std::string directory = "./";
   bool distortions = false;
@@ -48,6 +43,7 @@ int main(int argc, char** argv)
 
   OpenANN::Net net;
   net.inputLayer(1, loader.padToX, loader.padToY);
+  net.setRegularization(0.0, 0.0, 15.0);
   if(distortions)
   {
     // High model complexity
@@ -60,14 +56,20 @@ int main(int argc, char** argv)
   else
   {
     // Smaller network
-    net.convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    net.dropoutLayer(0.2)
+    .convolutionalLayer(30, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .dropoutLayer(0.2)
     .maxPoolingLayer(2, 2)
-    .convolutionalLayer(20, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .convolutionalLayer(30, 5, 5, OpenANN::RECTIFIER, 0.05)
+    .dropoutLayer(0.2)
     .maxPoolingLayer(2, 2)
+    .fullyConnectedLayer(200, OpenANN::RECTIFIER, 0.05)
+    .dropoutLayer(0.4)
     .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
-    .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05);
+    .dropoutLayer(0.4);
   }
   net.outputLayer(loader.F, OpenANN::LINEAR, 0.05);
+  net.useDropout(true);
   OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
                                         &evaluator);
@@ -79,16 +81,15 @@ int main(int argc, char** argv)
   OPENANN_INFO << "Press CTRL+C to stop optimization after the next"
                " iteration is finished.";
 
-  OpenANN::MBSGD optimizer(0.001, 0.0, 1, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
-  OpenANN::DataStream stream(loader.trainingN);
-  stream.setLearner(net);
-  stream.setOptimizer(optimizer);
+  OpenANN::MBSGD optimizer(0.05, 0.0, 1, true, 0.9998, 0.001, 0.0, 1.0, 1.0, 1.0);
+  OpenANN::DataStream stream = OpenANN::DataStream(loader.trainingN)
+      .setLearner(net).setOptimizer(optimizer);
 
   Eigen::VectorXd x, t;
   if(distortions)
   {
     // Generate more training data with distortions
-    for(int it = 0; it < 1000; it++)
+    for(int it = 0; it < 200; it++)
     {
       for(int n = 0; n < loader.trainingN; n++)
       {
@@ -112,11 +113,12 @@ int main(int argc, char** argv)
     }
   }
 
+  // Set best parameter vector
+  optimizer.result();
   OPENANN_INFO << "Error = " << net.error();
   OPENANN_INFO << "Wrote data to evaluation-*.log.";
 
-  OpenANN::Logger resultLogger(OpenANN::Logger::APPEND_FILE, "weights");
-  resultLogger << optimizer.result();
+  net.save("mnist.net");
 
   return EXIT_SUCCESS;
 }

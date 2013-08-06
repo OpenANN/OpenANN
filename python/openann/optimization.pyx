@@ -1,11 +1,9 @@
-import warnings
-
 cdef class StoppingCriteria:
   """Stopping criteria for optimization algorithms."""
-  cdef openann.StoppingCriteria *thisptr
+  cdef cbindings.StoppingCriteria *thisptr
   
   def __cinit__(self, stop={}):
-    self.thisptr = new openann.StoppingCriteria()
+    self.thisptr = new cbindings.StoppingCriteria()
     self.__configure_stopping_criteria__(stop)
 
   def __dealloc__(self):
@@ -39,24 +37,28 @@ cdef class StoppingCriteria:
 
 cdef class Optimizer:
   """Common base of optimization algorithms."""
-  cdef openann.Optimizer *thisptr
+  cdef cbindings.Optimizer *thisptr
   cdef object stopping_criteria
 
 cdef class MBSGD(Optimizer):
   """Mini-batch stochastic gradient descent."""
   def __cinit__(self,
       object stop={},
-      double learning_rate=0.01,
-      double momentum=0.5,
-      int batch_size=10,
-      double learning_rate_decay=1.0,
-      double min_learning_rate=0.0,
-      double momentum_gain=0.0,
-      double max_momentum=1.0,
-      double min_gain=1.0,
-      double max_gain=1.0):
+      learning_rate=0.01,
+      momentum=0.5,
+      batch_size=10,
+      nesterov=False,
+      learning_rate_decay=1.0,
+      min_learning_rate=0.0,
+      momentum_gain=0.0,
+      max_momentum=1.0,
+      min_gain=1.0,
+      max_gain=1.0):
 
-    self.thisptr = new openann.MBSGD(learning_rate, momentum, batch_size, learning_rate_decay, min_learning_rate, momentum_gain, max_momentum, min_gain, max_gain)
+    self.thisptr = new cbindings.MBSGD(learning_rate, momentum, batch_size,
+                                       nesterov, learning_rate_decay,
+                                       min_learning_rate, momentum_gain,
+                                       max_momentum, min_gain, max_gain)
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 
@@ -76,7 +78,7 @@ cdef class MBSGD(Optimizer):
 cdef class LMA(Optimizer):
   """Levenberg-Marquardt algorithm."""
   def __cinit__(self, stop={}):
-    self.thisptr = new openann.LMA()
+    self.thisptr = new cbindings.LMA()
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 
@@ -96,7 +98,7 @@ cdef class LMA(Optimizer):
 cdef class CG(Optimizer):
   """Conjugate gradient."""
   def __cinit__(self, stop={}):
-    self.thisptr = new openann.CG()
+    self.thisptr = new cbindings.CG()
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 
@@ -116,7 +118,7 @@ cdef class CG(Optimizer):
 cdef class LBFGS(Optimizer):
   """Limited storage Broyden-Fletcher-Goldfarb-Shanno."""
   def __cinit__(self, stop={}, m=10):
-    self.thisptr = new openann.LBFGS(m)
+    self.thisptr = new cbindings.LBFGS(m)
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 

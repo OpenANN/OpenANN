@@ -39,7 +39,6 @@ class Compressed : public Layer
   double stdDev;
   Eigen::MatrixXd W;
   Eigen::MatrixXd Wd;
-  Eigen::VectorXd b;
   Eigen::MatrixXd phi;
   Eigen::MatrixXd alpha;
   Eigen::MatrixXd alphad;
@@ -64,6 +63,7 @@ public:
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
                              bool backpropToPrevious);
   virtual Eigen::MatrixXd& getOutput();
+  virtual Eigen::VectorXd getParameters();
 };
 
 } // namespace OpenANN

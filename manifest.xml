@@ -1,0 +1,19 @@
+<package>
+  <description brief="An open source library for artificial neural networks.">
+  </description>
+  <author>Alexander Fabisch</author>
+  <license>GPL3</license>
+  <url>https://github.com/OpenANN/OpenANN</url>
+  <depend package="eigen3"/>
+  <depend package="python"/>
+  <depend package="numpy"/>
+  <depend package="cython"/>
+  <depend package="wget"/>
+  <depend package="unzip"/>
+  <depend package="doxygen" optional="1"/>
+  <depend package="graphviz" optional="1"/>
+  <depend package="qt4" optional="1"/>
+  <depend package="qt4-opengl" optional="1"/>
+  <depend package="freeglut3" optional="1"/>
+  <depend package="libxmu" optional="1"/>
+</package>

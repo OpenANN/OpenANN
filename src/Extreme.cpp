@@ -35,7 +35,7 @@ void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dro
   // Activate neurons
   a = *x * W.leftCols(I).transpose();
   if(bias)
-    a += W.rightCols(1).transpose();
+    a.rowwise() += W.col(I).transpose();
   // Compute output
   this->y.conservativeResize(a.rows(), Eigen::NoChange);
   activationFunction(act, a, this->y);
@@ -58,6 +58,11 @@ void Extreme::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
 Eigen::MatrixXd& Extreme::getOutput()
 {
   return y;
+}
+
+Eigen::VectorXd Extreme::getParameters()
+{
+  return Eigen::VectorXd();
 }
 
 }

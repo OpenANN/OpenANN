@@ -3,9 +3,6 @@
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/Evaluator.h>
 #include "CIFARLoader.h"
-#ifdef PARALLEL_CORES
-#include <omp.h>
-#endif
 
 /**
  * \page CIFAR10Benchmark CIFAR-10
@@ -24,9 +21,8 @@ python benchmark.py [download] [run] [evaluate]
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  OpenANN::useAllCores();
+
   bool bigNet = false;
   std::string directory = ".";
   if(argc > 1)
@@ -73,7 +69,7 @@ int main(int argc, char** argv)
 
   OpenANN::StoppingCriteria stop;
   stop.maximalIterations = 100;
-  OpenANN::MBSGD optimizer(0.01, 0.6, 10, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
+  OpenANN::MBSGD optimizer(0.01, 0.6, 10, false, 1.0, 0.0, 0.0, 1.0, 0.01, 100.0);
   optimizer.setOptimizable(net);
   optimizer.setStopCriteria(stop);
   optimizer.optimize();

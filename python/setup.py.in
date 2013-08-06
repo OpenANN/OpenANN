@@ -22,7 +22,9 @@ if __name__ == "__main__":
                               "${PROJECT_SOURCE_DIR}/lib/ALGLIB",
                               "${PROJECT_SOURCE_DIR}/test/lib/CPP-Test",
                               "${EIGEN3_INCLUDE_DIRS}"],
-                extra_compile_args=["-DNDEBUG", ${OPENANN_PYTHON_COMPILE_ARGS}],
+                define_macros=[("NDEBUG",)],
+                extra_compile_args=[${OPENANN_PYTHON_COMPILE_ARGS}
+                                    "-Wno-enum-compare"],
                 language="c++"),
       ],
     cmdclass = {'build_ext': build_ext},

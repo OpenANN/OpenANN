@@ -160,4 +160,9 @@ Eigen::MatrixXd& IntrinsicPlasticity::getOutput()
   return Y;
 }
 
+Eigen::VectorXd IntrinsicPlasticity::getParameters()
+{
+  return currentParameters();
+}
+
 }

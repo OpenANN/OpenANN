@@ -101,21 +101,20 @@ int classificationHits(Learner& learner, DataSet& dataSet)
 }
 
 
-void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
+double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
 {
+  double averageTestAccuracy = 0.0;
   std::vector<DataSetView> splits;
-
   split(splits, dataSet, folds);
-
   OPENANN_INFO << "Run " << folds << "-fold cross-validation";
 
   for(int i = 0; i < folds; ++i)
   {
-    // generate training set from splits (remove validation set)
+    // Generate training set from splits (remove validation set)
     std::vector<DataSetView> training_splits = splits;
     training_splits.erase(training_splits.begin() + i);
 
-    // generate validation and training set
+    // Generate validation and training set
     DataSetView& test = splits.at(i);
     DataSetView training(dataSet);
     merge(training, training_splits);
@@ -128,20 +127,24 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     OpenANN::StoppingInterrupt interrupt;
     int iteration = 0;
 
-    int training_hits = 0;
-    int test_hits = 0;
+    int trainingHits = 0;
+    int testHits = 0;
+    double trainingAccuracy = 0.0;
+    double testAccuracy = 0.0;
 
     while(opt.step() && !interrupt.isSignaled())
     {
       std::stringstream ss;
 
-      training_hits = classificationHits(learner, training);
-      test_hits = classificationHits(learner, test);
+      trainingHits = classificationHits(learner, training);
+      testHits = classificationHits(learner, test);
+      trainingAccuracy = (100.0 * trainingHits) / training.samples();
+      testAccuracy = (100.0 * testHits) / test.samples();
 
       ss << "iteration " << ++iteration;
       ss << ", training sse = " << FloatingPointFormatter(sse(learner, training), 4);
-      ss << ", training accuracy = " << FloatingPointFormatter((100.0 * training_hits) / training.samples(), 2) << "%";
-      ss << ", test accuracy = " << FloatingPointFormatter((100.0 * test_hits) / test.samples(), 2) << "%";
+      ss << ", training accuracy = " << FloatingPointFormatter(trainingAccuracy, 2) << "%";
+      ss << ", test accuracy = " << FloatingPointFormatter(testAccuracy, 2) << "%";
 
       OPENANN_DEBUG << ss.str();
     }
@@ -149,12 +152,15 @@ void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& o
     OPENANN_INFO
         << "Fold [" << i + 1 << "] "
         << "training result = "
-        << OpenANN::FloatingPointFormatter(100.0 * ((double) training_hits / training.samples()), 2)
-        << "% (" << training_hits << "/" << training.samples() << "), "
+        << OpenANN::FloatingPointFormatter(trainingAccuracy, 2)
+        << "% (" << trainingHits << "/" << training.samples() << "), "
         << "test result = "
-        << OpenANN::FloatingPointFormatter(100.0 * ((double) test_hits / test.samples()), 2)
-        << "% (" << test_hits << "/" << test.samples() << ")  [classification]";
+        << OpenANN::FloatingPointFormatter(testAccuracy, 2)
+        << "% (" << testHits << "/" << test.samples() << ")  [classification]";
+    averageTestAccuracy += testAccuracy;
   }
+
+  return averageTestAccuracy /= folds * 100.0;
 }
 
 }

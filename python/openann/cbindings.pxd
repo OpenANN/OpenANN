@@ -2,6 +2,12 @@ from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+
+cdef extern from "<iostream>" namespace "std":
+  cdef cppclass ostream
+  ostream& write "operator<<" (ostream& os, char* str)
+
+
 cdef extern from "Eigen/Dense" namespace "Eigen":
   cdef cppclass VectorXd:
     VectorXd()
@@ -29,6 +35,18 @@ cdef extern from "Eigen/Dense" namespace "Eigen":
     int cols()
     int& get "operator()"(int rows, int cols)
 
+
+cdef extern from "OpenANN/OpenANN" namespace "OpenANN::OpenANNLibraryInfo":
+  char* VERSION
+  char* URL
+  char* DESCRIPTION
+  char* COMPILATION_TIME
+  char* COMPILER_FLAGS
+
+cdef extern from "OpenANN/OpenANN" namespace "OpenANN":
+  void useAllCores()
+
+
 cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
   cdef enum ActivationFunction:
     LOGISTIC
@@ -43,9 +61,6 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     MSE
     CE
 
-cdef extern from "<iostream>" namespace "std":
-  cdef cppclass ostream
-  ostream& write "operator<<" (ostream& os, char* str)
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Logger":
   cdef enum Target:
@@ -64,13 +79,18 @@ cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN":
   cdef cppclass Log:
     Log()
-    ostream& get(LogLevel level, char* namespace = ?)
+    ostream& get(LogLevel level, char* namespace)
 
 cdef extern from "OpenANN/io/Logger.h" namespace "OpenANN::Log":
   void setDisabled()
   void setError()
   void setInfo()
   void setDebug()
+
+
+cdef extern from "OpenANN/util/Random.h" namespace "OpenANN":
+  cdef cppclass RandomNumberGenerator:
+    void seed(unsigned int seed)
 
 
 cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
@@ -85,7 +105,8 @@ cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
     void updatedParameters()
     void forwardPropagate(VectorXd* x, VectorXd*& y, bool dropout)
     void backpropagate(VectorXd* ein, VectorXd*& eout)
-    VectorXd& getOutput()
+    MatrixXd& getOutput()
+    VectorXd getParameters()
 
 
 cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN::SigmaPi":
@@ -147,7 +168,8 @@ cdef extern from "OpenANN/optimization/Optimizable.h" namespace "OpenANN":
   cdef cppclass Optimizable:
     bool providesInitialization()
     void initialize()
-    VectorXd currentParameters()
+    VectorXd& currentParameters()
+    void setParameters(VectorXd& parameters)
     int dimension()
     double error()
     double error_from "error" (unsigned int i)
@@ -168,7 +190,7 @@ cdef extern from "OpenANN/optimization/Optimizer.h" namespace "OpenANN":
 
 cdef extern from "OpenANN/optimization/MBSGD.h" namespace "OpenANN":
   cdef cppclass MBSGD(Optimizer):
-    MBSGD(double learningRate, double momentum, int batchSize,
+    MBSGD(double learningRate, double momentum, int batchSize, bool nesterov,
        double learningRateDecay, double minimalLearningRate, 
        double momentumGain, double maximalMomentum,
        double minGain, double maxGain)
@@ -184,6 +206,7 @@ cdef extern from "OpenANN/optimization/CG.h" namespace "OpenANN":
 cdef extern from "OpenANN/optimization/LBFGS.h" namespace "OpenANN":
   cdef cppclass LBFGS(Optimizer):
     LBFGS(int m)
+
 
 cdef extern from "OpenANN/Learner.h" namespace "OpenANN":
   cdef cppclass Learner(Optimizable):
@@ -225,8 +248,12 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
     Net& useDropout(bool activate)
 
     unsigned int numberOflayers()
+    Layer& getLayer(unsigned int l)
     OutputInfo getOutputInfo(int l)
     DataSet* propagateDataSet(DataSet& dataSet, int l)
+
+    void save(string& fileName)
+    void load(string& fileName)
 
 cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
   cdef cppclass SparseAutoEncoder(Learner):
@@ -235,6 +262,7 @@ cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
     MatrixXd getInputWeights()
     MatrixXd getOutputWeights()
     VectorXd reconstruct(VectorXd& x)
+
 
 cdef extern from "OpenANN/Transformer.h" namespace "OpenANN":
   cdef cppclass Transformer:
@@ -252,12 +280,17 @@ cdef extern from "OpenANN/PCA.h" namespace "OpenANN":
     PCA(int components, bool whiten)
     VectorXd explainedVarianceRatio()
 
+cdef extern from "OpenANN/ZCAWhitening.h" namespace "OpenANN":
+  cdef cppclass ZCAWhitening(Transformer):
+    ZCAWhitening()
+
 cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
   cdef cppclass KMeans:
     KMeans(int D, int K)
     void update(MatrixXd& X)
     MatrixXd transform "operator()" (MatrixXd& x)
     MatrixXd getCenters()
+
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
@@ -266,4 +299,5 @@ cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double accuracy(Learner& learner, DataSet& dataSet)
   MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
   int classificationHits(Learner& learner, DataSet& dataSet)
-  void crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
+  double crossValidation(int folds, Learner& learner, DataSet& dataSet,
+                         Optimizer& opt)

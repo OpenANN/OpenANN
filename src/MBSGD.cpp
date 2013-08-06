@@ -15,11 +15,11 @@ namespace OpenANN
 {
 
 MBSGD::MBSGD(double learningRate, double momentum, int batchSize,
-             double learningRateDecay, double minimalLearningRate,
-             double momentumGain, double maximalMomentum,
-             double minGain, double maxGain)
-  : opt(0), P(-1), N(-1), batches(-1), accumulatedError(0.0),
-    alpha(learningRate), alphaDecay(learningRateDecay),
+             bool nesterov, double learningRateDecay,
+             double minimalLearningRate, double momentumGain,
+             double maximalMomentum, double minGain, double maxGain)
+  : opt(0), nesterov(nesterov), P(-1), N(-1), batches(-1),
+    accumulatedError(0.0), alpha(learningRate), alphaDecay(learningRateDecay),
     minAlpha(minimalLearningRate), eta(momentum), etaGain(momentumGain),
     maxEta(maximalMomentum), batchSize(batchSize), minGain(minGain),
     maxGain(maxGain), useGain(minGain != 1.0 || maxGain != 1.0),
@@ -64,7 +64,8 @@ void MBSGD::optimize()
     std::stringstream ss;
 
     ss << "Iteration " << iteration;
-    ss << ", error = " << FloatingPointFormatter(accumulatedError, 4);
+    ss << ", error = " << FloatingPointFormatter(accumulatedError /
+                                                 (double) batches, 4);
 
     if(alphaDecay < 1.0)
       ss << ", alpha = " << FloatingPointFormatter(alpha, 3);
@@ -91,8 +92,12 @@ bool MBSGD::step()
   std::vector<int>::const_iterator endN = randomIndices.begin() + batchSize;
   if(endN > randomIndices.end())
     endN = randomIndices.end();
+
   for(int b = 0; b < batches; b++)
   {
+    if(nesterov)
+      opt->setParameters(parameters + eta * momentum);
+
     double error = 0.0;
     opt->errorGradient(startN, endN, error, gradient);
     accumulatedError += error;
@@ -115,7 +120,8 @@ bool MBSGD::step()
     OPENANN_CHECK_MATRIX_BROKEN(momentum);
     parameters += momentum;
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
-    opt->setParameters(parameters);
+    if(!nesterov)
+      opt->setParameters(parameters);
 
     // Decay alpha, increase momentum
     alpha *= alphaDecay;
@@ -148,6 +154,7 @@ bool MBSGD::step()
 
 Eigen::VectorXd MBSGD::result()
 {
+  opt->setParameters(parameters);
   return parameters;
 }
 

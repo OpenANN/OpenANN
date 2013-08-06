@@ -1,24 +1,42 @@
 cdef class Layer:
   """Common base of all layers."""
-  cdef openann.Layer* construct(self):
+  cdef cbindings.Layer *thisptr
+
+  def __cinit__(object self):
+    self.thisptr = NULL
+
+  cdef cbindings.Layer* construct(self):
+    """Returns the internal representation of the layer."""
     return NULL
+
+  def get_output(self):
+    """Get the current output of the layer."""
+    cdef cbindings.MatrixXd out_eigen = self.thisptr.getOutput()
+    return __matrix_eigen_to_numpy__(&out_eigen)
+
+  def get_parameters(self):
+    """Get the current parameters of the layer."""
+    cdef cbindings.VectorXd params_eigen = self.thisptr.getParameters()
+    return __vector_eigen_to_numpy__(&params_eigen)
 
 
 cdef class SigmaPiLayer(Layer):
   """Fully connected higher-order layer."""
+  cdef cbindings.SigmaPi* layer
+
   cdef int width
   cdef int height
 
-  cdef openann.Constraint* distance
-  cdef openann.Constraint* slope
-  cdef openann.Constraint* triangle
-    
-  cdef openann.SigmaPi* layer
+  cdef cbindings.Constraint* distance
+  cdef cbindings.Constraint* slope
+  cdef cbindings.Constraint* triangle
 
   def __cinit__(self, net, activation, std_dev=0.05, bias=False):
-    cdef openann.OutputInfo info = \
+    super(SigmaPiLayer, self).__init__()
+    cdef cbindings.OutputInfo info = \
         (<Net?>net).output_info((<Net?>net).number_of_layers()-1)
-    self.layer = new openann.SigmaPi(info, bias, activation, std_dev)
+    self.layer = new cbindings.SigmaPi(info, bias, activation, std_dev)
+    self.thisptr = self.layer
 
     self.width = info.dimensions[1]
     self.height = info.dimensions[2]
@@ -36,20 +54,20 @@ cdef class SigmaPiLayer(Layer):
 
   def distance_2nd_order_nodes(self, numbers):
     if self.distance == NULL:
-      self.distance = new openann.DistanceConstraint(self.width, self.height)
+      self.distance = new cbindings.DistanceConstraint(self.width, self.height)
     self.layer.secondOrderNodes(numbers, deref(self.distance))
     return self
 
   def slope_2nd_order_nodes(self, numbers):
     if self.slope == NULL:
-      self.slope = new openann.SlopeConstraint(self.width, self.height)
+      self.slope = new cbindings.SlopeConstraint(self.width, self.height)
     self.layer.secondOrderNodes(numbers, deref(self.slope))
     return self
 
   def triangle_3rd_order_nodes(self, numbers, resolution):
     if self.triangle == NULL:
-      self.triangle = new openann.TriangleConstraint(self.width, self.height,
-                                                     resolution)
+      self.triangle = new cbindings.TriangleConstraint(self.width, self.height,
+                                                       resolution)
     self.layer.thirdOrderNodes(numbers, deref(self.triangle))
     return self
 
@@ -61,6 +79,6 @@ cdef class SigmaPiLayer(Layer):
     self.layer.thirdOrderNodes(numbers)
     return self
 
-  cdef openann.Layer* construct(self):
+  cdef cbindings.Layer* construct(self):
     return self.layer
 

@@ -9,7 +9,7 @@ Compressed::Compressed(OutputInfo info, int J, int M, bool bias,
                        ActivationFunction act, const std::string& compression,
                        double stdDev, Regularization regularization)
   : I(info.outputs()), J(J), M(M), bias(bias), act(act), stdDev(stdDev),
-    W(J, I + bias), Wd(J, I + bias), b(J), phi(M, I + 1), alpha(J, M), alphad(J, M),
+    W(J, I + bias), Wd(J, I + bias), phi(M, I + 1), alpha(J, M), alphad(J, M),
     x(0), a(1, J), y(1, J), yd(1, J), deltas(1, J), e(1, I + bias),
     regularization(regularization)
 {
@@ -62,7 +62,6 @@ void Compressed::initializeParameters()
 void Compressed::updatedParameters()
 {
   W = alpha * phi.block(0, 0, M, I + bias);
-  b = W.rightCols(1);
 }
 
 void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
@@ -73,7 +72,7 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool 
   // Activate neurons
   a = *x * W.leftCols(I).transpose();
   if(bias)
-    a.rowwise() += b.transpose();
+    a.rowwise() += W.col(I).transpose();
   // Compute output
   activationFunction(act, a, this->y);
   y = &(this->y);
@@ -92,8 +91,8 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
   alphad = Wd.leftCols(I) * phi.block(0, 0, M, I).transpose();
   if(bias)
   {
-    Wd.rightCols(1) = deltas.colwise().sum().transpose();
-    alphad += Wd.rightCols(1) * phi.rightCols(1).transpose();
+    Wd.col(I) = deltas.colwise().sum().transpose();
+    alphad += Wd.col(I) * phi.col(I).transpose();
   }
   if(regularization.l1Penalty > 0.0)
     alphad.array() += regularization.l1Penalty * alpha.array() / alpha.array().abs();
@@ -108,6 +107,16 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
 Eigen::MatrixXd& Compressed::getOutput()
 {
   return y;
+}
+
+Eigen::VectorXd Compressed::getParameters()
+{
+  Eigen::VectorXd p(M*I);
+  int idx = 0;
+  for(int m = 0; m < M; m++)
+    for(int i = 0; i < I; i++)
+      p(idx++) = phi(m, i);
+  return p;
 }
 
 } // namespace OpenANN
