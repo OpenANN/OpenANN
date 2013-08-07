@@ -2,6 +2,7 @@
 #include <OpenANN/ActivationFunctions.h>
 #include <OpenANN/util/EigenWrapper.h>
 #include <OpenANN/util/OpenANNException.h>
+#include <OpenANN/util/Random.h>
 #include <OpenANN/io/Logger.h>
 
 namespace OpenANN
@@ -9,7 +10,7 @@ namespace OpenANN
 
 RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop,
          Regularization regularization)
-  : D(D), H(H), cdN(cdN), stdDev(stdDev),
+  : rng(new RandomNumberGenerator), D(D), H(H), cdN(cdN), stdDev(stdDev),
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
@@ -18,6 +19,11 @@ RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop,
     backprop(backprop), regularization(regularization)
 {
   initialize();
+}
+
+RBM::~RBM()
+{
+  delete rng;
 }
 
 Eigen::VectorXd RBM::operator()(const Eigen::VectorXd& x)
@@ -45,7 +51,7 @@ void RBM::initialize()
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
     {
-      W(j, i) = rng.sampleNormalDistribution<double>() * stdDev;
+      W(j, i) = rng->sampleNormalDistribution<double>() * stdDev;
       params(idx++) = W(j, i);
     }
   bv.setZero();
@@ -248,7 +254,7 @@ void RBM::sampleHgivenV()
   activationFunction(LOGISTIC, ph, ph);
   for(int n = 0; n < N; n++)
     for(int j = 0; j < H; j++)
-      h(n, j) = (double)(ph(n, j) > rng.generate<double>(0.0, 1.0));
+      h(n, j) = (double)(ph(n, j) > rng->generate<double>(0.0, 1.0));
 }
 
 void RBM::sampleVgivenH()
@@ -259,7 +265,7 @@ void RBM::sampleVgivenH()
   activationFunction(LOGISTIC, pv, pv);
   for(int n = 0; n < N; n++)
     for(int i = 0; i < D; i++)
-      v(n, i) = (double)(pv(n, i) > rng.generate<double>(0.0, 1.0));
+      v(n, i) = (double)(pv(n, i) > rng->generate<double>(0.0, 1.0));
 }
 
 void RBM::reality()
