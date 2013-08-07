@@ -11,7 +11,8 @@ MulticlassEvaluator::MulticlassEvaluator(int interval, Logger::Target target)
   : interval(interval), logger(new Logger(target, "evaluation")),
     stopwatch(new Stopwatch), iteration(0)
 {
-  *logger << "# Multiclass problem\n\n";
+  *logger << "# Multiclass problem\n"
+          << "# it. SSE corr. wrong time (ms)\n\n";
   stopwatch->start();
 }
 
