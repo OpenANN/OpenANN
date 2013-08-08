@@ -52,9 +52,7 @@ void EvaluationTestCase::sse()
   const int N = 1000;
   const int F = 10;
   Eigen::MatrixXd Y(N, F);
-  for(int n = 0; n < N; n++)
-    for(int f = 0; f < F; f++)
-      Y(n, f) = rng.sampleNormalDistribution<double>() * 2.0;
+  rng.fillNormalDistribution(Y, 2.0);
   Eigen::MatrixXd T(N, F);
   T.setZero();
   ReturnInput learner;
@@ -69,9 +67,7 @@ void EvaluationTestCase::mse()
   const int N = 1000;
   const int F = 10;
   Eigen::MatrixXd Y(N, F);
-  for(int n = 0; n < N; n++)
-    for(int f = 0; f < F; f++)
-      Y(n, f) = rng.sampleNormalDistribution<double>() * 2.0;
+  rng.fillNormalDistribution(Y, 2.0);
   Eigen::MatrixXd T(N, F);
   T.setZero();
   ReturnInput learner;
@@ -86,9 +82,7 @@ void EvaluationTestCase::rmse()
   const int N = 100000;
   const int F = 10;
   Eigen::MatrixXd Y(N, F);
-  for(int n = 0; n < N; n++)
-    for(int f = 0; f < F; f++)
-      Y(n, f) = rng.sampleNormalDistribution<double>() * 2.0;
+  rng.fillNormalDistribution(Y, 2.0);
   Eigen::MatrixXd T(N, F);
   T.setZero();
   ReturnInput learner;

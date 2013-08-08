@@ -53,9 +53,7 @@ OutputInfo Compressed::initialize(std::vector<double*>& parameterPointers,
 void Compressed::initializeParameters()
 {
   RandomNumberGenerator rng;
-  for(int j = 0; j < J; j++)
-    for(int m = 0; m < M; m++)
-      alpha(j, m) = rng.sampleNormalDistribution<double>() * stdDev;
+  rng.fillNormalDistribution(alpha, stdDev);
   updatedParameters();
 }
 
