@@ -220,7 +220,7 @@ int main(int argc, char** argv)
   optimizer.setStopCriteria(stop);
   optimizer.optimize();
 
-  OpenANN::MulticlassEvaluator evaluator(OpenANN::Logger::FILE);
+  OpenANN::MulticlassEvaluator evaluator(1, OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testInput,
                                         &evaluator);
   sae.validationSet(testSet);
