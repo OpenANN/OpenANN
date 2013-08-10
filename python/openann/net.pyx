@@ -1,3 +1,7 @@
+cdef class Learner:
+  """Base class of learning algorithms."""
+  cdef cbindings.Learner *learner
+
 class Activation:
   """Activation function."""
   LOGISTIC = cbindings.LOGISTIC
@@ -11,12 +15,13 @@ class Error:
   MSE = cbindings.MSE
   CE = cbindings.CE
 
-cdef class Net:
+cdef class Net(Learner):
   """A multilayer feedforward network."""
   cdef cbindings.Net *thisptr
 
   def __cinit__(self):
     self.thisptr = new cbindings.Net()
+    self.learner = self.thisptr
 
   def __dealloc__(self):
     del self.thisptr
@@ -172,7 +177,7 @@ cdef class Net:
     self.thisptr.load(string(fn))
 
 
-cdef class RBM:
+cdef class RBM(Learner):
   """Restricted Boltzmann machine."""
   cdef cbindings.RBM *thisptr
 
@@ -183,6 +188,7 @@ cdef class RBM:
     self.thisptr = new cbindings.RBM(D, H, cd_N, std_dev, backprop,
                                      deref(regularization))
     del regularization
+    self.learner = self.thisptr
 
   def __dealloc__(self):
     del self.thisptr
@@ -223,12 +229,13 @@ cdef class RBM:
     self.thisptr.sampleVgivenH()
 
 
-cdef class SparseAutoEncoder:
+cdef class SparseAutoEncoder(Learner):
   """Sparse auto-encoder."""
   cdef cbindings.SparseAutoEncoder *thisptr
 
   def __init__(self, D, H, beta, rho, lmbda, act):
     self.thisptr = new cbindings.SparseAutoEncoder(D, H, beta, rho, lmbda, act)
+    self.learner = self.thisptr
 
   def __dealloc__(self):
     del self.thisptr
