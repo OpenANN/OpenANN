@@ -172,6 +172,50 @@ cdef class Net:
     self.thisptr.load(string(fn))
 
 
+cdef class RBM:
+  """Restricted Boltzmann machine."""
+  cdef cbindings.RBM *thisptr
+
+  def __init__(self, D, H, cd_N=1, std_dev=0.01, backprop=True, l1penalty=0.0,
+               l2penalty=0.0):
+    cdef cbindings.Regularization* regularization = \
+        new cbindings.Regularization(l1penalty, l2penalty, 0.0)
+    self.thisptr = new cbindings.RBM(D, H, cd_N, std_dev, backprop,
+                                     deref(regularization))
+    del regularization
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def visible_units(self):
+    return self.thisptr.visibleUnits()
+
+  def hidden_units(self):
+    return self.thisptr.hiddenUnits()
+
+  def get_weights(self):
+    cdef cbindings.MatrixXd weights = self.thisptr.getWeights()
+    return __matrix_eigen_to_numpy__(&weights)
+
+  def get_visible_probs(self):
+    cdef cbindings.MatrixXd probs = self.thisptr.getVisibleProbs()
+    return __matrix_eigen_to_numpy__(&probs)
+
+  def get_visible_sample(self):
+    cdef cbindings.MatrixXd sample = self.thisptr.getVisibleSample()
+    return __matrix_eigen_to_numpy__(&sample)
+
+  def reconstruct_prob(self, n, steps):
+    cdef cbindings.MatrixXd prop = self.thisptr.reconstructProb(n, steps)
+    return __matrix_eigen_to_numpy__(&prop)
+
+  def sample_H_given_V(self):
+    self.thisptr.sampleHgivenV()
+
+  def sample_V_given_H(self):
+    self.thisptr.sampleVgivenH()
+
+
 cdef class SparseAutoEncoder:
   """Sparse auto-encoder."""
   cdef cbindings.SparseAutoEncoder *thisptr

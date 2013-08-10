@@ -109,6 +109,16 @@ cdef extern from "OpenANN/layers/Layer.h" namespace "OpenANN":
     VectorXd getParameters()
 
 
+cdef extern from "OpenANN/Regularization.h" namespace "OpenANN":
+  cdef cppclass Regularization:
+    double l1Penalty
+    double l2Penalty
+    double maxSquaredWeightNorm
+
+    Regularization(double l1Penalty, double l2Penalty,
+                   double maxSquaredWeightNorm)
+
+
 cdef extern from "OpenANN/layers/SigmaPi.h" namespace "OpenANN::SigmaPi":
   cdef cppclass Constraint:
     double constrain "operator()" (int p1, int p2)
@@ -254,6 +264,19 @@ cdef extern from "OpenANN/Net.h" namespace "OpenANN":
 
     void save(string& fileName)
     void load(string& fileName)
+
+cdef extern from "OpenANN/RBM.h" namespace "OpenANN":
+  cdef cppclass RBM(Learner):
+    RBM(int D, int H, int cdN, double stdDev, bool backprop,
+        Regularization regularization)
+    int visibleUnits()
+    int hiddenUnits()
+    MatrixXd& getWeights()
+    MatrixXd& getVisibleProbs()
+    MatrixXd& getVisibleSample()
+    MatrixXd reconstructProb(int n, int steps)
+    void sampleHgivenV()
+    void sampleVgivenH()
 
 cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
   cdef cppclass SparseAutoEncoder(Learner):
