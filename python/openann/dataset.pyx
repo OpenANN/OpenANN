@@ -5,13 +5,17 @@ cdef class Dataset:
   cdef cbindings.DataSet* storage
 
   def __cinit__(self, input=None, output=None):
-    if input != None and output != None:
+    if input != None:
       self.input = __matrix_numpy_to_eigen__(input)
-      self.output = __matrix_numpy_to_eigen__(output)
-      self.storage = new cbindings.DirectStorageDataSet(self.input, self.output)
     else:
       self.input = NULL
+    if output != None:
+      self.output = __matrix_numpy_to_eigen__(output)
+    else:
       self.output = NULL
+    if self.input != NULL:
+      self.storage = new cbindings.DirectStorageDataSet(self.input, self.output)
+    else:
       self.storage = NULL
 
   def __dealloc__(self):
