@@ -187,6 +187,13 @@ cdef class RBM:
   def __dealloc__(self):
     del self.thisptr
 
+  def predict(self, x_numpy):
+    x_numpy = numpy.atleast_2d(x_numpy)
+    cdef cbindings.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
+    cdef cbindings.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
+    del x_eigen
+    return __matrix_eigen_to_numpy__(&y_eigen)
+
   def visible_units(self):
     return self.thisptr.visibleUnits()
 
@@ -225,6 +232,13 @@ cdef class SparseAutoEncoder:
 
   def __dealloc__(self):
     del self.thisptr
+
+  def predict(self, x_numpy):
+    x_numpy = numpy.atleast_2d(x_numpy)
+    cdef cbindings.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
+    cdef cbindings.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
+    del x_eigen
+    return __matrix_eigen_to_numpy__(&y_eigen)
 
   def get_input_weights(self):
     """Get weight matrix between input and hidden layer."""
