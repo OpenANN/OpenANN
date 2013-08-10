@@ -99,8 +99,17 @@ cdef class LMA(Optimizer):
 
   def optimize(self, net, dataset):
     """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    # TODO this is a bit ugly, maybe all learners should have the same
+    # superclass in Python
+    if isinstance(net, Net):
+      (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    elif isinstance(net, RBM):
+      (<RBM?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<RBM>net).thisptr))
+    elif isinstance(net, SparseAutoEncoder):
+      (<SparseAutoEncoder?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<SparseAutoEncoder>net).thisptr))
     self.thisptr.optimize()
 
 
@@ -119,8 +128,17 @@ cdef class CG(Optimizer):
 
   def optimize(self, net, dataset):
     """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    # TODO this is a bit ugly, maybe all learners should have the same
+    # superclass in Python
+    if isinstance(net, Net):
+      (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    elif isinstance(net, RBM):
+      (<RBM?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<RBM>net).thisptr))
+    elif isinstance(net, SparseAutoEncoder):
+      (<SparseAutoEncoder?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<SparseAutoEncoder>net).thisptr))
     self.thisptr.optimize()
 
 
@@ -139,6 +157,15 @@ cdef class LBFGS(Optimizer):
 
   def optimize(self, net, dataset):
     """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    # TODO this is a bit ugly, maybe all learners should have the same
+    # superclass in Python
+    if isinstance(net, Net):
+      (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<Net>net).thisptr))
+    elif isinstance(net, RBM):
+      (<RBM?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<RBM>net).thisptr))
+    elif isinstance(net, SparseAutoEncoder):
+      (<SparseAutoEncoder?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
+      self.thisptr.setOptimizable(deref((<SparseAutoEncoder>net).thisptr))
     self.thisptr.optimize()
