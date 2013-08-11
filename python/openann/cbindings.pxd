@@ -144,6 +144,14 @@ cdef extern from "OpenANN/layers/SigmaPiConstraints.h" namespace "OpenANN":
     TriangleConstraint(long width, long height, double resolution)
 
 
+cdef extern from "OpenANN/io/DataStream.h" namespace "OpenANN":
+  cdef cppclass DataStream:
+    DataStream(int cacheSize)
+    DataStream& setLearner(Learner& learner)
+    DataStream& setOptimizer(Optimizer& opt)
+    void addSample(VectorXd* x, VectorXd* t)
+
+
 cdef extern from "OpenANN/io/DataSet.h" namespace "OpenANN":
   cdef cppclass DataSet:
     int samples()
