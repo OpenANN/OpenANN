@@ -31,11 +31,8 @@ OutputInfo AlphaBetaFilter::initialize(std::vector<double*>& parameterPointers,
 void AlphaBetaFilter::initializeParameters()
 {
   RandomNumberGenerator rng;
-  for(int i = 0; i < I; i++)
-  {
-    gamma(i) = rng.sampleNormalDistribution<double>() * stdDev;
-    gammad(i) = 0.0;
-  }
+  rng.fillNormalDistribution(gamma, stdDev);
+  gammad.setZero();
 }
 
 void AlphaBetaFilter::updatedParameters()
