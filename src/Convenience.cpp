@@ -6,13 +6,14 @@
 #include <OpenANN/optimization/CG.h>
 #include <OpenANN/optimization/LBFGS.h>
 #include <OpenANN/optimization/IPOPCMAES.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 #include <cstdarg>
 
 namespace OpenANN
 {
 
 void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
-           StoppingCriteria stop, bool reinitialize, bool dropout)
+           const StoppingCriteria& stop, bool reinitialize, bool dropout)
 {
   if(reinitialize)
     net.initialize();
