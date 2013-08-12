@@ -2,11 +2,14 @@
 #define OPENANN_CONVENIENCE_H_
 
 #include <OpenANN/Net.h>
-#include <OpenANN/optimization/StoppingCriteria.h>
 #include <string>
 
 namespace OpenANN
 {
+
+
+class StoppingCriteria;
+
 
 /**
  * Train a feedforward neural network supervised.
@@ -20,7 +23,7 @@ namespace OpenANN
  * @param dropout use dropout for regularization
  */
 void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
-           StoppingCriteria stop, bool reinitialize = false,
+           const StoppingCriteria& stop, bool reinitialize = false,
            bool dropout = false);
 
 /**

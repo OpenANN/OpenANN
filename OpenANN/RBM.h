@@ -6,12 +6,15 @@
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
-#include <OpenANN/util/Random.h>
 #include <Eigen/Dense>
 #include <vector>
 
 namespace OpenANN
 {
+
+
+class RandomNumberGenerator;
+
 
 /**
  * @class RBM
@@ -47,7 +50,7 @@ namespace OpenANN
  */
 class RBM : public Learner, public Layer
 {
-  RandomNumberGenerator rng;
+  RandomNumberGenerator* rng;
   int D, H;
   int cdN;
   double stdDev;
@@ -73,7 +76,7 @@ public:
    */
   RBM(int D, int H, int cdN = 1, double stdDev = 0.01, bool backprop = true,
       Regularization regularization = Regularization());
-  virtual ~RBM() {}
+  virtual ~RBM();
 
   // Learner interface
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
