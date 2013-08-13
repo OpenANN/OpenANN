@@ -6,8 +6,7 @@ if(PYTHONINTERP_FOUND)
     set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"openann_cuda\"")
   endif()
 
-  file(COPY openann/cbindings.pxd DESTINATION .)
-  file(GLOB cython_pyx "openann/*.pyx")
+  file(GLOB cython_pyx "openann/*.p[xy][dix]")
   file(COPY ${cython_pyx} DESTINATION .)
   configure_file(setup.py.in setup.py)
 
@@ -27,7 +26,6 @@ if(PYTHONINTERP_FOUND)
     COMMAND ${CMAKE_COMMAND} -E echo "Installing Python extension..."
     COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    DEPENDS ${cython_pyx} openann/cbindings.pxd
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   add_custom_target(python_extension_install DEPENDS openann alglib python_extension_install_command)
