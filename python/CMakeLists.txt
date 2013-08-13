@@ -6,8 +6,8 @@ if(PYTHONINTERP_FOUND)
     set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"openann_cuda\"")
   endif()
 
-  file(GLOB cython_pyx "openann/*.p[xy][dix]")
-  file(COPY ${cython_pyx} DESTINATION .)
+  file(GLOB cython_sources "*.p[xy][dix]")
+  file(COPY ${cython_sources} DESTINATION .)
   configure_file(setup.py.in setup.py)
 
   add_custom_command(
@@ -15,7 +15,7 @@ if(PYTHONINTERP_FOUND)
     COMMAND ${CMAKE_COMMAND} -E echo "Building Python extension..."
     COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    DEPENDS ${cython_pyx} openann/cbindings.pxd
+    DEPENDS ${cython_sources}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   # HACK This target will only be build to test the python bindings!
