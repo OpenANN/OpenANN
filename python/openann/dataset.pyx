@@ -5,13 +5,17 @@ cdef class Dataset:
   cdef cbindings.DataSet* storage
 
   def __cinit__(self, input=None, output=None):
-    if input != None and output != None:
+    if input != None:
       self.input = __matrix_numpy_to_eigen__(input)
-      self.output = __matrix_numpy_to_eigen__(output)
-      self.storage = new cbindings.DirectStorageDataSet(self.input, self.output)
     else:
       self.input = NULL
+    if output != None:
+      self.output = __matrix_numpy_to_eigen__(output)
+    else:
       self.output = NULL
+    if self.input != NULL:
+      self.storage = new cbindings.DirectStorageDataSet(self.input, self.output)
+    else:
       self.storage = NULL
 
   def __dealloc__(self):
@@ -63,3 +67,32 @@ def load_from_libsvm(filename):
   cbindings.libsvm_load(deref(input), deref(output), filename, 0)
   dset.storage = new cbindings.DirectStorageDataSet(input, output)
   return dset 
+
+
+cdef class DataStream:
+  """Streams training data for online training."""
+  cdef cbindings.DataStream* thisptr
+
+  def __cinit__(self, cache_size):
+    self.thisptr = new cbindings.DataStream(cache_size)
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def set_learner(self, learner):
+    self.thisptr.setLearner(deref((<Learner?>learner).learner))
+    return self
+
+  def set_optimizer(self, optimizer):
+    self.thisptr.setOptimizer(deref((<Optimizer?>optimizer).thisptr))
+    return self
+
+  def add_sample(self, x, y=None):
+    cdef cbindings.VectorXd* x_eigen = __vector_numpy_to_eigen__(x)
+    cdef cbindings.VectorXd* y_eigen = NULL
+    if y is not None:
+      y_eigen = __vector_numpy_to_eigen__(y)
+    self.thisptr.addSample(x_eigen, y_eigen)
+    del x_eigen
+    if y is not None:
+      del y_eigen

@@ -2,7 +2,7 @@
 #include <OpenANN/Evaluation.h>
 #include <OpenANN/Learner.h>
 #include <OpenANN/io/DataSet.h>
-#include <Test/Stopwatch.h>
+#include <OpenANN/util/Stopwatch.h>
 
 namespace OpenANN
 {
