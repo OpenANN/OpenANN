@@ -95,3 +95,11 @@ cdef class KMeans:
   def get_centers(self):
     cdef cbindings.MatrixXd C_eigen = self.thisptr.getCenters()
     return __matrix_eigen_to_numpy__(&C_eigen)
+
+def sample_random_patches(images, channels, rows, cols, samples, patch_rows,
+                          patch_cols):
+  cdef cbindings.MatrixXd* images_eigen = __matrix_numpy_to_eigen__(images)
+  cdef cbindings.MatrixXd patches = cbindings.sampleRandomPatches(
+      deref(images_eigen), channels, rows, cols, samples, patch_rows,
+      patch_cols)
+  return __matrix_eigen_to_numpy__(&patches)

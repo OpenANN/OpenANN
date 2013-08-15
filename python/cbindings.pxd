@@ -325,6 +325,12 @@ cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
     MatrixXd getCenters()
 
 
+cdef extern from "OpenANN/Preprocessing.h" namespace "OpenANN":
+  MatrixXd sampleRandomPatches(MatrixXd& images, int channels, int rows,
+                               int cols, int samples, int patchRows,
+                               int patchCols)
+
+
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   double sse(Learner& learner, DataSet& dataSet)
   double mse(Learner& learner, DataSet& dataSet)
