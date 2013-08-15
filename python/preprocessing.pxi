@@ -77,9 +77,15 @@ cdef class KMeans:
   def __init__(self, n_inputs, n_centers):
     self.thisptr = new cbindings.KMeans(n_inputs, n_centers)
 
-  def update(self, X):
+  def fit(self, X):
     cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
-    self.thisptr.update(deref(X_eigen))
+    self.thisptr.fit(deref(X_eigen))
+    return self
+
+  def fit_partial(self, X):
+    cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    self.thisptr.fitPartial(deref(X_eigen))
+    return self
 
   def transform(self, X):
     cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)

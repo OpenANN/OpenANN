@@ -9,7 +9,7 @@ KMeans::KMeans(int D, int K)
 {
 }
 
-void KMeans::update(const Eigen::MatrixXd& X)
+Transformer& KMeans::fit(const Eigen::MatrixXd& X)
 {
   OPENANN_CHECK_EQUALS(X.cols(), D);
 
@@ -20,6 +20,7 @@ void KMeans::update(const Eigen::MatrixXd& X)
 
   findClusters(X);
   updateCenters(X);
+  return *this;
 }
 
 Eigen::MatrixXd KMeans::operator()(const Eigen::MatrixXd& X)

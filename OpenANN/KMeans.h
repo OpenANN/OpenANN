@@ -2,13 +2,14 @@
 #define OPENANN_KMEANS_H_
 
 #include <OpenANN/util/Random.h>
+#include <OpenANN/Transformer.h>
 #include <Eigen/Dense>
 #include <vector>
 
 namespace OpenANN
 {
 
-class KMeans
+class KMeans : public Transformer
 {
   const int D;
   const int K;
@@ -25,15 +26,15 @@ public:
    */
   KMeans(int D, int K);
 
-  /**
-   * Sequential update.
-   * @param X new training data, note that the number of samples per update
-   *          must never change!
-   */
-  void update(const Eigen::MatrixXd& X);
+  virtual Transformer& fit(const Eigen::MatrixXd& X);
+  virtual Eigen::MatrixXd transform(const Eigen::MatrixXd& X)
+  {
+    return (*this)(X);
+  }
 
   /**
    * Compute for each instance the distances to the centers.
+   * This is an alias for transform().
    * @param X each row represents an instance
    * @return each row contains the distances to all centers
    */
