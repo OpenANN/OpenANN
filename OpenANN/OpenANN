@@ -37,5 +37,6 @@ void useAllCores();
 
 #include <OpenANN/Net.h>
 #include <OpenANN/Convenience.h>
+#include <OpenANN/optimization/StoppingCriteria.h>
 
 #endif // OPENANN_INCLUDED

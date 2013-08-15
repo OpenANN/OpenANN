@@ -40,6 +40,22 @@ cdef class Optimizer:
   cdef cbindings.Optimizer *thisptr
   cdef object stopping_criteria
 
+  def __cinit__(self):
+    self.thisptr = NULL
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def __str__(self):
+    return self.thisptr.name().c_str()
+
+  def optimize(self, net, dataset):
+    """Perform optimization until stopping criteria are satisfied."""
+    assert self.thisptr != NULL, "You must use a subclass of Optimizer!"
+    (<Learner?>net).learner.trainingSet(deref((<Dataset?>dataset).storage))
+    self.thisptr.setOptimizable(deref((<Learner>net).learner))
+    self.thisptr.optimize()
+
 cdef class MBSGD(Optimizer):
   """Mini-batch stochastic gradient descent."""
   def __cinit__(self,
@@ -62,18 +78,6 @@ cdef class MBSGD(Optimizer):
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 
-  def __str__(self):
-    return self.thisptr.name().c_str()
-
-  def __dealloc__(self):
-    del self.thisptr
-
-  def optimize(self, net, dataset):
-    """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
-    self.thisptr.optimize()
-
 
 cdef class LMA(Optimizer):
   """Levenberg-Marquardt algorithm."""
@@ -81,18 +85,6 @@ cdef class LMA(Optimizer):
     self.thisptr = new cbindings.LMA()
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
-
-  def __dealloc__(self):
-    del self.thisptr
-
-  def __str__(self):
-    return self.thisptr.name().c_str()
-
-  def optimize(self, net, dataset):
-    """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
-    self.thisptr.optimize()
 
 
 cdef class CG(Optimizer):
@@ -102,18 +94,6 @@ cdef class CG(Optimizer):
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
 
-  def __dealloc__(self):
-    del self.thisptr
-
-  def __str__(self):
-    return self.thisptr.name().c_str()
-
-  def optimize(self, net, dataset):
-    """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
-    self.thisptr.optimize()
-
 
 cdef class LBFGS(Optimizer):
   """Limited storage Broyden-Fletcher-Goldfarb-Shanno."""
@@ -121,15 +101,3 @@ cdef class LBFGS(Optimizer):
     self.thisptr = new cbindings.LBFGS(m)
     self.stopping_criteria = StoppingCriteria(stop)
     self.thisptr.setStopCriteria(deref((<StoppingCriteria>self.stopping_criteria).thisptr))
-
-  def __dealloc__(self):
-    del self.thisptr
-
-  def __str__(self):
-    return self.thisptr.name().c_str()
-
-  def optimize(self, net, dataset):
-    """Perform optimization until stopping criteria are satisfied."""
-    (<Net?>net).thisptr.trainingSet(deref((<Dataset?>dataset).storage))
-    self.thisptr.setOptimizable(deref((<Net>net).thisptr))
-    self.thisptr.optimize()

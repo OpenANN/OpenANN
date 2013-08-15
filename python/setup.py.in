@@ -14,7 +14,9 @@ if __name__ == "__main__":
     license = "GPL",
     ext_modules=[
       Extension("openann",
-                sources=["openann.pyx"],
+                sources=["cbindings.pxd", "openann.pyx", "evaluation.pxi",
+                         "net.pxi", "optimization.pxi", "util.pxi",
+                         "dataset.pxi", "layer.pxi", "preprocessing.pxi"],
                 library_dirs=["${PROJECT_BINARY_DIR}/lib",
                               "${PROJECT_BINARY_DIR}/src"],
                 libraries=[${PYTHONEX_LINK_LIBRARIES}],

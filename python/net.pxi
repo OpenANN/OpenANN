@@ -1,3 +1,7 @@
+cdef class Learner:
+  """Base class of learning algorithms."""
+  cdef cbindings.Learner *learner
+
 class Activation:
   """Activation function."""
   LOGISTIC = cbindings.LOGISTIC
@@ -11,12 +15,13 @@ class Error:
   MSE = cbindings.MSE
   CE = cbindings.CE
 
-cdef class Net:
+cdef class Net(Learner):
   """A multilayer feedforward network."""
   cdef cbindings.Net *thisptr
 
   def __cinit__(self):
     self.thisptr = new cbindings.Net()
+    self.learner = self.thisptr
 
   def __dealloc__(self):
     del self.thisptr
@@ -172,15 +177,75 @@ cdef class Net:
     self.thisptr.load(string(fn))
 
 
-cdef class SparseAutoEncoder:
+cdef class RBM(Learner):
+  """Restricted Boltzmann machine."""
+  cdef cbindings.RBM *thisptr
+
+  def __init__(self, D, H, cd_N=1, std_dev=0.01, backprop=True, l1penalty=0.0,
+               l2penalty=0.0):
+    cdef cbindings.Regularization* regularization = \
+        new cbindings.Regularization(l1penalty, l2penalty, 0.0)
+    self.thisptr = new cbindings.RBM(D, H, cd_N, std_dev, backprop,
+                                     deref(regularization))
+    del regularization
+    self.learner = self.thisptr
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def predict(self, x_numpy):
+    x_numpy = numpy.atleast_2d(x_numpy)
+    cdef cbindings.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
+    cdef cbindings.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
+    del x_eigen
+    return __matrix_eigen_to_numpy__(&y_eigen)
+
+  def visible_units(self):
+    return self.thisptr.visibleUnits()
+
+  def hidden_units(self):
+    return self.thisptr.hiddenUnits()
+
+  def get_weights(self):
+    cdef cbindings.MatrixXd weights = self.thisptr.getWeights()
+    return __matrix_eigen_to_numpy__(&weights)
+
+  def get_visible_probs(self):
+    cdef cbindings.MatrixXd probs = self.thisptr.getVisibleProbs()
+    return __matrix_eigen_to_numpy__(&probs)
+
+  def get_visible_sample(self):
+    cdef cbindings.MatrixXd sample = self.thisptr.getVisibleSample()
+    return __matrix_eigen_to_numpy__(&sample)
+
+  def reconstruct_prob(self, n, steps):
+    cdef cbindings.MatrixXd prop = self.thisptr.reconstructProb(n, steps)
+    return __matrix_eigen_to_numpy__(&prop)
+
+  def sample_H_given_V(self):
+    self.thisptr.sampleHgivenV()
+
+  def sample_V_given_H(self):
+    self.thisptr.sampleVgivenH()
+
+
+cdef class SparseAutoEncoder(Learner):
   """Sparse auto-encoder."""
   cdef cbindings.SparseAutoEncoder *thisptr
 
   def __init__(self, D, H, beta, rho, lmbda, act):
     self.thisptr = new cbindings.SparseAutoEncoder(D, H, beta, rho, lmbda, act)
+    self.learner = self.thisptr
 
   def __dealloc__(self):
     del self.thisptr
+
+  def predict(self, x_numpy):
+    x_numpy = numpy.atleast_2d(x_numpy)
+    cdef cbindings.MatrixXd* x_eigen = __matrix_numpy_to_eigen__(x_numpy)
+    cdef cbindings.MatrixXd y_eigen = self.thisptr.predict(deref(x_eigen))
+    del x_eigen
+    return __matrix_eigen_to_numpy__(&y_eigen)
 
   def get_input_weights(self):
     """Get weight matrix between input and hidden layer."""
