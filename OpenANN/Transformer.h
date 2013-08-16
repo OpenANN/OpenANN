@@ -24,6 +24,16 @@ public:
    */
   virtual Transformer& fit(const Eigen::MatrixXd& X) = 0;
   /**
+   * Fit transformation according to subset of the training set X.
+   * This can be used for online adaption of the transformation.
+   * @param X each row represents an instance
+   * @return this for chaining
+   */
+  virtual Transformer& fitPartial(const Eigen::MatrixXd& X)
+  {
+    return fit(X);
+  }
+  /**
    * Transform the data.
    * @param X each row represents an instance
    * @return transformed data

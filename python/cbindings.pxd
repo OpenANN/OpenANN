@@ -298,6 +298,7 @@ cdef extern from "OpenANN/SparseAutoEncoder.h" namespace "OpenANN":
 cdef extern from "OpenANN/Transformer.h" namespace "OpenANN":
   cdef cppclass Transformer:
     Transformer& fit(MatrixXd& X)
+    Transformer& fitPartial(MatrixXd& X)
     MatrixXd transform(MatrixXd& X)
 
 cdef extern from "OpenANN/Normalization.h" namespace "OpenANN":
@@ -314,6 +315,20 @@ cdef extern from "OpenANN/PCA.h" namespace "OpenANN":
 cdef extern from "OpenANN/ZCAWhitening.h" namespace "OpenANN":
   cdef cppclass ZCAWhitening(Transformer):
     ZCAWhitening()
+
+cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
+  cdef cppclass KMeans:
+    KMeans(int D, int K)
+    Transformer& fit(MatrixXd& X)
+    Transformer& fitPartial(MatrixXd& X)
+    MatrixXd transform(MatrixXd& x)
+    MatrixXd getCenters()
+
+
+cdef extern from "OpenANN/Preprocessing.h" namespace "OpenANN":
+  MatrixXd sampleRandomPatches(MatrixXd& images, int channels, int rows,
+                               int cols, int samples, int patchRows,
+                               int patchCols)
 
 
 cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
