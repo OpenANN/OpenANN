@@ -105,7 +105,7 @@ public:
     }
     else
     {
-      OPENANN_CHECK_EQUALS(result.size(), n);
+      OPENANN_CHECK_EQUALS(result.size(), (size_t) n);
     }
     std::random_shuffle(result.begin(), result.end());
   }
