@@ -68,9 +68,8 @@ void softmax(Eigen::MatrixXd& y)
 void logistic(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
   double const* aPtr = a.data();
-  double* zPtr = z.data();
   double const* aEnd = aPtr + a.rows() * a.cols();
-  for(; aPtr < aEnd; aPtr++, zPtr++)
+  for(double* zPtr = z.data(); aPtr < aEnd; aPtr++, zPtr++)
   {
     if(*aPtr < -45.0)
       *zPtr = 0.0;
@@ -84,63 +83,56 @@ void logistic(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 void logisticDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
   double const* zPtr = z.data();
-  double* gdPtr = gd.data();
   double const* zEnd = zPtr + z.rows() * z.cols();
-  for(; zPtr < zEnd; zPtr++, gdPtr++)
+  for(double* gdPtr = gd.data(); zPtr < zEnd; zPtr++, gdPtr++)
     *gdPtr = *zPtr * (1.0 - *zPtr);
 }
 
 void normaltanh(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
   double const* aPtr = a.data();
-  double* zPtr = z.data();
   double const* aEnd = aPtr + a.rows() * a.cols();
-  for(; aPtr < aEnd; aPtr++, zPtr++)
+  for(double* zPtr = z.data(); aPtr < aEnd; aPtr++, zPtr++)
     *zPtr = std::tanh(*aPtr);
 }
 
 void normaltanhDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
   double const* zPtr = z.data();
-  double* gdPtr = gd.data();
   double const* zEnd = zPtr + z.rows() * z.cols();
-  for(; zPtr < zEnd; zPtr++, gdPtr++)
+  for(double* gdPtr = gd.data(); zPtr < zEnd; zPtr++, gdPtr++)
     *gdPtr = 1.0 - *zPtr * *zPtr;
 }
 
 void scaledtanh(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
   double const* aPtr = a.data();
-  double* zPtr = z.data();
   double const* aEnd = aPtr + a.rows() * a.cols();
-  for(; aPtr < aEnd; aPtr++, zPtr++)
+  for(double* zPtr = z.data(); aPtr < aEnd; aPtr++, zPtr++)
     *zPtr = 1.7159 * std::tanh(0.66666667 * *aPtr);
 }
 
 void scaledtanhDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
   double const* zPtr = z.data();
-  double* gdPtr = gd.data();
   double const* zEnd = zPtr + z.rows() * z.cols();
-  for(; zPtr < zEnd; zPtr++, gdPtr++)
+  for(double* gdPtr = gd.data(); zPtr < zEnd; zPtr++, gdPtr++)
     *gdPtr = 0.66666667 / 1.7159 * (1.7159 + *zPtr) * (1.7159 - *zPtr);
 }
 
 void rectifier(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
   double const* aPtr = a.data();
-  double* zPtr = z.data();
   double const* aEnd = aPtr + a.rows() * a.cols();
-  for(; aPtr < aEnd; aPtr++, zPtr++)
+  for(double* zPtr = z.data(); aPtr < aEnd; aPtr++, zPtr++)
     *zPtr = std::max<double>(0.0, *aPtr);
 }
 
 void rectifierDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
 {
   double const* zPtr = z.data();
-  double* gdPtr = gd.data();
   double const* zEnd = zPtr + z.rows() * z.cols();
-  for(; zPtr < zEnd; zPtr++, gdPtr++)
+  for(double* gdPtr = gd.data(); zPtr < zEnd; zPtr++, gdPtr++)
     *gdPtr = (double)(*zPtr > 0.0) * 1.0;
 }
 
