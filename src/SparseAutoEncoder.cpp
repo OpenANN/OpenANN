@@ -42,18 +42,7 @@ bool SparseAutoEncoder::providesInitialization()
 
 void SparseAutoEncoder::initialize()
 {
-  RandomNumberGenerator rng;
-  double r = std::sqrt(6.0) / std::sqrt(H + D + 1.0);
-  for(int j = 0; j < H; j++)
-  {
-    for(int i = 0; i < D; i++)
-    {
-      W1(j, i) = rng.generate<double>(-r, 2*r);
-      W2(i, j) = rng.generate<double>(-r, 2*r);
-    }
-  }
-  b1.setZero();
-  b2.setZero();
+  initializeParameters();
   pack(parameters, W1, W2, b1, b2);
 }
 
@@ -139,6 +128,82 @@ Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
   for(int n = 0; n < trainingSet.samples(); n++)
     X.row(n) = trainingSet.getInstance(n);
   return *this;
+}
+
+void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
+                                      Eigen::MatrixXd*& eout,
+                                      bool backpropToPrevious)
+{
+  const int N = ein->rows();
+  G1D.resize(Z1.rows(), Z1.cols());
+  activationFunctionDerivative(act, Z1, G1D);
+  Eigen::MatrixXd deltas1 = ein->cwiseProduct(G1D);
+  W1d = deltas1.transpose() * X / N + lambda * W1;
+  b1d = deltas1.colwise().sum().transpose() / N;
+  if(backpropToPrevious)
+    dEdZ1 = deltas1 * W1;
+  eout = &dEdZ1;
+}
+
+void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
+                                         Eigen::MatrixXd*& y, bool dropout)
+{
+  const int N = x->rows();
+  A1.resize(N, Eigen::NoChange);
+  A1 = *x * W1.transpose();
+  A1.rowwise() += b1.transpose();
+  Z1.resize(N, Eigen::NoChange);
+  Z1.conservativeResize(A1.rows(), A1.cols());
+  activationFunction(act, A1, Z1);
+  y = &Z1;
+}
+
+Eigen::MatrixXd& SparseAutoEncoder::getOutput()
+{
+  return Z1;
+}
+
+Eigen::VectorXd SparseAutoEncoder::getParameters()
+{
+  Eigen::VectorXd params(W1.rows()*W1.cols()+b1.rows());
+  int idx = 0;
+  for(int j = 0; j < W1.rows(); j++)
+    for(int i = 0; i < W2.rows(); i++)
+      params(idx++) = W1(j, i);
+  for(int j = 0; j < b1.rows(); j++)
+    params(idx++) = b1(j);
+}
+
+OutputInfo SparseAutoEncoder::initialize(std::vector<double*>& parameterPointers,
+                                         std::vector<double*>& parameterDerivativePointers)
+{
+  for(int j = 0; j < W1.rows(); j++)
+    for(int i = 0; i < W2.rows(); i++)
+    {
+      parameterPointers.push_back(&W1(j, i));
+      parameterDerivativePointers.push_back(&W1d(j, i));
+    }
+  for(int j = 0; j < b1.rows(); j++)
+  {
+    parameterPointers.push_back(&b1(j));
+    parameterDerivativePointers.push_back(&b1d(j));
+  }
+}
+
+void SparseAutoEncoder::initializeParameters()
+{
+  RandomNumberGenerator rng;
+  double r = std::sqrt(6.0) / std::sqrt(H + D + 1.0);
+  for(int j = 0; j < H; j++)
+  {
+    for(int i = 0; i < D; i++)
+    {
+      W1(j, i) = rng.generate<double>(-r, 2*r);
+      W2(i, j) = rng.generate<double>(-r, 2*r);
+    }
+  }
+  b1.setZero();
+  b2.setZero();
 }
 
 Eigen::MatrixXd SparseAutoEncoder::getInputWeights()
