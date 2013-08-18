@@ -51,4 +51,6 @@ void SparseAutoEncoderTestCase::inputGradient()
 
 void SparseAutoEncoderTestCase::layerGradient()
 {
+  // TODO implement
+  ASSERT(false);
 }
