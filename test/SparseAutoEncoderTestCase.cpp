@@ -70,5 +70,5 @@ void SparseAutoEncoderTestCase::layerGradient()
       OpenANN::FiniteDifferences::parameterGradient(indices.begin(),
                                                     indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
-    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
 }
