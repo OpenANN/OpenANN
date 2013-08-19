@@ -30,7 +30,7 @@ void SparseAutoEncoderTestCase::inputGradient()
 {
   const int D = 6;
   const int H = 3;
-  const int N = 1;
+  const int N = 2;
   OpenANN::OutputInfo info;
   info.dimensions.push_back(D);
   OpenANN::SparseAutoEncoder layer(D, H, 3.0, 0.1, 0.0001, OpenANN::LOGISTIC);
