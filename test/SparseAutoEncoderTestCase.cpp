@@ -51,6 +51,24 @@ void SparseAutoEncoderTestCase::inputGradient()
 
 void SparseAutoEncoderTestCase::layerGradient()
 {
-  // TODO implement
-  ASSERT(false);
+  const int D = 6;
+  const int H = 3;
+  const int N = 2;
+  OpenANN::OutputInfo info;
+  info.dimensions.push_back(D);
+  OpenANN::SparseAutoEncoder layer(D, H, 3.0, 0.1, 0.0001, OpenANN::LOGISTIC);
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(N, H);
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
+  Eigen::VectorXd estimatedGradient =
+      OpenANN::FiniteDifferences::parameterGradient(indices.begin(),
+                                                    indices.end(), opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
