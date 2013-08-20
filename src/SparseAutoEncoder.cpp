@@ -42,18 +42,7 @@ bool SparseAutoEncoder::providesInitialization()
 
 void SparseAutoEncoder::initialize()
 {
-  RandomNumberGenerator rng;
-  double r = std::sqrt(6.0) / std::sqrt(H + D + 1.0);
-  for(int j = 0; j < H; j++)
-  {
-    for(int i = 0; i < D; i++)
-    {
-      W1(j, i) = rng.generate<double>(-r, 2*r);
-      W2(i, j) = rng.generate<double>(-r, 2*r);
-    }
-  }
-  b1.setZero();
-  b2.setZero();
+  initializeParameters();
   pack(parameters, W1, W2, b1, b2);
 }
 
@@ -115,13 +104,13 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
   // Forward propagation and error calculation
   value = error();
 
-  G2D.conservativeResize(Z2.rows(), Z2.cols());
+  G2D.resize(Z2.rows(), Z2.cols());
   activationFunctionDerivative(act, Z2, G2D);
   Eigen::MatrixXd deltas2 = dEdZ2.cwiseProduct(G2D);
   W2d = deltas2.transpose() * Z1 / N + lambda * W2;
   b2d = deltas2.colwise().sum().transpose() / N;
   Eigen::MatrixXd dEdZ1 = deltas2 * W2;
-  G1D.conservativeResize(Z1.rows(), Z1.cols());
+  G1D.resize(Z1.rows(), Z1.cols());
   activationFunctionDerivative(act, Z1, G1D);
   dEdZ1.array().rowwise() += beta *
       (-rho * meanActivation.array().inverse()
@@ -135,10 +124,89 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
 
 Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
 {
-  X.conservativeResize(trainingSet.samples(), trainingSet.inputs());
+  X.resize(trainingSet.samples(), trainingSet.inputs());
   for(int n = 0; n < trainingSet.samples(); n++)
     X.row(n) = trainingSet.getInstance(n);
   return *this;
+}
+
+void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
+                                      Eigen::MatrixXd*& eout,
+                                      bool backpropToPrevious)
+{
+  G1D.resize(Z1.rows(), Z1.cols());
+  activationFunctionDerivative(act, Z1, G1D);
+  Eigen::MatrixXd deltas1 = ein->cwiseProduct(G1D);
+  W1d = deltas1.transpose() * X + lambda * W1;
+  b1d = deltas1.colwise().sum().transpose();
+  if(backpropToPrevious)
+    dEdZ1 = deltas1 * W1;
+  eout = &dEdZ1;
+}
+
+void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
+                                         Eigen::MatrixXd*& y, bool dropout)
+{
+  const int N = x->rows();
+  X = *x;
+  A1.resize(N, Eigen::NoChange);
+  A1 = X * W1.transpose();
+  A1.rowwise() += b1.transpose();
+  Z1.resize(A1.rows(), A1.cols());
+  activationFunction(act, A1, Z1);
+  y = &Z1;
+}
+
+Eigen::MatrixXd& SparseAutoEncoder::getOutput()
+{
+  return Z1;
+}
+
+Eigen::VectorXd SparseAutoEncoder::getParameters()
+{
+  Eigen::VectorXd params(H*D+H);
+  int idx = 0;
+  for(int h = 0; h < H; h++)
+    for(int d = 0; d < D; d++)
+      params(idx++) = W1(h, d);
+  for(int h = 0; h < H; h++)
+    params(idx++) = b1(h);
+}
+
+OutputInfo SparseAutoEncoder::initialize(std::vector<double*>& parameterPointers,
+                                         std::vector<double*>& parameterDerivativePointers)
+{
+  for(int h = 0; h < H; h++)
+    for(int d = 0; d < D; d++)
+    {
+      parameterPointers.push_back(&W1(h, d));
+      parameterDerivativePointers.push_back(&W1d(h, d));
+    }
+  for(int h = 0; h < H; h++)
+  {
+    parameterPointers.push_back(&b1(h));
+    parameterDerivativePointers.push_back(&b1d(h));
+  }
+
+  OutputInfo info;
+  info.dimensions.push_back(H);
+  return info;
+}
+
+void SparseAutoEncoder::initializeParameters()
+{
+  RandomNumberGenerator rng;
+  double r = std::sqrt(6.0) / std::sqrt(H + D + 1.0);
+  for(int j = 0; j < H; j++)
+  {
+    for(int i = 0; i < D; i++)
+    {
+      W1(j, i) = rng.generate<double>(-r, 2*r);
+      W2(i, j) = rng.generate<double>(-r, 2*r);
+    }
+  }
+  b1.setZero();
+  b2.setZero();
 }
 
 Eigen::MatrixXd SparseAutoEncoder::getInputWeights()
@@ -155,11 +223,11 @@ Eigen::VectorXd SparseAutoEncoder::reconstruct(const Eigen::VectorXd& x)
 {
   A1 = x.transpose() * W1.transpose();
   A1.rowwise() += b1.transpose();
-  Z1.conservativeResize(A1.rows(), A1.cols());
+  Z1.resize(A1.rows(), A1.cols());
   activationFunction(act, A1, Z1);
   A2 = Z1 * W2.transpose();
   A2.rowwise() += b2.transpose();
-  Z2.conservativeResize(A2.rows(), A2.cols());
+  Z2.resize(A2.rows(), A2.cols());
   activationFunction(act, A2, Z2);
   return Z2.transpose();
 }

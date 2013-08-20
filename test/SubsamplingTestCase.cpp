@@ -3,8 +3,6 @@
 #include "LayerAdapter.h"
 #include <OpenANN/layers/Subsampling.h>
 
-using namespace OpenANN;
-
 void SubsamplingTestCase::run()
 {
   RUN(SubsamplingTestCase, subsampling);
@@ -14,14 +12,15 @@ void SubsamplingTestCase::run()
 
 void SubsamplingTestCase::subsampling()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(2);
   info.dimensions.push_back(6);
   info.dimensions.push_back(6);
-  Subsampling layer(info, 2, 2, false, TANH, 0.05, OpenANN::Regularization());
+  OpenANN::Subsampling layer(info, 2, 2, false, OpenANN::TANH, 0.05,
+                             OpenANN::Regularization());
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
+  OpenANN::OutputInfo info2 = layer.initialize(parameterPointers,
                                       parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 3);
   ASSERT_EQUALS(info2.dimensions[0], 2);
@@ -42,11 +41,12 @@ void SubsamplingTestCase::subsampling()
 
 void SubsamplingTestCase::subsamplingGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  Subsampling layer(info, 2, 2, true, LINEAR, 0.05, OpenANN::Regularization());
+  OpenANN::Subsampling layer(info, 2, 2, true, OpenANN::LINEAR, 0.05,
+                             OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*4*4);
@@ -56,19 +56,21 @@ void SubsamplingTestCase::subsamplingGradient()
   indices.push_back(1);
   opt.trainingSet(X, Y);
   Eigen::VectorXd gradient = opt.gradient(indices.begin(), indices.end());
-  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(
-      indices.begin(), indices.end(), opt);
+  Eigen::VectorXd estimatedGradient =
+      OpenANN::FiniteDifferences::parameterGradient(indices.begin(),
+                                                    indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
 
 void SubsamplingTestCase::subsamplingInputGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(2);
   info.dimensions.push_back(4);
   info.dimensions.push_back(4);
-  Subsampling layer(info, 2, 2, true, LINEAR, 0.05, OpenANN::Regularization());
+  OpenANN::Subsampling layer(info, 2, 2, true, OpenANN::LINEAR, 0.05,
+                             OpenANN::Regularization());
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*4*4);
@@ -76,8 +78,8 @@ void SubsamplingTestCase::subsamplingInputGradient()
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);
-  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(X, Y,
-                                                                       opt);
+  Eigen::MatrixXd estimatedGradient =
+      OpenANN::FiniteDifferences::inputGradient(X, Y, opt);
   ASSERT_EQUALS(estimatedGradient.rows(), 2);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)

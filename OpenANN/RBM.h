@@ -102,11 +102,11 @@ public:
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                 bool dropout);
   virtual Eigen::MatrixXd& getOutput();
+  virtual Eigen::VectorXd getParameters();
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
   virtual void initializeParameters() {}
   virtual void updatedParameters() {}
-  virtual Eigen::VectorXd getParameters();
 
   // RBM interface
   /**

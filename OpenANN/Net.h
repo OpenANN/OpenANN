@@ -101,6 +101,15 @@ public:
                                        double stdDev = 0.01,
                                        bool backprop = true);
   /**
+   * Add a sparse auto-encoder.
+   * @param H number of outputs
+   * @param beta weight of sparsity
+   * @param rho desired mean activation of hidden neurons
+   * @param act activation function of the hidden layer
+   */
+  Net& sparseAutoEncoderLayer(int H, double beta, double rho,
+                              ActivationFunction act);
+  /**
    * Add a compressed fully connected hidden layer.
    * @param units number of nodes (neurons)
    * @param params number of parameters to represent the incoming weights of
