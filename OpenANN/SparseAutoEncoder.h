@@ -8,6 +8,15 @@
 namespace OpenANN
 {
 
+/**
+ * @class SparseAutoEncoder
+ *
+ * A sparse auto-encoder tries to reconstruct the inputs from a compressed
+ * representation. Its objective function includes a penalty term for the
+ * distance to the desired mean activation of the hidden nodes as well as the
+ * reconstruction error. Sparse auto-encoders (SAEs) can be used to train
+ * multiple layers of feature detectors unsupervised.
+ */
 class SparseAutoEncoder : public Learner, public Layer
 {
   int D, H;
