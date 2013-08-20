@@ -25,10 +25,10 @@ public:
    * Sparse auto-encoder.
    * @param D number of inputs
    * @param H number of outputs
-   * @param act activation function of the hidden layer
    * @param beta weight of sparsity
    * @param rho desired mean activation of hidden neurons
    * @param lambda L2 norm penalty
+   * @param act activation function of the hidden layer
    */
   SparseAutoEncoder(int D, int H, double beta, double rho, double lambda,
                     ActivationFunction act);
