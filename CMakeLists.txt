@@ -4,7 +4,6 @@ project(OpenANN)
 
 find_package(Doxygen)
 find_package(OpenMP)
-find_package(CUDA)
 include(CheckIncludeFiles)
 include(cmake/UseDoxygen.cmake)
 include(cmake/Utilities.cmake)
@@ -41,6 +40,11 @@ endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+option(USE_CUDA "Use CUDA to accelerate some operations." OFF)
+if(USE_CUDA)
+  find_package(CUDA)
 endif()
 
 set(LOG_LEVEL "INFO" CACHE String "Log level (DEBUG, INFO, ERROR, DISABLED).")

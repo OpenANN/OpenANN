@@ -7,6 +7,8 @@ class SparseAutoEncoderTestCase : public TestCase
 {
   virtual void run();
   void gradient();
+  void inputGradient();
+  void layerGradient();
 };
 
 #endif // OPENANN_TEST_SPARSE_AUTO_ENCODER_TEST_CASE_H_

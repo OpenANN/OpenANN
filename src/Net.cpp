@@ -10,13 +10,12 @@
 #include <OpenANN/layers/LocalResponseNormalization.h>
 #include <OpenANN/layers/Dropout.h>
 #include <OpenANN/RBM.h>
+#include <OpenANN/SparseAutoEncoder.h>
 #include <OpenANN/IntrinsicPlasticity.h>
 #include <OpenANN/ErrorFunctions.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
-#include <OpenANN/optimization/IPOPCMAES.h>
-#include <OpenANN/optimization/LMA.h>
-#include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/util/OpenANNException.h>
+#include <OpenANN/util/AssertionMacros.h>
 #include <fstream>
 
 namespace OpenANN
@@ -67,6 +66,15 @@ Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
       << backprop << " ";
   return addLayer(new RBM(infos.back().outputs(), H, cdN, stdDev,
                           backprop, regularization));
+}
+
+Net& Net::sparseAutoEncoderLayer(int H, double beta, double rho,
+                                 ActivationFunction act)
+{
+  architecture << "sae " << H << " " << beta << " " << rho << " " << (int) act
+      << " ";
+  return addLayer(new SparseAutoEncoder(infos.back().outputs(), H, beta, rho,
+                                        regularization.l2Penalty, act));
 }
 
 Net& Net::compressedLayer(int units, int params, ActivationFunction act,
@@ -275,6 +283,15 @@ void Net::load(std::istream& stream)
       OPENANN_DEBUG << "rbm " << H << " " << cdN << " " << stdDev << " "
           << backprop;
       restrictedBoltzmannMachineLayer(H, cdN, stdDev, backprop);
+    }
+    else if(type == "sae")
+    {
+      int H;
+      double beta, rho;
+      int act;
+      stream >> H >> beta >> rho >> act;
+      OPENANN_DEBUG << "sae " << H << " " << beta << " " << rho << " " << act;
+      sparseAutoEncoderLayer(H, beta, rho, (ActivationFunction) act);
     }
     else if(type == "compressed")
     {
