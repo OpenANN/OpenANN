@@ -23,7 +23,7 @@ Eigen::VectorXd SparseAutoEncoder::operator()(const Eigen::VectorXd& x)
   A1.rowwise() += b1.transpose();
   Z1.conservativeResize(A1.rows(), Eigen::NoChange);
   activationFunction(act, A1, Z1);
-  return Z2.transpose();
+  return Z1.transpose();
 }
 
 Eigen::MatrixXd SparseAutoEncoder::operator()(const Eigen::MatrixXd& X)
@@ -32,7 +32,7 @@ Eigen::MatrixXd SparseAutoEncoder::operator()(const Eigen::MatrixXd& X)
   A1.rowwise() += b1.transpose();
   Z1.conservativeResize(A1.rows(), Eigen::NoChange);
   activationFunction(act, A1, Z1);
-  return Z2;
+  return Z1;
 }
 
 bool SparseAutoEncoder::providesInitialization()
