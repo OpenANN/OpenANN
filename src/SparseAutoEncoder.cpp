@@ -104,11 +104,11 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
   W2d = deltas2.transpose() * Z1 / N + lambda * W2;
   b2d = deltas2.colwise().sum().transpose() / N;
   Eigen::MatrixXd dEdZ1 = deltas2 * W2;
-  G1D.conservativeResize(Z1.rows(), Z1.cols());
-  activationFunctionDerivative(act, Z1, G1D);
   dEdZ1.array().rowwise() += beta *
       (-rho * meanActivation.array().inverse()
        +(1.0-rho) * (1.0-meanActivation.array()).inverse()).transpose();
+  G1D.conservativeResize(Z1.rows(), Z1.cols());
+  activationFunctionDerivative(act, Z1, G1D);
   Eigen::MatrixXd deltas1 = dEdZ1.cwiseProduct(G1D);
   W1d = deltas1.transpose() * X / N + lambda * W1;
   b1d = deltas1.colwise().sum().transpose() / N;
