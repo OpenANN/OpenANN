@@ -27,7 +27,7 @@ Eigen::MatrixXd SparseAutoEncoder::operator()(const Eigen::MatrixXd& X)
 {
   A1 = X * W1.transpose();
   A1.rowwise() += b1.transpose();
-  Z1.conservativeResize(A1.rows(), A1.rows());
+  Z1.conservativeResize(A1.rows(), A1.cols());
   activationFunction(act, A1, Z1);
   return Z1;
 }
