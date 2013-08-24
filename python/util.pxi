@@ -49,7 +49,7 @@ cdef numpy.ndarray __matrix_eigen_to_numpy__(cbindings.MatrixXd* X_eigen):
 @cython.boundscheck(False)
 cdef numpy.ndarray __matrix_eigen_to_numpy_int__(cbindings.MatrixXi* X_eigen):
   cdef numpy.ndarray[numpy.int_t, ndim=2] x_numpy = \
-      numpy.ndarray(shape=(X_eigen.rows(), X_eigen.cols()))
+      numpy.ndarray(shape=(X_eigen.rows(), X_eigen.cols()), dtype=numpy.int)
   cdef int rows = X_eigen.rows()
   cdef int cols = X_eigen.cols()
   cdef int r, c
