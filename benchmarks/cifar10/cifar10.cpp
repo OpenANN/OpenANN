@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     .fullyConnectedLayer(100, OpenANN::RECTIFIER, 0.05, true)        // 100
     .fullyConnectedLayer(50, OpenANN::RECTIFIER, 0.05, true);        //  50
   }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05)                   //  10
+  net.outputLayer(loader.F, OpenANN::SOFTMAX, 0.05)                   //  10
   .trainingSet(loader.trainingInput, loader.trainingOutput);
   OpenANN::MulticlassEvaluator evaluator(1, OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,
