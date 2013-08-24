@@ -14,7 +14,7 @@ RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop,
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
-    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D* H + D + H),
+    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D * H + D + H),
     deltas(1, H), e(1, D), params(K), grad(K),
     backprop(backprop), regularization(regularization)
 {
@@ -82,7 +82,6 @@ void RBM::setParameters(const Eigen::VectorXd& parameters)
     bv(i) = parameters(idx++);
   for(int j = 0; j < H; j++)
     bh(j) = parameters(idx++);
-  OPENANN_CHECK_MATRIX_BROKEN(parameters);
 }
 
 const Eigen::VectorXd& RBM::currentParameters()
