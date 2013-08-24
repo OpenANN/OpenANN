@@ -142,11 +142,7 @@ void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
                                          Eigen::MatrixXd*& y, bool dropout)
 {
   X = *x;
-  A1.conservativeResize(X.rows(), X.cols());
-  A1 = X * W1.transpose();
-  A1.rowwise() += b1.transpose();
-  Z1.conservativeResize(A1.rows(), A1.cols());
-  activationFunction(act, A1, Z1);
+  (*this)(*x);
   y = &Z1;
 }
 
