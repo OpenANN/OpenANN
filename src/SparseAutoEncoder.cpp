@@ -43,7 +43,8 @@ bool SparseAutoEncoder::providesInitialization()
 void SparseAutoEncoder::initialize()
 {
   initializeParameters();
-  pack(parameters, W1, W2, b1, b2);
+  pack(parameters, 4, W1.size(), W1.data(), W2.size(), W2.data(),
+       b1.size(), b1.data(), b2.size(), b2.data());
 }
 
 unsigned int SparseAutoEncoder::dimension()
@@ -54,7 +55,8 @@ unsigned int SparseAutoEncoder::dimension()
 void SparseAutoEncoder::setParameters(const Eigen::VectorXd& parameters)
 {
   this->parameters = parameters;
-  unpack(parameters, W1, W2, b1, b2);
+  unpack(parameters, 4, W1.size(), W1.data(), W2.size(), W2.data(),
+         b1.size(), b1.data(), b2.size(), b2.data());
 }
 
 const Eigen::VectorXd& SparseAutoEncoder::currentParameters()
@@ -119,7 +121,8 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
   W1d = deltas1.transpose() * X / N + lambda * W1;
   b1d = deltas1.colwise().sum().transpose() / N;
 
-  pack(grad, W1d, W2d, b1d, b2d);
+  pack(grad, 4, W1d.size(), W1d.data(), W2d.size(), W2d.data(),
+       b1d.size(), b1d.data(), b2d.size(), b2d.data());
 }
 
 Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
@@ -230,46 +233,6 @@ Eigen::VectorXd SparseAutoEncoder::reconstruct(const Eigen::VectorXd& x)
   Z2.resize(A2.rows(), A2.cols());
   activationFunction(act, A2, Z2);
   return Z2.transpose();
-}
-
-void SparseAutoEncoder::pack(Eigen::VectorXd& vector,
-                             const Eigen::MatrixXd& W1,
-                             const Eigen::MatrixXd& W2,
-                             const Eigen::VectorXd& b1,
-                             const Eigen::VectorXd& b2)
-{
-  int idx = 0;
-  for(int j = 0; j < H; j++)
-  {
-    for(int i = 0; i < D; i++)
-    {
-      vector(idx++) = W1(j, i);
-      vector(idx++) = W2(i, j);
-    }
-  }
-  for(int j = 0; j < H; j++)
-    vector(idx++) = b1(j);
-  for(int i = 0; i < D; i++)
-    vector(idx++) = b2(i);
-}
-
-void SparseAutoEncoder::unpack(const Eigen::VectorXd& vector,
-                               Eigen::MatrixXd& W1, Eigen::MatrixXd& W2,
-                               Eigen::VectorXd& b1, Eigen::VectorXd& b2)
-{
-  int idx = 0;
-  for(int j = 0; j < H; j++)
-  {
-    for(int i = 0; i < D; i++)
-    {
-      W1(j, i) = vector(idx++);
-      W2(i, j) = vector(idx++);
-    }
-  }
-  for(int j = 0; j < H; j++)
-    b1(j) = vector(idx++);
-  for(int i = 0; i < D; i++)
-    b2(i) = vector(idx++);
 }
 
 } // namespace OpenANN
