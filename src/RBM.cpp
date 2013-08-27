@@ -14,7 +14,7 @@ RBM::RBM(int D, int H, int cdN, double stdDev, bool backprop,
     W(H, D), posGradW(H, D), negGradW(H, D), Wd(H, D),
     bv(D), posGradBv(D), negGradBv(D),
     bh(H), posGradBh(H), negGradBh(H), bhd(H),
-    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D* H + D + H),
+    pv(1, D), v(1, D), ph(1, H), h(1, H), phd(1, H), K(D * H + D + H),
     deltas(1, H), e(1, D), params(K), grad(K),
     backprop(backprop), regularization(regularization)
 {
@@ -82,7 +82,6 @@ void RBM::setParameters(const Eigen::VectorXd& parameters)
     bv(i) = parameters(idx++);
   for(int j = 0; j < H; j++)
     bh(j) = parameters(idx++);
-  OPENANN_CHECK_MATRIX_BROKEN(parameters);
 }
 
 const Eigen::VectorXd& RBM::currentParameters()
@@ -170,7 +169,8 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
   return info;
 }
 
-void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                           bool dropout)
 {
   v = *x;
   sampleHgivenV();
@@ -293,26 +293,25 @@ void RBM::fillGradient()
   int idx = 0;
   for(int j = 0; j < H; j++)
     for(int i = 0; i < D; i++)
-      grad(idx++) = posGradW(j, i) - negGradW(j, i);
+      grad(idx++) = -posGradW(j, i) + negGradW(j, i);
   for(int i = 0; i < D; i++)
-    grad(idx++) = posGradBv(i) - negGradBv(i);
+    grad(idx++) = -posGradBv(i) + negGradBv(i);
   for(int j = 0; j < H; j++)
-    grad(idx++) = posGradBh(j) - negGradBh(j);
+    grad(idx++) = -posGradBh(j) + negGradBh(j);
   if(regularization.l1Penalty > 0.0)
   {
     idx = 0;
     for(int j = 0; j < H; j++)
       for(int i = 0; i < D; i++)
-        grad(idx++) -= regularization.l1Penalty * W(j, i) / std::abs(W(j, i));
+        grad(idx++) += regularization.l1Penalty * W(j, i) / std::abs(W(j, i));
   }
   if(regularization.l2Penalty > 0.0)
   {
     idx = 0;
     for(int j = 0; j < H; j++)
       for(int i = 0; i < D; i++)
-        grad(idx++) -= regularization.l2Penalty * W(j, i);
+        grad(idx++) += regularization.l2Penalty * W(j, i);
   }
-  grad *= -1.0;
 }
 
 }
