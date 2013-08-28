@@ -87,7 +87,7 @@ public:
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                 bool dropout);
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                             bool backpropToPrevious);
+                             bool backpropToPrevious, double& error);
   virtual Eigen::MatrixXd& getOutput();
   virtual Eigen::VectorXd getParameters();
 };

@@ -69,7 +69,7 @@ public:
    * @param backpropToPrevious backpropagate errors to previous layers
    */
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                             bool backpropToPrevious) = 0;
+                             bool backpropToPrevious, double& error) = 0;
   /**
    * Output after last forward propagation.
    * @return output

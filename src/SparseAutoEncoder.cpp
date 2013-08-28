@@ -124,9 +124,17 @@ Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
   return *this;
 }
 
+void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
+                                         Eigen::MatrixXd*& y, bool dropout)
+{
+  X = *x;
+  (*this)(*x);
+  y = &Z1;
+}
+
 void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
                                       Eigen::MatrixXd*& eout,
-                                      bool backpropToPrevious)
+                                      bool backpropToPrevious, double& error)
 {
   G1D.conservativeResize(Z1.rows(), Z1.cols());
   activationFunctionDerivative(act, Z1, G1D);
@@ -136,14 +144,6 @@ void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
   if(backpropToPrevious)
     dEdZ1 = deltas1 * W1;
   eout = &dEdZ1;
-}
-
-void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
-                                         Eigen::MatrixXd*& y, bool dropout)
-{
-  X = *x;
-  (*this)(*x);
-  y = &Z1;
 }
 
 Eigen::MatrixXd& SparseAutoEncoder::getOutput()

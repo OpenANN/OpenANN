@@ -77,7 +77,7 @@ void AlphaBetaFilter::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, 
 
 void AlphaBetaFilter::backpropagate(Eigen::MatrixXd* ein,
                                     Eigen::MatrixXd*& eout,
-                                    bool backpropToPrevious)
+                                    bool backpropToPrevious, double& error)
 {
   // Do nothing.
 }

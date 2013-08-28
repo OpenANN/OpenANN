@@ -62,7 +62,8 @@ void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x, Eigen::Mat
 
 void LocalResponseNormalization::backpropagate(Eigen::MatrixXd* ein,
                                                Eigen::MatrixXd*& eout,
-                                               bool backpropToPrevious)
+                                               bool backpropToPrevious,
+                                               double& error)
 {
   const int N = y.rows();
   e.conservativeResize(N, Eigen::NoChange);
