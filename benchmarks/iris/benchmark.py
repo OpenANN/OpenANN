@@ -64,7 +64,7 @@ def run_iris():
     net.input_layer(D)
     net.fully_connected_layer(100, Activation.RECTIFIER)
     net.fully_connected_layer(100, Activation.RECTIFIER)
-    net.output_layer(F, Activation.LINEAR)
+    net.output_layer(F, Activation.SOFTMAX)
     net.set_error_function(Error.CE)
 
     # Split dataset into training set and validation set and make sure that
