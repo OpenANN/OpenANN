@@ -141,6 +141,7 @@ void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
   Eigen::MatrixXd deltas1 = ein->cwiseProduct(G1D);
   W1d = deltas1.transpose() * X + lambda * W1;
   b1d = deltas1.colwise().sum().transpose();
+  error += lambda * W1.array().square().sum() / (2.0 * Z1.rows());
   if(backpropToPrevious)
     dEdZ1 = deltas1 * W1;
   eout = &dEdZ1;

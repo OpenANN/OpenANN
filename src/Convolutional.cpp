@@ -202,13 +202,19 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
   {
     for(int fmo = 0; fmo < fmout; fmo++)
       for(int fmi = 0; fmi < fmin; fmi++)
-        Wd[fmo][fmi].array() += regularization.l2Penalty * W[fmo][fmi].array() / W[fmo][fmi].array().abs();
+      {
+        Wd[fmo][fmi].array() += regularization.l1Penalty * W[fmo][fmi].array() / W[fmo][fmi].array().abs();
+        error += regularization.l1Penalty * W[fmo][fmi].array().abs().sum() / N;
+      }
   }
   if(regularization.l2Penalty > 0.0)
   {
     for(int fmo = 0; fmo < fmout; fmo++)
       for(int fmi = 0; fmi < fmin; fmi++)
+      {
         Wd[fmo][fmi] += regularization.l2Penalty * W[fmo][fmi];
+        error += regularization.l2Penalty * W[fmo][fmi].array().square().sum() / (2.0 * N);
+      }
   }
 
   eout = &e;

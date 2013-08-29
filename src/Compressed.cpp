@@ -93,9 +93,15 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
     alphad += Wd.col(I) * phi.col(I).transpose();
   }
   if(regularization.l1Penalty > 0.0)
+  {
     alphad.array() += regularization.l1Penalty * alpha.array() / alpha.array().abs();
+    error += regularization.l1Penalty * alpha.array().abs().sum() / N;
+  }
   if(regularization.l2Penalty > 0.0)
+  {
     alphad += regularization.l2Penalty * alpha;
+    error += regularization.l2Penalty * alpha.array().square().sum() / (2.0 * N);
+  }
   // Prepare error signals for previous layer
   if(backpropToPrevious)
     e = deltas * W.leftCols(I);
