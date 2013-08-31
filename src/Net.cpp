@@ -463,14 +463,14 @@ void Net::finishedIteration()
 Eigen::VectorXd Net::operator()(const Eigen::VectorXd& x)
 {
   tempInput = x.transpose();
-  forwardPropagate();
+  forwardPropagate(0);
   return tempOutput.transpose();
 }
 
 Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
 {
   tempInput = x;
-  forwardPropagate();
+  forwardPropagate(0);
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
   return tempOutput;
@@ -519,11 +519,14 @@ void Net::initialize()
 double Net::error(unsigned int n)
 {
   tempInput = trainSet->getInstance(n).transpose();
-  forwardPropagate();
+  double regularizationError = 0;
+  forwardPropagate(&regularizationError);
   if(errorFunction == CE)
-    return crossEntropy(tempOutput, trainSet->getTarget(n).transpose());
+    return crossEntropy(tempOutput, trainSet->getTarget(n).transpose()) +
+        regularizationError;
   else
-    return meanSquaredError(tempOutput - trainSet->getTarget(n).transpose());
+    return meanSquaredError(tempOutput - trainSet->getTarget(n).transpose()) +
+        regularizationError;
 }
 
 double Net::error()
@@ -588,9 +591,10 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
     T.row(n) = trainSet->getTarget(*it);
   }
 
-  forwardPropagate();
+  value = 0;
+  forwardPropagate(&value);
   tempError = tempOutput - T;
-  value = errorFunction == CE ? crossEntropy(tempOutput, T) :
+  value += errorFunction == CE ? crossEntropy(tempOutput, T) :
       meanSquaredError(tempError);
   backpropagate();
 
@@ -612,12 +616,12 @@ void Net::initializeNetwork()
   initialized = true;
 }
 
-void Net::forwardPropagate()
+void Net::forwardPropagate(double* error)
 {
   Eigen::MatrixXd* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); ++layer)
-    (**layer).forwardPropagate(y, y, dropout);
+    (**layer).forwardPropagate(y, y, dropout, error);
   tempOutput = *y;
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)

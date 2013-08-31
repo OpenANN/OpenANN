@@ -72,6 +72,11 @@ void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     a.rowwise() += b.transpose();
   // Compute output
   activationFunction(act, a, this->y);
+  // Add regularization error
+  if(error && regularization.l1Penalty > 0.0)
+    *error += regularization.l1Penalty * W.array().abs().sum();
+  if(error && regularization.l2Penalty > 0.0)
+    *error += regularization.l2Penalty * W.array().square().sum() / 2.0;
   y = &(this->y);
 }
 

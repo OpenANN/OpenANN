@@ -227,22 +227,22 @@ void NetTestCase::regularizationGradient()
 {
   const int D = 3;
   const int F = 2;
-  const int N = 1;
+  const int N = 2;
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
   Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
 
   OpenANN::Net net;
   net.inputLayer(D)
-  .setRegularization(0.1)
+  .setRegularization(0.1, 0.1)
   .fullyConnectedLayer(2, OpenANN::TANH)
   .outputLayer(F, OpenANN::LINEAR)
   .trainingSet(X, T);
 
   Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
-  //Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
-  Eigen::VectorXd ga = (ga0 /*+ ga1*/) / (double) N;
+  Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
+  Eigen::VectorXd ga = (ga0 + ga1) / (double) N;
 
-  Eigen::VectorXd g = net.gradient();
+  Eigen::VectorXd g = (net.gradient(0) + net.gradient(1)) / (double) N;
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 }
