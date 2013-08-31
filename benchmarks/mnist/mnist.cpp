@@ -68,7 +68,7 @@ int main(int argc, char** argv)
     .fullyConnectedLayer(150, OpenANN::RECTIFIER, 0.05)
     .dropoutLayer(0.4);
   }
-  net.outputLayer(loader.F, OpenANN::LINEAR, 0.05);
+  net.outputLayer(loader.F, OpenANN::SOFTMAX, 0.05);
   net.useDropout(true);
   OpenANN::MulticlassEvaluator evaluator(1, OpenANN::Logger::FILE);
   OpenANN::DirectStorageDataSet testSet(&loader.testInput, &loader.testOutput,

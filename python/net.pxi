@@ -9,6 +9,7 @@ class Activation:
   TANH_SCALED = cbindings.TANH_SCALED
   RECTIFIER = cbindings.RECTIFIER
   LINEAR = cbindings.LINEAR
+  SOFTMAX = cbindings.SOFTMAX
 
 class Error:
   """Error function."""
