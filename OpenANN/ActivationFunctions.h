@@ -15,7 +15,7 @@ enum ActivationFunction
    *
    * \f$ g(a) = \frac{1}{1+\exp{{-a}}} \f$
    */
-  LOGISTIC,
+  LOGISTIC = 0,
   /**
    * Tanh sigmoid function.
    *
@@ -23,17 +23,17 @@ enum ActivationFunction
    *
    * \f$ g(a) = tanh(a) \f$
    */
-  TANH,
+  TANH = 1,
   /**
    * Scaled tanh sigmoid function.
    *
-   * Range: [-1.7159, 1.7159].
-   *
    * This activation function does not saturate around the output -1 or +1.
+   *
+   * Range: [-1.7159, 1.7159].
    *
    * \f$ g(a) = 1.7159 tanh(\frac{2}{3} a) \f$
    */
-  TANH_SCALED,
+  TANH_SCALED = 2,
   /**
    * Biologically inspired, non-saturating rectified linear unit (ReLU).
    *
@@ -46,15 +46,31 @@ enum ActivationFunction
    * International Conference on Artificial Intelligence and Statistics 15,
    * pp. 315–323, 2011.
    */
-  RECTIFIER,
+  RECTIFIER = 3,
   /**
    * Identity function.
+   *
+   * Note that LINEAR and SOFTMAX are actually the same. Which function will
+   * be used actually depends on the error function: if it is MSE we will use
+   * the identity, if it is CE we will use softmax.
    *
    * Range: [\f$ -\infty \f$, \f$ \infty \f$].
    *
    * \f$ g(a) = a \f$
    */
-  LINEAR
+  LINEAR = 4,
+  /**
+   * Softmax activation function.
+   *
+   * Note that LINEAR and SOFTMAX are actually the same. Which function will
+   * be used actually depends on the error function: if it is MSE we will use
+   * the identity, if it is CE we will use softmax.
+   *
+   * Range: [0, 1].
+   *
+   * \f$ g(a_i) = \frac{\exp(a_i)}{\sum_j exp(a_j)} \f$
+   */
+  SOFTMAX = 4
 };
 
 void activationFunction(ActivationFunction act, const Eigen::MatrixXd& a,

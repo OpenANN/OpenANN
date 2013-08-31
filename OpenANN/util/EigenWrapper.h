@@ -4,6 +4,7 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Dense>
 #include <cmath>
+#include <cstdarg>
 
 template<typename T, int M, int N>
 bool equals(const Eigen::Matrix<T, M, N>& a, const Eigen::Matrix<T, M, N>& b, T delta)
@@ -53,5 +54,9 @@ bool isMatrixBroken(const Eigen::Matrix<T, M, N> m)
 {
   return isMatrixNan(m) || isMatrixInf(m);
 }
+
+void pack(Eigen::VectorXd& vec, int components, ...);
+
+void unpack(const Eigen::VectorXd& vec, int components, ...);
 
 #endif // OPENANN_UTIL_EIGEN_WRAPPER_H_

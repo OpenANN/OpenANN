@@ -72,12 +72,6 @@ public:
   Eigen::MatrixXd getInputWeights();
   Eigen::MatrixXd getOutputWeights();
   Eigen::VectorXd reconstruct(const Eigen::VectorXd& x);
-private:
-  void pack(Eigen::VectorXd& vector, const Eigen::MatrixXd& W1,
-            const Eigen::MatrixXd& W2, const Eigen::VectorXd& b1,
-            const Eigen::VectorXd& b2);
-  void unpack(const Eigen::VectorXd& vector, Eigen::MatrixXd& W1,
-              Eigen::MatrixXd& W2, Eigen::VectorXd& b1, Eigen::VectorXd& b2);
 };
 
 } // OpenANN
