@@ -279,8 +279,8 @@ void RBM::daydream()
 void RBM::fillGradient()
 {
   int idx = 0;
-  for(int j = 0; j < H; j++)
-    for(int i = 0; i < D; i++)
+  for(int i = 0; i < D; i++)
+    for(int j = 0; j < H; j++)
       grad(idx++) = -posGradW(j, i) + negGradW(j, i);
   for(int i = 0; i < D; i++)
     grad(idx++) = -posGradBv(i) + negGradBv(i);
@@ -289,16 +289,16 @@ void RBM::fillGradient()
   if(regularization.l1Penalty > 0.0)
   {
     idx = 0;
-    for(int j = 0; j < H; j++)
-      for(int i = 0; i < D; i++)
-        grad(idx++) += regularization.l1Penalty * W(j, i) / std::abs(W(j, i));
+    for(int i = 0; i < D; i++)
+      for(int j = 0; j < H; j++)
+        grad(idx++) -= regularization.l1Penalty * W(j, i) / std::abs(W(j, i));
   }
   if(regularization.l2Penalty > 0.0)
   {
     idx = 0;
-    for(int j = 0; j < H; j++)
-      for(int i = 0; i < D; i++)
-        grad(idx++) += regularization.l2Penalty * W(j, i);
+    for(int i = 0; i < D; i++)
+      for(int j = 0; j < H; j++)
+        grad(idx++) -= regularization.l2Penalty * W(j, i);
   }
 }
 
