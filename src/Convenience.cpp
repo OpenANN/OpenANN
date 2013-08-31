@@ -56,6 +56,8 @@ void makeMLNN(Net& net, ActivationFunction g, ActivationFunction h,
     net.fullyConnectedLayer(j, g);
   }
   net.outputLayer(F, h);
+
+  va_end(nodes);
 }
 
 } // namespace OpenANN
