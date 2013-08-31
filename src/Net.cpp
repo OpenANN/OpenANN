@@ -592,7 +592,7 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   tempError = tempOutput - T;
   value = errorFunction == CE ? crossEntropy(tempOutput, T) :
       meanSquaredError(tempError);
-  backpropagate(value);
+  backpropagate();
 
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
@@ -624,13 +624,13 @@ void Net::forwardPropagate()
     OpenANN::softmax(tempOutput);
 }
 
-void Net::backpropagate(double& error)
+void Net::backpropagate()
 {
   Eigen::MatrixXd* e = &tempError;
   int l = L;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); ++layer, --l)
-    (**layer).backpropagate(e, e, l != 2, error);
+    (**layer).backpropagate(e, e, l != 2);
 }
 
 }

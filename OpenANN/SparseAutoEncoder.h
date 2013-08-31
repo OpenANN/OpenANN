@@ -58,9 +58,9 @@ public:
 
   // Layer interface
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                                bool dropout);
+                                bool dropout, double* error = 0);
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                             bool backpropToPrevious, double& error);
+                             bool backpropToPrevious);
   virtual Eigen::MatrixXd& getOutput();
   virtual Eigen::VectorXd getParameters();
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,

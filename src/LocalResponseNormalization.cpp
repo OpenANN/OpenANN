@@ -26,7 +26,10 @@ OutputInfo LocalResponseNormalization::initialize(
   return info;
 }
 
-void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x,
+                                                  Eigen::MatrixXd*& y,
+                                                  bool dropout,
+                                                  double* error)
 {
   const int N = x->rows();
   this->y.conservativeResize(N, Eigen::NoChange);
@@ -62,8 +65,7 @@ void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x, Eigen::Mat
 
 void LocalResponseNormalization::backpropagate(Eigen::MatrixXd* ein,
                                                Eigen::MatrixXd*& eout,
-                                               bool backpropToPrevious,
-                                               double& error)
+                                               bool backpropToPrevious)
 {
   const int N = y.rows();
   e.conservativeResize(N, Eigen::NoChange);

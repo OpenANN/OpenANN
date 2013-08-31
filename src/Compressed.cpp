@@ -62,7 +62,8 @@ void Compressed::updatedParameters()
   W = alpha * phi.block(0, 0, M, I + bias);
 }
 
-void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                  bool dropout, double* error)
 {
   const int N = x->rows();
   this->y.conservativeResize(N, Eigen::NoChange);
@@ -77,7 +78,7 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool 
 }
 
 void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                               bool backpropToPrevious, double& error)
+                               bool backpropToPrevious)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);
@@ -93,15 +94,9 @@ void Compressed::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
     alphad += Wd.col(I) * phi.col(I).transpose();
   }
   if(regularization.l1Penalty > 0.0)
-  {
     alphad.array() += regularization.l1Penalty * alpha.array() / alpha.array().abs();
-    error += regularization.l1Penalty * alpha.array().abs().sum() / N;
-  }
   if(regularization.l2Penalty > 0.0)
-  {
     alphad += regularization.l2Penalty * alpha;
-    error += regularization.l2Penalty * alpha.array().square().sum() / (2.0 * N);
-  }
   // Prepare error signals for previous layer
   if(backpropToPrevious)
     e = deltas * W.leftCols(I);

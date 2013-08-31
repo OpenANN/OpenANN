@@ -131,7 +131,8 @@ OutputInfo IntrinsicPlasticity::initialize(std::vector<double*>& parameterPointe
 }
 
 void IntrinsicPlasticity::forwardPropagate(Eigen::MatrixXd* x,
-                                           Eigen::MatrixXd*& y, bool dropout)
+                                           Eigen::MatrixXd*& y, bool dropout,
+                                           double* error)
 {
   (*this)(*x);
   y = &Y;
@@ -139,7 +140,7 @@ void IntrinsicPlasticity::forwardPropagate(Eigen::MatrixXd* x,
 
 void IntrinsicPlasticity::backpropagate(Eigen::MatrixXd* ein,
                                         Eigen::MatrixXd*& eout,
-                                        bool backpropToPrevious, double& error)
+                                        bool backpropToPrevious)
 {
   const int N = Y.rows();
   e.conservativeResize(N, nodes);

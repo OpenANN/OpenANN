@@ -158,7 +158,7 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
 }
 
 void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                           bool dropout)
+                           bool dropout, double* error)
 {
   v = *x;
   sampleHgivenV();
@@ -166,7 +166,7 @@ void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 }
 
 void RBM::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                        bool backpropToPrevious, double& error)
+                        bool backpropToPrevious)
 {
   const int N = ph.rows();
   phd.conservativeResize(N, Eigen::NoChange);

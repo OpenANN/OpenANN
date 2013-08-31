@@ -117,9 +117,8 @@ void CompressedTestCase::parallelCompressed()
   ASSERT_EQUALS_DELTA((*y)(0, 0), tanh(3.5), 1e-10);
   ASSERT_EQUALS_DELTA((*y)(0, 1), tanh(3.5), 1e-10);
 
-  double error = 0;
   Eigen::MatrixXd* e2;
-  layer.backpropagate(&e, e2, true, error);
+  layer.backpropagate(&e, e2, true);
   Eigen::VectorXd Wd(8);
   int i = 0;
   for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); ++it)

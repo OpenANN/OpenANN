@@ -60,7 +60,8 @@ void FullyConnected::updatedParameters()
   }
 }
 
-void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                      bool dropout, double* error)
 {
   const int N = x->rows();
   this->y.conservativeResize(N, Eigen::NoChange);
@@ -76,7 +77,7 @@ void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, b
 
 void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
                                    Eigen::MatrixXd*& eout,
-                                   bool backpropToPrevious, double& error)
+                                   bool backpropToPrevious)
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);
@@ -88,15 +89,9 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
   if(bias)
     bd = deltas.colwise().sum().transpose();
   if(regularization.l1Penalty > 0.0)
-  {
     Wd.array() += regularization.l1Penalty * W.array() / W.array().abs();
-    error += regularization.l1Penalty * W.array().abs().sum() / N;
-  }
   if(regularization.l2Penalty > 0.0)
-  {
     Wd += regularization.l2Penalty * W;
-    error += regularization.l2Penalty * W.array().square().sum() / (2.0 * N);
-  }
   // Prepare error signals for previous layer
   if(backpropToPrevious)
     e = deltas * W;

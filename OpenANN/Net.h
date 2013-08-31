@@ -361,7 +361,7 @@ net2.load("mlnn.net");
 protected:
   void initializeNetwork();
   void forwardPropagate();
-  void backpropagate(double& error);
+  void backpropagate();
 };
 
 } // namespace OpenANN

@@ -49,7 +49,7 @@ void MaxPooling::initializeParameters()
 }
 
 void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                                  bool dropout)
+                                  bool dropout, double* error)
 {
   const int N = x->rows();
   this->y.conservativeResize(N, Eigen::NoChange);
@@ -85,7 +85,7 @@ void MaxPooling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 }
 
 void MaxPooling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
-                               bool backpropToPrevious, double& error)
+                               bool backpropToPrevious)
 {
   const int N = y.rows();
   e.conservativeResize(N, Eigen::NoChange);
