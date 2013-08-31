@@ -19,20 +19,17 @@ SparseAutoEncoder::SparseAutoEncoder(int D, int H, double beta, double rho,
 
 Eigen::VectorXd SparseAutoEncoder::operator()(const Eigen::VectorXd& x)
 {
-  A1 = x.transpose() * W1.transpose();
-  A1.rowwise() += b1.transpose();
-  Z1.conservativeResize(A1.rows(), Eigen::NoChange);
-  activationFunction(act, A1, Z1);
-  return Z2.transpose();
+  Eigen::MatrixXd X = x.transpose();
+  return (*this)(X).transpose();
 }
 
 Eigen::MatrixXd SparseAutoEncoder::operator()(const Eigen::MatrixXd& X)
 {
   A1 = X * W1.transpose();
   A1.rowwise() += b1.transpose();
-  Z1.conservativeResize(A1.rows(), Eigen::NoChange);
+  Z1.conservativeResize(A1.rows(), A1.cols());
   activationFunction(act, A1, Z1);
-  return Z2;
+  return Z1;
 }
 
 bool SparseAutoEncoder::providesInitialization()
@@ -67,10 +64,7 @@ const Eigen::VectorXd& SparseAutoEncoder::currentParameters()
 double SparseAutoEncoder::error()
 {
   const int N = X.rows();
-  A1 = X * W1.transpose();
-  A1.rowwise() += b1.transpose();
-  Z1.conservativeResize(A1.rows(), A1.cols());
-  activationFunction(act, A1, Z1);
+  (*this)(X);
   A2 = Z1 * W2.transpose();
   A2.rowwise() += b2.transpose();
   Z2.conservativeResize(A2.rows(), A2.cols());
@@ -106,17 +100,17 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
   // Forward propagation and error calculation
   value = error();
 
-  G2D.resize(Z2.rows(), Z2.cols());
+  G2D.conservativeResize(Z2.rows(), Z2.cols());
   activationFunctionDerivative(act, Z2, G2D);
   Eigen::MatrixXd deltas2 = dEdZ2.cwiseProduct(G2D);
   W2d = deltas2.transpose() * Z1 / N + lambda * W2;
   b2d = deltas2.colwise().sum().transpose() / N;
   Eigen::MatrixXd dEdZ1 = deltas2 * W2;
-  G1D.resize(Z1.rows(), Z1.cols());
-  activationFunctionDerivative(act, Z1, G1D);
   dEdZ1.array().rowwise() += beta *
       (-rho * meanActivation.array().inverse()
        +(1.0-rho) * (1.0-meanActivation.array()).inverse()).transpose();
+  G1D.conservativeResize(Z1.rows(), Z1.cols());
+  activationFunctionDerivative(act, Z1, G1D);
   Eigen::MatrixXd deltas1 = dEdZ1.cwiseProduct(G1D);
   W1d = deltas1.transpose() * X / N + lambda * W1;
   b1d = deltas1.colwise().sum().transpose() / N;
@@ -127,7 +121,7 @@ void SparseAutoEncoder::errorGradient(double& value, Eigen::VectorXd& grad)
 
 Learner& SparseAutoEncoder::trainingSet(DataSet& trainingSet)
 {
-  X.resize(trainingSet.samples(), trainingSet.inputs());
+  X.conservativeResize(trainingSet.samples(), trainingSet.inputs());
   for(int n = 0; n < trainingSet.samples(); n++)
     X.row(n) = trainingSet.getInstance(n);
   return *this;
@@ -137,7 +131,7 @@ void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
                                       Eigen::MatrixXd*& eout,
                                       bool backpropToPrevious)
 {
-  G1D.resize(Z1.rows(), Z1.cols());
+  G1D.conservativeResize(Z1.rows(), Z1.cols());
   activationFunctionDerivative(act, Z1, G1D);
   Eigen::MatrixXd deltas1 = ein->cwiseProduct(G1D);
   W1d = deltas1.transpose() * X + lambda * W1;
@@ -150,13 +144,8 @@ void SparseAutoEncoder::backpropagate(Eigen::MatrixXd* ein,
 void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
                                          Eigen::MatrixXd*& y, bool dropout)
 {
-  const int N = x->rows();
   X = *x;
-  A1.resize(N, Eigen::NoChange);
-  A1 = X * W1.transpose();
-  A1.rowwise() += b1.transpose();
-  Z1.resize(A1.rows(), A1.cols());
-  activationFunction(act, A1, Z1);
+  (*this)(*x);
   y = &Z1;
 }
 
@@ -224,13 +213,10 @@ Eigen::MatrixXd SparseAutoEncoder::getOutputWeights()
 
 Eigen::VectorXd SparseAutoEncoder::reconstruct(const Eigen::VectorXd& x)
 {
-  A1 = x.transpose() * W1.transpose();
-  A1.rowwise() += b1.transpose();
-  Z1.resize(A1.rows(), A1.cols());
-  activationFunction(act, A1, Z1);
+  (*this)(x);
   A2 = Z1 * W2.transpose();
   A2.rowwise() += b2.transpose();
-  Z2.resize(A2.rows(), A2.cols());
+  Z2.conservativeResize(A2.rows(), A2.cols());
   activationFunction(act, A2, Z2);
   return Z2.transpose();
 }

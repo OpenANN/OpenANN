@@ -116,7 +116,7 @@ void NetTestCase::gradientCE()
   OpenANN::Net net;
   net.inputLayer(D)
   .fullyConnectedLayer(2, OpenANN::TANH)
-  .outputLayer(F, OpenANN::LINEAR)
+  .outputLayer(F, OpenANN::SOFTMAX)
   .setErrorFunction(OpenANN::CE)
   .trainingSet(X, T);
 
@@ -233,7 +233,7 @@ void NetTestCase::saveLoad()
   .extremeLayer(5, OpenANN::TANH, 1.0)
   .fullyConnectedLayer(10, OpenANN::TANH)
   .sparseAutoEncoderLayer(5, 3.0, 0.1, OpenANN::LOGISTIC)
-  .compressedOutputLayer(2, 2, OpenANN::LINEAR, "gaussian");
+  .compressedOutputLayer(2, 2, OpenANN::SOFTMAX, "gaussian");
   net.setErrorFunction(OpenANN::CE);
   std::stringstream stream;
   net.save(stream);

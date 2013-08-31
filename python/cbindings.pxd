@@ -54,6 +54,7 @@ cdef extern from "OpenANN/ActivationFunctions.h" namespace "OpenANN":
     TANH_SCALED
     RECTIFIER
     LINEAR
+    SOFTMAX
 
 cdef extern from "OpenANN/Net.h" namespace "OpenANN":
   cdef enum ErrorFunction:
