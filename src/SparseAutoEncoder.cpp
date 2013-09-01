@@ -133,6 +133,8 @@ void SparseAutoEncoder::forwardPropagate(Eigen::MatrixXd* x,
 {
   X = *x;
   (*this)(*x);
+  if(error && lambda > 0.0)
+    *error += lambda * W1.array().square().sum() / 2.0;
   y = &Z1;
 }
 

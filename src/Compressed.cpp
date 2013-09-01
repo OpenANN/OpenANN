@@ -74,6 +74,11 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     a.rowwise() += W.col(I).transpose();
   // Compute output
   activationFunction(act, a, this->y);
+  // Add regularization error
+  if(error && regularization.l1Penalty > 0.0)
+    *error += regularization.l1Penalty * alpha.array().abs().sum();
+  if(error && regularization.l2Penalty > 0.0)
+    *error += regularization.l2Penalty * alpha.array().square().sum() / 2.0;
   y = &(this->y);
 }
 

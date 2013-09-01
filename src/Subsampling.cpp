@@ -128,6 +128,13 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 
   activationFunction(act, a, this->y);
 
+  if(error && regularization.l1Penalty > 0.0)
+    for(int fmo = 0; fmo < fm; fmo++)
+      *error += regularization.l1Penalty * W[fmo].array().abs().sum();
+  if(error && regularization.l2Penalty > 0.0)
+    for(int fmo = 0; fmo < fm; fmo++)
+      *error += regularization.l2Penalty * W[fmo].array().square().sum() / 2.0;
+
   y = &(this->y);
 }
 
