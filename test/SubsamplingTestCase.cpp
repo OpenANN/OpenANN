@@ -8,6 +8,7 @@ void SubsamplingTestCase::run()
   RUN(SubsamplingTestCase, subsampling);
   RUN(SubsamplingTestCase, subsamplingGradient);
   RUN(SubsamplingTestCase, subsamplingInputGradient);
+  RUN(SubsamplingTestCase, regularization);
 }
 
 void SubsamplingTestCase::subsampling()
@@ -84,4 +85,24 @@ void SubsamplingTestCase::subsamplingInputGradient()
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)
       ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
+}
+
+void SubsamplingTestCase::regularization()
+{
+  OpenANN::OutputInfo info;
+  info.dimensions.push_back(2);
+  info.dimensions.push_back(4);
+  info.dimensions.push_back(4);
+  OpenANN::Subsampling layer(info, 2, 2, true, OpenANN::LINEAR, 0.05,
+                             OpenANN::Regularization(0.1, 0.1));
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 2*4*4);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2*2*2);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(0);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::
+      parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
