@@ -10,6 +10,7 @@ class ConvolutionalTestCase : public TestCase
   void convolutional();
   void convolutionalGradient();
   void convolutionalInputGradient();
+  void regularization();
 };
 
 #endif // OPENANN_TEST_CONVOLUTIONAL_TEST_CASE_H_
