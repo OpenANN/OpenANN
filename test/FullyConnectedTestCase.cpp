@@ -11,6 +11,7 @@ void FullyConnectedTestCase::run()
   RUN(FullyConnectedTestCase, backprop);
   RUN(FullyConnectedTestCase, inputGradient);
   RUN(FullyConnectedTestCase, parallelForward);
+  RUN(FullyConnectedTestCase, regularization);
 }
 
 void FullyConnectedTestCase::forward()
@@ -137,4 +138,20 @@ void FullyConnectedTestCase::parallelForward()
   ASSERT_EQUALS_DELTA(Wd(6), 2.0*2.0*(1.0-(*y)(0, 1)*(*y)(0, 1))*2.0, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(7), 2.0*1.0*(1.0-(*y)(0, 1)*(*y)(0, 1))*2.0, 1e-7);
   ASSERT(e2 != 0);
+}
+
+void FullyConnectedTestCase::regularization()
+{
+  OutputInfo info;
+  info.dimensions.push_back(3);
+  FullyConnected layer(info, 2, false, TANH, 0.05, OpenANN::Regularization());
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(0);
+  Eigen::VectorXd estimatedGradient = FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
