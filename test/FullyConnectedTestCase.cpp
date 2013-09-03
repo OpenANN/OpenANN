@@ -146,7 +146,7 @@ void FullyConnectedTestCase::regularization()
 {
   OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
-  OpenANN::FullyConnected layer(info, 2, false, OpenANN::TANH, 0.05, OpenANN::Regularization());
+  OpenANN::FullyConnected layer(info, 2, false, OpenANN::TANH, 0.05, OpenANN::Regularization(0.1, 0.1));
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3);

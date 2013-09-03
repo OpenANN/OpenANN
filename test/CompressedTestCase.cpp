@@ -10,6 +10,7 @@ void CompressedTestCase::run()
   RUN(CompressedTestCase, compressedGradient);
   RUN(CompressedTestCase, compressedInputGradient);
   RUN(CompressedTestCase, parallelCompressed);
+  RUN(CompressedTestCase, regularization);
 }
 
 void CompressedTestCase::setUp()
@@ -123,4 +124,21 @@ void CompressedTestCase::parallelCompressed()
   int i = 0;
   for(std::vector<double*>::iterator it = pdp.begin(); it != pdp.end(); ++it)
     Wd(i++) = **it;
+}
+
+void CompressedTestCase::regularization()
+{
+  OpenANN::OutputInfo info;
+  info.dimensions.push_back(3);
+  OpenANN::Compressed layer(info, 2, 2, true, OpenANN::TANH, "gaussian", 0.05,
+                            OpenANN::Regularization(0.1, 0.1));
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(0);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }

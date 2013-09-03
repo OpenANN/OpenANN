@@ -11,6 +11,7 @@ class CompressedTestCase : public TestCase
   void compressedGradient();
   void compressedInputGradient();
   void parallelCompressed();
+  void regularization();
 };
 
 #endif // OPENANN_TEST_COMPRESSED_TEST_CASE_H_
