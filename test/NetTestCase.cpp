@@ -238,11 +238,14 @@ void NetTestCase::regularizationGradient()
   .outputLayer(F, OpenANN::LINEAR)
   .trainingSet(X, T);
 
-  Eigen::VectorXd ga0 = OpenANN::FiniteDifferences::parameterGradient(0, net);
-  Eigen::VectorXd ga1 = OpenANN::FiniteDifferences::parameterGradient(1, net);
-  Eigen::VectorXd ga = (ga0 + ga1) / (double) N;
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  Eigen::VectorXd ga = OpenANN::FiniteDifferences::parameterGradient(
+      indices.begin(), indices.end(), net);
+  Eigen::VectorXd g = ((OpenANN::Optimizable&)net).gradient(
+      indices.begin(), indices.end());
 
-  Eigen::VectorXd g = (net.gradient(0) + net.gradient(1)) / (double) N;
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 }
