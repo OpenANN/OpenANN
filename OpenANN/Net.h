@@ -360,7 +360,7 @@ net2.load("mlnn.net");
 
 protected:
   void initializeNetwork();
-  void forwardPropagate();
+  void forwardPropagate(double* error);
   void backpropagate();
 };
 

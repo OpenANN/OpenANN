@@ -41,17 +41,19 @@ void LayerAdapter::setParameters(const Eigen::VectorXd& parameters)
 double LayerAdapter::error()
 {
   Eigen::MatrixXd* output;
-  layer.forwardPropagate(&input, output, false);
+  double regularizationError = 0.0;
+  layer.forwardPropagate(&input, output, false, &regularizationError);
   Eigen::MatrixXd diff = (*output) - desired;
-  return (diff * diff.transpose()).diagonal().sum() / 2.0;
+  return regularizationError + (diff * diff.transpose()).diagonal().sum() / 2.0;
 }
 
 double LayerAdapter::error(unsigned int n)
 {
   Eigen::MatrixXd* output;
-  layer.forwardPropagate(&input, output, false);
+  double regularizationError = 0.0;
+  layer.forwardPropagate(&input, output, false, &regularizationError);
   Eigen::MatrixXd diff = ((*output) - desired).row(n);
-  return (diff * diff.transpose()).sum() / 2.0;
+  return regularizationError + (diff * diff.transpose()).sum() / 2.0;
 }
 
 Eigen::VectorXd LayerAdapter::error(std::vector<int>::const_iterator startN,
@@ -61,9 +63,12 @@ Eigen::VectorXd LayerAdapter::error(std::vector<int>::const_iterator startN,
   OPENANN_CHECK_EQUALS(*startN, 0);
   OPENANN_CHECK_EQUALS(endN-startN, input.rows());
   Eigen::MatrixXd* output;
-  layer.forwardPropagate(&input, output, false);
+  double regularizationError = 0.0;
+  layer.forwardPropagate(&input, output, false, &regularizationError);
   Eigen::MatrixXd diff = ((*output) - desired);
-  return (diff * diff.transpose()).diagonal() / 2.0;
+  Eigen::VectorXd errors = (diff * diff.transpose()).diagonal() / 2.0;
+  errors.array() += regularizationError;
+  return errors;
 }
 
 Eigen::VectorXd LayerAdapter::gradient()

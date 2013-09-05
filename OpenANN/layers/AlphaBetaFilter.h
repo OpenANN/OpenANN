@@ -39,7 +39,7 @@ public:
   virtual void updatedParameters();
   virtual void reset();
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                                bool dropout);
+                                bool dropout, double* error = 0);
   virtual void backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
                              bool backpropToPrevious);
   virtual Eigen::MatrixXd& getOutput();

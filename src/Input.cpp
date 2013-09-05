@@ -25,7 +25,8 @@ void Input::initializeParameters()
   // Do nothing.
 }
 
-void Input::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Input::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                             bool dropout, double* error)
 {
   this->x = x;
   y = this->x;

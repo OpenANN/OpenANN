@@ -9,6 +9,7 @@ void ConvolutionalTestCase::run()
   RUN(ConvolutionalTestCase, convolutional);
   RUN(ConvolutionalTestCase, convolutionalGradient);
   RUN(ConvolutionalTestCase, convolutionalInputGradient);
+  RUN(ConvolutionalTestCase, regularization);
 }
 
 void ConvolutionalTestCase::setUp()
@@ -95,4 +96,23 @@ void ConvolutionalTestCase::convolutionalInputGradient()
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)
       ASSERT_EQUALS_DELTA(gradient(j, i), estimatedGradient(j, i), 1e-10);
+}
+
+void ConvolutionalTestCase::regularization()
+{
+  OpenANN::OutputInfo info;
+  info.dimensions.push_back(3);
+  info.dimensions.push_back(5);
+  info.dimensions.push_back(5);
+  OpenANN::Convolutional layer(info, 2, 3, 3, true, OpenANN::LINEAR, 0.05,
+                               OpenANN::Regularization(0.1, 0.1));
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(1, 3*5*5);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(1, 2*3*3);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(0);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }

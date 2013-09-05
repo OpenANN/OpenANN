@@ -16,7 +16,8 @@ OutputInfo Dropout::initialize(std::vector<double*>& parameterPointers,
   return info;
 }
 
-void Dropout::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Dropout::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                               bool dropout, double* error)
 {
   const int N = x->rows();
   dropoutMask.conservativeResize(N, Eigen::NoChange);

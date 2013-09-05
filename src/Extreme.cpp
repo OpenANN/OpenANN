@@ -27,7 +27,8 @@ void Extreme::initializeParameters()
   rng.fillNormalDistribution(W, stdDev);
 }
 
-void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Extreme::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                               bool dropout, double* error)
 {
   this->x = x;
   // Activate neurons

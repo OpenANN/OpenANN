@@ -97,7 +97,8 @@ void Convolutional::initializeParameters()
   }
 }
 
-void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                     bool dropout, double* error)
 {
   this->x = x;
 
@@ -143,6 +144,15 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bo
 
   this->y.conservativeResize(N, Eigen::NoChange);
   activationFunction(act, a, this->y);
+
+  if(error && regularization.l1Penalty > 0.0)
+    for(int fmo = 0; fmo < fmout; fmo++)
+      for(int fmi = 0; fmi < fmin; fmi++)
+        *error += regularization.l1Penalty * W[fmo][fmi].array().abs().sum();
+  if(error && regularization.l2Penalty > 0.0)
+    for(int fmo = 0; fmo < fmout; fmo++)
+      for(int fmi = 0; fmi < fmin; fmi++)
+        *error += regularization.l2Penalty * W[fmo][fmi].array().square().sum() / 2.0;
 
   y = &(this->y);
 }
@@ -202,7 +212,7 @@ void Convolutional::backpropagate(Eigen::MatrixXd* ein,
   {
     for(int fmo = 0; fmo < fmout; fmo++)
       for(int fmi = 0; fmi < fmin; fmi++)
-        Wd[fmo][fmi].array() += regularization.l2Penalty * W[fmo][fmi].array() / W[fmo][fmi].array().abs();
+        Wd[fmo][fmi].array() += regularization.l1Penalty * W[fmo][fmi].array() / W[fmo][fmi].array().abs();
   }
   if(regularization.l2Penalty > 0.0)
   {

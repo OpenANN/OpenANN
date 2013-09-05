@@ -131,7 +131,8 @@ OutputInfo IntrinsicPlasticity::initialize(std::vector<double*>& parameterPointe
 }
 
 void IntrinsicPlasticity::forwardPropagate(Eigen::MatrixXd* x,
-                                           Eigen::MatrixXd*& y, bool dropout)
+                                           Eigen::MatrixXd*& y, bool dropout,
+                                           double* error)
 {
   (*this)(*x);
   y = &Y;

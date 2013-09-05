@@ -9,6 +9,7 @@ class SubsamplingTestCase : public TestCase
   void subsampling();
   void subsamplingGradient();
   void subsamplingInputGradient();
+  void regularization();
 };
 
 #endif // OPENANN_TEST_SUBSAMPLING_TEST_CASE_H_

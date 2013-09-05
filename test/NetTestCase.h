@@ -13,6 +13,7 @@ class NetTestCase : public TestCase
   void multilayerNetwork();
   void predictMinibatch();
   void minibatchErrorGradient();
+  void regularizationGradient();
   void saveLoad();
 };
 
