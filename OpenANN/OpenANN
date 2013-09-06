@@ -31,6 +31,14 @@ public:
   static void print();
 };
 
+/**
+ * Enable all cores for OpenMP.
+ *
+ * The number of available cores must be specified during the build of %OpenANN.
+ * It can be set with the CMake variable PARALLEL_CORES. Note that you should
+ * use only the maximum number of available physical cores. Virtual cores will
+ * usually slow matrix operations down.
+ */
 void useAllCores();
 
 } // namespace OpenANN
