@@ -6,6 +6,14 @@
 /**
  * \page PB Pole Balancing
  *
+ * Let a neural network learn how to balance poles that are mounted on a cart.
+ *
+ * This is an example for a reinforcement learning problem. We will use direct
+ * policy search, i.e. we will not approximate a value function from which we
+ * will infer a policy. Instead, we will represent the policy with a neural
+ * network and we will optimize its parameters with a gradient-free optimization
+ * algorithm (CMAES).
+ *
  * You can choose between the environments SinglePoleBalancing and
  * DoublePoleBalancing with or without velocities. The NeuroEvolutionAgent
  * solves this problem.
