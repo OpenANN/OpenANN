@@ -7,32 +7,6 @@
 
 using namespace OpenANN;
 
-/**
- * \page XOR
- *
- * \section DataSet Data Set
- *
- * The XOR problem cannot be solved by the perceptron (a neural network with
- * just one neuron) and was the reason for the death of neural network
- * research in the 70s until backpropagation was discovered.
- *
- * The data set is simple:
- * <table>
- * <tr><td>\f$ x_1 \f$</td><td>\f$ x_2 \f$</td><td>\f$ y_1 \f$</td></tr>
- * <tr><td>0</td><td>1</td><td>1</td></tr>
- * <tr><td>0</td><td>0</td><td>0</td></tr>
- * <tr><td>1</td><td>1</td><td>0</td></tr>
- * <tr><td>1</td><td>0</td><td>1</td></tr>
- * </table>
- *
- * That means \f$ y_1 \f$ is on whenever \f$ x_1 \neq x_2 \f$. The problem is
- * that you cannot draw a line that separates the two classes 0 and 1. They
- * are not linearly separable as you can see in the following picture.
- *
- * \image html xor.png
- *
- * Therefore, we need at least one hidden layer to solve the problem.
- */
 int main()
 {
   // Create dataset
