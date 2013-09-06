@@ -24,7 +24,8 @@ The data set is simple:
 That means \f$ y_1 \f$ is on whenever \f$ x_1 \neq x_2 \f$. The problem is
 that you cannot draw a line that separates the two classes 0 and 1. They
 are not linearly separable as you can see in the following picture. Therefore,
-we need at least one hidden layer to solve the problem.
+we need at least one hidden layer to solve the problem. In the next sections
+you will find C++ code and Python code that solves this problem.
 
 \image html xor.png
 
