@@ -54,7 +54,9 @@ void AlphaBetaFilter::reset()
   y.setZero();
 }
 
-void AlphaBetaFilter::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void AlphaBetaFilter::forwardPropagate(Eigen::MatrixXd* x,
+                                       Eigen::MatrixXd*& y, bool dropout,
+                                       double* error)
 {
   this->x = x;
 

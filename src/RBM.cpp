@@ -158,7 +158,7 @@ OutputInfo RBM::initialize(std::vector<double*>& parameterPointers,
 }
 
 void RBM::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                           bool dropout)
+                           bool dropout, double* error)
 {
   v = *x;
   sampleHgivenV();

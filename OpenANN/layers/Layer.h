@@ -58,9 +58,10 @@ public:
    * @param x pointer to input of the layer (with bias)
    * @param y returns a pointer to output of the layer
    * @param dropout enable dropout for regularization
+   * @param error error value, will be updated with regularization terms
    */
   virtual void forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                                bool dropout) = 0;
+                                bool dropout, double* error = 0) = 0;
   /**
    * Backpropagation in this layer.
    * @param ein pointer to error signal of the higher layer

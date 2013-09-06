@@ -63,7 +63,7 @@ void SigmaPi::updatedParameters()
 }
 
 void SigmaPi::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                               bool dropout)
+                               bool dropout, double* error)
 {
   const int N = x->rows();
   this->x.conservativeResize(N, Eigen::NoChange);

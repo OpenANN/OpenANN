@@ -10,6 +10,7 @@ class FullyConnectedTestCase : public TestCase
   void backprop();
   void inputGradient();
   void parallelForward();
+  void regularization();
 };
 
 #endif // OPENANN_TEST_FULLY_CONNECTED_TEST_CASE_H_

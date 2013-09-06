@@ -62,7 +62,8 @@ void Compressed::updatedParameters()
   W = alpha * phi.block(0, 0, M, I + bias);
 }
 
-void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool dropout)
+void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
+                                  bool dropout, double* error)
 {
   const int N = x->rows();
   this->y.conservativeResize(N, Eigen::NoChange);
@@ -73,6 +74,11 @@ void Compressed::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y, bool 
     a.rowwise() += W.col(I).transpose();
   // Compute output
   activationFunction(act, a, this->y);
+  // Add regularization error
+  if(error && regularization.l1Penalty > 0.0)
+    *error += regularization.l1Penalty * alpha.array().abs().sum();
+  if(error && regularization.l2Penalty > 0.0)
+    *error += regularization.l2Penalty * alpha.array().square().sum() / 2.0;
   y = &(this->y);
 }
 

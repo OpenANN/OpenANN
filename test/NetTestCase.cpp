@@ -14,6 +14,7 @@ void NetTestCase::run()
   RUN(NetTestCase, multilayerNetwork);
   RUN(NetTestCase, predictMinibatch);
   RUN(NetTestCase, minibatchErrorGradient);
+  RUN(NetTestCase, regularizationGradient);
   RUN(NetTestCase, saveLoad);
 }
 
@@ -220,6 +221,33 @@ void NetTestCase::minibatchErrorGradient()
   for(int k = 0; k < net.dimension(); k++)
     ASSERT_EQUALS_DELTA(g1(k), g2(k), 1e-2);
   ASSERT_EQUALS_DELTA(error1, error2, 1e-2);
+}
+
+void NetTestCase::regularizationGradient()
+{
+  const int D = 3;
+  const int F = 2;
+  const int N = 2;
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
+
+  OpenANN::Net net;
+  net.inputLayer(D)
+  .setRegularization(0.1, 0.1)
+  .fullyConnectedLayer(2, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
+
+  std::vector<int> indices;
+  indices.push_back(0);
+  indices.push_back(1);
+  Eigen::VectorXd ga = OpenANN::FiniteDifferences::parameterGradient(
+      indices.begin(), indices.end(), net);
+  Eigen::VectorXd g = ((OpenANN::Optimizable&)net).gradient(
+      indices.begin(), indices.end());
+
+  for(int k = 0; k < net.dimension(); k++)
+    ASSERT_EQUALS_DELTA(ga(k), g(k), 1e-2);
 }
 
 void NetTestCase::saveLoad()

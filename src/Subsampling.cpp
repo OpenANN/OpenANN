@@ -92,7 +92,7 @@ void Subsampling::initializeParameters()
 }
 
 void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
-                                   bool dropout)
+                                   bool dropout, double* error)
 {
   const int N = x->rows();
   this->a.conservativeResize(N, Eigen::NoChange);
@@ -127,6 +127,13 @@ void Subsampling::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   }
 
   activationFunction(act, a, this->y);
+
+  if(error && regularization.l1Penalty > 0.0)
+    for(int fmo = 0; fmo < fm; fmo++)
+      *error += regularization.l1Penalty * W[fmo].array().abs().sum();
+  if(error && regularization.l2Penalty > 0.0)
+    for(int fmo = 0; fmo < fm; fmo++)
+      *error += regularization.l2Penalty * W[fmo].array().square().sum() / 2.0;
 
   y = &(this->y);
 }
@@ -180,12 +187,12 @@ void Subsampling::backpropagate(Eigen::MatrixXd* ein, Eigen::MatrixXd*& eout,
   if(regularization.l1Penalty > 0.0)
   {
     for(int fmo = 0; fmo < fm; fmo++)
-      Wd[fmo].array() += regularization.l2Penalty * W[fmo].array() / W[fmo].array().abs();
+      Wd[fmo].array() += regularization.l1Penalty * W[fmo].array() / W[fmo].array().abs();
   }
   if(regularization.l2Penalty > 0.0)
   {
     for(int fmo = 0; fmo < fm; fmo++)
-        Wd[fmo] += regularization.l2Penalty * W[fmo];
+      Wd[fmo] += regularization.l2Penalty * W[fmo];
   }
 
   eout = &e;

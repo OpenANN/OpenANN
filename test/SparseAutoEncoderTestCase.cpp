@@ -9,6 +9,7 @@ void SparseAutoEncoderTestCase::run()
   RUN(SparseAutoEncoderTestCase, gradient);
   RUN(SparseAutoEncoderTestCase, inputGradient);
   RUN(SparseAutoEncoderTestCase, layerGradient);
+  RUN(SparseAutoEncoderTestCase, regularization);
 }
 
 void SparseAutoEncoderTestCase::gradient()
@@ -56,7 +57,7 @@ void SparseAutoEncoderTestCase::layerGradient()
   const int N = 2;
   OpenANN::OutputInfo info;
   info.dimensions.push_back(D);
-  OpenANN::SparseAutoEncoder layer(D, H, 3.0, 0.1, 0.0001, OpenANN::LOGISTIC);
+  OpenANN::SparseAutoEncoder layer(D, H, 3.0, 0.1, 0.0, OpenANN::LOGISTIC);
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
@@ -71,4 +72,23 @@ void SparseAutoEncoderTestCase::layerGradient()
                                                     indices.end(), opt);
   for(int i = 0; i < gradient.rows(); i++)
     ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-4);
+}
+
+void SparseAutoEncoderTestCase::regularization()
+{
+  const int D = 6;
+  const int H = 3;
+  const int N = 1;
+  OpenANN::OutputInfo info;
+  info.dimensions.push_back(D);
+  OpenANN::SparseAutoEncoder layer(D, H, 3.0, 0.1, 0.1, OpenANN::LOGISTIC);
+  LayerAdapter opt(layer, info);
+
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd Y = Eigen::MatrixXd::Random(N, H);
+  opt.trainingSet(X, Y);
+  Eigen::VectorXd gradient = opt.gradient(0);
+  Eigen::VectorXd estimatedGradient = OpenANN::FiniteDifferences::parameterGradient(0, opt);
+  for(int i = 0; i < gradient.rows(); i++)
+    ASSERT_EQUALS_DELTA(gradient(i), estimatedGradient(i), 1e-10);
 }
