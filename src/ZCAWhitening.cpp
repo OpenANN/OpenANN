@@ -10,9 +10,9 @@ Transformer& ZCAWhitening::fit(const Eigen::MatrixXd& X)
 {
   const int N = X.rows();
   const int D = X.cols();
-  mean = X.colwise().mean().transpose();
+  mean = X.colwise().mean();
   Eigen::MatrixXd aligned = X;
-  aligned.rowwise() -= mean.transpose();
+  aligned.rowwise() -= mean;
   Eigen::MatrixXd cov = aligned.transpose() * aligned / (double) (N-1);
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(cov, Eigen::ComputeFullV);
@@ -27,10 +27,10 @@ Transformer& ZCAWhitening::fit(const Eigen::MatrixXd& X)
 
 Eigen::MatrixXd ZCAWhitening::transform(const Eigen::MatrixXd& X)
 {
-  OPENANN_CHECK(mean.cols() > 0);
-  OPENANN_CHECK_EQUALS(X.cols(), mean.rows());
+  OPENANN_CHECK(mean.rows() > 0);
+  OPENANN_CHECK_EQUALS(X.cols(), mean.cols());
   Eigen::MatrixXd Y = X;
-  Y.rowwise() -= mean.transpose();
+  Y.rowwise() -= mean;
   return Y * W.transpose();
 }
 
