@@ -19,7 +19,7 @@ Transformer& ZCAWhitening::fit(const Eigen::MatrixXd& X)
   Eigen::VectorXd S = svd.singularValues();
   W = svd.matrixV();
   for(int d = 0; d < D; ++d)
-    W.row(d).array() /= S.array().sqrt();
+    W.row(d).array() /= (S.array() + 1e-5).sqrt();
   W *= svd.matrixV().transpose();
 
   return *this;
