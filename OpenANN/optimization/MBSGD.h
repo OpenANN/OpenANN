@@ -25,7 +25,6 @@ namespace OpenANN
  * - each weight has an adaptive learning rate
  * - we can decrease the learning rate during optimization
  * - we can increase the momentum during optimization
- * - we can regularize the weights, so that the generalization will be better
  *
  * A good introduction to optimization with MBSGD can be found in Geoff
  * Hinton's Coursera course "Neural Networks for Machine Learning". A detailed
