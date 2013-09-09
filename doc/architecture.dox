@@ -28,7 +28,8 @@ can also optimize e.g. reinforcement learning agents that implement the
 Optimizable interface. The most important Learner in the library is the Net.
 It represents a feedforward multilayer neural network that can be trained
 supervised. Another example is the RBM, which is usually trained unsupervised
-and can be used as a layer of a Net.
+and can then be used as a layer of a Net. A Net can consist of many different
+types of layers. They only have to implement the Layer interface.
 
 */
 
