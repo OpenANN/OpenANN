@@ -126,7 +126,6 @@ double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer&
 
     OpenANN::StoppingInterrupt interrupt;
     int iteration = 0;
-
     int trainingHits = 0;
     int testHits = 0;
     double trainingAccuracy = 0.0;
@@ -134,19 +133,15 @@ double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer&
 
     while(opt.step() && !interrupt.isSignaled())
     {
-      std::stringstream ss;
-
       trainingHits = classificationHits(learner, training);
       testHits = classificationHits(learner, test);
-      trainingAccuracy = (100.0 * trainingHits) / training.samples();
-      testAccuracy = (100.0 * testHits) / test.samples();
+      trainingAccuracy = trainingHits / training.samples();
+      testAccuracy = testHits / test.samples();
 
-      ss << "iteration " << ++iteration;
-      ss << ", training sse = " << FloatingPointFormatter(sse(learner, training), 4);
-      ss << ", training accuracy = " << FloatingPointFormatter(trainingAccuracy, 2) << "%";
-      ss << ", test accuracy = " << FloatingPointFormatter(testAccuracy, 2) << "%";
-
-      OPENANN_DEBUG << ss.str();
+      OPENANN_DEBUG << "iteration " << ++iteration
+          << ", training sse = " << FloatingPointFormatter(sse(learner, training), 4)
+          << ", training accuracy = " << FloatingPointFormatter(trainingAccuracy, 2) << "%"
+          << ", test accuracy = " << FloatingPointFormatter(testAccuracy, 2) << "%";
     }
 
     OPENANN_INFO
@@ -160,7 +155,7 @@ double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer&
     averageTestAccuracy += testAccuracy;
   }
 
-  return averageTestAccuracy /= folds * 100.0;
+  return averageTestAccuracy /= folds;
 }
 
 }
