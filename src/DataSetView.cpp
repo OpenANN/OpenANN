@@ -63,28 +63,28 @@ DataSetView& DataSetView::shuffle()
 
 
 void split(std::vector<DataSetView>& groups, DataSet& dataset,
-           int number_of_groups, bool shuffling)
+           int numberOfGroups, bool shuffling)
 {
-  OPENANN_CHECK(number_of_groups > 1);
+  OPENANN_CHECK(numberOfGroups > 1);
   std::vector<int> indices;
 
   indices.reserve(dataset.samples());
-  groups.reserve(number_of_groups);
+  groups.reserve(numberOfGroups);
 
   for(int i = 0; i < dataset.samples(); ++i)
     indices.push_back(i);
 
-  int samples_per_group = std::floor(dataset.samples() / number_of_groups + 0.5);
+  int samplesPerGroup = std::floor(dataset.samples() / numberOfGroups + 0.5);
 
   if(shuffling)
     std::random_shuffle(indices.begin(), indices.end());
 
-  for(int i = 0; i < number_of_groups; ++i)
+  for(int i = 0; i < numberOfGroups; ++i)
   {
-    std::vector<int>::iterator it = indices.begin() + i * samples_per_group;
+    std::vector<int>::iterator it = indices.begin() + i * samplesPerGroup;
 
-    if(i < number_of_groups - 1)
-      groups.push_back(DataSetView(dataset, it, it + samples_per_group));
+    if(i < numberOfGroups - 1)
+      groups.push_back(DataSetView(dataset, it, it + samplesPerGroup));
     else
       groups.push_back(DataSetView(dataset, it, indices.end()));
   }
