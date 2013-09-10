@@ -1,7 +1,6 @@
 #include <OpenANN/OpenANN>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
-#include <OpenANN/ZCAWhitening.h>
 #include <OpenANN/Evaluator.h>
 #include "CIFARLoader.h"
 
