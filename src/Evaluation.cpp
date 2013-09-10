@@ -101,7 +101,8 @@ int classificationHits(Learner& learner, DataSet& dataSet)
 }
 
 
-double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt)
+double crossValidation(int folds, Learner& learner, DataSet& dataSet,
+                       Optimizer& opt)
 {
   double averageTestAccuracy = 0.0;
   std::vector<DataSetView> splits;

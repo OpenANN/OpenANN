@@ -1,6 +1,8 @@
 #include "EvaluationTestCase.h"
 #include <OpenANN/Learner.h>
 #include <OpenANN/Evaluation.h>
+#include <OpenANN/Net.h>
+#include <OpenANN/optimization/LMA.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
 
@@ -38,6 +40,7 @@ void EvaluationTestCase::run()
   RUN(EvaluationTestCase, ce);
   RUN(EvaluationTestCase, accuracy);
   RUN(EvaluationTestCase, confusionMatrix);
+  RUN(EvaluationTestCase, crossValidation);
 }
 
 void EvaluationTestCase::setUp()
@@ -148,4 +151,31 @@ void EvaluationTestCase::confusionMatrix()
   ASSERT_EQUALS(confusionMatrix(0, 1), 1);
   ASSERT_EQUALS(confusionMatrix(2, 0), 1);
   ASSERT_EQUALS(confusionMatrix(2, 2), 1);
+}
+
+void EvaluationTestCase::crossValidation()
+{
+  const int D = 2;
+  const int F = 1;
+  const int N = 4;
+  Eigen::MatrixXd X(N, D);
+  Eigen::MatrixXd T(N, F);
+  X.row(0) << 0.0, 1.0;
+  T.row(0) << 1.0;
+  X.row(1) << 0.0, 0.0;
+  T.row(1) << 0.0;
+  X.row(2) << 1.0, 1.0;
+  T.row(2) << 0.0;
+  X.row(3) << 1.0, 0.0;
+  T.row(3) << 1.0;
+  OpenANN::DirectStorageDataSet ds(&X, &T);
+  OpenANN::Net net;
+  net.inputLayer(D).outputLayer(F, OpenANN::LOGISTIC);
+  OpenANN::LMA opt;
+  OpenANN::StoppingCriteria stop;
+  stop.maximalIterations = 5;
+  opt.setStopCriteria(stop);
+  double score = OpenANN::crossValidation(4, net, ds, opt);
+  // A linear model is not able to fit the XOR data set
+  ASSERT_EQUALS(score, 0.0);
 }
