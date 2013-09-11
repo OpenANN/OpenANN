@@ -15,8 +15,8 @@ class RandomAgent : public Agent
 {
   Environment* environment;
   double accumulatedReward;
-public:
   double lastReturn;
+public:
   RandomAgent();
   virtual void abandoneIn(Environment& environment);
   virtual void chooseAction();

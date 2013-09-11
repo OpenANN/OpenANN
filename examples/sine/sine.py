@@ -1,6 +1,14 @@
-## \page Sine
+## \page Sine Sine
 #
-# In this example, a sine function will approximated from noisy measurements.
+# \section DataSet Data Set
+#
+# In this example, a sine function will be approximated from noisy measurements.
+# This is an example for nonlinear regression. To run this example, you have
+# to install matplotlib. It is a plotting library for Python.
+#
+# \section Code
+#
+# \include "sine/sine.py"
 
 try:
     import pylab

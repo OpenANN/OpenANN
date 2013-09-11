@@ -19,6 +19,7 @@ namespace OpenANN
  */
 class ZCAWhitening : public Transformer
 {
+  Eigen::VectorXd mean;
   Eigen::MatrixXd W;
 public:
   virtual Transformer& fit(const Eigen::MatrixXd& X);

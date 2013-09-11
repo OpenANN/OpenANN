@@ -13,6 +13,7 @@ class EvaluationTestCase : public TestCase
   void ce();
   void accuracy();
   void confusionMatrix();
+  void crossValidation();
 };
 
 #endif // OPENANN_TEST_EVALUATION_TEST_CASE_H_

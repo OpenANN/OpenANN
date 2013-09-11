@@ -52,13 +52,20 @@
  * [1] Kevin J. Lang and Michael J. Witbrock: Learning to Tell Two Spirals
  *    Apart. In: Proceedings of the 1988 Connectionist Models Summer School,
  *    1988. ISBN: 0-55860-015-9
+ *
+ * \section Code
+ *
+ * Note that you should not use this as an example for good GUI code because it
+ * mixes a lot of logic and visualization.
+ *
+ * \include "twospirals/twospirals.cpp"
+ * \include "twospirals/TwoSpiralsVisualization.h"
+ * \include "twospirals/TwoSpiralsVisualization.cpp"
  */
 
 int main(int argc, char** argv)
 {
-#ifdef PARALLEL_CORES
-  omp_set_num_threads(PARALLEL_CORES);
-#endif
+  useAllCores(); // Enable all cores (must be specified during build)
   OpenANNLibraryInfo::print();
   QApplication app(argc, argv);
 
