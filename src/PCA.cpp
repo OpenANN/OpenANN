@@ -13,7 +13,7 @@ PCA::PCA(int components, bool whiten)
 Transformer& PCA::fit(const Eigen::MatrixXd& X)
 {
   const int N = X.rows();
-  mean = X.colwise().mean().transpose();
+  mean = X.colwise().mean();
   Eigen::MatrixXd aligned = X;
   aligned.rowwise() -= mean.transpose();
 
@@ -34,7 +34,7 @@ Transformer& PCA::fit(const Eigen::MatrixXd& X)
 
 Eigen::MatrixXd PCA::transform(const Eigen::MatrixXd& X)
 {
-  OPENANN_CHECK(mean.cols() > 0);
+  OPENANN_CHECK(mean.rows() > 0);
   OPENANN_CHECK_EQUALS(X.cols(), mean.rows());
   Eigen::MatrixXd Y = X;
   Y.rowwise() -= mean.transpose();

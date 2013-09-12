@@ -13,7 +13,7 @@ cdef cbindings.VectorXd* __vector_numpy_to_eigen__(numpy.ndarray x_numpy):
 @cython.boundscheck(False)
 cdef numpy.ndarray __vector_eigen_to_numpy__(cbindings.VectorXd* x_eigen):
   cdef numpy.ndarray[numpy.float64_t, ndim=1] x_numpy = \
-      numpy.ndarray(shape=(x_eigen.rows(), 1))
+      numpy.ndarray(shape=(x_eigen.rows(),))
   cdef int rows = x_eigen.rows()
   cdef int r
   for r in range(rows):

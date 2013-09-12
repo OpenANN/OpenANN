@@ -30,7 +30,7 @@ OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 OPTIMIZE_FOR_FORTRAN   = NO
 OPTIMIZE_OUTPUT_VHDL   = NO
-EXTENSION_MAPPING      = pyx=Python
+EXTENSION_MAPPING      = pxi=Python pyx=Python
 BUILTIN_STL_SUPPORT    = YES
 CPP_CLI_SUPPORT        = NO
 SIP_SUPPORT            = NO
@@ -79,9 +79,9 @@ WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = YES
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           =
-INPUT                  = OpenANN doc examples benchmarks python/openann
+INPUT                  = OpenANN doc examples benchmarks python
 INPUT_ENCODING         = UTF-8
-FILE_PATTERNS          = *.h *.cpp *.py *.pyx *.dox OpenANN
+FILE_PATTERNS          = *.h *.cpp *.py *.pyx *.pxi *.dox OpenANN
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO

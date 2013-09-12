@@ -9,6 +9,19 @@
 namespace OpenANN
 {
 
+/**
+ * @class KMeans
+ *
+ * K-means clustering.
+ *
+ * This is an iterative implementation based on mini-batch stochastic
+ * gradient descent [1].
+ *
+ * [1] Sculley, D.:
+ * Web-scale k-means clustering,
+ * Proceedings of the 19th international conference on World wide web,
+ * pp. 1177-1178, ISBN 978-1-60558-799-8, 2010.
+ */
 class KMeans : public Transformer
 {
   const int D;

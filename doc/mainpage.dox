@@ -13,7 +13,9 @@ This is the API documentation of %OpenANN.
 for users that want to apply ANN to their problems, developers and researchers
 that want to implement new technologies and students that want to understand
 the tricks that are required to implement neural networks. It follows a
-minimal dependency policy, i.e. we rely on only a few libraries and tools.
+minimal dependency policy, i.e. we rely on only a few libraries and tools. It
+is not designed to use the full potential of GPUs though, but it is possible to
+run it on very limited systems, e.g. robotic platforms.
 
 To start using %OpenANN it might be helpful to take a look at
 \ref GettingStarted to see how it works.
@@ -44,7 +46,8 @@ To start using %OpenANN it might be helpful to take a look at
     subsampling layers and max-pooling layers
   - Random projections for data and network compression and extreme learning
     machines
-  - Restricted Boltzmann machines (RBM) for unsupervised pretraining
+  - Restricted Boltzmann machines (RBM) and sparse auto-encoders (SAE) for
+    unsupervised pretraining
 - Optimization algorithms
   - Mini-batch stochastic gradient descent (MBSGD) for large networks
   - Conjugate gradient (CG) for large networks
@@ -53,6 +56,11 @@ To start using %OpenANN it might be helpful to take a look at
   - Levenberg-Marquardt algorithm (LMA) for small networks
   - (Increasing population size) covariance matrix adaption evolution
     strategies (IPOPCMAES) for reinforcement learning
+- Preprocessing methods
+  - Normalization
+  - Principal component analysis (PCA)
+  - Zero-phase component analysis (ZCAWhitening)
+  - k-means (KMeans)
 - Supported languages
   - C++
   - Python bindings

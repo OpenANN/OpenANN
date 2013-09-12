@@ -117,7 +117,7 @@ private:
  *      reference dataset
  */
 void split(std::vector<DataSetView>& groups, DataSet& dataset,
-           int number_of_groups, bool shuffling = true);
+           int numberOfGroups, bool shuffling = true);
 
 
 /**

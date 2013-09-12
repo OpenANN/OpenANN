@@ -120,7 +120,8 @@ int classificationHits(Learner& learner, DataSet& dataSet);
  * @param opt optimization algorithm
  * @return average accuracy on validation set, within [0, 1]
  */
-double crossValidation(int folds, Learner& learner, DataSet& dataSet, Optimizer& opt);
+double crossValidation(int folds, Learner& learner, DataSet& dataSet,
+                       Optimizer& opt);
 
 /**
  * One-of-c decoding.
