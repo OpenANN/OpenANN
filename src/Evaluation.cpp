@@ -77,9 +77,16 @@ Eigen::MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
 
 int oneOfCDecoding(const Eigen::VectorXd& target)
 {
-  int i;
-  target.maxCoeff(&i);
-  return i;
+  if(target.rows() == 1)
+  {
+    return (int) (target(0) >= 0.5);
+  }
+  else
+  {
+    int i;
+    target.maxCoeff(&i);
+    return i;
+  }
 }
 
 int classificationHits(Learner& learner, DataSet& dataSet)

@@ -136,8 +136,11 @@ double crossValidation(int folds, Learner& learner, DataSet& dataSet,
 /**
  * One-of-c decoding.
  *
+ * If the length of the vector is 1 it is interpreted as probability for the
+ * class 1.
+ *
  * @param target vector that represents a 1-of-c encoded class label
- * @return index of entry with the highest value
+ * @return index of entry with the highest value or class index
  */
 int oneOfCDecoding(const Eigen::VectorXd& target);
 
