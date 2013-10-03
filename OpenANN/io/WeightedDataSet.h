@@ -18,7 +18,7 @@ namespace OpenANN
 class WeightedDataSet : public DataSet
 {
   DataSet& dataSet;
-  std::vector<double> weights;
+  Eigen::VectorXd weights;
   bool deterministic;
   std::vector<int> originalIndices;
 public:
@@ -27,9 +27,9 @@ public:
    * @param weights weights for each instance, must sum up to one
    * @param deterministic use deterministic (roulette wheel) sampling
    */
-  WeightedDataSet(DataSet& dataSet, std::vector<double>& weights,
+  WeightedDataSet(DataSet& dataSet, const Eigen::VectorXd& weights,
                   bool deterministic);
-  WeightedDataSet& updateWeights(std::vector<double>& weights);
+  WeightedDataSet& updateWeights(const Eigen::VectorXd& weights);
   virtual int samples();
   virtual int inputs();
   virtual int outputs();

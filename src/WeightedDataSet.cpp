@@ -4,14 +4,14 @@
 namespace OpenANN
 {
 
-WeightedDataSet::WeightedDataSet(DataSet& dataSet, std::vector<double>& weights,
+WeightedDataSet::WeightedDataSet(DataSet& dataSet, const Eigen::VectorXd& weights,
                                  bool deterministic)
   : dataSet(dataSet), weights(weights), deterministic(deterministic)
 {
   resample();
 }
 
-WeightedDataSet& WeightedDataSet::updateWeights(std::vector<double>& weights)
+WeightedDataSet& WeightedDataSet::updateWeights(const Eigen::VectorXd& weights)
 {
   this->weights = weights;
   resample();
@@ -54,7 +54,7 @@ void WeightedDataSet::resample()
     double sum = 0.0;
     int idx = 0;
     for(; sum < p && idx < N; idx++)
-      sum += weights[idx];
+      sum += weights(idx);
     originalIndices[n] = idx-1;
   }
 }
