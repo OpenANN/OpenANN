@@ -34,6 +34,7 @@ EnsembleLearner& AdaBoost::train(DataSet& dataSet)
   for(std::list<Learner*>::iterator m = models.begin(); m != models.end();
       m++, t++)
   {
+    (*m)->trainingSet(dataSet);
     optimizer->setOptimizable(**m);
     optimizer->optimize();
     const double error = 1.0 - weightedAccuracy(**m, dataSet, weights);
