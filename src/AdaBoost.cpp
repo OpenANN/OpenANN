@@ -29,19 +29,19 @@ EnsembleLearner& AdaBoost::train(DataSet& dataSet)
   modelWeights.setZero();
   Eigen::VectorXd weights(dataSet.samples());
   weights.fill(1.0 / (double) dataSet.samples());
-  WeightedDataSet resampled(dataSet, weights, true);
+  WeightedDataSet resampled(dataSet, weights, false);
   int t = 0;
   for(std::list<Learner*>::iterator m = models.begin(); m != models.end();
       m++, t++)
   {
-    (*m)->trainingSet(dataSet);
+    (*m)->trainingSet(resampled);
     optimizer->setOptimizable(**m);
     optimizer->optimize();
     const double error = 1.0 - weightedAccuracy(**m, dataSet, weights);
     OPENANN_CHECK_WITHIN(error, 0.0, 1.0);
+    modelWeights(t) = 0.5 * std::log((1.0 - error) / (error+1e-10));
     if(error == 0.0 || error >= 0.5)
       continue;
-    modelWeights(t) = 0.5 * std::log((1.0 - error) / error);
     for(int n = 0; n < N; n++)
     {
       const bool correct = oneOfCDecoding((**m)(dataSet.getInstance(n))) ==
@@ -50,6 +50,7 @@ EnsembleLearner& AdaBoost::train(DataSet& dataSet)
     }
     weights /= weights.sum();
   }
+  modelWeights /= modelWeights.sum();
 }
 
 Eigen::MatrixXd AdaBoost::operator()(Eigen::MatrixXd& X)

@@ -6,6 +6,7 @@
 class AdaBoostTestCase : public TestCase
 {
   virtual void run();
+  virtual void setUp();
   void adaBoost();
 };
 
