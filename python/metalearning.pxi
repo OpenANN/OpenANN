@@ -8,6 +8,10 @@ cdef class AdaBoost:
   def __dealloc__(self):
     del self.thisptr
 
+  def get_weights(self):
+    cdef cbindings.VectorXd w_eigen = self.thisptr.getWeights()
+    return __vector_eigen_to_numpy__(&w_eigen)
+
   def add_learner(self, learner):
     self.thisptr.addLearner(deref((<Learner>learner).learner))
 

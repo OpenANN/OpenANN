@@ -22,6 +22,11 @@ class AdaBoost : public EnsembleLearner
   int F;
 public:
   AdaBoost();
+  /**
+   * Get weights of the models.
+   * @return model weights, sum up to one
+   */
+  Eigen::VectorXd getWeights();
   virtual EnsembleLearner& addLearner(Learner& learner);
   virtual EnsembleLearner& setOptimizer(Optimizer& optimizer);
   virtual EnsembleLearner& train(DataSet& dataSet);

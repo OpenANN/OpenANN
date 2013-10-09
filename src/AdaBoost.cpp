@@ -11,6 +11,11 @@ AdaBoost::AdaBoost()
 {
 }
 
+Eigen::VectorXd AdaBoost::getWeights()
+{
+  return modelWeights;
+}
+
 EnsembleLearner& AdaBoost::addLearner(Learner& learner)
 {
   models.push_back(&learner);
