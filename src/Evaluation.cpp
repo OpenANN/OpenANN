@@ -52,6 +52,17 @@ double accuracy(Learner& learner, DataSet& dataSet)
   return accuracy / (double) N;
 }
 
+double weightedAccuracy(Learner& learner, DataSet& dataSet, Eigen::VectorXd weights)
+{
+  const int N = dataSet.samples();
+  double accuracy = 0.0;
+  for(int n = 0; n < N; n++)
+    if(oneOfCDecoding(learner(dataSet.getInstance(n))) ==
+       oneOfCDecoding(dataSet.getTarget(n)))
+      accuracy += weights(n);
+  return accuracy;
+}
+
 Eigen::MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
 {
   const int N = dataSet.samples();
@@ -66,9 +77,16 @@ Eigen::MatrixXi confusionMatrix(Learner& learner, DataSet& dataSet)
 
 int oneOfCDecoding(const Eigen::VectorXd& target)
 {
-  int i;
-  target.maxCoeff(&i);
-  return i;
+  if(target.rows() == 1)
+  {
+    return (int) (target(0) >= 0.5);
+  }
+  else
+  {
+    int i;
+    target.maxCoeff(&i);
+    return i;
+  }
 }
 
 int classificationHits(Learner& learner, DataSet& dataSet)

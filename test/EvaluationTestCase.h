@@ -12,6 +12,7 @@ class EvaluationTestCase : public TestCase
   void rmse();
   void ce();
   void accuracy();
+  void weightedAccuracy();
   void confusionMatrix();
   void crossValidation();
 };
