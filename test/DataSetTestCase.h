@@ -14,6 +14,7 @@ public:
   void dataSetSplitsFromGroups();
   void dataSetSplitsFromRatio();
   void dataSetMerge();
+  void weightedDataSet();
 };
 
 #endif // OPENANN_TEST_DATA_SET_TEST_CASE_H_

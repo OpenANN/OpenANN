@@ -341,3 +341,16 @@ cdef extern from "OpenANN/Evaluation.h" namespace "OpenANN":
   int classificationHits(Learner& learner, DataSet& dataSet)
   double crossValidation(int folds, Learner& learner, DataSet& dataSet,
                          Optimizer& opt)
+
+
+cdef extern from "OpenANN/EnsembleLearner.h" namespace "OpenANN":
+  cdef cppclass EnsembleLearner:
+    EnsembleLearner& addLearner(Learner& learner)
+    EnsembleLearner& setOptimizer(Optimizer& optimizer)
+    EnsembleLearner& train(DataSet& dataSet)
+    MatrixXd predict "operator()" (MatrixXd& x)
+
+cdef extern from "OpenANN/AdaBoost.h" namespace "OpenANN":
+  cdef cppclass AdaBoost(EnsembleLearner):
+    AdaBoost()
+    VectorXd getWeights()

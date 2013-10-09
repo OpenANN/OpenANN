@@ -1,6 +1,7 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/io/DataSetView.h>
+#include <OpenANN/io/WeightedDataSet.h>
 
 #include "DataSetTestCase.h"
 
@@ -13,6 +14,7 @@ void DataSetTestCase::run()
   RUN(DataSetTestCase, dataSetSplitsFromGroups);
   RUN(DataSetTestCase, dataSetSplitsFromRatio);
   RUN(DataSetTestCase, dataSetMerge);
+  RUN(DataSetTestCase, weightedDataSet);
 }
 
 void DataSetTestCase::directStorageDataSets()
@@ -194,4 +196,47 @@ void DataSetTestCase::dataSetMerge()
   }
 }
 
+#include <iostream>
+void DataSetTestCase::weightedDataSet()
+{
+  Eigen::MatrixXd in(5, 1);
+  Eigen::MatrixXd out(5, 1);
+  in << 0, 1, 2, 3, 4;
+  out << 0, 1, 2, 3, 4;
+  OpenANN::DirectStorageDataSet original(&in, &out);
 
+  Eigen::VectorXd weights(5);
+  weights.fill(0.0);
+  weights(2) = 1.0;
+  OpenANN::WeightedDataSet resampled(original, weights, true);
+  ASSERT_EQUALS(resampled.getTarget(0).x(), 2.0);
+  ASSERT_EQUALS(resampled.getTarget(1).x(), 2.0);
+  ASSERT_EQUALS(resampled.getTarget(2).x(), 2.0);
+  ASSERT_EQUALS(resampled.getTarget(3).x(), 2.0);
+  ASSERT_EQUALS(resampled.getTarget(4).x(), 2.0);
+  weights.fill(0.0);
+  weights(0) = 1.0;
+  resampled.updateWeights(weights);
+  ASSERT_EQUALS(resampled.getTarget(0).x(), 0.0);
+  ASSERT_EQUALS(resampled.getTarget(1).x(), 0.0);
+  ASSERT_EQUALS(resampled.getTarget(2).x(), 0.0);
+  ASSERT_EQUALS(resampled.getTarget(3).x(), 0.0);
+  ASSERT_EQUALS(resampled.getTarget(4).x(), 0.0);
+  weights.fill(0.0);
+  weights(4) = 1.0;
+  resampled.updateWeights(weights);
+  ASSERT_EQUALS(resampled.getTarget(0).x(), 4.0);
+  ASSERT_EQUALS(resampled.getTarget(1).x(), 4.0);
+  ASSERT_EQUALS(resampled.getTarget(2).x(), 4.0);
+  ASSERT_EQUALS(resampled.getTarget(3).x(), 4.0);
+  ASSERT_EQUALS(resampled.getTarget(4).x(), 4.0);
+  weights.fill(0.0);
+  weights(0) = 0.5;
+  weights(4) = 0.5;
+  resampled.updateWeights(weights);
+  ASSERT_EQUALS(resampled.getTarget(0).x(), 0.0);
+  ASSERT_EQUALS(resampled.getTarget(1).x(), 0.0);
+  ASSERT_EQUALS(resampled.getTarget(2).x(), 4.0);
+  ASSERT_EQUALS(resampled.getTarget(3).x(), 4.0);
+  ASSERT_EQUALS(resampled.getTarget(4).x(), 4.0);
+}

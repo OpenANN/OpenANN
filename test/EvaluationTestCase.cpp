@@ -39,6 +39,7 @@ void EvaluationTestCase::run()
   RUN(EvaluationTestCase, rmse);
   RUN(EvaluationTestCase, ce);
   RUN(EvaluationTestCase, accuracy);
+  RUN(EvaluationTestCase, weightedAccuracy);
   RUN(EvaluationTestCase, confusionMatrix);
   RUN(EvaluationTestCase, crossValidation);
 }
@@ -126,6 +127,26 @@ void EvaluationTestCase::accuracy()
   OpenANN::DirectStorageDataSet dataSet(&Y, &T);
   double accuracy = OpenANN::accuracy(learner, dataSet);
   ASSERT_EQUALS_DELTA(accuracy, 0.667, 0.001);
+}
+
+void EvaluationTestCase::weightedAccuracy()
+{
+  const int N = 3;
+  const int F = 3;
+  Eigen::MatrixXd Y(N, F);
+  Eigen::MatrixXd T(N, F);
+  Y.row(0) << 1.0, 0.0, 0.0;
+  Y.row(1) << 0.0, 0.0, 1.0;
+  Y.row(2) << 0.0, 1.0, 0.0;
+  T.row(0) << 1.0, 0.0, 0.0;
+  T.row(1) << 0.0, 1.0, 0.0;
+  T.row(2) << 0.0, 1.0, 0.0;
+  ReturnInput learner;
+  OpenANN::DirectStorageDataSet dataSet(&Y, &T);
+  Eigen::VectorXd weights(N);
+  weights << 0.5, 0.25, 0.25;
+  double accuracy = OpenANN::weightedAccuracy(learner, dataSet, weights);
+  ASSERT_EQUALS_DELTA(accuracy, 0.75, 0.001);
 }
 
 void EvaluationTestCase::confusionMatrix()
