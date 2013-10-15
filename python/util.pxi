@@ -132,6 +132,9 @@ cdef class OpenANN:
     return cbindings.COMPILER_FLAGS
 
 
+__version__ = cbindings.VERSION
+
+
 def _use_all_cores():
   cbindings.useAllCores()
 
