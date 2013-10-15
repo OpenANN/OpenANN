@@ -128,8 +128,8 @@ cdef class OpenANN:
     return cbindings.COMPILATION_TIME
 
   @classmethod
-  def compilation_flags(object cls):
-    return cbindings.COMPILATION_FLAGS
+  def compiler_flags(object cls):
+    return cbindings.COMPILER_FLAGS
 
 
 def _use_all_cores():
