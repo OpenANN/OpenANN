@@ -19,24 +19,6 @@ void AdaBoostTestCase::setUp()
 
 void AdaBoostTestCase::adaBoost()
 {
-  OpenANN::AdaBoost adaBoost;
-
-  std::list<OpenANN::Net*> nets;
-  for(int m = 0; m < 4; m++)
-  {
-    OpenANN::Net* net = new OpenANN::Net;
-    net->inputLayer(2);
-    net->outputLayer(1, OpenANN::LOGISTIC);
-    nets.push_back(net);
-    adaBoost.addLearner(*net);
-  }
-
-  OpenANN::CG optimizer;
-  OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 100;
-  optimizer.setStopCriteria(stop);
-  adaBoost.setOptimizer(optimizer);
-
   const int D = 2;
   const int F = 1;
   const int N = 100;
@@ -50,6 +32,25 @@ void AdaBoostTestCase::adaBoost()
     T(n, 0) = (double) (X.row(n).squaredNorm() > 1.0);
   }
   OpenANN::DirectStorageDataSet dataSet(&X, &T);
+
+  OpenANN::AdaBoost adaBoost;
+
+  std::list<OpenANN::Net*> nets;
+  for(int m = 0; m < 4; m++)
+  {
+    OpenANN::Net* net = new OpenANN::Net;
+    net->inputLayer(D);
+    net->outputLayer(F, OpenANN::LOGISTIC);
+    nets.push_back(net);
+    adaBoost.addLearner(*net);
+  }
+
+  OpenANN::CG optimizer;
+  OpenANN::StoppingCriteria stop;
+  stop.maximalIterations = 100;
+  optimizer.setStopCriteria(stop);
+  adaBoost.setOptimizer(optimizer);
+
   adaBoost.train(dataSet);
   Eigen::MatrixXd Y = adaBoost(X);
   const int correct = ((Y - T).array() < 0.5).count();
