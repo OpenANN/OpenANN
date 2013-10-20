@@ -34,7 +34,7 @@ EnsembleLearner& AdaBoost::train(DataSet& dataSet)
   modelWeights.setZero();
   Eigen::VectorXd weights(dataSet.samples());
   weights.fill(1.0 / (double) dataSet.samples());
-  WeightedDataSet resampled(dataSet, weights, false);
+  WeightedDataSet resampled(dataSet, weights, true);
   int t = 0;
   for(std::list<Learner*>::iterator m = models.begin(); m != models.end();
       m++, t++)
@@ -54,6 +54,7 @@ EnsembleLearner& AdaBoost::train(DataSet& dataSet)
       weights(n) *= std::exp((correct ? -1.0 : 1.0) * modelWeights(t));
     }
     weights /= weights.sum();
+    resampled.updateWeights(weights);
   }
   modelWeights /= modelWeights.sum();
 }
