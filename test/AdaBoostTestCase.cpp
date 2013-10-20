@@ -53,7 +53,7 @@ void AdaBoostTestCase::adaBoost()
   adaBoost.train(dataSet);
   Eigen::MatrixXd Y = adaBoost(X);
   const int correct = ((Y - T).array() < 0.5).count();
-  ASSERT_WITHIN(correct, 80, 100);
+  ASSERT_WITHIN(correct, 75, 100);
 
   // Combined classifier should be better than single classifiers
   for(std::list<OpenANN::Net*>::iterator it = nets.begin();
