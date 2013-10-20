@@ -61,6 +61,9 @@ To start using %OpenANN it might be helpful to take a look at
   - Principal component analysis (PCA)
   - Zero-phase component analysis (ZCAWhitening)
   - k-means (KMeans)
+- Ensemble methods
+  - AdaBoost
+  - Bagging
 - Supported languages
   - C++
   - Python bindings
