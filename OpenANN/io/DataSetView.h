@@ -145,6 +145,17 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset,
  */
 void merge(DataSetView& merging, std::vector<DataSetView>& groups);
 
+/**
+ * Sample random instances from the original data set.
+ *
+ * @param dataSet original data set
+ * @param fraction fraction of the original data set's size, must be within
+ *                 (0, 1)
+ * @param replacement draw with or without replacement
+ * @return sample from the original data set
+ */
+DataSetView sample(DataSet& dataSet, double fraction, bool replacement);
+
 } // namespace OpenANN
 
 #endif // OPENANN_IO_DATA_SET_VIEW_H_

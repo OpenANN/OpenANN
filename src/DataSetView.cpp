@@ -1,5 +1,6 @@
 #include <OpenANN/io/DataSetView.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/Random.h>
 #include <OpenANN/Learner.h>
 #include <algorithm>
 #include <ctime>
@@ -14,24 +15,20 @@ DataSetView::DataSetView(const DataSetView& ds)
 {
 }
 
-
 int DataSetView::samples()
 {
   return indices.size();
 }
-
 
 int DataSetView::inputs()
 {
   return dataset->inputs();
 }
 
-
 int DataSetView::outputs()
 {
   return dataset->outputs();
 }
-
 
 Eigen::VectorXd& DataSetView::getInstance(int i)
 {
@@ -39,19 +36,16 @@ Eigen::VectorXd& DataSetView::getInstance(int i)
   return dataset->getInstance(indices.at(i));
 }
 
-
 Eigen::VectorXd& DataSetView::getTarget(int i)
 {
   OPENANN_CHECK_WITHIN(i, 0, samples() - 1);
   return dataset->getTarget(indices.at(i));
 }
 
-
 void DataSetView::finishIteration(Learner& learner)
 {
   dataset->finishIteration(learner);
 }
-
 
 DataSetView& DataSetView::shuffle()
 {
@@ -59,8 +53,6 @@ DataSetView& DataSetView::shuffle()
 
   return *this;
 }
-
-
 
 void split(std::vector<DataSetView>& groups, DataSet& dataset,
            int numberOfGroups, bool shuffling)
@@ -90,8 +82,6 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset,
   }
 }
 
-
-
 void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio,
            bool shuffling)
 {
@@ -113,8 +103,6 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio,
   groups.push_back(DataSetView(dataset, indices.begin() + samples, indices.end()));
 }
 
-
-
 void merge(DataSetView& merging, std::vector<DataSetView>& groups)
 {
   OPENANN_CHECK(!groups.empty());
@@ -126,6 +114,22 @@ void merge(DataSetView& merging, std::vector<DataSetView>& groups)
     std::copy(groups.at(i).indices.begin(), groups.at(i).indices.end(),
               std::back_inserter(merging.indices));
   }
+}
+
+DataSetView sample(DataSet& dataSet, double fraction, bool replacement)
+{
+  std::vector<int> indices;
+  int samples = std::ceil(dataSet.samples() * fraction);
+  indices.reserve(samples);
+
+  RandomNumberGenerator rng;
+  if(replacement)
+    for(int n = 0; n < samples; n++)
+      indices[n] = rng.generateIndex(dataSet.samples());
+  else
+    rng.generateIndices(dataSet.samples(), indices, false);
+
+  return DataSetView(dataSet, indices.begin(), indices.begin() + samples);
 }
 
 } // namespace OpenANN

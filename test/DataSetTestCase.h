@@ -14,6 +14,8 @@ public:
   void dataSetSplitsFromGroups();
   void dataSetSplitsFromRatio();
   void dataSetMerge();
+  void dataSetSamplingWithoutReplacement();
+  void dataSetSamplingWithReplacement();
   void weightedDataSet();
 };
 

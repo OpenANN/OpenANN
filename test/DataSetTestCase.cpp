@@ -14,6 +14,8 @@ void DataSetTestCase::run()
   RUN(DataSetTestCase, dataSetSplitsFromGroups);
   RUN(DataSetTestCase, dataSetSplitsFromRatio);
   RUN(DataSetTestCase, dataSetMerge);
+  RUN(DataSetTestCase, dataSetSamplingWithoutReplacement);
+  RUN(DataSetTestCase, dataSetSamplingWithReplacement);
   RUN(DataSetTestCase, weightedDataSet);
 }
 
@@ -196,7 +198,40 @@ void DataSetTestCase::dataSetMerge()
   }
 }
 
-#include <iostream>
+void DataSetTestCase::dataSetSamplingWithoutReplacement()
+{
+  Eigen::MatrixXd in(5, 1);
+  Eigen::MatrixXd out(5, 1);
+  in << 0, 1, 2, 3, 4;
+  out << 0, 1, 2, 3, 4;
+  OpenANN::DirectStorageDataSet original(&in, &out);
+
+  DataSetView view = sample(original, 1.0, false);
+  std::vector<bool> contains(original.samples(), false);
+  for(int n = 0; n < original.samples(); n++)
+    contains[int(view.getInstance(n).x())] = true;
+  for(int n = 0; n < original.samples(); n++)
+    ASSERT(contains[n]);
+}
+
+void DataSetTestCase::dataSetSamplingWithReplacement()
+{
+  Eigen::MatrixXd in(5, 1);
+  Eigen::MatrixXd out(5, 1);
+  in << 0, 1, 2, 3, 4;
+  out << 0, 1, 2, 3, 4;
+  OpenANN::DirectStorageDataSet original(&in, &out);
+
+  DataSetView view = sample(original, 1.0, true);
+  std::vector<int> contains(original.samples(), 0);
+  for(int n = 0; n < original.samples(); n++)
+    contains[int(view.getInstance(n).x())]++;
+  ASSERT(contains[0] >= 2 || contains[1] >= 2 || contains[2] >= 2 ||
+         contains[3] >= 2 || contains[4] >= 2);
+  ASSERT(contains[0] == 0 || contains[1] == 0 || contains[2] == 0 ||
+         contains[3] == 0 || contains[4] == 0);
+}
+
 void DataSetTestCase::weightedDataSet()
 {
   Eigen::MatrixXd in(5, 1);
