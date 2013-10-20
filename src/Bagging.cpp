@@ -26,9 +26,8 @@ EnsembleLearner& Bagging::train(DataSet& dataSet)
   F = dataSet.outputs();
   for(std::list<Learner*>::iterator m = models.begin(); m != models.end(); m++)
   {
-    std::vector<DataSetView> dataSets;
-    split(dataSets, dataSet, bagSize, true);
-    (*m)->trainingSet(dataSets[0]);
+    DataSetView samples = sample(dataSet, bagSize, true);
+    (*m)->trainingSet(samples);
     optimizer->setOptimizable(**m);
     optimizer->optimize();
   }
