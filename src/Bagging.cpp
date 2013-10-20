@@ -30,6 +30,7 @@ EnsembleLearner& Bagging::train(DataSet& dataSet)
     (*m)->trainingSet(samples);
     optimizer->setOptimizable(**m);
     optimizer->optimize();
+    (*m)->removeTrainingSet();
   }
 }
 

@@ -42,6 +42,7 @@ EnsembleLearner& AdaBoost::train(DataSet& dataSet)
     (*m)->trainingSet(resampled);
     optimizer->setOptimizable(**m);
     optimizer->optimize();
+    (*m)->removeTrainingSet();
     const double error = 1.0 - weightedAccuracy(**m, dataSet, weights);
     OPENANN_CHECK_WITHIN(error, 0.0, 1.0);
     modelWeights(t) = 0.5 * std::log((1.0 - error) / (error+1e-10));
