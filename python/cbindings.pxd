@@ -354,3 +354,7 @@ cdef extern from "OpenANN/AdaBoost.h" namespace "OpenANN":
   cdef cppclass AdaBoost(EnsembleLearner):
     AdaBoost()
     VectorXd getWeights()
+
+cdef extern from "OpenANN/Bagging.h" namespace "OpenANN":
+  cdef cppclass Bagging(EnsembleLearner):
+    Bagging(double bagSize)
