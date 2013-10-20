@@ -12,7 +12,13 @@ namespace OpenANN
  *
  * Adaptive Boosting.
  *
- * AdaBoost tries to learn specialized experts for subsets of the training set.
+ * AdaBoost tries to learn specialized experts for subsets of the training set
+ * [1]. This implementation can only be used for classification.
+ *
+ * [1] Y. Freund, R. E. Schapire:
+ * A Decision-Theoretic Generalization of on-Line Learning and an Application
+ * to Boosting,
+ * Journal of Computer and System Sciences 55, pp. 119-139, 1995.
  */
 class AdaBoost : public EnsembleLearner
 {

@@ -13,7 +13,8 @@ namespace OpenANN
  * Bootstrap Aggregating.
  *
  * Bagging averages instable learners that have been trained on randomly
- * sampled subsets of the training set [1].
+ * sampled subsets of the training set [1]. This implementation can be used
+ * for classification and regression.
  *
  * [1] L. Breiman: Bagging Predictors, Machine Learning 24, pp. 123-140, 1996.
  */
