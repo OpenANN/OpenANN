@@ -26,7 +26,7 @@ void BaggingTestCase::bagging()
   OpenANN::RandomNumberGenerator rng;
   for(int n = 0; n < N; n++)
   {
-    X(n, 0) = M_PI * (double) n / (double) (N-1) + rng.sampleNormalDistribution<double>() * 0.3;
+    X(n, 0) = 2*M_PI * (double) n / (double) (N-1) + rng.sampleNormalDistribution<double>() * 0.3;
   }
   Eigen::MatrixXd T(N, F);
   T.array() = X.array().cos();
@@ -47,7 +47,7 @@ void BaggingTestCase::bagging()
 
   OpenANN::CG optimizer;
   OpenANN::StoppingCriteria stop;
-  stop.maximalIterations = 10;
+  stop.maximalIterations = 100;
   optimizer.setStopCriteria(stop);
   bagging.setOptimizer(optimizer);
   bagging.train(dataSet);
