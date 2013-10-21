@@ -25,6 +25,7 @@
 #include "DropoutTestCase.h"
 #include "SigmaPiTestCase.h"
 #include "AdaBoostTestCase.h"
+#include "BaggingTestCase.h"
 #include "NetTestCase.h"
 #include "SparseAutoEncoderTestCase.h"
 #include "PreprocessingTestCase.h"
@@ -81,6 +82,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new SigmaPiTestCase);
 
   ts.addTestCase(new AdaBoostTestCase);
+  ts.addTestCase(new BaggingTestCase);
   ts.addTestCase(new NetTestCase);
   ts.addTestCase(new IntrinsicPlasticityTestCase);
   ts.addTestCase(new RBMTestCase);
