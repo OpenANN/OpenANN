@@ -64,7 +64,7 @@ public:
   int iteration;
 
   bool comp;
-  OpenANN::Compressor compressor;
+  OpenANN::Compressor* compressor;
   bool decimated;
   int downSamplingFactor;
 
@@ -84,7 +84,7 @@ public:
   void clear();
   std::string fileName(const std::string& type);
   void decimate(int factor = 1);
-  void compress(const Eigen::MatrixXd& compressionMatrix);
+  void compress(OpenANN::Compressor& compressor);
   void reset();
   virtual int samples() { return N; }
   virtual int inputs() { return D; }

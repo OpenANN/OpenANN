@@ -1,6 +1,7 @@
 #include "BCIDataSet.h"
 #include "Decimator.h"
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/OpenANNException.h>
 #include <fstream>
 
 BCIDataSet::BCIDataCache::BCIDataCache(int size, int D)
@@ -40,7 +41,8 @@ BCIDataSet::BCIDataSet(const std::string& directory, const std::string& subject,
     debugLogger(OpenANN::Logger::NONE),
     iteration(0),
     comp(false), decimated(false), downSamplingFactor(1),
-    cache(1000, 0)
+    cache(1000, 0),
+    compressor(0)
 {
   determineDimension();
   if(loadNow)
@@ -60,7 +62,8 @@ void BCIDataSet::load()
 void BCIDataSet::determineDimension()
 {
   std::ifstream file(fileName("Flashing").c_str());
-  OPENANN_CHECK(file.is_open());
+  if(!file.is_open())
+    throw OpenANN::OpenANNException("Could not find " + fileName("Flashing"));
   sampling = 240;
   channels = 64;
   epochs = dataType == TEST ? 100 : 85;
@@ -84,7 +87,8 @@ void BCIDataSet::determineDimension()
 void BCIDataSet::loadFlashing()
 {
   std::ifstream file(fileName("Flashing").c_str());
-  OPENANN_CHECK(file.is_open());
+  if(!file.is_open())
+    throw OpenANN::OpenANNException("Could not find " + fileName("Flashing"));
 
   for(int t = 0; t < maxT; t++)
   {
@@ -99,7 +103,8 @@ void BCIDataSet::loadFlashing()
 void BCIDataSet::loadStimulusCode()
 {
   std::ifstream file(fileName("StimulusCode").c_str());
-  OPENANN_CHECK(file.is_open());
+  if(!file.is_open())
+    throw OpenANN::OpenANNException("Could not find " + fileName("StimulusCode"));
 
   for(int t = 0; t < maxT; t++)
   {
@@ -114,7 +119,8 @@ void BCIDataSet::loadStimulusCode()
 void BCIDataSet::loadStimulusType()
 {
   std::ifstream file(fileName("StimulusType").c_str());
-  OPENANN_CHECK(file.is_open());
+  if(!file.is_open())
+    throw OpenANN::OpenANNException("Could not find " + fileName("StimulusType"));
 
   for(int t = 0; t < maxT; t++)
   {
@@ -129,7 +135,8 @@ void BCIDataSet::loadStimulusType()
 void BCIDataSet::loadTargetChar()
 {
   std::ifstream file(fileName("TargetChar").c_str());
-  OPENANN_CHECK(file.is_open());
+  if(!file.is_open())
+    throw OpenANN::OpenANNException("Could not find " + fileName("TargetChar"));
 
   int c = 0;
   for(int e = 0; e < epochs; e++)
@@ -143,7 +150,8 @@ void BCIDataSet::loadTargetChar()
 void BCIDataSet::loadSignal()
 {
   std::ifstream file(fileName("Signal").c_str());
-  OPENANN_CHECK(file.is_open());
+  if(!file.is_open())
+    throw OpenANN::OpenANNException("Could not find " + fileName("Signal"));
 
   for(int e = 0; e < readEpochs; e++)
   {
@@ -217,10 +225,10 @@ void BCIDataSet::decimate(int factor)
   clear();
 }
 
-void BCIDataSet::compress(const Eigen::MatrixXd& compressionMatrix)
+void BCIDataSet::compress(OpenANN::Compressor& compressor)
 {
-  compressor.init(compressionMatrix);
-  D = compressionMatrix.rows();
+  this->compressor = &compressor;
+  D = compressor.getOutputs();
   comp = true;
   clear();
 }
@@ -230,7 +238,7 @@ void BCIDataSet::reset()
   decimated = false;
   downSamplingFactor = 1;
   comp = false;
-  compressor.reset();
+  compressor = 0;
   cache.clear();
   iteration = 0;
   D = sampling * channels;
@@ -267,7 +275,7 @@ void BCIDataSet::buildInstance(int epoch, int t0)
       if(comp)
       {
         Eigen::VectorXd uncompressed = toVector(decimatedSignal);
-        tempInstance = compressor.compress(uncompressed);
+        tempInstance = compressor->transform(uncompressed);
       }
       else
         tempInstance = toVector(decimatedSignal);
@@ -277,7 +285,7 @@ void BCIDataSet::buildInstance(int epoch, int t0)
       if(comp)
       {
         Eigen::VectorXd uncompressed = toVector(original);
-        tempInstance = compressor.compress(uncompressed);
+        tempInstance = compressor->transform(uncompressed);
       }
       else
         tempInstance = toVector(original);
