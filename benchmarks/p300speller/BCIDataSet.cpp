@@ -275,7 +275,7 @@ void BCIDataSet::buildInstance(int epoch, int t0)
       if(comp)
       {
         Eigen::VectorXd uncompressed = toVector(decimatedSignal);
-        tempInstance = compressor->transform(uncompressed);
+        tempInstance = compressor->transform(uncompressed.transpose()).transpose();
       }
       else
         tempInstance = toVector(decimatedSignal);
@@ -285,7 +285,7 @@ void BCIDataSet::buildInstance(int epoch, int t0)
       if(comp)
       {
         Eigen::VectorXd uncompressed = toVector(original);
-        tempInstance = compressor->transform(uncompressed);
+        tempInstance = compressor->transform(uncompressed.transpose()).transpose();
       }
       else
         tempInstance = toVector(original);
