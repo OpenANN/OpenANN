@@ -318,12 +318,19 @@ cdef extern from "OpenANN/ZCAWhitening.h" namespace "OpenANN":
     ZCAWhitening()
 
 cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
-  cdef cppclass KMeans:
+  cdef cppclass KMeans(Transformer):
     KMeans(int D, int K)
-    Transformer& fit(MatrixXd& X)
-    Transformer& fitPartial(MatrixXd& X)
-    MatrixXd transform(MatrixXd& x)
     MatrixXd getCenters()
+
+cdef extern from "OpenANN/CompressionMatrixFactory.h" namespace "OpenANN":
+  cdef cppclass CompressionMatrixFactory:
+    cdef enum Transformation
+
+cdef extern from "OpenANN/Compressor.h" namespace "OpenANN":
+  cdef cppclass Compressor(Transformer):
+    Compressor(int inputDim, int outputDim,
+               Transformation transformation)
+    int getOutputs()
 
 
 cdef extern from "OpenANN/Preprocessing.h" namespace "OpenANN":

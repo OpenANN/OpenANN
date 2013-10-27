@@ -13,10 +13,12 @@ Compressor::Compressor(int inputDim, int outputDim,
 
 Transformer& Compressor::fit(const Eigen::MatrixXd& X)
 {
+  return *this;
 }
 
 Transformer& Compressor::fitPartial(const Eigen::MatrixXd& X)
 {
+  return *this;
 }
 
 Eigen::MatrixXd Compressor::transform(const Eigen::MatrixXd& X)
