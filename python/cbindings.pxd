@@ -322,9 +322,13 @@ cdef extern from "OpenANN/KMeans.h" namespace "OpenANN":
     KMeans(int D, int K)
     MatrixXd getCenters()
 
-cdef extern from "OpenANN/CompressionMatrixFactory.h" namespace "OpenANN":
-  cdef cppclass CompressionMatrixFactory:
-    cdef enum Transformation
+cdef extern from "OpenANN/CompressionMatrixFactory.h" namespace "OpenANN::CompressionMatrixFactory":
+  cdef enum Transformation:
+    DCT
+    GAUSSIAN
+    SPARSE_RANDOM
+    AVERAGE
+    EDGE
 
 cdef extern from "OpenANN/Compressor.h" namespace "OpenANN":
   cdef cppclass Compressor(Transformer):
