@@ -1,9 +1,17 @@
 #include "CompressionMatrixFactoryTestCase.h"
 #include <OpenANN/CompressionMatrixFactory.h>
+#include <OpenANN/Compressor.h>
+#include <OpenANN/util/Random.h>
 
 void CompressionMatrixFactoryTestCase::run()
 {
   RUN(CompressionMatrixFactoryTestCase, compress);
+  RUN(CompressionMatrixFactoryTestCase, compressor);
+}
+
+void CompressionMatrixFactoryTestCase::setUp()
+{
+  OpenANN::RandomNumberGenerator().seed(0);
 }
 
 void CompressionMatrixFactoryTestCase::compress()
@@ -29,4 +37,17 @@ void CompressionMatrixFactoryTestCase::compress()
   }
 
   ASSERT(fabs(compressionMatrix.determinant()) > 0.1);
+}
+
+void CompressionMatrixFactoryTestCase::compressor()
+{
+  int N = 100;
+  int D = 100;
+  int F = 10;
+  OpenANN::Compressor compressor(D, F, OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd Y = compressor.transform(X);
+  ASSERT_EQUALS(Y.rows(), N);
+  ASSERT_EQUALS(Y.cols(), F);
+  ASSERT_EQUALS_DELTA(X.mean(), 0.0, 0.01);
 }

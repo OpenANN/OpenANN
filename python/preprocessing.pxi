@@ -96,6 +96,32 @@ cdef class KMeans:
     cdef cbindings.MatrixXd C_eigen = self.thisptr.getCenters()
     return __matrix_eigen_to_numpy__(&C_eigen)
 
+class Transformation:
+  """Compression matrix type."""
+  DCT = cbindings.DCT
+  GAUSSIAN = cbindings.GAUSSIAN
+  SPARSE_RANDOM = cbindings.SPARSE_RANDOM
+  AVERAGE = cbindings.AVERAGE
+  EDGE = cbindings.EDGE
+
+cdef class Compressor:
+  """Compress data by multiplication with a matrix."""
+  cdef cbindings.Compressor *thisptr
+
+  def __init__(self, input_dim, output_dim, matrix_type):
+    self.thisptr = new cbindings.Compressor(input_dim, output_dim, matrix_type)
+
+  def __dealloc__(self):
+    del self.thisptr
+
+  def fit(self, X):
+    return self
+
+  def transform(self, X):
+    cdef cbindings.MatrixXd* X_eigen = __matrix_numpy_to_eigen__(X)
+    cdef cbindings.MatrixXd Y_eigen = self.thisptr.transform(deref(X_eigen))
+    return __matrix_eigen_to_numpy__(&Y_eigen)
+
 def sample_random_patches(images, channels, rows, cols, samples, patch_rows,
                           patch_cols):
   cdef cbindings.MatrixXd* images_eigen = __matrix_numpy_to_eigen__(images)

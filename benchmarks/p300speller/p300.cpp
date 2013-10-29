@@ -101,6 +101,8 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
   .outputLayer(trainingSet.outputs(), OpenANN::TANH)
   .validationSet(testSet)
   .trainingSet(trainingSet);
+  OpenANN::Compressor compressor(trainingSet.inputs(), csDimension,
+                                 OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
 
   OpenANN::Logger progressLogger(OpenANN::Logger::CONSOLE);
   for(int run = 0; run < runs; run++)
@@ -114,12 +116,8 @@ void runTest(Result& result, BCIDataSet& trainingSet, BCIDataSet& testSet,
     }
     if(csDimension > 0)
     {
-      Eigen::MatrixXd compressionMatrix;
-      OpenANN::CompressionMatrixFactory cmf(trainingSet.inputs(), csDimension,
-                                            OpenANN::CompressionMatrixFactory::SPARSE_RANDOM);
-      cmf.createCompressionMatrix(compressionMatrix);
-      trainingSet.compress(compressionMatrix);
-      testSet.compress(compressionMatrix);
+      trainingSet.compress(compressor);
+      testSet.compress(compressor);
     }
 
     Stopwatch sw;
