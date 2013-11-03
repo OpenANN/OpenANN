@@ -19,7 +19,7 @@ cdef class AdaBoost:
     self.thisptr.setOptimizer(deref((<Optimizer>optimizer).thisptr))
 
   def train(self, data_set):
-    self.thisptr.train(deref((<Dataset>data_set).storage))
+    self.thisptr.train(deref((<DataSet>data_set).storage))
 
   def predict(self, x_numpy):
     x_numpy = numpy.atleast_2d(x_numpy)
@@ -46,7 +46,7 @@ cdef class Bagging:
     self.thisptr.setOptimizer(deref((<Optimizer>optimizer).thisptr))
 
   def train(self, data_set):
-    self.thisptr.train(deref((<Dataset>data_set).storage))
+    self.thisptr.train(deref((<DataSet>data_set).storage))
 
   def predict(self, x_numpy):
     x_numpy = numpy.atleast_2d(x_numpy)

@@ -29,7 +29,7 @@ net.output_layer(1, Activation.LINEAR)
 # Create dataset
 X = numpy.linspace(0, 2*numpy.pi, 500)[:, numpy.newaxis]
 T = numpy.sin(X) + numpy.random.randn(*X.shape) * 0.1
-dataset = Dataset(X, T)
+dataset = DataSet(X, T)
 
 Log.info("Using %d samples with %d inputs and %d outputs"
     % (dataset.samples(), dataset.inputs(), dataset.outputs()))

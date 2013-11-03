@@ -95,8 +95,8 @@ def run_sarcos():
     Y = n.fit(Y).transform(Y)
     Ytest = n.transform(Ytest)
 
-    training_set = Dataset(X, Y)
-    validation_set = Dataset(Xtest, Ytest)
+    training_set = DataSet(X, Y)
+    validation_set = DataSet(Xtest, Ytest)
 
     D = X.shape[1]
     F = Y.shape[1]

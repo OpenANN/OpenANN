@@ -52,7 +52,7 @@ cdef class Optimizer:
   def optimize(self, net, dataset):
     """Perform optimization until stopping criteria are satisfied."""
     assert self.thisptr != NULL, "You must use a subclass of Optimizer!"
-    (<Learner?>net).learner.trainingSet(deref((<Dataset?>dataset).storage))
+    (<Learner?>net).learner.trainingSet(deref((<DataSet?>dataset).storage))
     self.thisptr.setOptimizable(deref((<Learner>net).learner))
     self.thisptr.optimize()
 

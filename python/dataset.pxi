@@ -1,4 +1,4 @@
-cdef class Dataset:
+cdef class DataSet:
   """Contains instances and targets."""
   cdef cbindings.MatrixXd* input
   cdef cbindings.MatrixXd* output
@@ -61,12 +61,12 @@ def load_from_libsvm(filename):
   """Load dataset from libsvm file."""
   cdef cbindings.MatrixXd* input = new cbindings.MatrixXd()
   cdef cbindings.MatrixXd* output = new cbindings.MatrixXd()
-  dset = Dataset()
-  dset.input = input
-  dset.output = output
+  ds = DataSet()
+  ds.input = input
+  ds.output = output
   cbindings.libsvm_load(deref(input), deref(output), filename, 0)
-  dset.storage = new cbindings.DirectStorageDataSet(input, output)
-  return dset 
+  ds.storage = new cbindings.DirectStorageDataSet(input, output)
+  return ds 
 
 
 cdef class DataStream:

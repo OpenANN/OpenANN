@@ -71,10 +71,10 @@ def run_iris():
     # each class is equally distributed in the datasets
     X1 = numpy.vstack((X[0:40], X[50:90], X[100:140]))
     T1 = numpy.vstack((T[0:40], T[50:90], T[100:140]))
-    training_set = Dataset(X1, T1)
+    training_set = DataSet(X1, T1)
     X2 = numpy.vstack((X[40:50], X[90:100], X[140:150]))
     T2 = numpy.vstack((T[40:50], T[90:100], T[140:150]))
-    validation_set = Dataset(X2, T2)
+    validation_set = DataSet(X2, T2)
 
     # Train for 500 episodes (with tuned parameters for MBSGD)
     optimizer = MBSGD({"maximal_iterations": 500}, learning_rate=0.7,

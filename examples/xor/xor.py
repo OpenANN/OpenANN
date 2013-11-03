@@ -8,7 +8,7 @@ if __name__ == "__main__":
     D = X.shape[1]
     F = Y.shape[1]
     N = X.shape[0]
-    dataset = Dataset(X, Y)
+    dataset = DataSet(X, Y)
 
     # Make the result repeatable
     RandomNumberGenerator().seed(0)
