@@ -1,7 +1,7 @@
 #ifndef OPENANN_TRANSFORMER_H_
 #define OPENANN_TRANSFORMER_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace OpenANN
 {

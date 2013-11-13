@@ -1,7 +1,7 @@
 #ifndef OPENANN_LAYERS_LAYER_H_
 #define OPENANN_LAYERS_LAYER_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 
 namespace OpenANN

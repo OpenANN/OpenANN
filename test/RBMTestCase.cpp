@@ -4,7 +4,7 @@
 #include <OpenANN/RBM.h>
 #include <OpenANN/optimization/MBSGD.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 void RBMTestCase::run()
 {

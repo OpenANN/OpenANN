@@ -2,7 +2,7 @@
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <iostream>
 
 using namespace OpenANN;

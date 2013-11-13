@@ -3,7 +3,7 @@
 
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <optimization.h>
 
 namespace OpenANN

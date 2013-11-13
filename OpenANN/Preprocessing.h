@@ -7,7 +7,7 @@
  * Provides some convenience functions to preprocess data.
  */
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace OpenANN
 {

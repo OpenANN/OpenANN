@@ -1,7 +1,7 @@
 #ifndef OPENANN_COMPRESSION_MATRIX_FACTORY_H_
 #define OPENANN_COMPRESSION_MATRIX_FACTORY_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 
 namespace OpenANN

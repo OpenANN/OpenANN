@@ -4,7 +4,7 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 
 namespace OpenANN

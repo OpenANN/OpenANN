@@ -1,7 +1,7 @@
 #ifndef OPENANN_IO_DATA_SET_H_
 #define OPENANN_IO_DATA_SET_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace OpenANN
 {

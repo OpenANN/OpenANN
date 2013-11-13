@@ -7,7 +7,7 @@
  * Provides some convenience functions to evaluate learners.
  */
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace OpenANN
 {

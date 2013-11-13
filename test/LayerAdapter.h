@@ -4,7 +4,7 @@
 #include <OpenANN/Learner.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/layers/Layer.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 class LayerAdapter : public OpenANN::Learner
 {

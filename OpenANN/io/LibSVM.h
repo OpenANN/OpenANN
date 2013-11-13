@@ -1,7 +1,7 @@
 #ifndef OPENANN_IO_LIB_SVM_H_
 #define OPENANN_IO_LIB_SVM_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <iostream>
 
 namespace OpenANN

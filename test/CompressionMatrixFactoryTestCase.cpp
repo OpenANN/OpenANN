@@ -2,6 +2,7 @@
 #include <OpenANN/CompressionMatrixFactory.h>
 #include <OpenANN/Compressor.h>
 #include <OpenANN/util/Random.h>
+#include <Eigen/LU>
 
 void CompressionMatrixFactoryTestCase::run()
 {

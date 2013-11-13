@@ -4,7 +4,7 @@
 #include <OpenANN/Learner.h>
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/io/DataSet.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace OpenANN
 {

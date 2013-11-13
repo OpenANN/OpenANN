@@ -1,7 +1,7 @@
 #ifndef OPENANN_LAYERS_SIGMA_PI_H_
 #define OPENANN_LAYERS_SIGMA_PI_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/ActivationFunctions.h>

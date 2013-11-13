@@ -4,7 +4,7 @@
 #include <OpenANN/util/Random.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/util/EigenWrapper.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <cmath>
 
 /**

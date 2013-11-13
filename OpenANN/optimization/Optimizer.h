@@ -1,7 +1,7 @@
 #ifndef OPENANN_OPTIMIZATION_OPTIMIZER_H_
 #define OPENANN_OPTIMIZATION_OPTIMIZER_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <string>
 
 namespace OpenANN

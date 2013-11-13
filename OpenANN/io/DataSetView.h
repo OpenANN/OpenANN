@@ -1,7 +1,7 @@
 #ifndef OPENANN_IO_DATA_SET_VIEW_H_
 #define OPENANN_IO_DATA_SET_VIEW_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 #include <OpenANN/io/DataSet.h>
 

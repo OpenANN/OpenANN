@@ -1,7 +1,7 @@
 #ifndef OPENANN_RL_STATE_SPACE_H_
 #define OPENANN_RL_STATE_SPACE_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 
 namespace OpenANN

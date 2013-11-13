@@ -6,7 +6,7 @@
 #include <OpenANN/layers/Layer.h>
 #include <OpenANN/optimization/Optimizable.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 
 namespace OpenANN

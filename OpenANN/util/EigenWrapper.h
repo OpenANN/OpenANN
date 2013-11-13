@@ -2,7 +2,7 @@
 #define OPENANN_UTIL_EIGEN_WRAPPER_H_
 
 #include <OpenANN/util/AssertionMacros.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <cmath>
 #include <cstdarg>
 

@@ -2,7 +2,7 @@
 #define IDX_LOADER_H_
 
 #include <OpenANN/util/AssertionMacros.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <fstream>
 #include <OpenANN/io/Logger.h>
 #include <stdint.h>

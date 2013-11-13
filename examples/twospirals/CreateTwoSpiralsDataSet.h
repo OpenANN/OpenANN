@@ -1,7 +1,7 @@
 #ifndef CREATE_TWO_SPIRALS_DATA_SET_H_
 #define CREATE_TWO_SPIRALS_DATA_SET_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/Preprocessing.h>
 
