@@ -102,7 +102,7 @@ void Convolutional::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
 {
   this->x = x;
 
-  OPENANN_CHECK_EQUALS(x->cols(), fmin * inRows * inRows);
+  OPENANN_CHECK_EQUALS(x->cols(), fmin * inRows * inCols);
   OPENANN_CHECK_EQUALS(this->y.cols(), fmout * outRows * outCols);
 
   const int N = x->rows();
