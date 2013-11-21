@@ -28,8 +28,8 @@ OutputInfo Convolutional::initialize(std::vector<double*>& parameterPointers,
   info.dimensions.push_back(outRows);
   info.dimensions.push_back(outCols);
   fmInSize = inRows * inCols;
-  maxRow = inRows - kernelRows + 1;
-  maxCol = inCols - kernelCols + 1;
+  maxRow = inRows - kernelRows + kernelRows%2;
+  maxCol = inCols - kernelCols + kernelCols%2;
 
   W.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
   Wd.resize(fmout, std::vector<Eigen::MatrixXd>(fmin, Eigen::MatrixXd(kernelRows, kernelCols)));
