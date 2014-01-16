@@ -11,6 +11,7 @@ class ConvolutionalTestCase : public TestCase
   void convolutionalGradient();
   void convolutionalInputGradient();
   void regularization();
+  void convolutionalGradientWithOddKernel();
 };
 
 #endif // OPENANN_TEST_CONVOLUTIONAL_TEST_CASE_H_
