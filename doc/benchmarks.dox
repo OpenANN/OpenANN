@@ -23,7 +23,7 @@ corresponding build directory and are called "benchmark.py".
 
   - \ref SARCOSBenchmark
 
-\section Reinforcement Learning
+\section RL Reinforcement Learning
 
   - \ref PoleBalancingBenchmark
   - \ref OctopusArm
