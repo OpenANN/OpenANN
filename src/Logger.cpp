@@ -69,6 +69,8 @@ Logger& operator<<(Logger& logger, const FloatingPointFormatter& t)
   return logger;
 }
 
+std::ostream* Log::stream = &std::cout;
+
 Log::Log()
   : level(DEBUG)
 {
@@ -101,10 +103,14 @@ std::ostream& Log::get(LogLevel level, const char* name_space)
   return message;
 }
 
+void Log::setStream(std::ostream& stream)
+{
+  Log::stream = &stream;
+}
+
 std::ostream& Log::getStream()
 {
-  static std::ostream& gStream = std::cout;
-  return gStream;
+  return *stream;
 }
 
 Log::LogLevel& Log::getLevel()

@@ -46,7 +46,7 @@ OpenANN::Log::setDebug();
 You can also change the logging target to any std::ostream at runtime with
 
 \code
-OpenANN::Log::getStream() = std::cerr;
+OpenANN::Log::setStream(std::cerr);
 \endcode
 
 To log something you just have to use the stream operator <<:

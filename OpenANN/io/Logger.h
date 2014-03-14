@@ -100,6 +100,7 @@ public:
 
   std::ostream& get(LogLevel level, const char* name_space);
 
+  static void setStream(std::ostream& stream);
   static std::ostream& getStream();
   static LogLevel& getLevel();
 
@@ -108,6 +109,7 @@ public:
   static void setInfo();
   static void setDebug();
 private:
+  static std::ostream* stream;
   std::ostringstream message;
   LogLevel level;
 };
