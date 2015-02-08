@@ -5,11 +5,11 @@ cdef class DataSet:
   cdef cbindings.DataSet* storage
 
   def __cinit__(self, input=None, output=None):
-    if input != None:
+    if input is not None:
       self.input = __matrix_numpy_to_eigen__(input)
     else:
       self.input = NULL
-    if output != None:
+    if output is not None:
       self.output = __matrix_numpy_to_eigen__(output)
     else:
       self.output = NULL
