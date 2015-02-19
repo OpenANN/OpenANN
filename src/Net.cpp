@@ -632,7 +632,11 @@ void Net::backpropagate()
   int l = L;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); ++layer, --l)
-    (**layer).backpropagate(e, e, l != 2);
+  {
+    // Backprop of dE/dX is not required in input layer and first hidden layer
+    const bool backpropToPrevious = l > 2;
+    (**layer).backpropagate(e, e, backpropToPrevious);
+  }
 }
 
 }
