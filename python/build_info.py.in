@@ -1,0 +1,6 @@
+version = "${OPENANN_VERSION_NUMBER}"
+project_bin_dir = "${PROJECT_BINARY_DIR}"
+project_src_dir = "${PROJECT_SOURCE_DIR}"
+libraries = [${PYTHONEX_LINK_LIBRARIES}]
+eigen_inc = "${EIGEN3_INCLUDE_DIRS}"
+compile_args = [${OPENANN_PYTHON_COMPILE_ARGS}]

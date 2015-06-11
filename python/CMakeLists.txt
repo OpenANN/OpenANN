@@ -6,17 +6,16 @@ if(PYTHONINTERP_FOUND)
     set(PYTHONEX_LINK_LIBRARIES "${PYTHONEX_LINK_LIBRARIES}, \"openann_cuda\"")
   endif()
 
-  file(GLOB cython_sources "*.p[xy][dix]")
-  file(COPY ${cython_sources} DESTINATION .)
-  configure_file(setup.py.in setup.py)
+  file(GLOB CYTHON_SOURCES "*.p[xy][dix]")
+  configure_file(build_info.py.in ${PROJECT_SOURCE_DIR}/python/build_info.py)
 
   add_custom_command(
     OUTPUT python_extension_command
     COMMAND ${CMAKE_COMMAND} -E echo "Building Python extension..."
     COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    DEPENDS ${cython_sources}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CYTHON_SOURCES}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/python
   )
   # HACK This target will only be build to test the python bindings!
   add_custom_target(python_extension DEPENDS openann alglib python_extension_command)
@@ -26,7 +25,7 @@ if(PYTHONINTERP_FOUND)
     COMMAND ${CMAKE_COMMAND} -E echo "Installing Python extension..."
     COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
     COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/python
   )
   add_custom_target(python_extension_install DEPENDS openann alglib python_extension_install_command)
   install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" --build . --target python_extension_install)")

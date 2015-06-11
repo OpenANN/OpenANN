@@ -3,8 +3,11 @@ build
 *~
 *.backup
 *.orig
+*.pyc
 lib/ALGLIB
 lib/CMA-ES*
 src/OpenANN.cpp
 test/lib/CPP-Test
 doxygen.cfg
+python/build_info.py
+python/openann.cpp
