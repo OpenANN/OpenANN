@@ -107,7 +107,7 @@ public:
     {
       OPENANN_CHECK_EQUALS(result.size(), (size_t) n);
     }
-    std::random_shuffle(result.begin(), result.end());
+    std::shuffle(result.begin(), result.end());
   }
 
   template<class M>
