@@ -49,8 +49,11 @@ void DataSetView::finishIteration(Learner& learner)
 
 DataSetView& DataSetView::shuffle()
 {
+#if __cplusplus < 201300L		
   std::random_shuffle(indices.begin(), indices.end());
-
+#else
+  std::shuffle(indices.begin(), indices.end());
+#endif
   return *this;
 }
 
@@ -68,9 +71,14 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset,
 
   int samplesPerGroup = std::floor(dataset.samples() / numberOfGroups + 0.5);
 
-  if(shuffling)
-    std::random_shuffle(indices.begin(), indices.end());
-
+  if(shuffling) 
+	{
+		#if __cplusplus < 201300L		
+			std::random_shuffle(indices.begin(), indices.end());
+		#else
+			std::shuffle(indices.begin(), indices.end());
+		#endif
+	}
   for(int i = 0; i < numberOfGroups; ++i)
   {
     std::vector<int>::iterator it = indices.begin() + i * samplesPerGroup;
@@ -97,8 +105,13 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio,
   int samples = std::ceil(ratio * dataset.samples());
 
   if(shuffling)
-    std::random_shuffle(indices.begin(), indices.end());
-
+	{
+		#if __cplusplus < 201300L		
+			std::random_shuffle(indices.begin(), indices.end());
+		#else
+			std::shuffle(indices.begin(), indices.end());
+		#endif	
+	}
   groups.push_back(DataSetView(dataset, indices.begin(), indices.begin() + samples));
   groups.push_back(DataSetView(dataset, indices.begin() + samples, indices.end()));
 }
