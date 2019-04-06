@@ -107,7 +107,11 @@ public:
     {
       OPENANN_CHECK_EQUALS(result.size(), (size_t) n);
     }
+#if __cplusplus < 201300L		
+    std::random_shuffle(result.begin(), result.end());
+#else
     std::shuffle(result.begin(), result.end());
+#endif
   }
 
   template<class M>
