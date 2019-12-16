@@ -7,8 +7,14 @@
 #include <cmath>
 #include <cstdlib>
 
+#if __cplusplus >= 201300L
+namespace {
+	std::mt19937 randomGenerator;
+}
+#endif
 namespace OpenANN
 {
+
 
 DataSetView::DataSetView(const DataSetView& ds)
   : indices(ds.indices), dataset(ds.dataset)
@@ -52,7 +58,7 @@ DataSetView& DataSetView::shuffle()
 #if __cplusplus < 201300L		
   std::random_shuffle(indices.begin(), indices.end());
 #else
-  std::shuffle(indices.begin(), indices.end());
+  std::shuffle(indices.begin(), indices.end(),randomGenerator);
 #endif
   return *this;
 }
@@ -76,7 +82,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset,
 		#if __cplusplus < 201300L		
 			std::random_shuffle(indices.begin(), indices.end());
 		#else
-			std::shuffle(indices.begin(), indices.end());
+			std::shuffle(indices.begin(), indices.end(),randomGenerator);
 		#endif
 	}
   for(int i = 0; i < numberOfGroups; ++i)
@@ -109,7 +115,7 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio,
 		#if __cplusplus < 201300L		
 			std::random_shuffle(indices.begin(), indices.end());
 		#else
-			std::shuffle(indices.begin(), indices.end());
+			std::shuffle(indices.begin(), indices.end(),randomGenerator);
 		#endif	
 	}
   groups.push_back(DataSetView(dataset, indices.begin(), indices.begin() + samples));

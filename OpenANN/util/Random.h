@@ -10,6 +10,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <algorithm>
+#if __cplusplus >= 201300L
+#include <random>
+#endif
 
 namespace OpenANN
 {
@@ -20,6 +23,12 @@ namespace OpenANN
  */
 class RandomNumberGenerator
 {
+private:
+#if __cplusplus >= 201300L
+	mutable std::mt19937 m_generator;
+	mutable std::uniform_int_distribution<> m_distribution;
+#endif
+
 public:
   /**
    * Initialize the seed.
@@ -110,7 +119,7 @@ public:
 #if __cplusplus < 201300L		
     std::random_shuffle(result.begin(), result.end());
 #else
-    std::shuffle(result.begin(), result.end());
+    std::shuffle(result.begin(), result.end(),m_generator);
 #endif
   }
 

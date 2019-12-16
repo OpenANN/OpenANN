@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(OpenANN)
+option(CPP_17 "Compile with c++ 17" off) 
 
 find_package(Doxygen)
 find_package(OpenMP)
@@ -51,6 +52,10 @@ set(OPENANN_BRIEF_DESCRIPTION "An open source library for artificial neural netw
 current_time(OPENANN_TIME)
 set(OPENANN_OPTIMIZATION_FLAGS)
 set(OPENANN_PYTHON_COMPILE_ARGS)
+if(CPP_17)
+	compiler_check_add_flag("-std=c++17")
+	compiler_check_add_flag("-Dregister=") # a work-around to get rid of the register keyword
+endif(CPP_17)
 if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
   message(STATUS "Debug configuration")
   if(CMAKE_COMPILER_IS_GNUCXX)
