@@ -119,7 +119,7 @@ public:
 #if __cplusplus < 201300L		
     std::random_shuffle(result.begin(), result.end());
 #else
-    std::shuffle(result.begin(), result.end(),m_generator);
+    std::shuffle(result.begin(), result.end(), m_generator);
 #endif
   }
 
