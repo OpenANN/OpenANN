@@ -20,7 +20,7 @@ Transformer& Normalization::fit(const Eigen::MatrixXd& X)
   {
     for(int d = 0; d < X.cols(); ++d)
     {
-      register double tmp = X(n, d) - mean(d);
+      double tmp = X(n, d) - mean(d);
       std(0, d) += tmp*tmp;
     }
   }

@@ -50,7 +50,7 @@ void LocalResponseNormalization::forwardPropagate(Eigen::MatrixXd* x,
           const int fmInMax = std::min(fm - 1, fmOut + n / 2);
           for(int fmIn = fmInMin; fmIn < fmInMax; fmIn++)
           {
-            register double a = (*x)(n, fmIn * fmSize + r * cols + c);
+            double a = (*x)(n, fmIn * fmSize + r * cols + c);
             denom += a * a;
           }
           denom = k + alpha * denom;
