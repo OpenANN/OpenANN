@@ -23,7 +23,6 @@ class RandomNumberGenerator
 {
 private:
 	mutable std::mt19937 m_generator;
-	mutable std::uniform_int_distribution<> m_distribution;
 
 public:
   /**

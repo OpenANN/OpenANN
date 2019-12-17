@@ -6,12 +6,19 @@ namespace OpenANN
 
 RandomNumberGenerator::RandomNumberGenerator()
 {
+	static bool seedInitialized = false;
+  if(!seedInitialized)
+  {
+    srand(std::time(0));
+    seedInitialized = true;
+  }
   m_generator.seed(std::time(0));
 }
 
 void RandomNumberGenerator::seed(unsigned int seed)
 {
-	m_generator.seed(seed);
+  srand(seed);
+  m_generator.seed(seed);
 }
 
 int RandomNumberGenerator::generateInt(int min, int range) const
@@ -20,7 +27,7 @@ int RandomNumberGenerator::generateInt(int min, int range) const
   if(range == 0)
     return min;
   else
-    return m_distribution(m_generator) % range + min;
+    return rand() % range + min;
 }
 
 size_t RandomNumberGenerator::generateIndex(size_t size) const
