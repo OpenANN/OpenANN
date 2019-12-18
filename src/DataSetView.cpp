@@ -102,9 +102,9 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio,
   int samples = std::ceil(ratio * dataset.samples());
 
   if(shuffling)
-	{
+  {
     std::shuffle(indices.begin(), indices.end(), randomGenerator);
-	}
+  }
   groups.push_back(DataSetView(dataset, indices.begin(), indices.begin() + samples));
   groups.push_back(DataSetView(dataset, indices.begin() + samples, indices.end()));
 }
