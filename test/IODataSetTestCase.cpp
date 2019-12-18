@@ -95,7 +95,7 @@ void IODataSetTestCase::saveFANN()
 
   ASSERT_EQUALS(str.str(),
                 "2 2 1\n"
-                "1.5 0\n"
+                "1.5   0\n"
                 "1\n"
                 "  0 1.5\n"
                 "0\n");

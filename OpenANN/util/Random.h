@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <algorithm>
+#include <random>
 
 namespace OpenANN
 {
@@ -20,6 +21,9 @@ namespace OpenANN
  */
 class RandomNumberGenerator
 {
+private:
+	mutable std::mt19937 m_generator;
+
 public:
   /**
    * Initialize the seed.
@@ -107,11 +111,7 @@ public:
     {
       OPENANN_CHECK_EQUALS(result.size(), (size_t) n);
     }
-#if __cplusplus < 201300L		
-    std::random_shuffle(result.begin(), result.end());
-#else
-    std::shuffle(result.begin(), result.end());
-#endif
+    std::shuffle(result.begin(), result.end(), m_generator);
   }
 
   template<class M>
