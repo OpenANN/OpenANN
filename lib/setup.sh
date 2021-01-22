@@ -34,7 +34,7 @@ if [ -d "${TARGET_ALGLIB}" ]; then
   rm -r ${TARGET_ALGLIB}
 fi
 echo "Downloading ALGLIB."
-if wget http://www.alglib.net/translator/re/alglib-3.5.0.cpp.zip; then
+if wget https://www.alglib.net/translator/re/alglib-3.5.0.cpp.zip; then
   echo "Success."
 else
   echo "Failed."
